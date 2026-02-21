@@ -1,0 +1,24 @@
+[project]
+name = "mtu15-project"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "duckdb>=1.4.4",
+    "ipykernel>=7.2.0",
+    "jupyter>=1.1.1",
+    "pandas>=3.0.1",
+    "pyarrow>=23.0.1",
+    "pydantic>=2.12.5",
+    "pytest>=9.0.2",
+    "python-dateutil>=2.9.0.post0",
+    "rich>=14.3.3",
+]
+
+[project.scripts]
+mtu15-project = "mtu15_project:main"
+
+[build-system]
+requires = ["uv_build>=0.8.22,<0.9.0"]
+build-backend = "uv_build"
