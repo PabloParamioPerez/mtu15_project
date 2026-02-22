@@ -17,6 +17,10 @@ from mtu.parsing.omie_common import (
 
 FILENAME_RE = re.compile(r"^marginalpdbc_(\d{8})\.(\d+)$")
 
+# Allowed counts including DST days
+MTU60_ALLOWED_COUNTS = {23, 24, 25}
+MTU15_ALLOWED_COUNTS = {92, 96, 100}
+
 
 def parse_filename_metadata(path: Path) -> dict:
     m = FILENAME_RE.match(path.name)
@@ -32,6 +36,35 @@ def parse_filename_metadata(path: Path) -> dict:
     }
 
 
+def infer_mtu_minutes_from_periods(periods: pd.Series) -> int:
+    """
+    Infer market time unit from period numbering.
+    - MTU60 usually has periods up to 24/25
+    - MTU15 usually has periods up to 96/100
+    """
+    max_period = int(periods.max())
+
+    if max_period <= 25:
+        return 60
+    if max_period <= 100:
+        return 15
+
+    raise ValueError(f"Cannot infer MTU from max period={max_period}")
+
+
+def validate_period_count_for_mtu(path: Path, n_rows: int, mtu_minutes: int) -> None:
+    if mtu_minutes == 60 and n_rows not in MTU60_ALLOWED_COUNTS:
+        raise ValueError(
+            f"{path.name}: inferred MTU60 but row count={n_rows} "
+            f"(expected one of {sorted(MTU60_ALLOWED_COUNTS)})"
+        )
+    if mtu_minutes == 15 and n_rows not in MTU15_ALLOWED_COUNTS:
+        raise ValueError(
+            f"{path.name}: inferred MTU15 but row count={n_rows} "
+            f"(expected one of {sorted(MTU15_ALLOWED_COUNTS)})"
+        )
+
+
 def parse_marginalpdbc_file(path: Path) -> pd.DataFrame:
     """
     Parse one OMIE MARGINALPDBC raw file into a tidy DataFrame.
@@ -40,7 +73,6 @@ def parse_marginalpdbc_file(path: Path) -> pd.DataFrame:
       MARGINALPDBC;
       YYYY;MM;DD;PERIOD;PT_PRICE;ES_PRICE;
       ...
-      *
     """
     meta = parse_filename_metadata(path)
     lines = [ln.strip() for ln in read_text_lines(path) if ln.strip()]
@@ -62,7 +94,7 @@ def parse_marginalpdbc_file(path: Path) -> pd.DataFrame:
 
         parts = raw_line.split(";")
 
-        # OMIE rows often end with a trailing ';' -> final empty token
+        # OMIE rows often end with trailing ';' -> final empty token
         if parts and parts[-1] == "":
             parts = parts[:-1]
 
@@ -104,6 +136,11 @@ def parse_marginalpdbc_file(path: Path) -> pd.DataFrame:
         dups = df.loc[df["period"].duplicated(), "period"].tolist()
         raise ValueError(f"{path.name} has duplicated periods: {dups}")
 
+    # Infer MTU and validate row count (works for MTU60 + MTU15, incl DST)
+    mtu_minutes = infer_mtu_minutes_from_periods(df["period"])
+    n_periods_in_file = len(df)
+    validate_period_count_for_mtu(path, n_periods_in_file, mtu_minutes)
+
     # Sort just in case
     df = df.sort_values(["date", "period"]).reset_index(drop=True)
 
@@ -114,6 +151,8 @@ def parse_marginalpdbc_file(path: Path) -> pd.DataFrame:
     df["market"] = "mercado_diario"
     df["category"] = "precios"
     df["version_suffix"] = meta["version_suffix"]
+    df["mtu_minutes"] = mtu_minutes
+    df["n_periods_in_file"] = n_periods_in_file
 
     # Reorder columns (analysis-friendly first)
     df = df[
@@ -122,6 +161,8 @@ def parse_marginalpdbc_file(path: Path) -> pd.DataFrame:
             "period",
             "price_es_eur_mwh",
             "price_pt_eur_mwh",
+            "mtu_minutes",
+            "n_periods_in_file",
             "market",
             "category",
             "file_family",
@@ -177,7 +218,7 @@ def parse_folder_and_write(
                 "category": "precios",
                 "file_family": "marginalpdbc",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.marginalpdbc.parse_marginalpdbc_file:v1",
+                "parser_name": "mtu.parsing.marginalpdbc.parse_marginalpdbc_file:v2",
                 "raw_file_kind": "omie_text",
                 "rows_read": len(df),
                 "rows_output": len(df),
@@ -203,7 +244,7 @@ def parse_folder_and_write(
                 "category": "precios",
                 "file_family": "marginalpdbc",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.marginalpdbc.parse_marginalpdbc_file:v1",
+                "parser_name": "mtu.parsing.marginalpdbc.parse_marginalpdbc_file:v2",
                 "raw_file_kind": "omie_text",
                 "rows_read": "",
                 "rows_output": 0,
