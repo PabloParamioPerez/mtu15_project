@@ -1,7 +1,7 @@
 [project]
 name = "mtu15-project"
 version = "0.1.0"
-description = "Add your description here"
+description = "Data pipeline for OMIE electricity market analysis - MTU15 reform"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -13,12 +13,18 @@ dependencies = [
     "pydantic>=2.12.5",
     "pytest>=9.0.2",
     "python-dateutil>=2.9.0.post0",
+    "requests>=2.32.5",
     "rich>=14.3.3",
 ]
 
 [project.scripts]
-mtu15-project = "mtu15_project:main"
+mtu15-project = "mtu:main"
 
 [build-system]
 requires = ["uv_build>=0.8.22,<0.9.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]

@@ -999,7 +999,13 @@ dependencies = [
     { name = "pydantic" },
     { name = "pytest" },
     { name = "python-dateutil" },
+    { name = "requests" },
     { name = "rich" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
 ]
 
 [package.metadata]
@@ -1012,8 +1018,12 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "pytest", specifier = ">=9.0.2" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
+    { name = "requests", specifier = ">=2.32.5" },
     { name = "rich", specifier = ">=14.3.3" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=9.0.2" }]
 
 [[package]]
 name = "nbclient"
