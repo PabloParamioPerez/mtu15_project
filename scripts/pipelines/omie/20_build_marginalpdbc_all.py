@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 INPUT_DIR = PROJECT_ROOT / "data/processed/omie/mercado_diario/precios/marginalpdbc"
 OUTPUT_FILE = PROJECT_ROOT / "data/processed/omie/mercado_diario/precios/marginalpdbc_all.parquet"
