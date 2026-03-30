@@ -17,6 +17,19 @@ from mtu.parsing.omie_common import (
 
 # Filename format: marginalpibc_aaaammddss.v
 # where ss = intraday auction session (usually 01..25)
+
+
+def parse_decimal_or_nan(text: str) -> float:
+    """
+    PIBC can contain blank prices in some historical sessions.
+    Parse blanks/NA as NaN instead of failing.
+    """
+    s = str(text).strip()
+    if s == "" or s.upper() in {"NA", "N/A", "NULL", "-"}:
+        return float("nan")
+    return parse_decimal(s)
+
+
 FILENAME_RE = re.compile(r"^marginalpibc_(\d{8})(\d{2})\.(\d+)$")
 
 # Allowed counts including DST days
@@ -72,18 +85,17 @@ def validate_period_sequence_for_session(path: Path, periods: pd.Series, mtu_min
 
     We require:
     - periods within valid MTU bounds
-    - no duplicates (also checked elsewhere, but kept defensively)
     - contiguous sequence from min(period) to max(period)
     """
     p = [int(x) for x in periods.tolist()]
     if not p:
         raise ValueError(f"{path.name}: no periods found")
 
-    p_sorted = sorted(p)
-    if len(p_sorted) != len(set(p_sorted)):
-        raise ValueError(f"{path.name}: duplicated periods in session file")
+    # Some raw session files repeat period labels across dates/blocks.
+    # We validate true duplicates later at the (date, period) level.
+    p_unique_sorted = sorted(set(p))
 
-    lo, hi = p_sorted[0], p_sorted[-1]
+    lo, hi = p_unique_sorted[0], p_unique_sorted[-1]
 
     if mtu_minutes == 60:
         valid_lo, valid_hi = 1, 25
@@ -99,9 +111,9 @@ def validate_period_sequence_for_session(path: Path, periods: pd.Series, mtu_min
         )
 
     expected = list(range(lo, hi + 1))
-    if p_sorted != expected:
-        missing = sorted(set(expected) - set(p_sorted))
-        extras = sorted(set(p_sorted) - set(expected))
+    if p_unique_sorted != expected:
+        missing = sorted(set(expected) - set(p_unique_sorted))
+        extras = sorted(set(p_unique_sorted) - set(expected))
         raise ValueError(
             f"{path.name}: non-contiguous periods for session file. "
             f"Range={lo}..{hi}, missing={missing[:10]}, extras={extras[:10]}"
@@ -153,33 +165,67 @@ def parse_marginalpibc_file(path: Path) -> pd.DataFrame:
                 "month": int(mm),
                 "day": int(dd),
                 "period": int(period),
-                "price_pt_eur_mwh": parse_decimal(price_pt),
-                "price_es_eur_mwh": parse_decimal(price_es),
+                "price_pt_eur_mwh": parse_decimal_or_nan(price_pt),
+                "price_es_eur_mwh": parse_decimal_or_nan(price_es),
             }
         )
 
     df = pd.DataFrame(rows)
 
     if df.empty:
-        raise ValueError(f"No data rows found in {path.name}")
+        # Valid but empty session file (keep pipeline running)
+        return pd.DataFrame(
+            columns=[
+                "date",
+                "session_number",
+                "period",
+                "price_es_eur_mwh",
+                "price_pt_eur_mwh",
+                "mtu_minutes",
+                "n_periods_in_file",
+                "market",
+                "category",
+                "file_family",
+                "version_suffix",
+                "source_file",
+                "source_path",
+            ]
+        )
 
     df["date"] = pd.to_datetime(df[["year", "month", "day"]]).dt.date.astype(str)
 
     # Validation checks
-    unique_dates = df["date"].drop_duplicates().tolist()
-    if len(unique_dates) != 1:
-        raise ValueError(f"{path.name} contains multiple dates: {unique_dates}")
+    unique_dates = sorted(df["date"].drop_duplicates().tolist())
 
-    if unique_dates[0] != meta["file_date"]:
+    # Historical PIBC files (especially some session-2 files) can span midnight.
+    if len(unique_dates) > 2:
+        raise ValueError(f"{path.name} contains too many dates: {unique_dates}")
+
+    if len(unique_dates) == 2:
+        d0 = pd.to_datetime(unique_dates[0]).date()
+        d1 = pd.to_datetime(unique_dates[1]).date()
+        if (d1 - d0).days != 1:
+            raise ValueError(f"{path.name} spans non-adjacent dates: {unique_dates}")
+
+    # For midnight-spanning files, require the filename date to be one of the row dates.
+    if meta["file_date"] not in unique_dates:
         raise ValueError(
-            f"Filename date {meta['file_date']} != content date {unique_dates[0]} in {path.name}"
+            f"Filename date {meta['file_date']} not present in content dates {unique_dates} in {path.name}"
         )
 
-    if df["period"].duplicated().any():
-        dups = df.loc[df["period"].duplicated(), "period"].tolist()
-        raise ValueError(f"{path.name} has duplicated periods: {dups}")
+    # Duplicates are only invalid within the same (date, period) pair.
+    dup_mask = df.duplicated(subset=["date", "period"])
+    if dup_mask.any():
+        dups = (
+            df.loc[dup_mask, ["date", "period"]]
+            .drop_duplicates()
+            .sort_values(["date", "period"])
+        )
+        dups_preview = [tuple(x) for x in dups.head(10).to_numpy().tolist()]
+        more = "..." if len(dups) > 10 else ""
+        raise ValueError(f"{path.name} has duplicated (date, period) pairs: {dups_preview}{more}")
 
-    # Infer MTU and validate session period sequence (partial-day session files allowed)
+    # Infer MTU and validate session period sequence
     mtu_minutes = infer_mtu_minutes_from_periods(df["period"])
     n_periods_in_file = len(df)
     validate_period_sequence_for_session(path, df["period"], mtu_minutes)
@@ -198,7 +244,7 @@ def parse_marginalpibc_file(path: Path) -> pd.DataFrame:
     df["mtu_minutes"] = mtu_minutes
     df["n_periods_in_file"] = n_periods_in_file
 
-    # Reorder columns (analysis-friendly first)
+    # Reorder columns
     df = df[
         [
             "date",
@@ -234,8 +280,15 @@ def parse_folder_and_write(
 ) -> pd.DataFrame:
     """
     Parse all visible files in raw_dir, write one parquet per file to processed_dir,
-    append rows to ingestion_log.csv, and return a summary DataFrame.
+    append rows to ingestion_log.csv for success/failed parses, and return a summary
+    DataFrame.
+
+    Incremental behavior:
+    - if output parquet already exists, skip parsing;
+    - skipped files are returned in the summary but are NOT appended to ingestion_log.csv.
     """
+    ensure_dir(processed_dir)
+
     files = visible_files(raw_dir)
     summary_rows = []
 
@@ -252,6 +305,19 @@ def parse_folder_and_write(
             )
             continue
 
+        out_path = processed_dir / f"{path.name}.parquet"
+        if out_path.exists():
+            summary_rows.append(
+                {
+                    "filename": path.name,
+                    "status": "skipped",
+                    "rows_output": 0,
+                    "output_path": str(out_path),
+                    "error_message": "Output parquet already exists",
+                }
+            )
+            continue
+
         try:
             df = parse_marginalpibc_file(path)
             out_path = write_parquet_for_file(df, processed_dir, path.name)
@@ -262,7 +328,7 @@ def parse_folder_and_write(
                 "category": "precios",
                 "file_family": "marginalpibc",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.marginalpibc.parse_marginalpibc_file:v1",
+                "parser_name": "mtu.parsing.marginalpibc.parse_marginalpibc_file:v2",
                 "raw_file_kind": "omie_text",
                 "rows_read": len(df),
                 "rows_output": len(df),
@@ -288,7 +354,7 @@ def parse_folder_and_write(
                 "category": "precios",
                 "file_family": "marginalpibc",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.marginalpibc.parse_marginalpibc_file:v1",
+                "parser_name": "mtu.parsing.marginalpibc.parse_marginalpibc_file:v2",
                 "raw_file_kind": "omie_text",
                 "rows_read": "",
                 "rows_output": 0,

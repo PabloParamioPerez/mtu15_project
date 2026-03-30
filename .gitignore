@@ -12,15 +12,24 @@ __pycache__/
 .vscode/.ropeproject
 
 # Data
-data/raw/*
-data/interim/*
-data/processed/*
-
-# Keep folder structure
+data/**
+!data/raw/
+!data/interim/
+!data/processed/
+!data/external/
+!data/metadata/
 !data/raw/.gitkeep
 !data/interim/.gitkeep
 !data/processed/.gitkeep
 !data/external/.gitkeep
+!data/metadata/.gitkeep
+data/metadata/*.csv
+
+# Docs
+/docs
 
 # Outputs
 *.log
+
+# Local backups
+attic/

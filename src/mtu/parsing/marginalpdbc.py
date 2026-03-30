@@ -189,8 +189,15 @@ def parse_folder_and_write(
 ) -> pd.DataFrame:
     """
     Parse all visible files in raw_dir, write one parquet per file to processed_dir,
-    append rows to ingestion_log.csv, and return a summary DataFrame.
+    append rows to ingestion_log.csv for success/failed parses, and return a summary
+    DataFrame.
+
+    Incremental behavior:
+    - if output parquet already exists, skip parsing;
+    - skipped files are returned in the summary but are NOT appended to ingestion_log.csv.
     """
+    ensure_dir(processed_dir)
+
     files = visible_files(raw_dir)
     summary_rows = []
 
@@ -208,6 +215,19 @@ def parse_folder_and_write(
             )
             continue
 
+        out_path = processed_dir / f"{path.name}.parquet"
+        if out_path.exists():
+            summary_rows.append(
+                {
+                    "filename": path.name,
+                    "status": "skipped",
+                    "rows_output": 0,
+                    "output_path": str(out_path),
+                    "error_message": "Output parquet already exists",
+                }
+            )
+            continue
+
         try:
             df = parse_marginalpdbc_file(path)
             out_path = write_parquet_for_file(df, processed_dir, path.name)
@@ -218,7 +238,7 @@ def parse_folder_and_write(
                 "category": "precios",
                 "file_family": "marginalpdbc",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.marginalpdbc.parse_marginalpdbc_file:v2",
+                "parser_name": "mtu.parsing.marginalpdbc.parse_marginalpdbc_file:v3",
                 "raw_file_kind": "omie_text",
                 "rows_read": len(df),
                 "rows_output": len(df),
@@ -244,7 +264,7 @@ def parse_folder_and_write(
                 "category": "precios",
                 "file_family": "marginalpdbc",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.marginalpdbc.parse_marginalpdbc_file:v2",
+                "parser_name": "mtu.parsing.marginalpdbc.parse_marginalpdbc_file:v3",
                 "raw_file_kind": "omie_text",
                 "rows_read": "",
                 "rows_output": 0,
