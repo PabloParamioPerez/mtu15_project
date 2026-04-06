@@ -85,6 +85,7 @@ def validate_content_dates(path: Path, df: pd.DataFrame) -> None:
 def parse_pibca_file(path: Path) -> pd.DataFrame:
     meta = parse_filename_metadata(path)
     rows = []
+    data_row_counter = 0
 
     with path.open("r", encoding="latin-1", errors="replace") as f:
         for i, raw_line in enumerate(f):
@@ -110,6 +111,7 @@ def parse_pibca_file(path: Path) -> pd.DataFrame:
                     f"{path.name}: expected 9 fields, got {len(parts)} -> {parts!r}"
                 )
 
+            data_row_counter += 1
             yyyy, mm, dd, period, session_number, unit_code, assigned_power, unused_zero, offer_type = parts
 
             rows.append(
@@ -123,6 +125,7 @@ def parse_pibca_file(path: Path) -> pd.DataFrame:
                     "assigned_power_mw": parse_decimal(assigned_power),
                     "unused_zero": int(unused_zero),
                     "offer_type": int(offer_type),
+                    "raw_row_number_in_file": data_row_counter,
                 }
             )
 
@@ -131,8 +134,19 @@ def parse_pibca_file(path: Path) -> pd.DataFrame:
     if df.empty:
         raise ValueError(f"No data rows found in {path.name}")
 
+    content_cols = [
+        "year",
+        "month",
+        "day",
+        "period",
+        "session_number",
+        "unit_code",
+        "assigned_power_mw",
+        "unused_zero",
+        "offer_type",
+    ]
     rows_before_dedup = len(df)
-    df = df.drop_duplicates().reset_index(drop=True)
+    df = df.drop_duplicates(subset=content_cols, keep="first").reset_index(drop=True)
     exact_duplicate_rows_dropped = rows_before_dedup - len(df)
 
     if df["session_number"].nunique() != 1:
@@ -152,7 +166,7 @@ def parse_pibca_file(path: Path) -> pd.DataFrame:
 
     validate_content_dates(path, df)
 
-    dup_mask = df.duplicated(subset=["date", "session_number", "period", "unit_code"])
+    dup_mask = df.duplicated(subset=["date", "session_number", "period", "unit_code"], keep=False)
     if dup_mask.any():
         dups = (
             df.loc[dup_mask, ["date", "session_number", "period", "unit_code"]]
@@ -162,7 +176,7 @@ def parse_pibca_file(path: Path) -> pd.DataFrame:
         dups_preview = [tuple(x) for x in dups.head(10).to_numpy().tolist()]
         more = "..." if len(dups) > 10 else ""
         raise ValueError(
-            f"{path.name}: duplicated (date, session_number, period, unit_code) rows: "
+            f"{path.name}: duplicated (date, session_number, period, unit_code) rows within source file: "
             f"{dups_preview}{more}"
         )
 
@@ -189,6 +203,7 @@ def parse_pibca_file(path: Path) -> pd.DataFrame:
             "assigned_power_mw",
             "unused_zero",
             "offer_type",
+            "raw_row_number_in_file",
             "exact_duplicate_rows_dropped",
             "mtu_minutes",
             "market",
@@ -256,9 +271,9 @@ def parse_folder_and_write(
                 "category": "programas",
                 "file_family": "pibca",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.pibca.parse_pibca_file:v1",
+                "parser_name": "mtu.parsing.pibca.parse_pibca_file:v2",
                 "raw_file_kind": "omie_text",
-                "rows_read": len(df),
+                "rows_read": len(df) + int(df["exact_duplicate_rows_dropped"].iloc[0]),
                 "rows_output": len(df),
                 "status": "success",
                 "output_path": str(out_path),
@@ -282,7 +297,7 @@ def parse_folder_and_write(
                 "category": "programas",
                 "file_family": "pibca",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.pibca.parse_pibca_file:v1",
+                "parser_name": "mtu.parsing.pibca.parse_pibca_file:v2",
                 "raw_file_kind": "omie_text",
                 "rows_read": "",
                 "rows_output": 0,

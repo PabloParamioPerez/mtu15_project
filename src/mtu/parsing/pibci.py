@@ -85,6 +85,7 @@ def validate_content_dates(path: Path, df: pd.DataFrame) -> None:
 def parse_pibci_file(path: Path) -> pd.DataFrame:
     meta = parse_filename_metadata(path)
     rows = []
+    data_row_counter = 0
 
     with path.open("r", encoding="latin-1", errors="replace") as f:
         for i, raw_line in enumerate(f):
@@ -110,6 +111,7 @@ def parse_pibci_file(path: Path) -> pd.DataFrame:
                     f"{path.name}: expected 9 fields, got {len(parts)} -> {parts!r}"
                 )
 
+            data_row_counter += 1
             yyyy, mm, dd, period, session_number, unit_code, assigned_power, unused_zero, offer_type = parts
 
             rows.append(
@@ -123,6 +125,7 @@ def parse_pibci_file(path: Path) -> pd.DataFrame:
                     "assigned_power_mw": parse_decimal(assigned_power),
                     "unused_zero": int(unused_zero),
                     "offer_type": int(offer_type),
+                    "raw_row_number_in_file": data_row_counter,
                 }
             )
 
@@ -131,9 +134,7 @@ def parse_pibci_file(path: Path) -> pd.DataFrame:
     if df.empty:
         raise ValueError(f"No data rows found in {path.name}")
 
-    rows_before_dedup = len(df)
-    df = df.drop_duplicates().reset_index(drop=True)
-    exact_duplicate_rows_dropped = rows_before_dedup - len(df)
+    exact_duplicate_rows_dropped = 0
 
     if df["session_number"].nunique() != 1:
         raise ValueError(
@@ -155,11 +156,8 @@ def parse_pibci_file(path: Path) -> pd.DataFrame:
     mtu_minutes = infer_mtu_minutes_from_periods(df["period"])
     validate_period_values(path, df["period"], mtu_minutes)
 
-    df = df.sort_values(
-        ["date", "session_number", "period", "unit_code", "offer_type", "unused_zero", "assigned_power_mw"]
-    ).reset_index(drop=True)
+    df["row_number_in_file"] = df["raw_row_number_in_file"]
 
-    df["row_number_in_file"] = range(1, len(df) + 1)
     df["exact_duplicate_rows_dropped"] = exact_duplicate_rows_dropped
     df["mtu_minutes"] = mtu_minutes
     df["market"] = "mercado_intradiario_subastas"
@@ -178,6 +176,7 @@ def parse_pibci_file(path: Path) -> pd.DataFrame:
             "assigned_power_mw",
             "unused_zero",
             "offer_type",
+            "raw_row_number_in_file",
             "row_number_in_file",
             "exact_duplicate_rows_dropped",
             "mtu_minutes",
@@ -246,7 +245,7 @@ def parse_folder_and_write(
                 "category": "programas",
                 "file_family": "pibci",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.pibci.parse_pibci_file:v1",
+                "parser_name": "mtu.parsing.pibci.parse_pibci_file:v2",
                 "raw_file_kind": "omie_text",
                 "rows_read": len(df),
                 "rows_output": len(df),
@@ -272,7 +271,7 @@ def parse_folder_and_write(
                 "category": "programas",
                 "file_family": "pibci",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.pibci.parse_pibci_file:v1",
+                "parser_name": "mtu.parsing.pibci.parse_pibci_file:v2",
                 "raw_file_kind": "omie_text",
                 "rows_read": "",
                 "rows_output": 0,

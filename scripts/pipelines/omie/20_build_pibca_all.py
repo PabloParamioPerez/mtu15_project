@@ -11,42 +11,77 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 
+SNAPSHOT_KEY = [
+    "source_file",
+    "date",
+    "session_number",
+    "period",
+    "unit_code",
+]
+
+
+def validate_unique(df: pd.DataFrame, subset: list[str], label: str) -> None:
+    dup_mask = df.duplicated(subset=subset, keep=False)
+    if dup_mask.any():
+        preview_cols = subset + [c for c in ["assigned_power_mw"] if c in df.columns and c not in subset]
+        preview = df.loc[dup_mask, preview_cols].head(20)
+        raise ValueError(
+            f"{label}: found duplicated rows on key {subset}. "
+            f"Sample={preview.to_dict(orient='records')}"
+        )
+
+
+def sort_output(df: pd.DataFrame) -> pd.DataFrame:
+    sort_cols = [c for c in ["source_file", "date", "session_number", "period", "unit_code", "raw_row_number_in_file"] if c in df.columns]
+    return df.sort_values(sort_cols).reset_index(drop=True)
+
+
+def build_one_month(month: str, files: list[Path], monthly_dir: Path) -> Path:
+    dfs = [pd.read_parquet(p) for p in files]
+    df = pd.concat(dfs, ignore_index=True)
+
+    validate_unique(df, SNAPSHOT_KEY, f"[{month}] monthly PIBCA snapshot table")
+
+    df = sort_output(df)
+
+    monthly_dir.mkdir(parents=True, exist_ok=True)
+    out_path = monthly_dir / f"pibca_{month}_all.parquet"
+    df.to_parquet(out_path, index=False)
+
+    print(f"[{month}] files={len(files)} rows={len(df)} -> {out_path}")
+    return out_path
+
+
 def main() -> None:
     processed_dir = PROJECT_ROOT / "data/processed/omie/mercado_intradiario_subastas/programas/pibca"
+    monthly_dir = processed_dir.parent / "pibca_monthly"
     output_path = processed_dir.parent / "pibca_all.parquet"
 
     files = sorted(processed_dir.glob("*.parquet"))
     if not files:
         raise FileNotFoundError(f"No parquet files found in {processed_dir}")
 
-    dfs = [pd.read_parquet(p) for p in files]
+    files_by_month: dict[str, list[Path]] = {}
+    for p in files:
+        stem = p.name.removesuffix(".parquet")
+        month = stem.split("_", 1)[1][:6]
+        files_by_month.setdefault(month, []).append(p)
+
+    print(f"Input files:             {len(files)}")
+    print(f"Months found:            {len(files_by_month)}")
+
+    monthly_paths = []
+    for month in sorted(files_by_month):
+        monthly_paths.append(build_one_month(month, files_by_month[month], monthly_dir))
+
+    print("\nCombining monthly outputs...")
+
+    dfs = [pd.read_parquet(p) for p in monthly_paths]
     df = pd.concat(dfs, ignore_index=True)
 
-    input_files = len(files)
+    validate_unique(df, SNAPSHOT_KEY, "FINAL PIBCA snapshot table")
 
-    df["version_suffix_num"] = pd.to_numeric(df["version_suffix"], errors="coerce")
-    dup_mask = df.duplicated(subset=["date", "session_number", "period", "unit_code"], keep=False)
-    dup_rows = int(dup_mask.sum())
-    dup_keys = int(df.loc[dup_mask, ["date", "session_number", "period", "unit_code"]].drop_duplicates().shape[0])
-
-    if dup_rows > 0:
-        print(
-            f"WARNING: Found {dup_rows} duplicated rows across {dup_keys} "
-            f"(date, session_number, period, unit_code) keys."
-        )
-        print(
-            "This can occur because consecutive PIBCA files overlap on adjacent content dates "
-            "and/or because multiple file versions exist."
-        )
-        print("Keeping latest version by version_suffix for each key.")
-
-    df = (
-        df.sort_values(["date", "session_number", "period", "unit_code", "version_suffix_num"])
-          .drop_duplicates(subset=["date", "session_number", "period", "unit_code"], keep="last")
-          .drop(columns=["version_suffix_num"])
-          .sort_values(["date", "session_number", "period", "unit_code"])
-          .reset_index(drop=True)
-    )
+    df = sort_output(df)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(output_path, index=False)
@@ -61,8 +96,7 @@ def main() -> None:
 
     rows_per_file = df.groupby("source_file").size()
 
-    print(f"Input files:             {input_files}")
-    print(f"Output rows (latest):    {len(df)}")
+    print(f"\nOutput rows:             {len(df)}")
     print(f"Date range:              {df['date'].min()} -> {df['date'].max()}")
     print(f"Output file:             {output_path}")
     print(f"Days by inferred MTU:    {days_by_mtu}")
