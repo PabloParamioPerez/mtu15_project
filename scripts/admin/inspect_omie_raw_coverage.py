@@ -6,8 +6,6 @@ from pathlib import Path
 
 import pandas as pd
 
-# OMIE "Nombre del fichero" patterns from the manual.
-# We use lowercase matching on filenames.
 FAMILY_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("marginalpdbc", re.compile(r"^marginalpdbc_\d{8}\.\d+$", re.I)),
     ("marginalpibc", re.compile(r"^marginalpibc_\d{10}\.\d+$", re.I)),
@@ -34,6 +32,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Also show the inferred family directory path",
     )
+    p.add_argument(
+        "--scan-content-dates",
+        action="store_true",
+        help="Open files and infer content-date ranges (slower). Default is filename-only summary.",
+    )
     return p.parse_args()
 
 
@@ -57,7 +60,6 @@ def infer_family(path: Path) -> str:
         if pattern.match(name):
             return family
 
-    # Fallback: raw folder names in this repo are already family-specific.
     parent = path.parent.name.lower()
     if parent:
         return parent
@@ -75,7 +77,7 @@ def try_parse_int(x: str):
         return None
 
 
-def inspect_file(path: Path) -> dict:
+def inspect_file(path: Path, scan_content_dates: bool) -> dict:
     out = {
         "family": infer_family(path),
         "family_dir": str(path.parent),
@@ -92,6 +94,9 @@ def inspect_file(path: Path) -> dict:
         if pd.notna(dt):
             out["filename_date"] = dt.date()
         out["version_suffix"] = int(version_suffix)
+
+    if not scan_content_dates:
+        return out
 
     content_dates = []
 
@@ -151,7 +156,7 @@ def main() -> None:
         print("No raw files found.")
         return
 
-    rows = [inspect_file(p) for p in files]
+    rows = [inspect_file(p, scan_content_dates=args.scan_content_dates) for p in files]
     df = pd.DataFrame(rows)
 
     grouped = []
@@ -181,9 +186,10 @@ def main() -> None:
         line = (
             f"{r['family']} | "
             f"files={r['files']} | "
-            f"filename_dates={fmt_date(r['filename_date_min'])}..{fmt_date(r['filename_date_max'])} | "
-            f"content_dates={fmt_date(r['content_date_min'])}..{fmt_date(r['content_date_max'])}"
+            f"filename_dates={fmt_date(r['filename_date_min'])}..{fmt_date(r['filename_date_max'])}"
         )
+        if args.scan_content_dates:
+            line += f" | content_dates={fmt_date(r['content_date_min'])}..{fmt_date(r['content_date_max'])}"
         if pd.notna(r["version_suffixes"]) and r["version_suffixes"] != "":
             line += f" | versions={r['version_suffixes']}"
         print(line)
