@@ -1,0 +1,33 @@
+# Python caches
+**/__pycache__/
+**/*.pyc
+.pytest_cache/
+
+# Virtual environment
+.venv/
+
+# Data layers (large, on external SSD via symlinks)
+data/raw/
+data/processed/
+data/interim/
+
+# Generated metadata artifacts (keep manifests, ignore reconciliation outputs)
+data/metadata/reconciliation/
+
+# Attic / scratch
+attic/
+
+# macOS
+.DS_Store
+
+# VS Code workspace
+.vscode/
+
+# LaTeX build artifacts
+docs/*.aux
+docs/*.log
+docs/*.fls
+docs/*.fdb_latexmk
+docs/*.synctex.gz
+docs/*.toc
+docs/*.out
