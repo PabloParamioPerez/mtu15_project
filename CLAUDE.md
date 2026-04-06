@@ -11,6 +11,18 @@ Master thesis data-engineering project for OMIE electricity-market data, focused
 - Always use repo-relative paths; never hardcode machine-specific paths
 - Symlink targets may be slow or absent; do not traverse them speculatively
 
+## Repo layout
+- `src/mtu/parsing/` — one module per data family (e.g. `pibca.py`, `pibci.py`, `marginalpdbc.py`)
+- `src/mtu/transform/` — period normalization and shared transforms
+- `src/mtu/validation/` — post-parse checks (`checks.py`)
+- `scripts/pipelines/omie/` — numbered pipeline steps: `00_` download, `10_` parse, `20_` build
+- `scripts/admin/` — one-off audit, inspect, and forensic scripts; not part of the pipeline
+
+## Data families
+Active families: `pibca`, `pibci`, `precios_pibcic`, `precios_pibcic_ronda`, `marginalpdbc`, `marginalpibc`, `pdbc`.
+Each has a parser in `src/mtu/parsing/` and a full `00/10/20` pipeline in `scripts/pipelines/omie/`.
+Before adding or changing a parser, read at least one neighbouring family's parser first.
+
 ## Data layers
 - **Raw** — verbatim OMIE files. Never modify.
 - **Processed** — canonical Parquet tables, one per family. Preserve all raw rows and snapshot identity (`source_file`).

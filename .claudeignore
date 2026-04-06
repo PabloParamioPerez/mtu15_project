@@ -10,6 +10,7 @@
 data/raw/
 data/processed/
 data/interim/
+data/external/
 
 # Generated metadata artifacts (keep manifests, ignore reconciliation outputs)
 data/metadata/reconciliation/
@@ -22,6 +23,9 @@ attic/
 
 # VS Code workspace
 .vscode/
+
+# Large binary docs
+docs/*.pdf
 
 # LaTeX build artifacts
 docs/*.aux
