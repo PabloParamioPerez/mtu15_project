@@ -28,24 +28,13 @@ Before adding or changing a parser, read at least one neighbouring family's pars
 - **Processed** — canonical Parquet tables, one per family. Preserve all raw rows and snapshot identity (`source_file`).
 - **Derived** — reconciliation, collapsed views. Live separately and are clearly marked as derived. Not substitutes for canonical tables.
 
-## PIBCA vs PIBCI — read carefully before touching
-- `PIBCA` = accumulated intraday results
-- `PIBCI` = incremental intraday results; raw rows must be preserved as-is
-- A derived "net PIBCI" is formed by summing within snapshot on `(snapshot_token, date, period, unit_code)`
-- Reconciliation artifacts live in `data/metadata/reconciliation/`
-- Do NOT simplify this by deduplicating aggressively
-
-## precios_pibcic_ronda — read carefully before touching
-- The canonical combined object is a **snapshot panel** preserving `source_file` / snapshot identity
-- Collapsing on `(date, round_number, period)` was a previous bug — do not reintroduce it
-
 ## Coding expectations
 - **Conservative changes** — touch only what is needed; minimal diffs
-- **Idempotent scripts** — re-running any pipeline step must produce identical output
+- **Fast Idempotent scripts** — re-running any pipeline step must produce identical output, and in the fastest way.
 - **Inspect before editing** — before modifying a parser or builder for one family, read the analogous file for another family first
-- **Preserve structure** — match the style, naming, and conventions of neighbouring files
+- **Preserve structure** — match the style, naming, and conventions of neighbouring files. 
 - **No destructive file operations** — no `rm -rf`, no overwriting raw data, no bulk renames without explicit request
-- **No multi-file refactors** unless specifically asked
+- **Very conservative multi-file refactors** - only when it improves substantially the computation time and code
 
 ## What not to do
 - Do not "fix" duplicate keys unless the economic meaning is clear and confirmed

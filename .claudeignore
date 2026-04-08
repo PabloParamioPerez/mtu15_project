@@ -25,7 +25,7 @@ attic/
 .vscode/
 
 # Large binary docs
-docs/*.pdf
+docs/
 
 # LaTeX build artifacts
 docs/*.aux
