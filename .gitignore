@@ -33,3 +33,6 @@ data/metadata/*.csv
 
 # Local backups
 attic/
+
+# Exploratory analysis (notebooks, scratch scripts, outputs)
+explore/
