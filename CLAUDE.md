@@ -41,3 +41,8 @@ Before adding or changing a parser, read at least one neighbouring family's pars
 - Do not collapse snapshot-level data into latest-state views by default
 - Do not restructure the pipeline numbering scheme or folder layout
 - Do not introduce new dependencies without asking
+
+## Commands
+- Lint: `uv run ruff check .`
+- Test: `uv run pytest`
+- Type-check: `uv run mypy src/`
