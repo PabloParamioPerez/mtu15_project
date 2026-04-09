@@ -2,7 +2,7 @@
 
 Master thesis project on the Spanish electricity market reform that changed the Market Time Unit (MTU) from hourly trading to 15-minute trading.
 
-**Status date:** 6 April 2026
+**Status date:** 9 April 2026
 
 ## Project goal
 
@@ -27,7 +27,7 @@ Main dates relevant for this project:
 
 ## Current project scope
 
-As of 6 April 2026, the repository contains working or partially working pipelines for the following OMIE families:
+As of 9 April 2026, the repository contains working or partially working pipelines for the following OMIE families:
 
 ### Stable / working families
 - `marginalpdbc`
@@ -35,12 +35,16 @@ As of 6 April 2026, the repository contains working or partially working pipelin
 - `pdbc`
 - `precios_pibcic`
 - `precios_pibcic_ronda`
+- `curva_pbc` — day-ahead aggregate supply/demand curves
+- `curva_pibc` — intraday auction aggregate supply/demand curves
+- `omanulaintra` — intraday auction Market Operator cancelled hours
+- `osanulaintra` — intraday auction System Operator cancelled hours
 
 ### Families under active analytical refinement
 - `pibca`
 - `pibci`
 
-The project has moved beyond the initial price-only stage. The current repo includes both stable price pipelines and newer quantity / program families whose economic interpretation required more careful audit work.
+The project has moved beyond the initial price-only stage. The current repo includes stable price pipelines, quantity / program families, aggregate curve families, and cancellation families.
 
 ## Implemented pipelines and current interpretation
 
@@ -247,20 +251,36 @@ Key parsing modules currently include:
 - `src/mtu/parsing/pibci.py`
 - `src/mtu/parsing/precios_pibcic.py`
 - `src/mtu/parsing/precios_pibcic_ronda.py`
+- `src/mtu/parsing/curva_pbc.py`
+- `src/mtu/parsing/curva_pibc.py`
+- `src/mtu/parsing/omanulaintra.py`
+- `src/mtu/parsing/osanulaintra.py`
 - `src/mtu/parsing/omie_common.py`
 
 ### Pipeline scripts
 Representative pipeline scripts include:
 - `scripts/pipelines/omie/00_download_marginalpdbc.py`
 - `scripts/pipelines/omie/00_download_marginalpibc.py`
+- `scripts/pipelines/omie/00_download_curva_pbc.py`
+- `scripts/pipelines/omie/00_download_curva_pibc.py`
+- `scripts/pipelines/omie/00_download_omanulaintra.py`
+- `scripts/pipelines/omie/00_download_osanulaintra.py`
 - `scripts/pipelines/omie/10_parse_marginalpdbc.py`
 - `scripts/pipelines/omie/10_parse_marginalpibc.py`
+- `scripts/pipelines/omie/10_parse_curva_pbc.py`
+- `scripts/pipelines/omie/10_parse_curva_pibc.py`
+- `scripts/pipelines/omie/10_parse_omanulaintra.py`
+- `scripts/pipelines/omie/10_parse_osanulaintra.py`
 - `scripts/pipelines/omie/20_build_marginalpdbc_all.py`
 - `scripts/pipelines/omie/20_build_marginalpibc_all.py`
 - `scripts/pipelines/omie/20_build_pibca_all.py`
 - `scripts/pipelines/omie/20_build_pibci_all.py`
 - `scripts/pipelines/omie/20_build_precios_pibcic_all.py`
 - `scripts/pipelines/omie/20_build_precios_pibcic_ronda_all.py`
+- `scripts/pipelines/omie/20_build_curva_pbc_all.py`
+- `scripts/pipelines/omie/20_build_curva_pibc_all.py`
+- `scripts/pipelines/omie/20_build_omanulaintra_all.py`
+- `scripts/pipelines/omie/20_build_osanulaintra_all.py`
 
 ### Admin / audit scripts
 The repo now includes reusable OMIE admin tooling such as:
@@ -353,10 +373,13 @@ Generated metadata files such as ingestion logs, download manifests, and reconci
 
 ## Current Git status of the project
 
-As of the latest clean checkpoint, the repository includes committed changes for:
+As of the latest clean checkpoint (9 April 2026), the repository includes committed changes for:
 
 - continuous-market round-price builder fix to preserve snapshot panels
 - OMIE admin audit tooling and PIBCI reconciliation tooling
 - preservation of `PIBCA` and `PIBCI` row identity in canonical builds
+- full `curva_pbc` pipeline (day-ahead aggregate curves)
+- full `curva_pibc` pipeline (intraday auction aggregate curves)
+- full `omanulaintra` and `osanulaintra` pipelines (cancelled hours)
 
-The project’s stable base is no longer just the initial day-ahead and intraday auction price pipelines. It now includes a clearer canonical data model for several OMIE families and a reusable audit layer for ambiguous cases.
+The project now covers prices, quantities/programs, aggregate curves, and cancellation data across both the day-ahead and intraday auction markets.
