@@ -2,7 +2,7 @@
 
 Master thesis project on the Spanish electricity market reform that changed the Market Time Unit (MTU) from hourly to 15-minute trading. Builds a reproducible data pipeline for OMIE market data to study the effect of the reform on price formation and quantities.
 
-**Status date:** 9 April 2026
+**Status date:** 10 April 2026
 
 ---
 
@@ -25,6 +25,8 @@ Master thesis project on the Spanish electricity market reform that changed the 
 | `pdbc` | Day-ahead | Programs | Stable |
 | `pibca` | Intraday auctions | Programs (accumulated) | Stable |
 | `pibci` | Intraday auctions | Programs (incremental) | Stable |
+| `pibcac` | Continuous | Programs (accumulated) | Stable |
+| `pibcic` | Continuous | Programs (incremental) | Stable |
 | `precios_pibcic` | Continuous | Prices | Stable |
 | `precios_pibcic_ronda` | Continuous | Round prices | Stable |
 | `curva_pbc` | Day-ahead | Aggregate curves | Stable |
