@@ -22,6 +22,9 @@ data/**
 !data/interim/.gitkeep
 !data/processed/.gitkeep
 !data/external/.gitkeep
+!data/external/omie_reference/
+!data/external/omie_reference/*.csv
+!data/external/omie_reference/README.md
 !data/metadata/.gitkeep
 data/metadata/*.csv
 
