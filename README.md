@@ -44,17 +44,19 @@ Each family follows the same three-stage pipeline:
 
 ```
 scripts/pipelines/omie/
-  00_download_{family}.py   # Download raw files from OMIE
+  00_download_{family}.py   # Download raw files from OMIE (recent days)
   10_parse_{family}.py      # Parse raw files → per-file parquet
   20_build_{family}_all.py  # Build consolidated parquet
 ```
 
-Historical ZIP archives (where available) are handled by separate sync scripts:
+Historical ZIP archives (and families published only as monthly ZIPs) are handled by sync scripts:
 
 ```
 scripts/
   sync_{family}_zips.py
 ```
+
+`cab` and `det` are sync-only — OMIE publishes them exclusively as monthly ZIPs (no daily file endpoint). `det` files also have two fixed-width layouts: pre-reform (57-char lines, sessions before 2025-03-19) and post-reform (60-char lines, from 2025-03-19 onwards); the parser detects the format automatically by line length.
 
 ---
 
