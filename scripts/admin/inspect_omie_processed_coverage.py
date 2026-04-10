@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-import pandas as pd
+import duckdb
 
 
 def parse_args() -> argparse.Namespace:
@@ -13,38 +13,7 @@ def parse_args() -> argparse.Namespace:
         default="data/processed/omie",
         help="Root processed OMIE folder to scan (default: data/processed/omie)",
     )
-    p.add_argument(
-        "--sample-per-file-parquets",
-        type=int,
-        default=10,
-        help="When no combined parquet exists, inspect up to this many per-file parquets (default: 10)",
-    )
     return p.parse_args()
-
-
-def is_auxiliary_parquet(path: Path) -> bool:
-    name = path.name
-    return ("_STALE_" in name) or name.endswith("_with_session_date.parquet")
-
-
-def read_date_range_from_parquet(path: Path):
-    try:
-        df = pd.read_parquet(path, columns=["date"])
-    except Exception:
-        return None, None
-
-    if "date" not in df.columns or df.empty:
-        return None, None
-
-    vals = pd.to_datetime(df["date"], errors="coerce").dropna()
-    if vals.empty:
-        return None, None
-
-    return vals.min().date(), vals.max().date()
-
-
-def fmt_date(x) -> str:
-    return str(x) if x is not None and pd.notna(x) else "NA"
 
 
 def main() -> None:
@@ -53,130 +22,56 @@ def main() -> None:
 
     if not root_dir.exists():
         raise FileNotFoundError(f"Root dir does not exist: {root_dir}")
-    if not root_dir.is_dir():
-        raise NotADirectoryError(f"Not a directory: {root_dir}")
 
-    all_by_family = {}
-    for p in sorted(root_dir.rglob("*_all.parquet")):
-        if p.parent.name.endswith("_monthly"):
-            continue
-        if is_auxiliary_parquet(p):
-            continue
-        family = p.name.removesuffix("_all.parquet")
-        all_by_family[family] = p
+    all_parquets = sorted(
+        p for p in root_dir.rglob("*_all.parquet")
+        if "_STALE_" not in p.name
+    )
 
-    monthly_by_family = {}
-    for d in sorted(root_dir.rglob("*_monthly")):
-        if not d.is_dir():
-            continue
-        family = d.name.removesuffix("_monthly")
-        monthly_files = sorted(
-            p for p in d.glob(f"{family}_*_all.parquet")
-            if not is_auxiliary_parquet(p)
-        )
-        if monthly_files:
-            monthly_by_family[family] = monthly_files
-
-    family_dirs = {}
-    for p in sorted(root_dir.rglob("*.parquet")):
-        if p.name.endswith("_all.parquet"):
-            continue
-        if p.parent.name.endswith("_monthly"):
-            continue
-        if is_auxiliary_parquet(p):
-            continue
-
-        parent_name = p.parent.name
-        if parent_name in {"precios", "programas"}:
-            continue
-
-        fam = parent_name
-        family_dirs.setdefault(fam, p.parent)
-
-    families = sorted(set(all_by_family) | set(monthly_by_family) | set(family_dirs))
-
-    if not families:
-        print("No processed parquet families found.")
+    if not all_parquets:
+        print("No *_all.parquet files found.")
         return
 
-    rows = []
+    con = duckdb.connect()
+    col_w = max(len(p.stem.removesuffix("_all")) for p in all_parquets)
 
-    for family in families:
-        family_dir = family_dirs.get(family)
-        all_path = all_by_family.get(family)
-        monthly_files = monthly_by_family.get(family, [])
+    for path in all_parquets:
+        family = path.stem.removesuffix("_all")
+        try:
+            segments = con.execute(
+                """
+                WITH dates AS (
+                    SELECT DISTINCT date::DATE AS d FROM read_parquet(?)
+                ),
+                numbered AS (
+                    SELECT d, ROW_NUMBER() OVER (ORDER BY d) AS rn FROM dates
+                ),
+                islands AS (
+                    SELECT (d - INTERVAL (rn) DAY) AS grp, d FROM numbered
+                )
+                SELECT
+                    MIN(d)::VARCHAR AS date_from,
+                    MAX(d)::VARCHAR AS date_to,
+                    COUNT(*)        AS days
+                FROM islands
+                GROUP BY grp
+                ORDER BY date_from
+                """,
+                [str(path)],
+            ).fetchall()
+        except Exception as e:
+            print(f"{family:<{col_w}}  ERROR: {e}")
+            continue
 
-        per_file_parquets = 0
-        if family_dir is not None:
-            per_file_parquets = len(list(family_dir.glob("*.parquet")))
+        if not segments:
+            print(f"{family:<{col_w}}  (empty)")
+            continue
 
-        monthly_count = len(monthly_files)
-
-        date_min = None
-        date_max = None
-        build_status = "none"
-        combined_name = ""
-
-        if all_path is not None:
-            date_min, date_max = read_date_range_from_parquet(all_path)
-            build_status = "all"
-            combined_name = all_path.name
-        elif monthly_files:
-            mins = []
-            maxs = []
-            for p in monthly_files:
-                dmin, dmax = read_date_range_from_parquet(p)
-                if dmin is not None:
-                    mins.append(dmin)
-                if dmax is not None:
-                    maxs.append(dmax)
-            if mins:
-                date_min = min(mins)
-            if maxs:
-                date_max = max(maxs)
-            build_status = "monthly"
-            combined_name = f"{family}_monthly/{monthly_count} files"
-        elif family_dir is not None:
-            sample_files = sorted(family_dir.glob("*.parquet"))[: args.sample_per_file_parquets]
-            mins = []
-            maxs = []
-            for p in sample_files:
-                dmin, dmax = read_date_range_from_parquet(p)
-                if dmin is not None:
-                    mins.append(dmin)
-                if dmax is not None:
-                    maxs.append(dmax)
-            if mins:
-                date_min = min(mins)
-            if maxs:
-                date_max = max(maxs)
-            build_status = "per_file_only"
-
-        rows.append(
-            {
-                "family": family,
-                "per_file_parquets": per_file_parquets,
-                "monthly_parquets": monthly_count,
-                "build_status": build_status,
-                "combined_name": combined_name,
-                "processed_date_min": date_min,
-                "processed_date_max": date_max,
-            }
-        )
-
-    df = pd.DataFrame(rows).sort_values("family").reset_index(drop=True)
-
-    for _, r in df.iterrows():
-        line = (
-            f"{r['family']} | "
-            f"per_file_parquets={r['per_file_parquets']} | "
-            f"monthly_parquets={r['monthly_parquets']} | "
-            f"build_status={r['build_status']} | "
-            f"processed_dates={fmt_date(r['processed_date_min'])}..{fmt_date(r['processed_date_max'])}"
-        )
-        if r["combined_name"]:
-            line += f" | combined={r['combined_name']}"
-        print(line)
+        first = True
+        for date_from, date_to, days in segments:
+            prefix = f"{family:<{col_w}}" if first else " " * col_w
+            print(f"{prefix}  {date_from} .. {date_to}  ({days} days)")
+            first = False
 
 
 if __name__ == "__main__":

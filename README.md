@@ -1,8 +1,6 @@
-# MTU15 Project: OMIE Electricity Market Data Pipeline
+# MTU15 Project: Spanish Electricity Market Data Pipeline
 
-Master thesis project on the Spanish electricity market reform that changed the Market Time Unit (MTU) from hourly to 15-minute trading. Builds a reproducible data pipeline for OMIE market data to study the effect of the reform on price formation and quantities.
-
-**Status date:** 10 April 2026
+Master thesis project on the Spanish electricity market reform that changed the Market Time Unit (MTU) from hourly to 15-minute trading. Builds a reproducible data pipeline for OMIE (market operator) and ESIOS/REE (system operator) data to study the effect of the reform on price formation, quantities, and balancing.
 
 ---
 
@@ -16,61 +14,99 @@ Master thesis project on the Spanish electricity market reform that changed the 
 
 ---
 
-## Data families
+## Data sources
 
-| Family | Market | Type | Status |
-|---|---|---|---|
-| `marginalpdbc` | Day-ahead | Prices | Stable |
-| `marginalpibc` | Intraday auctions | Prices | Stable |
-| `pdbc` | Day-ahead | Programs | Stable |
-| `pibca` | Intraday auctions | Programs (accumulated) | Stable |
-| `pibci` | Intraday auctions | Programs (incremental) | Stable |
-| `pibcac` | Continuous | Programs (accumulated) | Stable |
-| `pibcic` | Continuous | Programs (incremental) | Stable |
-| `precios_pibcic` | Continuous | Prices | Stable |
-| `precios_pibcic_ronda` | Continuous | Round prices | Stable |
-| `curva_pbc` | Day-ahead | Aggregate curves | Stable |
-| `curva_pibc` | Intraday auctions | Aggregate curves | Stable |
-| `omanulaintra` | Intraday auctions | Cancelled hours (MO) | Stable |
-| `osanulaintra` | Intraday auctions | Cancelled hours (SO) | Stable |
-| `cab` | Day-ahead | Matched offer headers | Stable |
-| `det` | Day-ahead | Matched offer detail (price/qty per period) | Stable |
+### OMIE (market operator)
+
+#### Day-ahead market
+
+| Family | Type | Coverage |
+|---|---|---|
+| `marginalpdbc` | Prices | 2018-01-01 – 2026-04-08 |
+| `pdbc` | Programs | 2018-02, 2023-12 – 2026-01-08 |
+| `curva_pbc` | Aggregate curves | 2018-01-01 – 2026-04-08 |
+| `cab` | Matched offer headers | 2017-01-01 – 2026-01-09 |
+| `det` | Matched offer detail (price/qty per period) | 2018-01-01 – 2026-01-09 |
+
+#### Intraday auctions
+
+| Family | Type | Coverage |
+|---|---|---|
+| `marginalpibc` | Prices | 2018-01-01 – 2026-02-24 |
+| `pibca` | Programs (accumulated) | 2019-02-28 – 2025-01-14 |
+| `pibci` | Programs (incremental) | 2019-02-28 – 2026-01-02 |
+| `curva_pibc` | Aggregate curves | 2018-01-01 – 2026-04-08 |
+| `omanulaintra` | Cancelled hours (MO) | sparse (event-driven) |
+| `osanulaintra` | Cancelled hours (SO) | sparse (event-driven) |
+
+#### Intraday continuous
+
+| Family | Type | Coverage |
+|---|---|---|
+| `pibcac` | Programs (accumulated) | 2018-06-13 – 2025-03-31 |
+| `pibcic` | Programs (incremental) | 2018-06-13 – 2026-01-10 |
+| `precios_pibcic` | Prices | incomplete |
+| `precios_pibcic_ronda` | Round prices | 2018-06-13 – 2026-04-09 |
+
+### ESIOS / REE (system operator)
+
+| Family | Type | Coverage |
+|---|---|---|
+| `restricciones` | Technical constraints | — |
+| `rampas` | Ramp limitations | — |
+| `desvios` | Imbalance settlement | — |
 
 ---
 
 ## Pipeline structure
 
-Each family follows the same three-stage pipeline:
+### OMIE
 
 ```
 scripts/pipelines/omie/
-  00_download_{family}.py   # Download raw files from OMIE (recent days)
-  10_parse_{family}.py      # Parse raw files → per-file parquet
-  20_build_{family}_all.py  # Build consolidated parquet
+  00_download_{family}.py    # Download raw daily files from OMIE
+  00_sync_{family}_zips.py   # Download and extract monthly ZIP archives
+  10_parse_{family}.py       # Parse raw files → per-file parquet
+  20_build_{family}_all.py   # Build consolidated parquet
 ```
 
-Historical ZIP archives (and families published only as monthly ZIPs) are handled by sync scripts:
+Families published only as monthly ZIPs (`cab`, `det`, `pibca`, `pibci`, `pibcac`, `pibcic`, `pdbc`) use `00_sync_*_zips.py` only. Families with both a daily endpoint and historical ZIPs (`curva_pbc`, `curva_pibc`, `precios_pibcic`, `precios_pibcic_ronda`, `marginalpdbc`, `marginalpibc`, `omanulaintra`, `osanulaintra`) have both scripts.
+
+`det` files have two fixed-width layouts: pre-reform (57-char lines, before 2025-03-19) and post-reform (60-char lines); the parser detects the format automatically.
+
+### ESIOS
 
 ```
-scripts/
-  sync_{family}_zips.py
+scripts/pipelines/esios/
+  00_download_indicator.py   # Download indicator time series (one JSON per day)
 ```
-
-`cab` and `det` are sync-only — OMIE publishes them exclusively as monthly ZIPs (no daily file endpoint). `det` files also have two fixed-width layouts: pre-reform (57-char lines, sessions before 2025-03-19) and post-reform (60-char lines, from 2025-03-19 onwards); the parser detects the format automatically by line length.
 
 ---
 
 ## Running the pipeline
 
+### OMIE
+
 ```bash
-# Download
+# Historical bulk sync (monthly ZIPs)
+uv run scripts/pipelines/omie/00_sync_{family}_zips.py --start-month 2019-01 --end-month 2025-03
+
+# Recent daily files
 uv run scripts/pipelines/omie/00_download_{family}.py --recent-days 7
 
 # Parse
 uv run scripts/pipelines/omie/10_parse_{family}.py
 
-# Build
+# Build consolidated parquet
 uv run scripts/pipelines/omie/20_build_{family}_all.py
+```
+
+### ESIOS
+
+```bash
+# Requires ESIOS_TOKEN env var (request from consultasios@ree.es)
+ESIOS_TOKEN=<token> uv run scripts/pipelines/esios/00_download_indicator.py \
+  --indicator-id <id> --start-date 2024-01-01 --end-date 2025-03-31
 ```
 
 All stages are idempotent — safe to rerun.
@@ -80,20 +116,21 @@ All stages are idempotent — safe to rerun.
 ## Repository layout
 
 ```
-src/mtu/parsing/       # One parser module per family
-src/mtu/transform/     # Period normalisation and shared transforms
-src/mtu/validation/    # Post-parse checks
-scripts/pipelines/omie/  # Numbered pipeline steps
-scripts/admin/         # Audit and inspection scripts
-data/raw/              # Verbatim OMIE files (symlink to external SSD)
-data/processed/        # Canonical parquet outputs (symlink to external SSD)
-data/metadata/         # Download manifests and ingestion logs
+src/mtu/parsing/          # One parser module per family
+src/mtu/transform/        # Period normalisation and shared transforms
+src/mtu/validation/       # Post-parse checks
+scripts/pipelines/omie/   # Numbered OMIE pipeline steps
+scripts/pipelines/esios/  # ESIOS pipeline steps
+scripts/admin/            # Audit and inspection scripts
+data/raw/                 # Verbatim source files (symlink to external SSD)
+data/processed/           # Canonical parquet outputs (symlink to external SSD)
+data/metadata/            # Download manifests and ingestion logs
 ```
 
 ---
 
 ## Data design principles
 
-- **Raw layer**: verbatim OMIE files, never modified
+- **Raw layer**: verbatim source files, never modified
 - **Processed layer**: canonical parquet, one per family, preserving all raw rows and snapshot identity (`source_file`)
 - **Derived layer**: reconciliation and collapsed views, clearly marked, never substitutes for canonical tables
