@@ -16,8 +16,9 @@ from mtu.parsing.omie_common import (
 # Accept both cases for robustness.
 FILENAME_RE = re.compile(r"^(?:DET|det)_(\d{8})\.(\d+)$", re.IGNORECASE)
 
-# Fixed-width column specs (0-indexed half-open intervals), per OMIE spec section 5.1.4.2
-# Field layout (same widths pre- and post-reform):
+# ── Post-reform format (line length 60) ─────────────────────────────────────
+# Adopted by OMIE on 2025-03-19 (same day as intraday MTU15 reform).
+# Per OMIE spec section 5.1.4.2 (post-reform):
 #   CodOferta     I10   pos  1-10  -> [0:10]
 #   Version       I5    pos 11-15  -> [10:15]
 #   Período       I3    pos 16-18  -> [15:18]
@@ -28,7 +29,7 @@ FILENAME_RE = re.compile(r"^(?:DET|det)_(\d{8})\.(\d+)$", re.IGNORECASE)
 #   Cantidad      F7.1  pos 42-48  -> [41:48]
 #   MAV           F7.1  pos 49-55  -> [48:55]
 #   MAR           F5.3  pos 56-60  -> [55:60]
-_COLSPECS = [
+_COLSPECS_POST = [
     (0, 10),
     (10, 15),
     (15, 18),
@@ -40,7 +41,7 @@ _COLSPECS = [
     (48, 55),
     (55, 60),
 ]
-_COLNAMES = [
+_COLNAMES_POST = [
     "offer_code",
     "version",
     "period",
@@ -52,6 +53,54 @@ _COLNAMES = [
     "min_acceptable_volume_mw",
     "min_acceptable_ratio",
 ]
+
+# ── Pre-reform format (line length 57) ──────────────────────────────────────
+# Used for sessions before 2025-03-19.
+#   CodOferta     I7    pos  1-7   -> [0:7]
+#   Version       I3    pos  8-10  -> [7:10]
+#   Período       I2    pos 11-12  -> [10:12]
+#   NumTramo      I2    pos 13-14  -> [12:14]
+#   PrecEuro      F17.3 pos 15-31  -> [14:31]
+#   Cantidad      F17.3 pos 32-48  -> [31:48]  (wider field in old format)
+#   MAV           F7.1  pos 49-55  -> [48:55]
+#   _marker       A2    pos 56-57  -> [55:57]  (always 'SS'; no MAR in old format)
+_COLSPECS_PRE = [
+    (0, 7),
+    (7, 10),
+    (10, 12),
+    (12, 14),
+    (14, 31),
+    (31, 48),
+    (48, 55),
+    (55, 57),
+]
+_COLNAMES_PRE = [
+    "offer_code",
+    "version",
+    "period",
+    "segment_number",
+    "price_eur_mwh",
+    "quantity_mw",
+    "min_acceptable_volume_mw",
+    "_marker",
+]
+
+
+def _detect_format(path: Path) -> str:
+    """Return 'post' or 'pre' by inspecting the length of the first data line."""
+    with path.open("rb") as f:
+        for raw in f:
+            line = raw.rstrip(b"\r\n")
+            if line:
+                if len(line) == 60:
+                    return "post"
+                if len(line) == 57:
+                    return "pre"
+                raise ValueError(
+                    f"{path.name}: unexpected line length {len(line)} "
+                    f"(expected 57 or 60). First line: {line!r}"
+                )
+    return "post"  # empty file — doesn't matter
 
 
 def parse_filename_metadata(path: Path) -> dict:
@@ -98,11 +147,19 @@ def validate_period_values(path: Path, periods: pd.Series, mtu_minutes: int) -> 
 
 def parse_det_file(path: Path) -> pd.DataFrame:
     meta = parse_filename_metadata(path)
+    fmt = _detect_format(path)
+
+    if fmt == "post":
+        colspecs = _COLSPECS_POST
+        names = _COLNAMES_POST
+    else:
+        colspecs = _COLSPECS_PRE
+        names = _COLNAMES_PRE
 
     df = pd.read_fwf(
         path,
-        colspecs=_COLSPECS,
-        names=_COLNAMES,
+        colspecs=colspecs,
+        names=names,
         header=None,
         encoding="latin-1",
         dtype=str,
@@ -117,26 +174,36 @@ def parse_det_file(path: Path) -> pd.DataFrame:
     if df.empty:
         return df
 
+    # ── Numeric conversions ──────────────────────────────────────────────────
     df["offer_code"] = pd.to_numeric(df["offer_code"].str.strip(), errors="coerce").astype("Int64")
     df["version"] = pd.to_numeric(df["version"].str.strip(), errors="coerce").astype("Int64")
     df["period"] = pd.to_numeric(df["period"].str.strip(), errors="coerce").astype("Int64")
-    df["block_number"] = pd.to_numeric(df["block_number"].str.strip(), errors="coerce").astype(
-        "Int64"
-    )
     df["segment_number"] = pd.to_numeric(
         df["segment_number"].str.strip(), errors="coerce"
-    ).astype("Int64")
-    df["exclusive_group"] = pd.to_numeric(
-        df["exclusive_group"].str.strip(), errors="coerce"
     ).astype("Int64")
     df["price_eur_mwh"] = pd.to_numeric(df["price_eur_mwh"].str.strip(), errors="coerce")
     df["quantity_mw"] = pd.to_numeric(df["quantity_mw"].str.strip(), errors="coerce")
     df["min_acceptable_volume_mw"] = pd.to_numeric(
         df["min_acceptable_volume_mw"].str.strip(), errors="coerce"
     )
-    df["min_acceptable_ratio"] = pd.to_numeric(
-        df["min_acceptable_ratio"].str.strip(), errors="coerce"
-    )
+
+    if fmt == "post":
+        df["block_number"] = pd.to_numeric(
+            df["block_number"].str.strip(), errors="coerce"
+        ).astype("Int64")
+        df["exclusive_group"] = pd.to_numeric(
+            df["exclusive_group"].str.strip(), errors="coerce"
+        ).astype("Int64")
+        df["min_acceptable_ratio"] = pd.to_numeric(
+            df["min_acceptable_ratio"].str.strip(), errors="coerce"
+        )
+    else:
+        # Pre-reform format has no block_number/exclusive_group/MAR fields.
+        # The '_marker' column is always 'SS' and has no numeric meaning.
+        df["block_number"] = pd.array([0] * len(df), dtype="Int64")
+        df["exclusive_group"] = pd.array([0] * len(df), dtype="Int64")
+        df["min_acceptable_ratio"] = float("nan")
+        df = df.drop(columns=["_marker"])
 
     mtu_minutes = infer_mtu_minutes_from_periods(df["period"])
     validate_period_values(path, df["period"], mtu_minutes)
