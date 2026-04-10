@@ -33,6 +33,8 @@ Master thesis project on the Spanish electricity market reform that changed the 
 | `curva_pibc` | Intraday auctions | Aggregate curves | Stable |
 | `omanulaintra` | Intraday auctions | Cancelled hours (MO) | Stable |
 | `osanulaintra` | Intraday auctions | Cancelled hours (SO) | Stable |
+| `cab` | Day-ahead | Matched offer headers | Stable |
+| `det` | Day-ahead | Matched offer detail (price/qty per period) | Stable |
 
 ---
 
