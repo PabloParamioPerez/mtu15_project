@@ -20,8 +20,9 @@ FILENAME_RE = re.compile(r"^(?:CAB|cab)_(\d{8})\.(\d+)$", re.IGNORECASE)
 # Day-ahead market MTU15 reform date (1 October 2025)
 _REFORM_DATE = date(2025, 10, 1)
 
-# Fixed-width column specs (0-indexed half-open intervals), per OMIE spec section 5.1.4.1
-# Field layout (post-reform, same widths pre-reform):
+# ── Post-reform format (line length 94) ─────────────────────────────────────
+# Adopted by OMIE on 2025-03-19 (same day as the intraday MTU15 reform).
+# Per OMIE spec section 5.1.4.1 (post-reform):
 #   CodOferta   I10   pos  1-10  -> [0:10]
 #   Version     I5    pos 11-15  -> [10:15]
 #   Código      A7    pos 16-22  -> [15:22]
@@ -37,7 +38,7 @@ _REFORM_DATE = date(2025, 10, 1)
 #   Hora        I2    pos 89-90  -> [88:90]
 #   Minuto      I2    pos 91-92  -> [90:92]
 #   Segundo     I2    pos 93-94  -> [92:94]
-_COLSPECS = [
+_COLSPECS_POST = [
     (0, 10),
     (10, 15),
     (15, 22),
@@ -54,7 +55,7 @@ _COLSPECS = [
     (90, 92),
     (92, 94),
 ]
-_COLNAMES = [
+_COLNAMES_POST = [
     "offer_code",
     "version",
     "unit_code",
@@ -71,6 +72,79 @@ _COLNAMES = [
     "_ins_minute",
     "_ins_second",
 ]
+
+# ── Pre-reform format (line length 169) ─────────────────────────────────────
+# Used for sessions before 2025-03-19.
+# Verified by byte-level inspection of raw files.
+#   CodOferta   I7    pos  1-7   -> [0:7]
+#   Version     I3    pos  8-10  -> [7:10]
+#   Código      A7    pos 11-17  -> [10:17]
+#   Descripción A30   pos 18-47  -> [17:47]
+#   CV          A1    pos 48     -> [47:48]
+#   TipoOferta  A1    pos 49     -> [48:49]  (extra field not in post-reform; N=normal)
+#   OferPlazo   A1    pos 50     -> [49:50]
+#   FijoEuro    F17.3 pos 51-67  -> [50:67]
+#   (4 complex-offer condition fields occupy pos 68-132 — parsed but not exposed)
+#   MaxPot      F7.1  pos 133-139 -> [132:139]
+#   (2 further F7.1 fields at [139:153] — not exposed)
+#   CodInt      I2    pos 154-155 -> [153:155]
+#   Año         I4    pos 156-159 -> [155:159]
+#   Mes         I2    pos 160-161 -> [159:161]
+#   Día         I2    pos 162-163 -> [161:163]
+#   Hora        I2    pos 164-165 -> [163:165]
+#   Minuto      I2    pos 166-167 -> [165:167]
+#   Segundo     I2    pos 168-169 -> [167:169]
+_COLSPECS_PRE = [
+    (0, 7),
+    (7, 10),
+    (10, 17),
+    (17, 47),
+    (47, 48),
+    (49, 50),
+    (50, 67),
+    (132, 139),
+    (153, 155),
+    (155, 159),
+    (159, 161),
+    (161, 163),
+    (163, 165),
+    (165, 167),
+    (167, 169),
+]
+_COLNAMES_PRE = [
+    "offer_code",
+    "version",
+    "unit_code",
+    "description",
+    "buy_sell",
+    "offer_plazo",
+    "fixed_term_eur",
+    "max_power_mw",
+    "interconnection_code",
+    "_ins_year",
+    "_ins_month",
+    "_ins_day",
+    "_ins_hour",
+    "_ins_minute",
+    "_ins_second",
+]
+
+
+def _detect_format(path: Path) -> str:
+    """Return 'post' or 'pre' by inspecting the length of the first data line."""
+    with path.open("rb") as f:
+        for raw in f:
+            line = raw.rstrip(b"\r\n")
+            if line:
+                if len(line) == 94:
+                    return "post"
+                if len(line) == 169:
+                    return "pre"
+                raise ValueError(
+                    f"{path.name}: unexpected line length {len(line)} "
+                    f"(expected 94 or 169). First line: {line!r}"
+                )
+    return "post"  # empty file — doesn't matter
 
 
 def parse_filename_metadata(path: Path) -> dict:
@@ -94,11 +168,19 @@ def infer_mtu_minutes_from_date(session_date: date) -> int:
 def parse_cab_file(path: Path) -> pd.DataFrame:
     meta = parse_filename_metadata(path)
     session_date = pd.to_datetime(meta["file_date"]).date()
+    fmt = _detect_format(path)
+
+    if fmt == "post":
+        colspecs = _COLSPECS_POST
+        names = _COLNAMES_POST
+    else:
+        colspecs = _COLSPECS_PRE
+        names = _COLNAMES_PRE
 
     df = pd.read_fwf(
         path,
-        colspecs=_COLSPECS,
-        names=_COLNAMES,
+        colspecs=colspecs,
+        names=names,
         header=None,
         encoding="latin-1",
         dtype=str,
@@ -243,7 +325,7 @@ def parse_folder_and_write(
                 "category": "ofertas",
                 "file_family": "cab",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.cab.parse_cab_file:v1",
+                "parser_name": "mtu.parsing.cab.parse_cab_file:v2",
                 "raw_file_kind": "omie_fixed_width",
                 "rows_read": len(df),
                 "rows_output": len(df),
@@ -269,7 +351,7 @@ def parse_folder_and_write(
                 "category": "ofertas",
                 "file_family": "cab",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.cab.parse_cab_file:v1",
+                "parser_name": "mtu.parsing.cab.parse_cab_file:v2",
                 "raw_file_kind": "omie_fixed_width",
                 "rows_read": "",
                 "rows_output": 0,
