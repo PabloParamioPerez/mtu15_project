@@ -22,7 +22,7 @@ Master thesis project on the Spanish electricity market reform that changed the 
 
 | Family | Type | Coverage |
 |---|---|---|
-| `marginalpdbc` | Prices | 2018-01-01 – 2026-04-08 |
+| `marginalpdbc` | Prices | 2018-01-01 – 2026-04-11 |
 | `pdbc` | Programs | 2018-02, 2023-12 – 2026-01-08 |
 | `curva_pbc` | Aggregate curves | 2018-01-01 – 2026-04-08 |
 | `cab` | Matched offer headers | 2017-01-01 – 2026-01-09 |
@@ -32,7 +32,9 @@ Master thesis project on the Spanish electricity market reform that changed the 
 
 | Family | Type | Coverage |
 |---|---|---|
-| `marginalpibc` | Prices | 2018-01-01 – 2026-02-24 |
+| `marginalpibc` | Prices | 2017-12-31 – 2026-04-09 |
+| `icab` | Matched offer headers | 2018-01-01 – 2026-01-10 |
+| `idet` | Matched offer detail (price/qty per period) | 2018-01-01 – 2026-01-10 |
 | `pibca` | Programs (accumulated) | 2019-02-28 – 2025-01-14 |
 | `pibci` | Programs (incremental) | 2019-02-28 – 2026-01-02 |
 | `curva_pibc` | Aggregate curves | 2018-01-01 – 2026-04-08 |
@@ -70,9 +72,9 @@ scripts/pipelines/omie/
   20_build_{family}_all.py   # Build consolidated parquet
 ```
 
-Families published only as monthly ZIPs (`cab`, `det`, `pibca`, `pibci`, `pibcac`, `pibcic`, `pdbc`) use `00_sync_*_zips.py` only. Families with both a daily endpoint and historical ZIPs (`curva_pbc`, `curva_pibc`, `precios_pibcic`, `precios_pibcic_ronda`, `marginalpdbc`, `marginalpibc`, `omanulaintra`, `osanulaintra`) have both scripts.
+Families published only as monthly ZIPs (`cab`, `det`, `icab`, `idet`, `pibca`, `pibci`, `pibcac`, `pibcic`, `pdbc`) use `00_sync_*_zips.py` only. Families with both a daily endpoint and historical ZIPs (`curva_pbc`, `curva_pibc`, `precios_pibcic`, `precios_pibcic_ronda`, `marginalpdbc`, `marginalpibc`, `omanulaintra`, `osanulaintra`) have both scripts.
 
-`det` files have two fixed-width layouts: pre-reform (57-char lines, before 2025-03-19) and post-reform (60-char lines); the parser detects the format automatically.
+`det` files have two fixed-width layouts: pre-reform (57-char lines, before 2025-03-19) and post-reform (60-char lines); the parser detects the format automatically. `icab` files have two layouts: pre-reform (195-char) and post-reform (94-char). `idet` files have two layouts: pre-reform (76-char) and post-reform (60-char). All parsers detect the format automatically from the first line length. Filename suffix encodes the session number (1–6 pre-2024-06-14, 1–3 after).
 
 ### ESIOS
 
