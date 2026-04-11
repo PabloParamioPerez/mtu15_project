@@ -24,9 +24,6 @@ attic/
 # VS Code workspace
 .vscode/
 
-# Large binary docs
-docs/
-
 # LaTeX build artifacts
 docs/*.aux
 docs/*.log
