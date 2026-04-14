@@ -45,6 +45,7 @@ Master thesis project on the Spanish electricity market reform that changed the 
 
 | Family | Type | Coverage |
 |---|---|---|
+| `orders` | Individual XBID limit orders (§5.3.3.1) | 2018-06-13 – 2026-01-13 |
 | `pibcac` | Programs (accumulated) | 2018-06-13 – 2025-03-31 |
 | `pibcic` | Programs (incremental) | 2018-06-13 – 2026-01-10 |
 | `precios_pibcic` | Prices | incomplete |
@@ -72,7 +73,7 @@ scripts/pipelines/omie/
   20_build_{family}_all.py   # Build consolidated parquet
 ```
 
-Families published only as monthly ZIPs (`cab`, `det`, `icab`, `idet`, `pibca`, `pibci`, `pibcac`, `pibcic`, `pdbc`) use `00_sync_*_zips.py` only. Families with both a daily endpoint and historical ZIPs (`curva_pbc`, `curva_pibc`, `precios_pibcic`, `precios_pibcic_ronda`, `marginalpdbc`, `marginalpibc`, `omanulaintra`, `osanulaintra`) have both scripts.
+Families published only as monthly ZIPs (`cab`, `det`, `icab`, `idet`, `orders`, `pibca`, `pibci`, `pibcac`, `pibcic`, `pdbc`) use `00_sync_*_zips.py` only. `orders` files are subject to a 90-day confidentiality window; months within 90 days of today return HTTP 404. Families with both a daily endpoint and historical ZIPs (`curva_pbc`, `curva_pibc`, `precios_pibcic`, `precios_pibcic_ronda`, `marginalpdbc`, `marginalpibc`, `omanulaintra`, `osanulaintra`) have both scripts.
 
 `det` files have two fixed-width layouts: pre-reform (57-char lines, before 2025-03-19) and post-reform (60-char lines); the parser detects the format automatically. `icab` files have two layouts: pre-reform (195-char) and post-reform (94-char). `idet` files have two layouts: pre-reform (76-char) and post-reform (60-char). All parsers detect the format automatically from the first line length. Filename suffix encodes the session number (1–6 pre-2024-06-14, 1–3 after).
 
@@ -124,6 +125,7 @@ src/mtu/validation/       # Post-parse checks
 scripts/pipelines/omie/   # Numbered OMIE pipeline steps
 scripts/pipelines/esios/  # ESIOS pipeline steps
 scripts/admin/            # Audit and inspection scripts
+explore/                  # Exploratory notebooks (not thesis output)
 data/raw/                 # Verbatim source files (symlink to external SSD)
 data/processed/           # Canonical parquet outputs (symlink to external SSD)
 data/metadata/            # Download manifests and ingestion logs

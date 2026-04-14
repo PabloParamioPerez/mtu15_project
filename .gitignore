@@ -40,5 +40,6 @@ data/metadata/*.csv
 # Local backups
 attic/
 
-# Exploratory analysis (notebooks, scratch scripts, outputs)
-explore/
+# Exploratory analysis — track notebooks, ignore heavy outputs
+explore/**/.ipynb_checkpoints/
+explore/.tmp/
