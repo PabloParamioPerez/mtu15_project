@@ -19,9 +19,57 @@ Master thesis data-engineering project for OMIE electricity-market data, focused
 - `scripts/admin/` — one-off audit, inspect, and forensic scripts; not part of the pipeline
 
 ## Data families
-Active families: `pibca`, `pibci`, `precios_pibcic`, `precios_pibcic_ronda`, `marginalpdbc`, `marginalpibc`, `pdbc`.
-Each has a parser in `src/mtu/parsing/` and a full `00/10/20` pipeline in `scripts/pipelines/omie/`.
+Active families (each has a parser in `src/mtu/parsing/` and a full `00/10/20` pipeline):
+
+| Family | Market | Description |
+|---|---|---|
+| `marginalpdbc` | Day-ahead | Clearing prices |
+| `marginalpibc` | Intraday auctions | Clearing prices by session |
+| `pdbc` | Day-ahead | Final programs by unit |
+| `pibca` | Intraday auctions | Accumulated programs |
+| `pibci` | Intraday auctions | Programs by unit and session |
+| `pibcic` | Continuous intraday | Programs by unit and round |
+| `pibcac` | Continuous intraday | Accumulated programs |
+| `precios_pibcic` | Continuous intraday | Aggregate prices |
+| `precios_pibcic_ronda` | Continuous intraday | Mean price by round and period |
+| `curva_pbc` | Day-ahead | Aggregate supply/demand curves |
+| `curva_pibc` | Intraday auctions | Aggregate supply/demand curves |
+| `cab` | Day-ahead | Offer headers |
+| `det` | Day-ahead | Offer details (price/quantity tranches) |
+| `icab` | Intraday auctions | Offer headers |
+| `idet` | Intraday auctions | Offer details |
+| `orders` | Continuous intraday | XBID limit orders |
+| `trades` | Continuous intraday | XBID matched transactions |
+| `capacidad_inter_pbc` | Day-ahead | Interconnection capacity (PBC) |
+| `capacidad_inter_pvp` | Day-ahead | Interconnection capacity (PVP) |
+| `omanulaintra` | Intraday | Annulled offer quantities |
+| `osanulaintra` | Intraday | Annulled session quantities |
+
+**Parser sharing:** `capacidad_inter_pbc` and `capacidad_inter_pvp` share one parser module (`capacidad_inter.py`), dispatched via `file_family` argument. All other families have their own module.
+
 Before adding or changing a parser, read at least one neighbouring family's parser first.
+
+## Reform dates (frequently referenced)
+- **2024-06-14** — IDA reform: 6 local MIBEL sessions → 3 European IDA sessions
+- **2025-03-19** — MTU15 intraday: auctions + continuous switch from MTU60 to MTU15
+- **2025-10-01** — MTU15 day-ahead: day-ahead market switches from MTU60 to MTU15
+
+These dates appear as constants (`IDA_REFORM`, `INTRADAY_REFORM`, `DAY_AHEAD_REFORM`) in all notebooks and scripts.
+
+## Exploratory notebooks
+All notebooks live in `explore/` and are for exploration only — not thesis output. Run with the `mtu15-project` kernel.
+
+| Notebook | Contents |
+|---|---|
+| `01_market_statistics.ipynb` | Price spot-validation, aggregate curve checks, structural statistics (within-day profile, intra-hour dispersion, monthly prices, IDA prices across regimes), continuous intraday volume, accumulated programs, DA offers by technology, XBID order book, interconnection capacity, XBID trades |
+| `02_bidding_behaviour.ipynb` | Offer type anatomy (DA + IDA), DA↔IDA price spread and arbitrage, program reconciliation (who re-trades and how much), bid price anatomy and market power, XBID order book and iceberg orders |
+| `03_reform_narrative.ipynb` | Reform effects across three regimes: DA-IDA price wedge, within-hour price dispersion (MTU15 signature), firm repositioning ΔQ (dominant vs fringe, by technology). Builds the Ito-Reguant (2016) empirical objects for the Spanish market. |
+
+Do not duplicate analysis across notebooks. Check what is already covered before adding a new section.
+
+## External data sources
+- **OMIE** — primary source; downloaded via `00_sync_*` scripts
+- **ESIOS (REE)** — secondary source for balancing/constraints data; requires `ESIOS_TOKEN` env var. Admin script: `scripts/admin/explore_esios.py`. Access not yet obtained.
 
 ## Data layers
 - **Raw** — verbatim OMIE files. Never modify.
