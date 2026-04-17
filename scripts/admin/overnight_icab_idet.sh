@@ -20,31 +20,31 @@ cd "$REPO"
 
 # ── 1. Download ──────────────────────────────────────────────────────────────
 echo "--- [1/6] Downloading icab ZIPs ($START_MONTH → $END_MONTH) ---"
-uv run scripts/pipelines/omie/00_sync_icab_zips.py \
+uv run scripts/pipelines/omie/mercado_intradiario_subastas/00_sync_icab_zips.py \
     --start-month "$START_MONTH" --end-month "$END_MONTH" --timeout 120
 
 echo ""
 echo "--- [2/6] Downloading idet ZIPs ($START_MONTH → $END_MONTH) ---"
-uv run scripts/pipelines/omie/00_sync_idet_zips.py \
+uv run scripts/pipelines/omie/mercado_intradiario_subastas/00_sync_idet_zips.py \
     --start-month "$START_MONTH" --end-month "$END_MONTH" --timeout 120
 
 # ── 2. Parse ─────────────────────────────────────────────────────────────────
 echo ""
 echo "--- [3/6] Parsing icab raw files ---"
-uv run scripts/pipelines/omie/10_parse_icab.py
+uv run scripts/pipelines/omie/mercado_intradiario_subastas/10_parse_icab.py
 
 echo ""
 echo "--- [4/6] Parsing idet raw files ---"
-uv run scripts/pipelines/omie/10_parse_idet.py
+uv run scripts/pipelines/omie/mercado_intradiario_subastas/10_parse_idet.py
 
 # ── 3. Build consolidated parquets ───────────────────────────────────────────
 echo ""
 echo "--- [5/6] Building icab_all.parquet ---"
-uv run scripts/pipelines/omie/20_build_icab_all.py
+uv run scripts/pipelines/omie/mercado_intradiario_subastas/20_build_icab_all.py
 
 echo ""
 echo "--- [6/6] Building idet_all.parquet ---"
-uv run scripts/pipelines/omie/20_build_idet_all.py
+uv run scripts/pipelines/omie/mercado_intradiario_subastas/20_build_idet_all.py
 
 # ── 4. Commit skipped (intentional — review parse results before committing) ──
 echo ""

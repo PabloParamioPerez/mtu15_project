@@ -67,9 +67,9 @@ def show_pipeline_status():
             console.print(f"❌ {dir_path}: missing")
 
     scripts = [
-        "scripts/pipelines/omie/00_download_marginalpdbc.py",
-        "scripts/pipelines/omie/10_parse_marginalpdbc.py",
-        "scripts/pipelines/omie/20_build_marginalpdbc_all.py",
+        "scripts/pipelines/omie/mercado_diario/00_download_marginalpdbc.py",
+        "scripts/pipelines/omie/mercado_diario/10_parse_marginalpdbc.py",
+        "scripts/pipelines/omie/mercado_diario/20_build_marginalpdbc_all.py",
     ]
 
     console.print("\n[bold]Pipeline Scripts[/bold]")
