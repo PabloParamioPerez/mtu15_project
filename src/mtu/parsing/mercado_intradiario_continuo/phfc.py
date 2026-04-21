@@ -106,13 +106,15 @@ def parse_phfc_file(path: Path) -> pd.DataFrame:
             if parts and parts[-1] == "":
                 parts = parts[:-1]
 
-            if len(parts) != 7:
+            if len(parts) not in (7, 9):
                 raise ValueError(
-                    f"{path.name}: expected 7 fields, got {len(parts)} -> {parts!r}"
+                    f"{path.name}: expected 7 or 9 fields, got {len(parts)} -> {parts!r}"
                 )
 
             data_row_counter += 1
-            yyyy, mm, dd, period, round_number, unit_code, assigned_power = parts
+            yyyy, mm, dd, period, round_number, unit_code, assigned_power = parts[:7]
+            flag_etiqueta = parts[7] if len(parts) == 9 else None
+            offer_type = parts[8] if len(parts) == 9 else None
 
             rows.append(
                 {
@@ -123,6 +125,8 @@ def parse_phfc_file(path: Path) -> pd.DataFrame:
                     "round_number": int(round_number),
                     "unit_code": unit_code.strip(),
                     "assigned_power_mw": parse_decimal(assigned_power),
+                    "flag_etiqueta": flag_etiqueta,
+                    "offer_type": offer_type,
                     "raw_row_number_in_file": data_row_counter,
                 }
             )
@@ -169,6 +173,8 @@ def parse_phfc_file(path: Path) -> pd.DataFrame:
             "period",
             "unit_code",
             "assigned_power_mw",
+            "flag_etiqueta",
+            "offer_type",
             "raw_row_number_in_file",
             "row_number_in_file",
             "mtu_minutes",
@@ -250,7 +256,7 @@ def parse_folder_and_write(
                 "category": "programas",
                 "file_family": "phfc",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.phfc.parse_phfc_file:v1",
+                "parser_name": "mtu.parsing.mercado_intradiario_continuo.phfc.parse_phfc_file:v2",
                 "raw_file_kind": "omie_text",
                 "rows_read": len(df),
                 "rows_output": len(df),
@@ -276,7 +282,7 @@ def parse_folder_and_write(
                 "category": "programas",
                 "file_family": "phfc",
                 "filename": path.name,
-                "parser_name": "mtu.parsing.phfc.parse_phfc_file:v1",
+                "parser_name": "mtu.parsing.mercado_intradiario_continuo.phfc.parse_phfc_file:v2",
                 "raw_file_kind": "omie_text",
                 "rows_read": "",
                 "rows_output": 0,
