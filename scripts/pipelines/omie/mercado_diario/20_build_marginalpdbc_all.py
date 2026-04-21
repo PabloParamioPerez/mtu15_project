@@ -22,6 +22,12 @@ def infer_mtu_from_row_count(n_rows: int) -> int | None:
 
 
 def main() -> None:
+    if OUTPUT_FILE.exists():
+        newest_input = max((f.stat().st_mtime for f in INPUT_DIR.glob("*.parquet") if f != OUTPUT_FILE), default=0)
+        if OUTPUT_FILE.stat().st_mtime >= newest_input:
+            print("Up to date, skipping build.")
+            return
+
     files = sorted(INPUT_DIR.glob("*.parquet"))
     files = [f for f in files if f.name != OUTPUT_FILE.name]
 

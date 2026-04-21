@@ -28,6 +28,12 @@ OUTPUT_FILE = PROJECT_ROOT / "data/processed/omie/mercado_intradiario_subastas/c
 
 
 def main() -> None:
+    if OUTPUT_FILE.exists():
+        newest_input = max((f.stat().st_mtime for f in INPUT_DIR.glob("*.parquet") if f != OUTPUT_FILE), default=0)
+        if OUTPUT_FILE.stat().st_mtime >= newest_input:
+            print("Up to date, skipping build.")
+            return
+
     glob = str(INPUT_DIR / "*.parquet")
 
     con = duckdb.connect()

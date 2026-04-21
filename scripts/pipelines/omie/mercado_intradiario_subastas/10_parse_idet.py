@@ -8,7 +8,7 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from mtu.parsing.idet import parse_folder_and_write  # noqa: E402
+from mtu.parsing.mercado_intradiario_subastas.idet import parse_folder_and_write  # noqa: E402
 
 
 def main() -> None:

@@ -17,6 +17,12 @@ def main() -> None:
     processed_dir = PROJECT_ROOT / "data/processed/omie/mercado_diario/ofertas/det"
     output_path = processed_dir.parent / "det_all.parquet"
 
+    if output_path.exists():
+        newest_input = max((f.stat().st_mtime for f in processed_dir.glob("*.parquet")), default=0)
+        if output_path.stat().st_mtime >= newest_input:
+            print("Up to date, skipping build.")
+            return
+
     glob = str(processed_dir / "*.parquet")
 
     # Use the external SSD for temp spill if needed (det data is large).

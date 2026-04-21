@@ -37,6 +37,12 @@ def main() -> None:
     processed_dir = PROJECT_ROOT / "data/processed/omie/mercado_intradiario_continuo/precios/precios_pibcic_ronda"
     output_path = processed_dir.parent / "precios_pibcic_ronda_all.parquet"
 
+    if output_path.exists():
+        newest_input = max((f.stat().st_mtime for f in processed_dir.glob("*.parquet")), default=0)
+        if output_path.stat().st_mtime >= newest_input:
+            print("Up to date, skipping build.")
+            return
+
     files = sorted(processed_dir.glob("*.parquet"))
     if not files:
         raise FileNotFoundError(f"No parquet files found in {processed_dir}")

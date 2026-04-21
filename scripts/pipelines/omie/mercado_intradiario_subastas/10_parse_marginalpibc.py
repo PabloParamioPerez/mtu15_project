@@ -9,7 +9,7 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 import pandas as pd  # noqa: E402
-from mtu.parsing.marginalpibc import parse_folder_and_write  # noqa: E402
+from mtu.parsing.mercado_intradiario_subastas.marginalpibc import parse_folder_and_write  # noqa: E402
 
 
 def main() -> None:

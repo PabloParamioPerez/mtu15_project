@@ -12,6 +12,12 @@ def main() -> None:
     processed_dir = PROJECT_ROOT / "data/processed/omie/mercado_intradiario_subastas/precios/marginalpibc"
     out_path = PROJECT_ROOT / "data/processed/omie/mercado_intradiario_subastas/precios/marginalpibc_all.parquet"
 
+    if output_path.exists():
+        newest_input = max((f.stat().st_mtime for f in processed_dir.glob("*.parquet")), default=0)
+        if output_path.stat().st_mtime >= newest_input:
+            print("Up to date, skipping build.")
+            return
+
     files = sorted(processed_dir.glob("*.parquet"))
     if not files:
         print(f"No parquet files found in: {processed_dir}")
