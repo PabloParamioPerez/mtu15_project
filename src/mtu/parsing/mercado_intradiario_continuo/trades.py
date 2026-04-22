@@ -12,7 +12,7 @@ from mtu.parsing.omie_common import (
     utc_now_iso,
     visible_files,
 )
-from mtu.parsing.orders import parse_contract
+from mtu.parsing.mercado_intradiario_continuo.orders import parse_contract
 
 FILENAME_RE = re.compile(r"^trades_(\d{8})\.(\d+)$")
 

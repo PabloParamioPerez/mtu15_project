@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import shutil
 import sys
+import time
 import zipfile
 from pathlib import Path
 
@@ -30,7 +31,18 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument("--start-month", required=True, help="YYYY-MM")
     p.add_argument("--end-month", required=True, help="YYYY-MM")
-    p.add_argument("--timeout", type=int, default=60)
+    p.add_argument(
+        "--timeout",
+        type=int,
+        default=1800,
+        help="Per-chunk read timeout in seconds (default 1800). PIBCAC monthly ZIPs are ~700 MB.",
+    )
+    p.add_argument(
+        "--max-retries",
+        type=int,
+        default=3,
+        help="Retries on 5xx / network errors before giving up. Default 3.",
+    )
     p.add_argument(
         "--overwrite-zip",
         action="store_true",
@@ -118,10 +130,12 @@ def download_zip(
     timeout: int,
     overwrite_zip: bool,
     refresh_recent_months: int,
+    max_retries: int,
 ) -> tuple[str, Path | None]:
     fname = zip_filename_for_month(period)
     url = build_url(fname)
     out_path = archives_dir / fname
+    part_path = out_path.with_suffix(out_path.suffix + ".part")
 
     refresh_this_month = should_refresh_month(
         period=period,
@@ -136,30 +150,60 @@ def download_zip(
     if out_path.exists() and refresh_this_month and not overwrite_zip:
         print(f"[REFRESH ZIP recent month] {fname}")
 
-    try:
-        r = session.get(url, timeout=timeout)
-    except requests.RequestException as e:
-        print(f"[ERROR ZIP] {fname} -> request error: {e}")
+    last_err: str | None = None
+    for attempt in range(1, max_retries + 1):
+        try:
+            with session.get(url, timeout=timeout, stream=True) as r:
+                if r.status_code == 404:
+                    print(f"[NO ZIP] {fname} (HTTP 404)")
+                    return "not_found", None
+
+                if r.status_code != 200:
+                    last_err = f"HTTP {r.status_code}"
+                    print(f"[WARN ZIP] {fname} -> {last_err} (attempt {attempt}/{max_retries})")
+                    if 500 <= r.status_code < 600 and attempt < max_retries:
+                        time.sleep(min(60 * attempt, 300))
+                        continue
+                    return "error", None
+
+                part_path.unlink(missing_ok=True)
+                with part_path.open("wb") as dst:
+                    for chunk in r.iter_content(chunk_size=1024 * 1024):
+                        if chunk:
+                            dst.write(chunk)
+
+            size = part_path.stat().st_size
+            if size == 0:
+                part_path.unlink(missing_ok=True)
+                last_err = "empty response"
+                print(f"[WARN ZIP] {fname} -> {last_err} (attempt {attempt}/{max_retries})")
+                if attempt < max_retries:
+                    time.sleep(min(30 * attempt, 120))
+                    continue
+                return "error", None
+
+            # Sanity check: reject obvious HTML error bodies served with 200.
+            with part_path.open("rb") as f:
+                head = f.read(400)
+            if looks_like_html(head):
+                part_path.unlink(missing_ok=True)
+                last_err = "HTML response"
+                print(f"[WARN ZIP] {fname} -> {last_err}")
+                return "error", None
+
+            part_path.replace(out_path)
+            break
+
+        except requests.RequestException as e:
+            last_err = f"request error: {e}"
+            print(f"[WARN ZIP] {fname} -> {last_err} (attempt {attempt}/{max_retries})")
+            part_path.unlink(missing_ok=True)
+            if attempt < max_retries:
+                time.sleep(min(30 * attempt, 120))
+                continue
+            return "error", None
+    else:
         return "error", None
-
-    if r.status_code == 404:
-        print(f"[NO ZIP] {fname} (HTTP 404)")
-        return "not_found", None
-
-    if r.status_code != 200:
-        print(f"[WARN ZIP] {fname} -> HTTP {r.status_code}")
-        return "error", None
-
-    content = r.content
-    if not content:
-        print(f"[WARN ZIP] {fname} -> empty response")
-        return "error", None
-
-    if looks_like_html(content):
-        print(f"[WARN ZIP] {fname} -> HTML response, skipping")
-        return "error", None
-
-    out_path.write_bytes(content)
 
     try:
         with zipfile.ZipFile(out_path, "r") as zf:
@@ -285,6 +329,7 @@ def main() -> None:
             timeout=args.timeout,
             overwrite_zip=args.overwrite_zip,
             refresh_recent_months=args.refresh_recent_months,
+            max_retries=args.max_retries,
         )
         totals[status] += 1
 

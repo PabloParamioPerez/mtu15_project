@@ -20,41 +20,46 @@ Master thesis project on the Spanish electricity market reform that changed the 
 
 #### Day-ahead market
 
-| Family | Type | Coverage |
-|---|---|---|
-| `marginalpdbc` | Prices | 2018-01-01 – 2026-04-11 |
-| `pdbc` | Programs | 2018-02, 2023-12 – 2026-01-08 |
-| `curva_pbc` | Aggregate curves | 2018-01-01 – 2026-04-08 |
-| `cab` | Matched offer headers | 2017-01-01 – 2026-01-09 |
-| `det` | Matched offer detail (price/qty per period) | 2018-01-01 – 2026-01-09 |
+| Family | Description | Coverage | Spec |
+|---|---|---|---|
+| `marginalpdbc` | Clearing prices | 2018-01-01 – 2026-04-11 | §5.1.1.1 |
+| `pdbc` | Programs by unit | 2018-02, 2023-12 – 2026-01-08 | §5.1.2.1 |
+| `pdbce` | Programs by firm | — | §5.1.2.2 |
+| `curva_pbc` | Aggregate supply/demand curves | 2018-01-01 – 2026-04-08 | §5.1.3.1 |
+| `cab` | Matched offer headers | 2017-01-01 – 2026-01-09 | §5.1.4.1 |
+| `det` | Matched offer detail (price/qty per period) | 2018-01-01 – 2026-01-09 | §5.1.4.2 |
+| `capacidad_inter_pbc` | Interconnection capacity post-clearing | — | §5.1.6.1 |
+| `capacidad_inter_pvp` | Interconnection capacity post-restrictions | — | §5.1.6.2 |
 
 #### Intraday auctions
 
-| Family | Type | Coverage |
-|---|---|---|
-| `marginalpibc` | Prices | 2017-12-31 – 2026-04-09 |
-| `icab` | Matched offer headers | 2018-01-01 – 2026-01-10 |
-| `idet` | Matched offer detail (price/qty per period) | 2018-01-01 – 2026-01-10 |
-| `pibca` | Programs (accumulated) | 2019-02-28 – 2025-01-14 |
-| `pibci` | Programs (incremental) | 2019-02-28 – 2026-01-02 |
-| `curva_pibc` | Aggregate curves | 2018-01-01 – 2026-04-08 |
-| `omanulaintra` | Cancelled hours (MO) | sparse (event-driven) |
-| `osanulaintra` | Cancelled hours (SO) | sparse (event-driven) |
+| Family | Description | Coverage | Spec |
+|---|---|---|---|
+| `marginalpibc` | Clearing prices by session | 2017-12-31 – 2026-04-09 | §5.2.1.1 |
+| `pibca` | Accumulated programs by unit | 2019-02-28 – 2025-01-14 | §5.2.2.1 |
+| `pibci` | Incremental programs by unit | 2019-02-28 – 2026-01-02 | §5.2.2.2 |
+| `pibcie` | Incremental programs by firm | — | §5.2.2.3 |
+| `curva_pibc` | Aggregate supply/demand curves | 2018-01-01 – 2026-04-08 | §5.2.3.1 |
+| `icab` | Matched offer headers | 2018-01-01 – 2026-01-10 | §5.2.4.1 |
+| `idet` | Matched offer detail (price/qty per period) | 2018-01-01 – 2026-01-10 | §5.2.4.2 |
+| `osanulaintra` | Cancelled periods (SO) | sparse (event-driven) | §5.2.6.1 |
+| `omanulaintra` | Cancelled periods (MO) | sparse (event-driven) | §5.2.6.2 |
 
 #### Intraday continuous
 
-| Family | Type | Coverage |
-|---|---|---|
-| `orders` | Individual XBID limit orders (§5.3.3.1) | 2018-06-13 – 2026-01-13 |
-| `trades` | Individual XBID matched transactions (§5.3.2.7) | 2018-06-13 – 2026-01-13 |
-| `pibcac` | Programs (accumulated) | 2018-06-13 – 2025-03-31 |
-| `pibcic` | Programs (incremental) | 2018-06-13 – 2026-01-10 |
-| `precios_pibcic` | Prices | incomplete |
-| `precios_pibcic_ronda` | Round prices | 2018-06-13 – 2026-04-09 |
+| Family | Description | Coverage | Spec |
+|---|---|---|---|
+| `precios_pibcic` | Prices per period | incomplete | §5.3.1.1 |
+| `precios_pibcic_ronda` | Prices per round | 2018-06-13 – 2026-04-09 | §5.3.1.2 |
+| `pibcac` | Accumulated programs by unit | 2018-06-13 – 2025-03-31 | §5.3.2.1 |
+| `pibcic` | Incremental programs by unit | 2018-06-13 – 2026-01-10 | §5.3.2.2 |
+| `pibcice` | Incremental programs by firm | — | §5.3.2.3 |
+| `trades` | XBID matched transactions | 2018-06-13 – 2026-01-13 | §5.3.2.7 |
+| `orders` | XBID limit orders | 2018-06-13 – 2026-01-13 | §5.3.3.1 |
 
 ### ESIOS / REE (system operator)
 
-| Family | Type | Coverage |
+| Family | Description | Coverage |
 |---|---|---|
 | `restricciones` | Technical constraints | — |
 | `rampas` | Ramp limitations | — |

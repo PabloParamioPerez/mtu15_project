@@ -25,10 +25,10 @@ attic/
 .vscode/
 
 # LaTeX build artifacts
-docs/*.aux
-docs/*.log
-docs/*.fls
-docs/*.fdb_latexmk
-docs/*.synctex.gz
-docs/*.toc
-docs/*.out
+docs/**/*.aux
+docs/**/*.log
+docs/**/*.fls
+docs/**/*.fdb_latexmk
+docs/**/*.synctex.gz
+docs/**/*.toc
+docs/**/*.out

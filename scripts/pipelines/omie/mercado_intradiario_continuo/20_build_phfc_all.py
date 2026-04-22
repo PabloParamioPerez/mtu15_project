@@ -63,13 +63,10 @@ def main() -> None:
 
     # --- Write sorted output ---
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    sort_cols = "source_file, row_number_in_file"
-
     con.execute(f"""
         COPY (
             SELECT *
             FROM read_parquet('{glob}', union_by_name=true)
-            ORDER BY {sort_cols}
         )
         TO '{output_path}' (FORMAT PARQUET)
     """)

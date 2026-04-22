@@ -21,29 +21,34 @@ Master thesis data-engineering project for OMIE electricity-market data, focused
 ## Data families
 Active families (each has a parser in `src/mtu/parsing/` and a full `00/10/20` pipeline):
 
-| Family | Market | Description |
-|---|---|---|
-| `marginalpdbc` | Day-ahead | Clearing prices |
-| `marginalpibc` | Intraday auctions | Clearing prices by session |
-| `pdbc` | Day-ahead | Final programs by unit |
-| `pibca` | Intraday auctions | Accumulated programs |
-| `pibci` | Intraday auctions | Programs by unit and session |
-| `pibcic` | Continuous intraday | Programs by unit and round |
-| `pibcac` | Continuous intraday | Accumulated programs |
-| `precios_pibcic` | Continuous intraday | Aggregate prices |
-| `precios_pibcic_ronda` | Continuous intraday | Mean price by round and period |
-| `curva_pbc` | Day-ahead | Aggregate supply/demand curves |
-| `curva_pibc` | Intraday auctions | Aggregate supply/demand curves |
-| `cab` | Day-ahead | Offer headers |
-| `det` | Day-ahead | Offer details (price/quantity tranches) |
-| `icab` | Intraday auctions | Offer headers |
-| `idet` | Intraday auctions | Offer details |
-| `orders` | Continuous intraday | XBID limit orders |
-| `trades` | Continuous intraday | XBID matched transactions |
-| `capacidad_inter_pbc` | Day-ahead | Interconnection capacity (PBC) |
-| `capacidad_inter_pvp` | Day-ahead | Interconnection capacity (PVP) |
-| `omanulaintra` | Intraday | Annulled offer quantities |
-| `osanulaintra` | Intraday | Annulled session quantities |
+| Family | Market | Description | Spec (v1.37) |
+|---|---|---|---|
+| `marginalpdbc` | Day-ahead | Clearing prices | §5.1.1.1 |
+| `marginalpibc` | Intraday auctions | Clearing prices by session | §5.2.1.1 |
+| `pdbc` | Day-ahead | Final programs by unit | §5.1.2.1 |
+| `pdbce` | Day-ahead | Final programs by firm | §5.1.2.2 |
+| `pibca` | Intraday auctions | Accumulated programs | §5.2.2.1 |
+| `pibci` | Intraday auctions | Programs by unit and session | §5.2.2.2 |
+| `pibcie` | Intraday auctions | Programs by firm and session | §5.2.2.3 |
+| `pibcic` | Continuous intraday | Programs by unit and round | §5.3.2.2 |
+| `pibcac` | Continuous intraday | Accumulated programs | §5.3.2.1 |
+| `pibcice` | Continuous intraday | Programs by firm and round | §5.3.2.3 |
+| `precios_pibcic` | Continuous intraday | Aggregate prices | §5.3.1.1 |
+| `precios_pibcic_ronda` | Continuous intraday | Mean price by round and period | §5.3.1.2 |
+| `curva_pbc` | Day-ahead | Aggregate supply/demand curves | §5.1.3.1 |
+| `curva_pibc` | Intraday auctions | Aggregate supply/demand curves | §5.2.3.1 |
+| `cab` | Day-ahead | Offer headers | §5.1.4.1 |
+| `det` | Day-ahead | Offer details (price/quantity tranches) | §5.1.4.2 |
+| `icab` | Intraday auctions | Offer headers | §5.2.4.1 |
+| `idet` | Intraday auctions | Offer details | §5.2.4.2 |
+| `orders` | Continuous intraday | XBID limit orders | §5.3.3.1 |
+| `trades` | Continuous intraday | XBID matched transactions | §5.3.2.7 |
+| `capacidad_inter_pbc` | Day-ahead | Interconnection capacity (PBC) | §5.1.6.1 |
+| `capacidad_inter_pvp` | Day-ahead | Interconnection capacity (PVP) | §5.1.6.2 |
+| `omanulaintra` | Intraday | Annulled offer quantities | §5.2.6.2 |
+| `osanulaintra` | Intraday | Annulled session quantities | §5.2.6.1 |
+| `phf` | Intraday auctions | Final hourly program by unit and session (OS-established) | §5.2.2.4 |
+| `phfc` | Continuous intraday | Final hourly program by unit and round (OS-established) | §5.3.2.4 |
 
 **Parser sharing:** `capacidad_inter_pbc` and `capacidad_inter_pvp` share one parser module (`capacidad_inter.py`), dispatched via `file_family` argument. All other families have their own module.
 

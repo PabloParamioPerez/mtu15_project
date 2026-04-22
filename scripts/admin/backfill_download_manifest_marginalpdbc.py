@@ -9,7 +9,7 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from mtu.parsing.marginalpdbc import build_download_manifest_row_for_existing_file  # noqa: E402
+from mtu.parsing.mercado_diario.marginalpdbc import build_download_manifest_row_for_existing_file  # noqa: E402
 from mtu.parsing.omie_common import append_csv_row, visible_files  # noqa: E402
 
 
