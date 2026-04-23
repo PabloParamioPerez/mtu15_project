@@ -24,9 +24,12 @@
     "*.ado": "stata"
   },
 
-  // ── Hide cruft from the file explorer ─────────────────────────────────────
-  // These files still exist on disk (tools need them). Only the VS Code
-  // Explorer view is cleaned up. Re-show anything by setting its key to false.
+  // ── Hide ONLY inert regenerated content ───────────────────────────────────
+  //
+  // Principle: only hide things you would NEVER edit or need to know about.
+  // Caches that regenerate themselves and vendored content are safe to hide.
+  // Config files, dotfiles, and anything "load-bearing" stays visible so
+  // future-you doesn't forget they exist.
   "files.exclude": {
     "**/.DS_Store": true,
     "**/__pycache__": true,
@@ -34,39 +37,38 @@
     "**/.pytest_cache": true,
     "**/.ruff_cache": true,
     "**/.mypy_cache": true,
-    "**/.ipynb_checkpoints": true,
-    ".venv": true,
-    ".claude": true,
-    ".python-version": true,
-    "renv/library": true,
-    "renv/staging": true,
-    "renv/sandbox": true,
-    "renv/activate.R": true,
-    "renv/settings.json": true,
-    "renv/.gitignore": true
+    "**/.ipynb_checkpoints": true
   },
 
-  // ── Nest related files under a single expandable parent ──────────────────
-  // Reduces visual noise at the root. Click the ▸ next to a parent to see
-  // its children.
+  // ── Group related files under a visible expandable parent ─────────────────
+  //
+  // Nested files REMAIN VISIBLE — click the ▸ on the parent to see them.
+  // This is the safer pattern than files.exclude because you can't forget
+  // about a file you can still see in the tree.
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
-    "pyproject.toml": "uv.lock, .python-version, .ruff.toml, ruff.toml, .ruff_cache, .mypy_cache, .pytest_cache",
+    "pyproject.toml": "uv.lock, .python-version, .ruff.toml, ruff.toml, mypy.ini, .flake8, tox.ini",
     "renv.lock": ".Rprofile, renv",
     "README.md": "CLAUDE.md, LICENSE*, CHANGELOG*, CONTRIBUTING*, CODE_OF_CONDUCT*",
     ".gitignore": ".gitattributes, .editorconfig, .env.example",
     "*.ipynb": "${capture}.py"
   },
 
-  // Search ignores caches + renv library (large, uninteresting).
+  // ── Search: skip large vendored/cached trees for speed ────────────────────
+  //
+  // This affects Ctrl+Shift+F search only, not file visibility. Excluding
+  // .venv and renv/library from search makes Find-in-Files fast; you can
+  // still browse these folders in the Explorer.
   "search.exclude": {
+    "**/.venv": true,
     "**/renv/library": true,
     "**/renv/staging": true,
     "**/renv/sandbox": true,
-    "**/.venv": true,
     "**/__pycache__": true,
     "**/.pytest_cache": true,
-    "**/.ruff_cache": true
+    "**/.ruff_cache": true,
+    "**/.mypy_cache": true,
+    "**/.ipynb_checkpoints": true
   }
 }
