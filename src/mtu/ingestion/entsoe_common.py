@@ -37,6 +37,7 @@ DOC_TYPE = {
     "aggregated_bids":        "A24",   # §3.13.2 Aggregated balancing energy bids (GL EB 12.3.e)
     "current_balancing_state": "A86",  # §3.13.3 (with businessType=B33)
     "wind_solar_forecast":    "A69",   # §3.3.1 Day-ahead forecast of wind & solar
+    "installed_capacity":     "A68",   # §14.1.A Installed generation capacity aggregated
 }
 
 # processType A16 = Realised. Default for activation/imbalance documents.
@@ -49,6 +50,10 @@ PROCESS_TYPE_DAY_AHEAD = "A01"
 # solar forecast: TSO republishes every MTU, API returns the most recent
 # forecast issued before each MTU in the queried window.
 PROCESS_TYPE_INTRADAY = "A18"
+
+# processType A33 = Year ahead. Used for installed capacity (A68), which
+# TSOs publish annually with the reference year's 01-01T00:00 timestamp.
+PROCESS_TYPE_YEAR_AHEAD = "A33"
 
 # businessType B33 = the discriminator for current balancing state vs
 # total imbalance volume (both carry documentType A86).
@@ -127,6 +132,22 @@ def month_chunks(start_ym: str, end_ym: str) -> Iterable[tuple[str, str, str]]:
             pe.strftime("%Y-%m-%d"),
         )
         cur += 1
+
+
+def year_chunks(start_year: int, end_year: int) -> Iterable[tuple[str, str, str]]:
+    """Yield `(yyyy, period_start, period_end)` for an inclusive yearly range.
+
+    `period_end` is the first instant of the *next* year (half-open).
+    Used by A68 (installed capacity), which is published annually.
+    """
+    if end_year < start_year:
+        raise ValueError("end-year cannot be before start-year")
+    for y in range(start_year, end_year + 1):
+        yield (
+            f"{y:04d}",
+            f"{y:04d}-01-01",
+            f"{y + 1:04d}-01-01",
+        )
 
 
 # ---- HTTP fetch --------------------------------------------------------
