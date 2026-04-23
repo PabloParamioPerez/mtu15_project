@@ -1,28 +1,20 @@
 {
-  // R extension (REditorSupport.r). Extension recommendations live in
-  // .vscode/extensions.json.
+  // ── R extension (REditorSupport.r) ─────────────────────────────────────────
   //
-  // radian is a modern R REPL (installed via `uv tool install radian`).
-  // If you prefer plain R, replace the path below with the output of
-  // `which R` and set r.bracketedPaste to false.
+  // radian is a modern R REPL installed via `uv tool install radian`.
+  // If you prefer plain R, replace the path with the output of `which R`
+  // and set r.bracketedPaste to false.
   "r.rterm.mac": "/Users/pabloparamio/.local/bin/radian",
   "r.bracketedPaste": true,
-
-  // httpgd is the in-editor plot device. Installed at user level.
   "r.plot.useHttpgd": true,
-
-  // Session watcher: RStudio-equivalent environment pane, plot history,
-  // help panel in VS Code's R sidebar.
   "r.sessionWatcher": true,
-
-  // Linter / LSP diagnostics via the `languageserver` R package.
   "r.lsp.diagnostics": true,
   "r.lsp.debug": false,
 
-  // Python interpreter — the uv-managed venv.
+  // ── Python ────────────────────────────────────────────────────────────────
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
 
-  // File associations for R + Stata + Quarto.
+  // ── File associations (R / Stata / Quarto) ────────────────────────────────
   "files.associations": {
     "*.R": "r",
     "*.r": "r",
@@ -32,19 +24,49 @@
     "*.ado": "stata"
   },
 
-  // Hide noisy generated folders from the explorer.
+  // ── Hide cruft from the file explorer ─────────────────────────────────────
+  // These files still exist on disk (tools need them). Only the VS Code
+  // Explorer view is cleaned up. Re-show anything by setting its key to false.
   "files.exclude": {
     "**/.DS_Store": true,
-    "**/renv/library": true,
-    "**/renv/staging": true,
-    "**/renv/sandbox": true,
-    "**/__pycache__": true
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/.pytest_cache": true,
+    "**/.ruff_cache": true,
+    "**/.mypy_cache": true,
+    "**/.ipynb_checkpoints": true,
+    ".venv": true,
+    ".claude": true,
+    ".python-version": true,
+    "renv/library": true,
+    "renv/staging": true,
+    "renv/sandbox": true,
+    "renv/activate.R": true,
+    "renv/settings.json": true,
+    "renv/.gitignore": true
   },
 
-  // Search should ignore those too.
+  // ── Nest related files under a single expandable parent ──────────────────
+  // Reduces visual noise at the root. Click the ▸ next to a parent to see
+  // its children.
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "pyproject.toml": "uv.lock, .python-version, .ruff.toml, ruff.toml, .ruff_cache, .mypy_cache, .pytest_cache",
+    "renv.lock": ".Rprofile, renv",
+    "README.md": "CLAUDE.md, LICENSE*, CHANGELOG*, CONTRIBUTING*, CODE_OF_CONDUCT*",
+    ".gitignore": ".gitattributes, .editorconfig, .env.example",
+    "*.ipynb": "${capture}.py"
+  },
+
+  // Search ignores caches + renv library (large, uninteresting).
   "search.exclude": {
     "**/renv/library": true,
     "**/renv/staging": true,
-    "**/renv/sandbox": true
+    "**/renv/sandbox": true,
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.ruff_cache": true
   }
 }
