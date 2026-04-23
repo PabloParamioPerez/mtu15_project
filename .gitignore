@@ -43,3 +43,21 @@ attic/
 # Exploratory analysis — track notebooks, ignore heavy outputs
 explore/**/.ipynb_checkpoints/
 explore/.tmp/
+
+# R (renv) — commit renv.lock + activate.R, ignore per-machine library
+renv/library/
+renv/staging/
+renv/sandbox/
+renv/python/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj.user/
+
+# LaTeX build artefacts
+*.aux
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.out
+*.toc

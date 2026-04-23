@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-toolsai.jupyter",
+    "charliermarsh.ruff",
+    "REditorSupport.r",
+    "quarto.quarto",
+    "kylebarron.stata-enhanced",
+    "ms-vscode.makefile-tools",
+    "tamasfe.even-better-toml"
+  ]
+}
