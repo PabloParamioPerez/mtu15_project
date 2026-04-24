@@ -1,0 +1,4 @@
+{
+  "caption": "Monthly median Lerner index per Big-4 firm, estimated from the Cournot-Nash first-order condition using aggregate supply-curve slope at the day-ahead clearing price. Endesa (GE) rises from ~5% pre-reform to a peak of 35% in DA60/ID15 (Mar-Sep 2025), moderating to 10% at MTU15-DA. IB (Iberdrola), GN (Naturgy), HC (HC-Energ\u00eda) remain at or below 5%. Series trimmed to [0,1] to exclude supply-slope-outlier hours.",
+  "figure_id": "fig2_big4_lerner_monthly"
+}

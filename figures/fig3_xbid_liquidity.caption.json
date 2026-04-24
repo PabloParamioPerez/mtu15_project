@@ -1,0 +1,4 @@
+{
+  "caption": "XBID continuous-intraday liquidity, monthly means. Orders per hour grow 15\u00d7 from pre-IDA (~920) to DA15/ID15 (~13,900); fill rate falls from 5.2% to 2.7% as granularity finer; trade-price dispersion peaks at DA60/ID15 (\u20ac11.3/MWh) and normalises at MTU15-DA \u2014 concordant with the structural-markup pattern in Fig 2.",
+  "figure_id": "fig3_xbid_liquidity"
+}
