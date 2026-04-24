@@ -361,3 +361,45 @@ The identification is now sharp enough to state in a single sentence:
 This is substantially tighter than the Big-4 aggregate claim: it is firm-specific (GE), tech-specific (CCGT), mechanism-specific (Ito–Reguant strategic withholding), and signed-change-specific (positive slope flips to negative at ISP15). Under modern-DiD terminology, the object identified is a *conditional wind-IV slope difference*, not an ATT on $\Delta Q$ levels — but it is empirically defensible in a way that nb07's level-based DiD coefficient is not.
 
 The D4–D6 aggregate framing remains valid as a summary statistic; D7–D9 are the identified-mechanism refinements.
+
+### D10 — Nuclear robustness check revises D4 downward (nb08 §9)
+
+The identified-finding pathway ran into a diagnostic puzzle in §8: within GE, the Nuclear coefficient ($\Delta \hat\rho = +53.8$) is larger than the CCGT coefficient ($\Delta \hat\rho = +27.9$), even though nuclear is not supposed to engage in strategic bidding. Two concrete tests in nb08 §9:
+
+**H1 — ANAV vs CNAT split within GE Nuclear.** The large nuclear coefficient is present in *both* ANAV-operated units (Ascó/Vandellós, Endesa-majority-owned, $\Delta = +45.8$) and CNAT-operated units (Almaraz, Iberdrola-majority-owned but OMIE-labelled GE, $\Delta = +59.8$). The nuclear wind-IV response is therefore **not** an Endesa-specific operator-coordination phenomenon — it's a Spanish-nuclear-wide pattern across two different operators with different owner coalitions.
+
+**H2 — Big-4 aggregate excluding nuclear.** Running the §6c spec (Big-4 dispatchable, low-wind, winsorised) after dropping the 8 nuclear units reduces the sample from 65 to 58 units and 10,283 to 6,711 obs. The regime coefficients that were statistically significant in the baseline lose significance entirely:
+
+| Regime | Baseline (all techs) | Ex-Nuclear | Change |
+|---|---:|---:|---:|
+| 6-sess | $+17.9$ ($p=0.02$) | $-3.4$ ($p=0.30$) | ns |
+| 3-sess | $+15.6$ ($p=0.02$) | $+2.8$ ($p=0.22$) | ns |
+| ISP15 window | $+0.8$ ($p=0.57$) | $-0.1$ ($p=0.96$) | already null |
+| DA60/ID15 | $+6.6$ ($p=0.04$) | $-1.7$ ($p=0.11$) | ns |
+| $\Delta$(3-sess − ISP15) | $+14.8$ | $+2.9$ | 80% reduction |
+
+**The §6c aggregate ISP15 collapse is variance-weighted by nuclear.** Nuclear's within-unit $|\Delta Q|$ standard deviation is $\sim 5{,}000$ MWh/unit-day vs CCGT's $\sim 800$ — a 6× variance ratio. PanelOLS with unit FE estimates a variance-weighted pooled slope, so 8 nuclear units dominate over 58 non-nuclear units despite being a small minority of the count.
+
+**Revised identified claim (post-§9).** The D4 aggregate "Big-4 strategic responsiveness declined at ISP15 by $\approx -15$ MWh/unit-day per GWh of wind surprise" is **not** a clean mechanism claim. It is a composite of two distinct empirical patterns:
+
+1. **(Mechanism plank)** Within GE's 5 CCGT units, the wind-IV slope flips sign across the ISP15 boundary: $+11.77$ (3-sess, $p=0.008$) to $-16.09$ (ISP15, $p=0.026$). **This is the only cell where the identified claim is mechanism-evidence for Ito–Reguant strategic withholding.** It is the narrowest and most defensible version of the central thesis claim: firm-specific, tech-specific, signed-flip.
+2. **(Non-mechanism phenomenon)** Within the 8 Big-4 nuclear units, the wind-IV slope is large in pre-ISP15 regimes and near-zero in the ISP15 window. This is real and reproducible across ANAV and CNAT, but nuclear is not a strategic-bidding setting. Plausible non-strategic readings (load-following, outage scheduling correlation, REE redispatch, scaling artefact) are untested here. **This finding is flagged, not claimed as mechanism evidence.**
+
+The **Big-4 aggregate claim** should therefore be withdrawn as an identification statement. Its status drops from "identified ATT on low-wind slope" to "variance-weighted mixture of two unrelated patterns." D4's $-15$ to $-18$ MWh/unit-day/GWh should not be cited as the thesis headline; the thesis headline is the GE-CCGT signed flip.
+
+### D11 — What is and isn't identified, post-§9
+
+**Identified (thesis-citable):**
+- GE × CCGT wind-IV slope flips sign across ISP15 (3-sess $+11.8$ → ISP15 $-16.1$, signed flip). Cell-level Δ = $+27.9$. Support: Fringe placebo (§4), solar-IV replication (§6b), winsorisation (§6a). Mechanism: Ito–Reguant strategic withholding becoming ineffective once ISP15 removes the intra-hour imbalance-netting buffer.
+
+**Real but non-mechanism (flagged, not claimed):**
+- Big-4 nuclear wind-IV slope declines sharply at ISP15. Pattern reproducible across ANAV and CNAT operators. Not strategic-bidding; mechanism is candidate-uncertain (load-following / outage-scheduling correlation / REE redispatch / $\Delta Q$ scaling).
+- GN × ResHydro reverses direction at ISP15 (3 units, 416 obs). Small-sample, interpretation uncertain.
+
+**Descriptive but not identified:**
+- nb03 §3e Big-4 $|\Delta Q|$ descriptive compression at MTU15-IDA. Cross-sectional, not robust to within-unit identification.
+- nb06 §2 CCGT conduct-gap collapse at MTU15-IDA. Absorbed by unit FE in nb07 §9.
+- nb07 §4-§8 saturated DiD Post-ISP15 coefficient $+217$. Conditional association, not an ATT under modern-DiD standards.
+
+**Withdrawn:**
+- Big-4 aggregate "ISP15 strategic-responsiveness collapse of $\approx +15$." Does not survive §9 ex-nuclear robustness. Was nuclear-variance-weighted, not mechanism-driven.
