@@ -38,6 +38,7 @@ DOC_TYPE = {
     "current_balancing_state": "A86",  # §3.13.3 (with businessType=B33)
     "wind_solar_forecast":    "A69",   # §3.3.1 Day-ahead forecast of wind & solar
     "installed_capacity":     "A68",   # §14.1.A Installed generation capacity aggregated
+    "wind_solar_actual":      "A75",   # §16.1.B Actual generation per production type
 }
 
 # processType A16 = Realised. Default for activation/imbalance documents.
