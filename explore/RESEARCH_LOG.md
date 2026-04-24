@@ -58,7 +58,7 @@ Between June 2024 and October 2025, Spain ran four sequential reforms progressiv
 |---|---|---|---|
 | **H10** | Big-4 CCGT DA bid granularity (tranches per offer-period) declines at MTU15-IDA (2025-03-19) | [FLAGGED — new descriptive finding, not stress-tested] | `nb09 §1/§2`. Median tranches drops from 5-7 (2024) to 1-2 (Mar 2025 onward). March 2025 has 106 offer-periods; sample adequate. Monthly series shows a step, not a gradual drift. Commit `c51c756`. Caveats: Spring 2025 has low CCGT activity overall; whether this is bid-structure shift or unit-composition shift is unresolved. |
 | **H11** | Big-4 hydro DA bid granularity *increases* across the reform sequence (opposite of CCGT) | [FLAGGED — descriptive] | `nb09 §1/§2`. Reservoir hydro: 2 → 3. Pumped hydro: 2 → 3 at MTU15-DA. |
-| **H12** | Big-4 shifts bid-structure complexity from DA to IDA once MTU15-IDA provides matching 15-min intraday tools | [UNTESTED] | Motivated by H10; would predict mirror-image *increase* in IDA tranche counts at MTU15-IDA. The `nb09 §3+` next cut. |
+| **H12** | Big-4 shifts bid-structure complexity from DA to IDA once MTU15-IDA provides matching 15-min intraday tools | [SUPPORTED — descriptive] | `nb09 §3/§4`. Big-4 CCGT IDA median tranches go 1 → 2 → 4 → 3 → 5 across regimes, mirror-imaging the DA decline (7 → 4 → 4 → 2 → 2). DA+IDA sum stays in the 5-9 range across all regimes. Monthly time series: at MTU15-IDA (2025-03) DA drops 5→1 and IDA jumps 1→5 simultaneously. Specific to Big-4 CCGT — not hydro, not nuclear, not Fringe. Descriptive only; no causal identification attempted. |
 
 ### 4.4 Theoretical rationalisation
 
@@ -94,6 +94,7 @@ Between June 2024 and October 2025, Spain ran four sequential reforms progressiv
 | 22 | Ex-nuclear aggregate robustness | `nb08 §9 H2` | Drops Δ from +14.79 to +2.88. Aggregate was nuclear-variance-weighted. |
 | 23 | Sliding-boundary placebo sweep (GE×CCGT) | `nb08 §10` | 6/22 fake boundaries within 3-sess+ISP15 window have \|Δ\| ≥ real. $p=0.273$. |
 | 24 | Tranche-count EDA by regime × group × tech | `nb09 §1/§2` | Big-4 CCGT median tranches drops from 5-7 to 1-2 at MTU15-IDA. |
+| 24a | IDA tranche-count mirror test (H12) | `nb09 §3/§4` | DA simplification offset by IDA complexification; DA+IDA sum stable 5-9. |
 | 25 | Descriptive OS-intervention decomposition (CCGT vs coal) | `nb03 §3g` | OS-intervention on CCGT is positive (amplifying, not attenuating, strategic position); coal gets curtailment |
 | 26 | Robustness sensitivity to blackout exclusion | `nb03 §5b` | Excluding 2025-04-26 to 2025-04-30 moves wedge by −0.17 EUR/MWh and ΔQ by 1.4% |
 | 27 | Installed-capacity ENTSO-E A68 pipeline | commit `14d021e` | H4 storage-ceiling quantification |
@@ -168,7 +169,7 @@ Live notebooks in `explore/`; older exploratory nb01 + nb02 moved to `explore/ar
 | [06_attenuation_dashboard.ipynb](06_attenuation_dashboard.ipynb) | 15 | Bid-level conduct gap, Ito–Reguant $\hat\beta$, within-hour DA dispersion post-MTU15-DA. | CCGT conduct gap (Big-4 − Fringe) collapses 128-146 → 10 EUR/MWh at MTU15-IDA descriptively; absorbed by unit FE in nb07 §9. |
 | [07_main_regression.ipynb](07_main_regression.ipynb) | 33 | Formal DiD (§4 flagship, §5a saturated, §5b tech, §6 placebos, §8a refined control, §8b within-Big-4, §9 bid-level, §10 per-firm, §11 RI, §12 treatment-date sweep, §13 identification standards). | Saturated ISP15 coefficient +217 ($p<0.01$) robust to control refinement, but **not** an ATT under modern-DiD rigor. |
 | [08_wind_iv.ipynb](08_wind_iv.ipynb) | 35 | Wind-IV (§3), Fringe placebo (§4), §6 robustness (a-d), §7 per-firm, §8 per-firm×tech, §9 nuclear-robustness, §10 placebo sweep. | GE × CCGT descriptive signed flip +11.8 → −16.1; not localised to ISP15 per §10 placebo. |
-| [09_bid_shape_eda.ipynb](09_bid_shape_eda.ipynb) | 9 | Bid-structure EDA. §1 tranches per offer-period by regime × group × tech; §2 monthly time series. | Big-4 CCGT median tranches drops from 5-7 to 1-2 at MTU15-IDA — new descriptive finding, not yet stress-tested. |
+| [09_bid_shape_eda.ipynb](09_bid_shape_eda.ipynb) | 14 | Bid-structure EDA. §1 DA tranches per offer-period by regime × group × tech; §2 monthly time series; §3 IDA tranches (H12 test); §4 DA+IDA side-by-side with reform verticals. | H10 Big-4 CCGT DA median tranches drops 5-7 → 1-2 at MTU15-IDA. H12 SUPPORTED descriptively: DA simplification mirrored by IDA complexification; total DA+IDA stable 5-9. |
 
 ### 7.1 Supporting documents
 
