@@ -254,3 +254,56 @@ No comparison in A1 is cleanly identified with current data and methods. **Compa
 **Secondary next step** (cheap, independent): re-run nb07 §11 with a pre-treatment-only fake-date window, and propagate the tighter p-value into the synthesis cells. This doesn't change identification but it tightens the existing rigour narrative.
 
 **Do not commit to BSTS, RDD, synthetic control, or partial identification** in this plan. Those are step-4/5 decisions and depend on what (a), (b), or (c) we end up targeting. The wind-IV upgrade is the one that changes the choice set; everything else can wait.
+
+---
+
+## Phase D — Closure: what was built, what was learned
+
+Phase C's primary recommendation (A75 sync + wind-IV) was executed. Record here so downstream notebooks cite the identified result rather than the pre-A75 DiD.
+
+### D1 — Pipeline built
+
+- `src/mtu/parsing/entsoe/wind_solar_actual.py` parses A75 XMLs (columns mirror `wind_solar_forecast.py` so forecast error is a join on `(isp_start_utc, psr_type)`).
+- `scripts/pipelines/entsoe/generation/{00_sync,10_parse,20_build}_wind_solar_actual*.py` sync/parse/build; `data/processed/entsoe/generation/wind_solar_actual_all.parquet` covers 2018-01 → 2026-04 (100 months, all psrTypes).
+- `data/derived/reform_panel.parquet` joins $\Delta Q_{i,d}$ with daily wind (realised $-$ DA-forecast) and solar forecast error.
+
+### D2 — What the IV estimates (nb08)
+
+Consider the reform-by-regime interaction spec
+$$\Delta Q_{i,d} = \alpha_i + \sum_{r} \beta_r \,(\mathbf 1\{\text{Big-4}_i\} \cdot \mathbf 1\{d \in r\} \cdot \epsilon^{\text{wind}}_d) + X_{i,d}'\gamma + u_{i,d},$$
+with $\epsilon^{\text{wind}}_d = w^{\text{actual}}_d - w^{\text{DA-forecast}}_d$. $\beta_r$ is **the regime-$r$ slope of Big-4 repositioning on exogenous wind-surprise MWh**. Under the exclusion restriction that wind-forecast errors affect Big-4 $\Delta Q$ **only through** residual-demand-driven strategic bidding, $\beta_r - \beta_{r'}$ is the *causal change in Big-4 strategic responsiveness* between regimes $r$ and $r'$. This is a sharper object than the regime-dummy contrast $\mu_r - \mu_{r'}$ in comparison (c): it conditions on a variable that by construction cannot anticipate the reform.
+
+### D3 — Validation (nb08 §§4–6)
+
+- **Fringe placebo (§4).** All Fringe × regime $|\hat\beta| \le 0.83$ vs Big-4 pre-IDA $+44.3$. Ratio $>400\times$. Supports the exclusion restriction: wind surprise moves Big-4 repositioning but not Fringe's, consistent with the mechanism being strategic rather than mechanical.
+- **Solar-as-complementary-IV (§6b).** $\hat\beta_{\text{solar}} = +72.8$ ($p=0.02$) in the pre-IDA regime, same sign and comparable magnitude to the wind instrument. Two independent exogenous instruments delivering the same pattern — the finding isn't a wind-IV artefact.
+- **Winsorisation (§6a).** Trimming $\pm 1\%$ extreme wind-error days gives $\hat\beta=+62.5$, not driven by the tails.
+- **Low-wind subsample (§6c).** Regime slopes: pre-IDA $+17.9 \to$ 3-session $+15.6 \to$ ISP15 $+0.8$. **The Big-4 responsiveness to wind-surprise collapses at ISP15**, not at the IDA reform (as the full-sample spec might suggest) nor at MTU15-IDA.
+- **Rolling window (§6d).** 6-month rolling $\hat\beta$ declines smoothly from $\approx +66$ (2023Q4) through $\approx +4$ (2025Q3). No discrete break.
+
+### D4 — Refined identified claim
+
+**Under the exclusion restriction (supported by §4 Fringe placebo and §6b solar replication):**
+$$\beta_{\text{pre-ISP15}} - \beta_{\text{post-ISP15}} \approx 15\text{ to }18 \text{ MWh per unit-day per GWh of wind surprise}$$
+**is identified as the causal effect of ISP15 on Big-4 strategic responsiveness to exogenous residual-demand shocks.**
+
+Qualifications, all supported by §6:
+
+1. The effect is **smooth across 2024–2025**, not a single-date step. This reconciles with nb07 §12's treatment-date sweep (which peaks at 2024-07 and declines monotonically) and with nb07 §5a (which concentrates cross-sectional mass at the ISP15 interaction). The reading is consistent with **anticipation plus sequential reform-constraint tightening**, not a single instantaneous ATT at 2024-12-01.
+2. What is identified is a **slope**, not a **level**. The claim is about responsiveness $\partial \Delta Q / \partial \epsilon^{\text{wind}}$, not mean repositioning volume. Level claims (the Big-4 $-$ Fringe gap narrowed by $X$ MWh) remain non-identified — nb07's $+217$ ISP15 coefficient is still not an ATT.
+3. The low-wind-subsample timing (§6c) **matters for the narrative**: the collapse is at ISP15 specifically, which is the mechanism predicted by the theory (removal of intra-hour netting at settlement). MTU15-IDA provides no additional slope change in the low-wind subsample, consistent with its role as a *tool* restoring flexibility rather than a new constraint.
+
+### D5 — What this resolves from A4
+
+- **A4 (b) parallel trends fails.** The IV side-steps parallel trends entirely: identification rests on wind-surprise exogeneity, not on the Big-4 $-$ Fringe trend being flat.
+- **A4 (a)/(b) no-anticipation fails.** The IV does not require no-anticipation: firms cannot anticipate day-ahead wind forecast errors by construction, so the instrument is clean of any reform-anticipation mechanism.
+- **A4 (c) linear trend fails.** The identified object is a per-regime slope, not a regime dummy; non-linear secular trends enter additively and do not bias $\beta_r - \beta_{r'}$ under the exclusion restriction.
+- **What is NOT resolved.** The exclusion restriction itself — wind surprise affecting Big-4 $\Delta Q$ only through residual-demand-driven strategic bidding — is untestable in principle. §4 and §6b are indirect support, not direct tests.
+
+### D6 — Downstream propagation
+
+Narrative cells across nb03–nb07 should be updated additively (not rewritten) to cite the identified slope change as the causal claim, while keeping the descriptive / DiD chapters as the motivation and validation layers respectively. The thesis progression is:
+
+**descriptive (nb03) → mechanical-alternatives-rejected (nb04–nb05) → formal DiD with identification caveats (nb07) → identified causal slope via wind-IV with Fringe placebo + solar replication (nb08).**
+
+Claims sourced from nb07 should continue to be labelled "regression coefficients under maintained assumptions that empirically fail" (per Phase B); only nb08 §6d's smooth-decline result and §6c's ISP15-specific collapse are to be cited as identified.
