@@ -307,3 +307,16 @@ Narrative cells across nb03–nb07 should be updated additively (not rewritten) 
 **descriptive (nb03) → mechanical-alternatives-rejected (nb04–nb05) → formal DiD with identification caveats (nb07) → identified causal slope via wind-IV with Fringe placebo + solar replication (nb08).**
 
 Claims sourced from nb07 should continue to be labelled "regression coefficients under maintained assumptions that empirically fail" (per Phase B); only nb08 §6d's smooth-decline result and §6c's ISP15-specific collapse are to be cited as identified.
+
+### D7 — Firm-level localisation of the identified ATT (nb08 §7)
+
+The aggregate "Big-4" label in D4 is a composition of four non-homogeneous firms. Re-running the low-wind winsorised spec separately for each firm yields a sharper picture:
+
+- **Endesa (GE, 24 units)**: 3-sess slope $\hat\rho = +29.1$ ($p < 0.01$), ISP15 window slope $\hat\rho = -0.6$ ($p = 0.71$). **Slope contraction $\Delta \hat\rho = +29.7$.** Carries the aggregate ISP15 collapse.
+- **Iberdrola (IB, 17 units)**: all regime slopes small and imprecise ($|\hat\rho| \le 8$, none significant). No contraction.
+- **Naturgy (GN, 21 units)**: 3-sess slope $-8.5$ ($p = 0.04$), ISP15 window slope $+4.7$ ($p = 0.10$). Moves in the *opposite direction* from GE at ISP15.
+- **HC-Energía (HC, 3 units)**: too few units for reliable within-firm identification.
+
+**Refined identified claim.** The causal effect of ISP15 on low-wind strategic responsiveness is concentrated in Endesa specifically. The aggregate $\approx +17$ MWh/unit-day per GWh that §6c reports for Big-4 is an averaged number that includes a near-zero IB contribution and an opposite-sign GN contribution. The identified ATT is therefore **Endesa's slope contraction of $\approx +30$ MWh/unit-day per GWh between the 3-sess regime and the ISP15 window**, not a uniform Big-4 response.
+
+This is consistent with the Ito–Reguant 2016 precedent: in pre-2007 Spain they also identified Endesa's strategic wedge as separable and different in sign/magnitude from Iberdrola's. The per-firm identification is a natural refinement once the day-level exclusion restriction (wind surprise $\perp$ firm strategy by construction, modulo strategic bidding) holds — and the restriction is unchanged from the aggregate analysis. Narrative cells citing "Big-4 strategic responsiveness collapses at ISP15" should be read as "Endesa's strategic responsiveness collapses at ISP15; the other Big-4 firms show no such pattern, and Naturgy moves oppositely." What opens Naturgy's opposite-direction response is a question for future work (different DA-imbalance strategy; hydro-heavier portfolio; unit composition shift across 2024).
