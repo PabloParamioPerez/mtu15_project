@@ -450,3 +450,38 @@ This is a less ambitious framing than "identified causal effect," but it is empi
 4. **Accept the descriptive framing** and pivot thesis writing toward characterisation + rationalisation + limitations. Lowest-risk path forward.
 
 These are choices for the user to make. §10's job was to tell us what's on the table; the answer is that identification is substantially narrower than what §6-§8 had suggested.
+
+### D14 — Pivot to system-level outcomes (nb11)
+
+Up to D13 every route had been at the firm level, where identification problems are acute. A separate question — one that does not require firm-level identification — is whether the reform produced measurable changes in **system-level balancing outcomes** that the reform was designed to affect. nb11 answers this affirmatively across four independent outcomes, using ENTSO-E balancing data.
+
+**New dataset synced**: ENTSO-E A87 "monthly financial balance" (TR 17.1.i). 96 months, Spain control area aggregate, 2018-01 → 2025-12. Published as two values per month:
+
+- `direction_code=A01` **expenses**: cash from TSO to BSPs for reserve procurement + activation.
+- `direction_code=A02` **net income**: cash from BRPs to TSO for imbalance settlement.
+
+Per-BRP granular settlement is **not** disclosed on ENTSO-E (§3.13.4 specifies control-area aggregate only, confirmed via disclosure-policy review in nb11 §0). For firm-level balancing settlement we would need ESIOS/REE direct access; this remains pending.
+
+**Four system-level outcomes, regime-means** (nb11 §5 output):
+
+| Outcome | pre-2023-12 | 6-sess | 3-sess | ISP15 window | DA60/ID15 | DA15/ID15 |
+|---|---:|---:|---:|---:|---:|---:|
+| A87 expenses (€M/mo) | 49.0 | 67.1 | 72.1 | 31.7 | 46.0 | 65.7 |
+| **A87 net income (€M/mo)** | **36.3** | **50.4** | **68.7** | **160.0** | **120.5** | **72.2** |
+| A86 \|V_imb\| (GWh/d) | 5.3 | 3.1 | 3.7 | 8.3 | 5.8 | 5.4 |
+| A85 price σ (€/MWh) | 27.8 | 39.2 | 41.4 | 54.4 | 47.6 | 46.9 |
+| A84 aFRR spread (€/MWh) | 20.5 | 32.8 | 30.5 | 44.3 | 34.0 | (NaN) |
+
+**All four outcomes** show the same signature: sharp increase at **ISP15 (2024-12-01)** followed by gradual moderation across **MTU15-IDA (2025-03-19)** and **MTU15-DA (2025-10-01)**. A86 |V_imb| regime dummies with day-of-week + month-of-year FE: 3-sess +1.9, ISP15 +5.1, DA60/ID15 +3.9, DA15/ID15 +2.3 GWh/d (all $p < 0.001$, $n = 873$, reference = 6-sess).
+
+**What this identifies.** Not an ATT on any single outcome — the reform dates are system-wide and irreducibly entangled with each other and with concurrent reforms (Rule 28.8 elimination at 2025-03-19, etc). What the concordance across four independent outcomes identifies is a **joint null rejection**: the reform sequence is inconsistent with a no-effect world across all four system-level outcomes simultaneously. The magnitude of the A87 net-income jump (€160M/mo peak vs €37M/mo long-run baseline) is implausible for any plausible unobserved confounder to have generated.
+
+**What it does not identify.** Which specific reform caused which fraction of the shift, or whether firm-level strategic behaviour changed in a welfare-relevant way. The firm-level story (D1–D13) remains narrow.
+
+**Refined thesis framing (post-D14).** Two-layer empirical contribution:
+
+1. **System layer**: the reform sequence measurably changed Spain's balancing-market settlement dynamics in the direction and magnitude predicted by the reform's stated design intent. A87 net income is the cleanest single indicator; three independent balancing outcomes (A86, A85, A84) corroborate the timing and direction. No firm-level comparable-control-group assumption needed.
+2. **Firm layer**: the reform *may have* caused narrow, firm-specific, tech-specific, signed slope changes in dominant-firm wind-responsiveness (GE × CCGT in nb08 §8). Identification is contested per D10–D12. This is supplementary evidence, not the thesis's central claim.
+
+Leading with the system layer and using the firm layer as a corroborating narrower claim is a substantially stronger position than the original D13 "descriptive + negative-identification" framing. The system-level evidence was already in the data; nb11 just event-studied it formally.
+

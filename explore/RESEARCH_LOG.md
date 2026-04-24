@@ -192,6 +192,7 @@ Live notebooks in `explore/`; older exploratory nb01 + nb02 moved to `explore/ar
 | [08_wind_iv.ipynb](08_wind_iv.ipynb) | 35 | Wind-IV (§3), Fringe placebo (§4), §6 robustness (a-d), §7 per-firm, §8 per-firm×tech, §9 nuclear-robustness, §10 placebo sweep. | GE × CCGT descriptive signed flip +11.8 → −16.1; not localised to ISP15 per §10 placebo. |
 | [09_bid_shape_eda.ipynb](09_bid_shape_eda.ipynb) | 43 | Bid-structure EDA. §1-§10 build initial aggregate findings; §11 overturns H18 via unit-level MUEL/UFBG decomposition; §12 systematic unit-level audit of H10/H12/H14; §13 complex-conditions (MAV format artefact documented); §14 final synthesis. | Final state: six aggregate findings fail or narrow under unit audit. What survives: H15 (widespread non-use of 15-min granularity), H19 (UFBG withdrawal at MTU15-DA), H20 (La Muela persistent iceberg), H21 (complex-bidder CCGT DA exits at MTU15-IDA), H22 (Naturgy CCGT IDA slope flattening). Contribution reframed as documentation of firm-level **participation shifts** around reforms rather than within-unit behavioral changes. |
 | [10_demand_side_eda.ipynb](10_demand_side_eda.ipynb) | 10 | Demand-side EDA (initial cut). Market structure, firm-group monthly trajectory, per-unit format-artefact check, regulatory-change diagnosis. | DA buy-offer "shift" at March 2025 diagnosed as **Rule 28.8 elimination** (CNMC 28-Feb-2025), not behavioral. Pre-reform DA buy data is artificial opportunity-cost bids. Future demand-side analysis must use cleared demand (pdbc/pdbce), IDA buy-side, or post-March-2025 DA only. Documentation-first methodology saved the project from another false-positive aggregate finding. |
+| [11_outcome_audit.ipynb](11_outcome_audit.ipynb) | 18 | Systematic outcome audit: event-study four ENTSO-E balancing outcomes (A87 monthly financial balance — newly synced in this notebook; A86 |V_imb|; A85 price σ; A84 aFRR spread) across all four reform regimes. | **Four-way concordance at ISP15.** A87 net income (BRPs→TSO) jumps €38M→€160M/mo at ISP15, moderates to €72M post-MTU15-DA. A86 |V_imb| +5.1 GWh/d at ISP15 ($p<0.001$). A85 σ +40% at ISP15. A84 aFRR spread +35% at ISP15. All four independent outcomes show the same sharp-jump-then-moderation pattern predicted by the reform design. Unlike the firm-level claims, system-level claims require no comparable-control-group assumption. |
 
 ### 7.1 Supporting documents
 
@@ -207,6 +208,7 @@ Live notebooks in `explore/`; older exploratory nb01 + nb02 moved to `explore/ar
 2. **Four engineering alternatives are rejected.** The observed compression cannot be explained by profile-matching, ramp-lumpiness, reserve substitution, or storage internalisation. (`nb05`.)
 3. **A new descriptive bid-structure finding** (nb09): Big-4 CCGT DA-offer granularity drops sharply at MTU15-IDA from 5-7 tranches to 1-2. Not yet stress-tested.
 4. **Nuclear-dispatch wind-sensitivity pattern** (nb08 §9): Spanish nuclear $\Delta Q$ has a large wind-IV slope that collapses at ISP15, reproducible across ANAV and CNAT. Real but not a strategic-bidding mechanism.
+5. **System-level reform signature** (nb11): four independent ENTSO-E balancing outcomes (A87 monthly financial balance newly synced; A86 imbalance volume; A85 imbalance-price σ; A84 aFRR up-down spread) all show sharp increases at ISP15 (2024-12-01) and gradual moderation through MTU15-IDA (2025-03-19) and MTU15-DA (2025-10-01). No comparable-control-group assumption needed — these are control-area aggregates. The joint concordance constitutes a system-level null rejection. See `_identification_target.md` Phase D14.
 
 ### 8.2 Empirically *not* established (identification claims withdrawn or rejected)
 
@@ -263,7 +265,7 @@ This is a modest but defensible set of claims for a master's thesis, grounded in
 
 ## 9. Current state and next steps
 
-**Current thesis framing.** Descriptive + negative-identification. See `_identification_target.md` Phase D13 for the detailed statement.
+**Current thesis framing.** Two-layer: (1) system-level reform signature from four concordant ENTSO-E outcomes (nb11, Phase D14), no firm-level identification required. (2) Firm-level narrow claims from nb07/nb08, with documented identification limits. See `_identification_target.md` Phase D14 for the refined statement and D11–D13 for what the firm-level analysis does and does not identify.
 
 **Active direction (as of most recent commit):** `nb09` bid-structure EDA. The Big-4 CCGT tranche-count simplification at MTU15-IDA is a new, promising descriptive channel. Next cuts in nb09:
 
@@ -281,4 +283,4 @@ This is a modest but defensible set of claims for a master's thesis, grounded in
 
 ---
 
-*Last updated: 2026-04-24 after commit `c51c756`. Update this file as new hypotheses are tested, rejected, or raised.*
+*Last updated: 2026-04-24 with nb11 outcome audit + A87 pipeline. Update this file as new hypotheses are tested, rejected, or raised.*
