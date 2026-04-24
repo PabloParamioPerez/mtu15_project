@@ -74,7 +74,7 @@ Between June 2024 and October 2025, Spain ran four sequential reforms progressiv
 
 | ID | Proposition | Status |
 |---|---|---|
-| **H_theory** | Two-channel model ($\alpha_r$ imbalance-gaming + $\Phi(\lambda,\beta,b_{21})$ ramp-thinness) rationalises the descriptive pattern | [CONSISTENT, not separately identified] `theory/granularity_extension.tex`. Structurally coherent; neither channel has a cleanly identified empirical counterpart after nb07/nb08 rigor checks. |
+| **H_theory** | Two-channel model ($\alpha_r$ imbalance-gaming + $\Phi(\lambda,\beta,b_{21})$ ramp-thinness) rationalises the descriptive pattern | **[DEPRECATED 2026-04-24]** archived to `attic/theory_granularity_extension/`. Predicted intensive-margin responses that aren't supported by the data (see nb09 §11-§12 unit-level audit). Thesis narrative pivoted to extensive-margin vs intensive-margin firm responses to reform sequence, for which this model is orthogonal. Historical references in nb03-09 synthesis cells left intact as point-in-time context. |
 
 ## 5. Methods attempted
 
@@ -196,7 +196,7 @@ Live notebooks in `explore/`; older exploratory nb01 + nb02 moved to `explore/ar
 ### 7.1 Supporting documents
 
 - [`_identification_target.md`](_identification_target.md) — working identification narrative (Phase A1–A5 articulation, Phase B audit of nb07, Phase C decision, Phase D1–D13 wind-IV closure and revisions).
-- `theory/granularity_extension.tex` — two-channel theoretical model rationalisation.
+- `attic/theory_granularity_extension/granularity_extension.tex` — two-channel theoretical model. **DEPRECATED 2026-04-24**. Intensive-margin predictions not empirically supported; not load-bearing.
 - `CLAUDE.md` — project-root coding conventions and data-family catalogue.
 
 ## 8. What this project has and has not established
