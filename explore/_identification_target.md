@@ -485,3 +485,47 @@ Per-BRP granular settlement is **not** disclosed on ENTSO-E (§3.13.4 specifies 
 
 Leading with the system layer and using the firm layer as a corroborating narrower claim is a substantially stronger position than the original D13 "descriptive + negative-identification" framing. The system-level evidence was already in the data; nb11 just event-studied it formally.
 
+### D15 — Structural markup + bid/liquidity/revenue (nb12 + nb13)
+
+Three-day scope expansion (2026-04-25) closed seven ✗ rows of the outcome-coverage matrix using only OMIE/ENTSO-E public data:
+
+**Structural markup (nb12)**. Cournot-Nash Lerner index per firm $i$:
+$$L_i = (p^*-MC_i)/p^* \approx q_i / (p^* \cdot (1-s_i) \cdot |\partial S/\partial p|)$$
+Aggregate supply slope $|\partial S/\partial p|$ from local finite-difference on `curva_pbc` (±€10/MWh window), firm shares from `pdbce`. Computed at hourly resolution across 2018-01 → 2026-01.
+
+Key finding: **GE median Lerner peaks at DA60/ID15**:
+
+| Regime | GE median L | GE fixed-share L (pre-IDA s_i) |
+|---|---:|---:|
+| pre-IDA | 5.2% | 5.2% |
+| 3-sess | 24.0% | 15.7% |
+| ISP15 window | 19.1% | 14.8% |
+| DA60/ID15 | **35.1%** | **24.5%** |
+| DA15/ID15 | 10.3% | 7.0% |
+
+The fixed-share decomposition isolates slope-driven from compositional Lerner change. GE's Lerner rises ~5× from pre-IDA to DA60/ID15 even holding share constant — a genuine market-power increase during the asymmetric-granularity window, closed at MTU15-DA. IB shows a smaller directionally-similar pattern. GN/HC Lerner movements are dominated by bilateral-contract reallocation (share collapse post-Rule-28.8-elimination).
+
+**Bid-level IDA offer prices (nb13 P2)**. Sell-side bid-weighted-average IDA offer price per firm × regime. GE: pre-IDA €103/MWh → 3-sess **€348** → ISP15 €332 → DA60/ID15 €133 → DA15/ID15 €83. A 3.4× offer-price jump at the IDA reform, sustained through the ISP15 window, moderating only at MTU15-DA. Consistent with firms bid-shading up in IDA as ISP15 raised the cost of imbalances.
+
+**XBID liquidity (nb13 P4)**. Orders/hour rises 15× from pre-IDA (921) to DA15/ID15 (13,868); trades/hour rises ~7×; fill rate drops 5.2%→2.7% (more unmatched orders as granularity finer); trade-price SD peaks at DA60/ID15 (€11.3/MWh) and moderates to €8.5/MWh at MTU15-DA. Liquidity pattern concordant with structural-markup pattern: peak friction at DA60/ID15, normalization at MTU15-DA.
+
+**Firm revenue (nb13 P5)**. Bilateral-contract reallocation at Rule 28.8 elimination (2025-03-19) concentrates DA revenue in Endesa's BRP. GE DA revenue doubles (€3.2→€6.2M/day) while GN collapses (-65%) and HC collapses (-75%). IB grows modestly. Compositional, not a pure strategic change.
+
+**ES-FR day-ahead price convergence** (data synced, preliminary look). Spain-France absolute DA-price spread: pre-IDA €34.5/MWh → ISP15 €26.4 (tightest) → DA15/ID15 €32.8. Coupling % (hours with |spread|<€1) peaked pre-reform at 6.6%, dropped to 4-5.8% post-reform. Reform did not tighten ES-FR coupling; if anything, made it more volatile. Data at `data/processed/entsoe/prices/fr_da_all.parquet` for further analysis.
+
+### D16 — Three-layer thesis framing, finalized
+
+After nb11 + nb12 + nb13, the thesis has three independent empirical layers, each identifying something different:
+
+1. **System layer (nb11)**: reform changed aggregate balancing settlement flows. A87 €38→€160→€72M/mo; A86 |V_imb| +5.1 GWh/d at ISP15; A85 σ +40%; A84 spread +35%. Four-way concordance at ISP15. Control-area aggregates — no identification assumption needed.
+2. **Structural layer (nb12)**: reform changed implied firm-level market power. GE Lerner 5%→35%→10% across regimes, even with fixed-share decomposition. Cournot-FOC, no control group.
+3. **Behavioural layer (nb13)**: reform changed bid prices (+238% GE IDA), liquidity (orders ×15), revenue allocation (GE +93%, GN -65%). Three independent outcomes all peak at DA60/ID15.
+
+**The peak-friction window is DA60/ID15** (post-MTU15-IDA, pre-MTU15-DA). In this window, firms had 15-min intraday trading tools but still faced 60-min day-ahead clearing — an asymmetric-granularity gap that created strategic arbitrage opportunities. MTU15-DA (2025-10-01) closed the gap and efficiency recovered.
+
+**Central thesis claim** (supported by layers 1-3 jointly):
+
+> The Spanish MTU15 reform sequence had measurable, concordant, and economically meaningful effects on balancing settlement, firm-level market power, and wholesale market behaviour. The peak of strategic friction occurred in the asymmetric-granularity window between MTU15-IDA and MTU15-DA; the reform completing at MTU15-DA restored the system close to pre-reform efficiency on most outcomes while leaving the ISP15-driven settlement-flow changes in place.
+
+This is the finalized framing for the thesis body.
+
