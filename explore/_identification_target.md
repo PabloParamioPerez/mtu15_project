@@ -403,3 +403,50 @@ The **Big-4 aggregate claim** should therefore be withdrawn as an identification
 
 **Withdrawn:**
 - Big-4 aggregate "ISP15 strategic-responsiveness collapse of $\approx +15$." Does not survive §9 ex-nuclear robustness. Was nuclear-variance-weighted, not mechanism-driven.
+
+### D12 — Placebo test for the GE × CCGT signed flip fails (nb08 §10)
+
+The GE × CCGT signed flip was the last remaining identification candidate: 5 units, signed slope change across the ISP15 boundary, plausibly Ito–Reguant. To pin it to ISP15 rather than to a spurious time-series feature, nb08 §10 runs a placebo sweep restricted to the 3-sess + ISP15 combined window (2024-06-14 to 2025-03-18, 212 GE-CCGT low-wind winsorised obs across 5 units). A two-regime pre-$T$/post-$T$ spec slides $T$ weekly through [2024-08-13, 2025-01-18], computing $\Delta(T) = \hat\beta_{\text{pre}}(T) - \hat\beta_{\text{post}}(T)$ for each candidate boundary. The real ISP15 date is $T = 2024$-$12$-$01$.
+
+| Quantity | Value |
+|---|---:|
+| Real ISP15 $\Delta$ | $+18.42$ |
+| Placebo mean $\Delta$ | $+7.05$ |
+| Placebo median $\Delta$ | $+16.89$ |
+| Placebo std | $20.55$ |
+| Placebo $\|\Delta\|$ range | $[2.99, 41.73]$ |
+| Empirical p ($\|\Delta(T_{\text{placebo}})\| \ge \|\Delta(\text{ISP15})\|$) | $0.273$ |
+
+**Six of 22 placebo boundaries produce $|\Delta|$ at least as large as the real ISP15 boundary.** The real $\Delta$ sits at the 83rd percentile of the placebo distribution — close to the upper tail but not outside the range. The signed flip of GE × CCGT's wind-IV slope is therefore **not** uniquely localised to the ISP15 calendar date; sliding the "reform" to arbitrary other dates inside the same 3-sess + ISP15 window produces flips of comparable magnitude.
+
+The nominal §10 $\Delta$ (+18.4) is smaller than §8's $\Delta$ (+27.9) because the two specs differ: §8 uses a 5-regime interacted spec with conditioning on other regime dummies; §10 uses a 2-regime pre-$T$/post-$T$ split within a single contiguous window. Both are internally valid, but the §10 spec is what admits a clean placebo sweep. The qualitative conclusion is unchanged: signed flips of magnitude 15–40 at arbitrary fake boundaries in this window.
+
+### D13 — No firm-level mechanism finding is cleanly identified; the thesis needs reframing
+
+Combining D1–D12, every route to "a single firm's strategic behaviour was causally changed by a specific reform" has surfaced identification problems:
+
+- **nb07 formal DiD**: pre-trends fail, analytical placebos fail, randomisation inference fails, treatment-date sweep peaks months before ISP15. The $+217$ coefficient is not an ATT.
+- **nb08 aggregate wind-IV**: works under the exclusion restriction but §9 shows the aggregate ISP15 slope contraction is nuclear-variance-weighted and disappears ex-nuclear.
+- **nb08 GE × CCGT wind-IV**: the signed flip is real within the 3-sess + ISP15 combined window but §10 shows it is not localised to the ISP15 calendar boundary. Placebo sweep produces comparable flips at arbitrary fake dates.
+
+**No cell in the project provides cleanly-identified causal evidence for a firm-level ATT of any single reform.**
+
+What the project DOES have, rigorously:
+
+1. **Descriptive patterns** (nb03, nb04, nb06 descriptive cells): reform-window footprints on the price wedge, within-hour price dispersion, firm-level $|\Delta Q|$ compression, bid-level conduct-gap collapse, and system-level balancing dynamics. All well-documented.
+2. **Engineering alternatives rejected** (nb05): profile-matching, ramp-lumpiness, reserve substitution, storage internalisation — all descriptively inconsistent with the observed compression. Leaves a *behavioural* residual.
+3. **Multiple identification strategies attempted, with honest documentation of why each fails.** This is a non-trivial contribution: the next researcher working on Spanish market-power regressions in reform windows has a map of which common strategies don't work and why.
+4. **A theoretical rationalisation** (`theory/granularity_extension.tex`) consistent with the descriptive patterns.
+
+**The defensible thesis framing is descriptive + negative-identification.** Not "ISP15 caused Big-4 strategic responsiveness to decline" but "the Spanish reform sequence produced a reform-window regime shift in dominant-firm descriptive behaviour that is inconsistent with four engineering alternatives; standard identification strategies (TWFE-DiD, wind-IV) run into pre-trends, anticipation, and placebo-localisation problems in this setting, so the shift is documented and rationalised but not causally identified."
+
+This is a less ambitious framing than "identified causal effect," but it is empirically honest. Master's theses can and regularly do make this kind of contribution; the contribution is the rigour, not the positive result.
+
+**What could still be tried, as speculative next steps (not yet committed):**
+
+1. **Bid-level wind-IV on GE × CCGT** (same spec with IDA wavg bid as outcome). If bid behaviour shows a flip *and* that flip survives the same placebo test, that's independent corroboration. Note: nb07 §9 already ran a unit-FE bid-level regression on all CCGT and found null.
+2. **Narrow-window RD ±60 days around ISP15** on GE × CCGT. Different identification strategy with different assumptions (continuity at the cutoff).
+3. **Alternative outcome**: instead of $\Delta Q$, use a constructed Ito–Reguant-style markup measure, or the ratio (DA quantity) / (DA + IDA buyback). Different margin, different expected signal.
+4. **Accept the descriptive framing** and pivot thesis writing toward characterisation + rationalisation + limitations. Lowest-risk path forward.
+
+These are choices for the user to make. §10's job was to tell us what's on the table; the answer is that identification is substantially narrower than what §6-§8 had suggested.
