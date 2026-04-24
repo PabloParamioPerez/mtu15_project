@@ -1,14 +1,12 @@
 # Archived exploratory notebooks
 
-These notebooks were the first-pass exploration of the OMIE dataset. They answered
-the discovery question — *what is interesting in this data?* — and the material
-they uncovered then fed into the focused thesis notebooks (`03_reform_narrative`,
-`05_engineering_decomposition`, `06_attenuation_dashboard`).
+Notebooks that were superseded by more focused or more rigorous analyses in the
+active `explore/` stack. Preserved for reference; do not expect them to stay up
+to date with the thesis narrative.
 
-They are preserved here for reference. Do not expect them to stay up to date with
-the thesis narrative; they were deliberately broad, not argumentative.
-
-| File | Original role | Superseded by |
+| File | Original role | Status |
 |---|---|---|
-| `01_market_statistics.ipynb` | Price spot-validation, structural statistics, within-day and monthly profiles, IDA / XBID / interconnection overview | Context only; the thesis does not use these directly. Cite cells if needed. |
-| `02_bidding_behaviour.ipynb` | Offer-type anatomy, DA↔IDA spread, program reconciliation, bid-price anatomy, XBID book, rebid anatomy, strategic cross-market behaviour | `06_attenuation_dashboard.ipynb` runs the four strategic tests (rent, conduct slope, withholding gap, Ito–Reguant Δ Q slope) on the nb03 regime grid × Big-4/fringe split; the remaining exploratory content (§1, §5, §7) is not thesis-critical and stays here as reference. |
+| `01_market_statistics.ipynb` | Price spot-validation, structural statistics, within-day and monthly profiles, IDA / XBID / interconnection overview | First-pass EDA. Context only; thesis does not cite directly. |
+| `02_bidding_behaviour.ipynb` | Offer-type anatomy, DA↔IDA spread, program reconciliation, bid-price anatomy, XBID book, rebid anatomy, strategic cross-market behaviour | First-pass EDA. Content folded into `03_reform_narrative`, `07_main_regression`, and `13_bid_liquidity_revenue` during consolidation. |
+| `04_imbalance_balancing.ipynb` | Descriptive EDA of ENTSO-E balancing families (A85 prices, A86 volumes, A84 activated, A69 forecast, A74 revisions) + §8 H3 reserve-substitution test | Archived 2026-04-25. Headline descriptive content on A85/A86/A84/A69 is now formally event-studied in `11_outcome_audit`. The unique §7 intraday-forecast-revision analysis and §8 H3 test produced no thesis-grade finding and are preserved here. |
+| `06_attenuation_dashboard.ipynb` | Descriptive CCGT conduct-gap collapse (Big-4 − Fringe) at MTU15-IDA; within-hour DA price dispersion; bid-level Ito–Reguant slope | Archived 2026-04-25. Central CCGT conduct-gap finding absorbed by unit FE in `07_main_regression` §9 (no within-unit shift; aggregate collapse is composition). Bid-level behaviour covered more cleanly by `13_bid_liquidity_revenue` §1. |
