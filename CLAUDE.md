@@ -62,15 +62,9 @@ Before adding or changing a parser, read at least one neighbouring family's pars
 These dates appear as constants (`IDA_REFORM`, `INTRADAY_REFORM`, `DAY_AHEAD_REFORM`) in all notebooks and scripts.
 
 ## Exploratory notebooks
-All notebooks live in `explore/` and are for exploration only — not thesis output. Run with the `mtu15-project` kernel.
+All notebooks live in `explore/` and are for exploration only — not thesis output. Run with the `mtu15-project` kernel. See `explore/README.md` for the current notebook map and `CLAIMS_LEDGER.md` for the claim each notebook produces.
 
-| Notebook | Contents |
-|---|---|
-| `01_market_statistics.ipynb` | Price spot-validation, aggregate curve checks, structural statistics (within-day profile, intra-hour dispersion, monthly prices, IDA prices across regimes), continuous intraday volume, accumulated programs, DA offers by technology, XBID order book, interconnection capacity, XBID trades |
-| `02_bidding_behaviour.ipynb` | Offer type anatomy (DA + IDA), DA↔IDA price spread and arbitrage, program reconciliation (who re-trades and how much), bid price anatomy and market power, XBID order book and iceberg orders |
-| `03_reform_narrative.ipynb` | Reform effects across three regimes: DA-IDA price wedge, within-hour price dispersion (MTU15 signature), firm repositioning ΔQ (dominant vs fringe, by technology). Builds the Ito-Reguant (2016) empirical objects for the Spanish market. |
-
-Do not duplicate analysis across notebooks. Check what is already covered before adding a new section.
+Each active notebook has a cell-1 markdown STATUS block (mirrors the script header convention). Do not duplicate analysis across notebooks; check what is already covered before adding a new section.
 
 ## External data sources
 
@@ -129,3 +123,32 @@ ESIOS `REE_ActualGen_` / `REE_AggGenOutput`; we use ENTSO-E.
 - Lint: `uv run ruff check .`
 - Test: `uv run pytest`
 - Type-check: `uv run mypy src/`
+
+## Claim-status discipline
+
+The project tracks empirical claim status in `CLAIMS_LEDGER.md` at the repo root. Open economic-modelling questions live in `explore/_modelling_track.md`. Identification provenance and history is frozen in `explore/_identification_target.md` (no rewrites; appendix-grade).
+
+**Before running any new analysis, the assistant must answer in writing:**
+
+1. Which claim in `CLAIMS_LEDGER.md` does this strengthen (alive) or potentially kill (wounded)? **OR** which entry in `explore/_modelling_track.md` does this advance?
+2. If neither: stop. Do not run.
+3. If yes: estimate runtime + writing-day impact. If total > 0.5 days, stop and ask the user.
+4. Any result that changes a claim's status triggers the discipline cycle:
+   1. Update the row in `CLAIMS_LEDGER.md` (status, `Date_changed`, reason). Do not delete rows.
+   2. Update the producing script's STATUS header (the 4-line block at top).
+   3. Update the consuming notebook's synthesis cell — strikethrough dead claims, do not delete cells.
+   4. Append one dated line to `explore/RESEARCH_LOG.md`.
+5. Move a script to `scripts/analysis/attic/` only if (a) status is DEAD AND (b) no live notebook imports it. Otherwise leave in place with the `DEAD-KEPT-AS-RECORD` header. Labels are reversible; moves are not in practice.
+
+**Header convention** (one block at top of every script in `scripts/analysis/`):
+
+```
+# STATUS: ALIVE | WOUNDED | DEAD-KEPT-AS-RECORD
+# LAST-AUDIT: YYYY-MM-DD
+# FEEDS: <claim-IDs from CLAIMS_LEDGER, comma-separated>
+# CLAIM: <one-line summary>
+```
+
+For active notebooks in `explore/`, the same four fields appear as a markdown cell-1.
+
+**Status meanings.** *Alive* — passed all documented robustness checks; safe to cite. *Wounded* — survives in narrowed form; cite only with caveat. *Dead* — retracted or contradicted; do not cite as positive result, may appear in identification appendix as "attempted but failed".

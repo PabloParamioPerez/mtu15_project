@@ -37,14 +37,14 @@ natively, so we convert on demand:
 # Python: parquet → .dta  (requires pyreadstat, in pyproject.toml)
 uv run python -c "
 import pandas as pd
-df = pd.read_parquet('data/derived/reform_panel.parquet')
-df.to_stata('data/derived/reform_panel.dta', version=118, write_index=False)
+df = pd.read_parquet('data/derived/panels/reform_panel.parquet')
+df.to_stata('data/derived/panels/reform_panel.dta', version=118, write_index=False)
 "
 
 # R: parquet → .dta  (uses haven, pinned in renv.lock)
 Rscript -e "
-haven::write_dta(arrow::read_parquet('data/derived/reform_panel.parquet'),
-                 'data/derived/reform_panel.dta')
+haven::write_dta(arrow::read_parquet('data/derived/panels/reform_panel.parquet'),
+                 'data/derived/panels/reform_panel.dta')
 "
 
 # Stata → parquet  (via Mauricio Caceres' `parquet` extension)
@@ -58,7 +58,7 @@ run.
 
 ## Files in this directory
 
-- `smoke_test.do` — reads `data/derived/reform_panel.dta` (after running
+- `smoke_test.do` — reads `data/derived/panels/reform_panel.dta` (after running
   the Python conversion command above) and prints a Big-4/Fringe summary.
   Mirrors what `scripts/analysis/smoke_test.R` does for R.
 

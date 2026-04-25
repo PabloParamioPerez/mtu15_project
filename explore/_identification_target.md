@@ -1,6 +1,8 @@
-# Identification Target — Articulating Comparisons, Parameters, Assumptions
+# Identification Provenance & History
 
-Working note. Not thesis prose. Prunes over time as clarity improves.
+> **FROZEN 2026-04-25 (Phase 1 of restructure plan).** This document is the canonical narrative of how identification claims in the project narrowed from D4 aggregate wind-IV → D11 GE×CCGT → D12 placebo failure → D14 system-layer pivot → D17 seasonal/price-level correction. Thesis-appendix-grade. **No further rewrites.** Only append-only D-section additions if a future status change warrants. Live claim status: `/CLAIMS_LEDGER.md`. Active modelling track: `_modelling_track.md`.
+
+Working note (now appendix-grade). Not thesis prose. Tracks the evolution of identification thinking up to 2026-04-25; subsequent identification decisions are made via `_modelling_track.md` and recorded in `/CLAIMS_LEDGER.md`.
 
 ---
 

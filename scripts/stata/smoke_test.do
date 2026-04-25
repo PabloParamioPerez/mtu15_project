@@ -8,17 +8,17 @@
 * If you symlink stata-mp onto PATH (see scripts/stata/README.md), just:
 *   stata-mp -b -q do scripts/stata/smoke_test.do
 *
-* Expects data/derived/reform_panel.dta to exist. Build it first with:
-*   uv run python -c "import pandas as pd; pd.read_parquet('data/derived/reform_panel.parquet').to_stata('data/derived/reform_panel.dta', version=118, write_index=False)"
+* Expects data/derived/panels/reform_panel.dta to exist. Build it first with:
+*   uv run python -c "import pandas as pd; pd.read_parquet('data/derived/panels/reform_panel.parquet').to_stata('data/derived/panels/reform_panel.dta', version=118, write_index=False)"
 
 clear all
 set more off
 
-use "data/derived/reform_panel.dta", clear
+use "data/derived/panels/reform_panel.dta", clear
 
 display ""
 display "Stata smoke test — Stata " c(version) ", `c(stata_version)' running"
-display "Loaded: data/derived/reform_panel.dta"
+display "Loaded: data/derived/panels/reform_panel.dta"
 display "Observations: " c(N)
 display "Variables:    " c(k)
 

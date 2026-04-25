@@ -1,4 +1,8 @@
 #!/usr/bin/env Rscript
+# STATUS: ALIVE
+# LAST-AUDIT: 2026-04-25
+# FEEDS: (env test)
+# CLAIM: Verify R + renv + arrow stack by loading derived panel and printing summary
 # smoke_test.R
 # Verifies the R + renv + arrow stack by loading a derived panel and
 # printing a short summary. Intended to confirm the R environment is
@@ -14,11 +18,11 @@ suppressPackageStartupMessages({
   library(dplyr)
 })
 
-PANEL_PATH <- "data/derived/reform_panel.parquet"
+PANEL_PATH <- "data/derived/panels/reform_panel.parquet"
 
 if (!file.exists(PANEL_PATH)) {
   stop(sprintf(
-    "Derived panel %s not found. Run nb07 §1 in Python to materialise it first.",
+    "Derived panel %s not found. Materialise it first via the panel-builder scripts in scripts/analysis/ (e.g. build_firm_lerner_panel.py).",
     PANEL_PATH
   ))
 }

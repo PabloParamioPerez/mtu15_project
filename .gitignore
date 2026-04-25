@@ -44,6 +44,18 @@ data/metadata/*.csv
 
 # Local backups
 attic/
+# But DO track scripts/analysis/attic/ as the project's "DEAD-KEPT-AS-RECORD" folder
+# (per CLAUDE.md § "Claim-status discipline"). Same for data/derived/README.md.
+!scripts/analysis/attic/
+!scripts/analysis/attic/**
+!data/derived/
+!data/derived/README.md
+data/derived/*.parquet
+data/derived/*.csv
+data/derived/*.dta
+data/derived/**/*.parquet
+data/derived/**/*.csv
+data/derived/**/*.dta
 
 # Exploratory analysis — track notebooks, ignore heavy outputs
 explore/**/.ipynb_checkpoints/
