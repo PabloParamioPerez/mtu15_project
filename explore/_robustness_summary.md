@@ -347,3 +347,200 @@ historic lows**, not the IDA-reform jump.
    text. Reconsider in week of thesis writing.
 5. **System layer (nb11) is unchanged** — A87 and other ISP15-pivoting
    findings are not subject to either confound.
+
+## 9. Within-tech decomposition: nb12 Lerner peak is mostly nuclear infra-marginal, not CCGT strategic (added 2026-04-25 afternoon)
+
+**The most important robustness finding so far.** Original nb12 Lerner
+implicitly aggregates infra-marginal nuclear/hydro with marginal CCGT.
+When restricted to CCGT-cleared volume only — the actually-marginal
+technology — the DA60/ID15 peak largely disappears.
+
+### Tech composition of Big-4 cleared volume per regime
+
+GE (Endesa), share of cleared MWh by technology, by regime:
+
+| Regime | CCGT | Hydro | **Nuclear** | Other |
+|---|---:|---:|---:|---:|
+| pre-IDA | 33.5% | 12.1% | 35.5% | 18.9% |
+| 3-sess | 4.5% | 6.1% | **89.4%** | 0% |
+| ISP15 window | 5.1% | 8.6% | **86.3%** | 0% |
+| DA60/ID15 | 3.4% | 20.6% | **75.9%** | 0% |
+| DA15/ID15 | 5.1% | 14.3% | **80.7%** | 0% |
+
+GE's selling-agent role post-IDA reform is **overwhelmingly nuclear**
+(76–90%). The "Big-4 selling agent" label hides a structural shift in
+which technology Endesa's BRP is settling. Pre-IDA Endesa's selling
+agent role was ~⅓ each of CCGT, nuclear, and other. Post-IDA it
+collapsed to ~80% nuclear.
+
+(Same pattern for HC; IB and GN show split between hydro and nuclear.)
+
+### CCGT-only Lerner — the clean strategic-markup measure
+
+Restrict $q_i$ in the Lerner formula to firm $i$'s **CCGT-cleared MW
+only**, with $s_i$ = firm $i$'s CCGT MW / total market CCGT MW. Median
+Lerner per (firm, regime), trimmed to [0,1]:
+
+| Firm | pre-IDA | 3-sess | ISP15 win | **DA60/ID15** | DA15/ID15 |
+|---|---:|---:|---:|---:|---:|
+| GE | 0.037 | 0.035 | 0.031 | **0.066** | 0.015 |
+| IB | 0.030 | 0.028 | 0.034 | 0.031 | 0.012 |
+| GN | 0.040 | 0.025 | 0.035 | 0.052 | 0.029 |
+| HC | 0.012 | 0.011 | 0.012 | 0.030 | 0.004 |
+
+Versus the original full-firm Lerner (GE pre-IDA 0.052 → DA60/ID15
+0.351). The CCGT-only Lerner is one order of magnitude smaller and
+mostly flat across regimes.
+
+### CCGT-only Lerner with price-bin FE (Spec 3) — regime contrasts vs pre-IDA
+
+| Firm | 3-sess | ISP15 win | DA60/ID15 | DA15/ID15 |
+|---|---:|---:|---:|---:|
+| GE | −0.063 | −0.071 | −0.013 | **−0.084** |
+| IB | +0.001 | +0.000 | +0.017 | **−0.026** |
+| GN | −0.071 | −0.056 | −0.041 | **−0.059** |
+| HC | −0.002 | −0.005 | +0.028 | −0.011 |
+
+(All p<0.001 with $n$ in tens of thousands per firm.)
+
+**The full-firm Lerner peak does not survive within-tech restriction.**
+GE's matched-price CCGT-Lerner is **negative** in every post-reform
+regime relative to pre-IDA (−0.013 in DA60/ID15, −0.084 in DA15/ID15).
+IB's is essentially flat with a very small DA60/ID15 elevation
+(+0.017) and a meaningful DA15/ID15 reduction (−0.026). GN is below
+pre-IDA across all regimes. Only HC shows a positive DA60/ID15 (+0.028)
+but the n is small (19) and likely noisy.
+
+### What changes for the thesis claim
+
+The structural-markup story has to be **substantially rewritten**:
+
+- **GE Lerner peak at 0.351 in DA60/ID15 was driven by composition,
+  not strategic withholding.** GE's BRP role concentrated in nuclear
+  post-IDA (76–90% of cleared volume), and the Hortaçsu-Puller formula
+  treats infra-marginal nuclear cleared MW as if strategic. When
+  restricted to actually-marginal CCGT, no peak.
+- **No clean Ito-Reguant signature** in the CCGT-only Lerner. The
+  hypothesis that CCGT was strategically withheld during the
+  asymmetric-granularity DA60/ID15 window does not survive the test
+  on the most direct measure.
+- **What MIGHT survive at the structural layer**: a uniform CCGT-Lerner
+  reduction at MTU15-DA across all four firms (GE −0.084, IB −0.026,
+  GN −0.059, HC −0.011). Direction is consistent with closure of
+  asymmetric-granularity arbitrage. But magnitude is small.
+- **System layer (nb11) and behavioural-layer XBID (nb13 §2)
+  unaffected.**
+
+### Implication for nb14 Fig 2
+
+Panel (b) of Fig 2 is now misleading without a CCGT-only counterpart.
+The price-bin-corrected contrasts (+0.318 GE, +0.135 IB) reflect mostly
+the bilateral-contract composition story, not strategic markup. Options:
+
+1. **Replace** Fig 2 panel (b) bar chart with side-by-side full-firm vs
+   CCGT-only contrasts. Honest but visually busy.
+2. **Demote** Fig 2 to appendix; promote the system-level Fig 1 (A87)
+   and behavioural Fig 3 (XBID) to the body. Lerner becomes a
+   subsidiary point.
+3. **Drop** Fig 2 entirely from thesis output.
+
+I lean toward (1) — keep the figure, show the within-tech result as
+honest robustness, frame the original full-firm Lerner as a
+"BRP-aggregated-claim" rather than a structural-markup claim.
+
+### Refined three-layer claim (post within-tech check)
+
+> The Spanish reform sequence produced concordant changes in (1)
+> aggregate balancing settlement flows, (2) wholesale market liquidity,
+> and (3) BRP-level cleared-volume composition through bilateral-
+> contract reallocation at Rule 28.8 elimination. The originally
+> claimed firm-level structural Lerner peak is largely an artefact of
+> the BRP composition shift; a within-tech CCGT-only Lerner does not
+> show a comparable peak. **The reform-attributable structural-markup
+> evidence is much weaker than initially claimed.** The system-layer
+> (nb11) and behavioural-layer (nb13 §2) findings remain robust.
+
+Reproducing: `scripts/analysis/within_tech_lerner.py`.
+
+## 10. France DA placebo — partial Spain-specificity (added 2026-04-25 afternoon)
+
+France was not subject to the Spanish 15-min reform sequence and serves
+as a control on EU-wide trends. Same regime windows (Spanish reform
+dates) applied to French DA prices.
+
+### (a) Mean DA price level by regime, ES vs FR
+
+|  | pre-IDA | 3-sess | ISP15 win | DA60/ID15 | DA15/ID15 |
+|---|---:|---:|---:|---:|---:|
+| ES mean | 80.9 | 79.3 | 99.8 | 50.9 | 55.6 |
+| FR mean | 96.9 | 61.6 | 104.2 | 44.4 | 64.3 |
+| ES Δ vs pre-IDA | −1.7 | **+18.9** | −30.0 | −25.3 |
+| FR Δ vs pre-IDA | −35.3 | **+7.4** | −52.5 | −32.6 |
+
+**Both countries' DA price levels move similarly across regimes** —
+both jump in ISP15 window (winter 2024-25 high prices), both fall in
+DA60/ID15 and DA15/ID15. ES being "cheaper" pre-IDA and "more
+expensive" post-IDA at signed-spread level is interesting but the
+direction of change is the same. **DA price level is not a clean Spain-
+specific signal.**
+
+### (b) Within-day price SD (volatility within each calendar day)
+
+|  | pre-IDA | 3-sess | ISP15 | DA60/ID15 | DA15/ID15 |
+|---|---:|---:|---:|---:|---:|
+| ES mean within-day SD | 14.0 | 27.6 | 27.5 | 33.7 | 25.4 |
+| FR mean within-day SD | 20.4 | 26.6 | 26.0 | 29.2 | 25.4 |
+| Δ ES vs pre-IDA | +13.7 | +13.6 | **+19.7** | +11.4 |
+| Δ FR vs pre-IDA | +6.2 | +5.6 | **+8.8** | +5.0 |
+
+Both rise post-reform, ES more than FR. **The ES-specific excess is
+≈+5–10 €/MWh** (ES Δ minus FR Δ). DA60/ID15 has the largest ES-specific
+excess (+19.7 vs +8.8 = +10.9 EU-controlled). Direction-consistent with
+mechanism story, magnitude smaller than uncontrolled ES change suggests.
+
+### (c) Within-month price SD (variability across hours within a month)
+
+|  | pre-IDA | 3-sess | ISP15 | DA60/ID15 | DA15/ID15 |
+|---|---:|---:|---:|---:|---:|
+| ES avg | 23.2 | 38.0 | 44.4 | 39.9 | 36.7 |
+| FR avg | 34.7 | 35.5 | 43.8 | 36.0 | 38.3 |
+
+**Cleanest Spain-specific finding.** ES within-month SD nearly **doubles**
+(23 → 38–44) across reforms; FR is essentially flat (35 → 35–44). The
+gap closes only in DA15/ID15 where both are around 37. This suggests
+the reform sequence did increase Spanish price-distribution dispersion
+in a way that isn't matched by EU-wide trends.
+
+### (d) ES − FR spread, signed and absolute
+
+| Regime | mean signed | mean \|spread\| | SD spread |
+|---|---:|---:|---:|
+| pre-IDA | −15.8 | 34.5 | 76.5 |
+| 3-sess | +18.1 | 32.8 | 38.6 |
+| ISP15 window | −4.3 | **26.4** | 37.5 |
+| DA60/ID15 | +7.8 | 33.5 | 43.5 |
+| DA15/ID15 | −9.9 | 32.8 | 46.1 |
+
+ISP15 window had the tightest coupling (lowest abs spread). Direction
+of signed spread varies across regimes — Spain switched from cheaper-
+than-FR pre-IDA to more-expensive-than-FR in 3-sess and DA60/ID15.
+
+### What survives the FR placebo
+
+1. **A87 financial balance (nb11 §1)** — Spain-specific by definition
+   (control-area metric); FR has its own A87 we haven't compared but
+   the underlying ISP15 driver (intra-hour netting elimination) is a
+   Spanish reform.
+2. **Within-month price dispersion** — clearly Spain-specific.
+3. **XBID liquidity (nb13 §2)** — France isn't on XBID Iberian product
+   list, so direct comparison N/A. The 15× growth in orders is
+   tightly tied to the MTU15 product introduction in the SIDC, which
+   is Spain-specific.
+
+### What's weakened
+
+4. **DA price level changes** — track France closely, EU-wide trend.
+5. **Within-day price SD** — rises in both countries; ES-specific
+   excess is +5–10 €/MWh (real but smaller than raw change suggests).
+
+Reproducing: `scripts/analysis/france_da_placebo.py`.
