@@ -1203,3 +1203,129 @@ modelable as a firm-specific adjustment cost or strategic choice.
    ~50%.
 
 Reproducing: `scripts/analysis/dispersion_15min_check.py`.
+
+---
+
+## NEW: ESIOS C2 settlement data — segment decomposition (2026-04-25 evening)
+
+After scaffolding the ESIOS pipeline and syncing 28 months of C2
+definitive settlement (2024-01 to 2026-04), three new findings emerge.
+
+### (A) ESIOS impdsvqh ↔ ENTSO-E A87: STRUCTURAL CHANGE at MTU15-DA
+
+ESIOS `impdsvqh` (quarter-hourly system imbalance €) summed monthly
+vs ENTSO-E A87 monthly net income (BRPs → TSO):
+
+| Month | ESIOS \|imp\| (€M) | ENTSO-E A87 income (€M) | Ratio A87/ESIOS |
+|---|---:|---:|---:|
+| 2024-12 (ISP15 first month) | 105 | 194 | **1.85** |
+| 2025-01 | 86 | 150 | 1.74 |
+| 2025-02 | 76 | 144 | 1.88 |
+| 2025-03 | 76 | 153 | **2.02** |
+| 2025-04 (DA60/ID15 starts) | 37 | 79 | 2.13 |
+| 2025-05 | 32 | 65 | 2.06 |
+| 2025-06 | 88 | 172 | 1.95 |
+| 2025-07 | 68 | 132 | 1.94 |
+| 2025-08 | 70 | 148 | 2.10 |
+| 2025-09 | 62 | 126 | 2.04 |
+| **2025-10 (MTU15-DA starts)** | **69** | **66** | **0.95** |
+| 2025-11 | 72 | 73 | 1.01 |
+| 2025-12 | 78 | 78 | 1.00 |
+
+**The ratio A87/ESIOS jumps from ~2× to ~1× exactly at MTU15-DA.**
+This is a sharp structural change. A87 net income includes both (i)
+direct imbalance settlement (= ESIOS impdsvqh) and (ii) other BRP→TSO
+flows (likely reserve-cost allocation via cdvbrp/ccbbrp, charged to
+BRPs in proportion to their deviation share).
+
+The 2× ratio in Dec 2024 - Sep 2025 means **about half of A87 net
+income in the asymmetric-granularity window was reserve-cost
+allocation**, not direct imbalance settlement. At MTU15-DA the reserve-
+cost component drops sharply, possibly because (a) less reserve
+activation needed once DA matches IDA granularity, (b) regulatory
+change in how reserves are allocated post-MTU15-DA, or (c) operación
+reforzada CCGT commitment via P.O. 3.2 technical-restrictions
+(out-of-market) doesn't pass to BRP cost allocation.
+
+**This significantly refines the A87 finding.** The "€38 → €160 → €72"
+swing is actually:
+- ~Half is direct imbalance settlement (reform-mechanism effect)
+- ~Half pre-MTU15-DA was reserve-cost allocation (operational effect)
+
+The reform-attributable mechanism is smaller than the headline
+suggested but still real (the direct imbalance component went €38 →
+€105 → €78, smaller swing).
+
+### (B) Spanish imbalance is dominated by RETAILERS and WIND
+
+Per-segment share of total |imbalance MWh| across post-ISP15 regimes:
+
+| Segment | ISP15 win | DA60/ID15 | DA15/ID15 |
+|---|---:|---:|---:|
+| **Free-market retailers** | 35% | **42%** | 37% |
+| **RE Wind** | 32% | 25% | 31% |
+| Conv in regulation zone | 14% | 13% | 14% |
+| Conv outside reg zone | 10% | 9% | 9% |
+| COR retailers | 5% | 4% | 4% |
+| RE Thermal | 4% | 5% | 4% |
+| RE Hydro | 1% | 2% | 2% |
+| Cross-border | 0% | 0% | 0% |
+
+**Free-market retailers contribute 35-42% of system imbalance volume**;
+**wind 25-32%**. These two segments alone account for **65-75% of all
+Spanish imbalance**. The Big-4 dominant CCGT + hydro analysis we've
+been doing is on the **conventional-in-regulation-zone segment which
+is only 13-14% of system imbalance**.
+
+This is a perspective-shifter for the thesis. The bulk of imbalance
+volume is NOT from strategic Big-4 bidding behaviour — it's from
+retailer load-forecasting error and wind variability. Reform effects
+on those segments may matter more than reform effects on Big-4 strategic
+behaviour.
+
+### (C) DA60/ID15 → DA15/ID15 segment shifts
+
+Total |imbalance| GWh across DA60/ID15 (~6 months) vs DA15/ID15 (~6
+months):
+
+| Segment | DA60/ID15 GWh | DA15/ID15 GWh | Δ% |
+|---|---:|---:|---:|
+| RE Wind | 1,767 | 2,041 | **+16%** |
+| Conv in regulation zone | 868 | 947 | +9% |
+| Conv outside reg zone | 641 | 609 | −5% |
+| COR retailers | 258 | 248 | −4% |
+| Free-market retailers | 2,929 | 2,504 | **−15%** |
+| RE Hydro | 134 | 109 | −18% |
+| RE Thermal | 361 | 239 | **−34%** |
+
+**MTU15-DA shifts imbalance composition:** wind imbalance UP +16%,
+free-market retailer imbalance DOWN -15%, RE thermal DOWN -34%,
+conventional roughly flat.
+
+**Caveats:**
+- DA60/ID15 = Apr-Sep 2025 (spring-summer). DA15/ID15 = Oct 2025 - Apr
+  2026 (autumn-winter). Different seasons confound — wind and load
+  profiles vary by season.
+- The −34% in RE thermal is large but volume is small (361 GWh vs
+  2,929 free-market retailers); driven possibly by seasonal cogeneration
+  patterns rather than reform.
+- The wind +16% is consistent with our earlier finding that wind-
+  forecast bias is widening as installed capacity outpaces forecaster
+  calibration. May not be reform-attributable.
+
+### Reform-attributable signal that survives caveats
+
+After accounting for the A87 split (only ~half is direct imbalance
+settlement) and the segment-level decomposition:
+
+> The ISP15 reform produced a direct quarter-hourly imbalance
+> settlement increase from approximately zero (no quarter-hourly
+> publication pre-ISP15) to €70-100M/month, dominated 65-75% by
+> free-market retailers and wind generation. The Big-4 dominant CCGT
+> contribution to system imbalance volume is only ~14%; their
+> strategic-bidding response to the reform is therefore a relatively
+> small fraction of the overall settlement-flow change.
+
+This is a **smaller reform-attributable claim** than nb11 had, but
+better-anchored to the segment-level mechanism. Reproducing:
+`scripts/analysis/esios_a87_cross.py`.
