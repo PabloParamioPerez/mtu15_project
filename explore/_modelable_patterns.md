@@ -513,3 +513,90 @@ $$\theta_r \times \text{(MW clearing)}_r \times \text{(price uplift from reserva
 
 Reproducing: `scripts/analysis/welfare_proxy.py`. Output panel saved
 to `data/derived/welfare_proxy_panel.parquet`.
+
+---
+
+## Pattern 10 — Anticipation: heterogeneous firm response to ISP15 announcement (executed 2026-04-25)
+
+The 3-sess anomaly (Pattern 2) is **anticipation-driven**, but with
+**heterogeneous timing across firms**. ISP15 was announced via CNMC
+resolution on **2024-10-03**, taking effect 2024-12-01. Splitting the
+3-sess regime around the announcement reveals two firm types:
+
+| Firm | reservation share PRE-announce (2024-06-14 → 2024-10-02) | POST-announce (2024-10-04 → 2024-11-30) | Δ |
+|---|---:|---:|---:|
+| **GE** | 80.7% | 87.8% | **+7pp** |
+| **IB** | 80.9% | 81.6% | +1pp |
+| GN | 34.9% | 65.5% | **+31pp** |
+| HC | 29.5% | 44.1% | +15pp |
+
+**GE and IB pre-anticipated** — they were already at 80%+ reservation
+the moment the IDA reform took effect (2024-06-14), four months before
+the formal CNMC announcement. **GN and HC reacted to the announcement**,
+not the IDA reform.
+
+Monthly time series (% of CCGT capacity priced > €100/MWh):
+
+| Month | GE | IB | GN | HC |
+|---|---:|---:|---:|---:|
+| 2024-04 | 61% | 16% | 3% | 0% |
+| 2024-05 | 54% | 28% | 8% | 0% |
+| 2024-06 | 53% | **68%** | 23% | **69%** |
+| 2024-07 | 78% | 84% | 20% | 23% |
+| 2024-08 | 86% | 82% | **60%** | 26% |
+| 2024-09 | 81% | 76% | 40% | 38% |
+| 2024-10 | 87% | 85% | 44% | 22% |
+| 2024-11 | 89% | 78% | **82%** | **51%** |
+| 2024-12 | 91% | 83% | 89% | 65% |
+| 2025-01 | 94% | 88% | 95% | 69% |
+| 2025-02 | 95% | 87% | 92% | 70% |
+| 2025-03 | 95% | 92% | 68% | 29% |
+| 2025-04 | 60% | **96%** | 12% | 10% |
+| 2025-05 | 55% | 92% | 14% | 10% |
+| 2025-09 | 11% | 84% | 11% | 14% |
+| 2025-10 | **9%** | **34%** | 16% | 23% |
+| 2025-11 | **3%** | **35%** | 14% | 16% |
+| 2025-12 | **5%** | **12%** | 9% | 30% |
+
+**Strong economic content**:
+
+1. **GE and IB**: respond at IDA reform (June 2024). Sophisticated
+   strategic adjustment; firms anticipate that the 6→3 session
+   structure makes reservation pricing more attractive even before
+   ISP15 settlement is enforced.
+2. **GN and HC**: respond at ISP15 announcement (Oct 2024). Slower
+   adaptation; firms react to announced rules rather than to
+   market-structure changes.
+3. **Reform-completion collapse timing differs across firms**:
+   - GE: bid-function collapse begins April 2025 (post-MTU15-IDA),
+     reaches near-zero by November 2025 (post-MTU15-DA).
+   - IB: stays at 90%+ until October 2025 (post-MTU15-DA), then
+     gradually falls to 12% by December 2025. **IB is the last firm
+     to normalize**.
+   - GN and HC: collapse already in April 2025 with GE.
+
+### Modelable structure
+
+The reservation-pricing dynamics fit a **two-stage anticipation +
+adjustment model**:
+
+  At time $t$, firm $i$'s reservation share $s_{i,t}$ depends on:
+    - $\theta_t$ : current settlement-risk exposure (= 1 in ISP15 + DA60/ID15)
+    - $A_{i,t}$ : firm $i$'s anticipation of future $\theta$
+    - $\rho_t$ : current IDA responsiveness (= 1 from MTU15-IDA on)
+
+  Firm types:
+    Sophisticated (GE, IB): $A_{i,t}$ updates at IDA reform (June 2024)
+    Adaptive (GN, HC): $A_{i,t}$ updates at ISP15 announcement (Oct 2024)
+
+  Adjustment after MTU15:
+    GE, GN, HC: $s_{i,t}$ falls when $\rho = 1$ + $\theta$ stays low
+    IB: $s_{i,t}$ persists into late 2025; possibly higher hedging cost
+        or different strategic-position constraints
+
+This is a heterogeneous-agent extension of the pattern-2 model,
+with the rational-expectations / adaptive-expectations distinction
+identified directly from the announcement-date discontinuity.
+
+Reproducing: `scripts/analysis/anticipation_test.py`. Monthly panel
+saved to `data/derived/anticipation_test_panel.parquet`.
