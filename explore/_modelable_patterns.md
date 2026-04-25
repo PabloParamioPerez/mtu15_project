@@ -1329,3 +1329,97 @@ settlement) and the segment-level decomposition:
 This is a **smaller reform-attributable claim** than nb11 had, but
 better-anchored to the segment-level mechanism. Reproducing:
 `scripts/analysis/esios_a87_cross.py`.
+
+---
+
+## NEW: Reserve-cost allocation to BRPs collapses at MTU15-DA (~€840M/yr shifted)
+
+Drilling deeper into the A87/ESIOS gap, the IMPLIED reserve-cost
+allocation (A87 net income − ESIOS direct impdsvqh) shows a sharp
+structural break exactly at MTU15-DA (2025-10-01):
+
+| Month | A87 income | Direct imp | **Implied reserve-cost** |
+|---|---:|---:|---:|
+| 2024-12 | 194 | 105 | **+89** |
+| 2025-01 | 150 | 86 | +64 |
+| 2025-02 | 144 | 76 | +67 |
+| 2025-03 | 153 | 76 | +77 |
+| 2025-04 | 79 | 37 | +42 |
+| 2025-05 | 65 | 32 | +34 |
+| 2025-06 | 172 | 88 | +84 |
+| 2025-07 | 132 | 68 | +64 |
+| 2025-08 | 148 | 70 | +77 |
+| **2025-09** (DA60/ID15 last) | 126 | 62 | **+64** |
+| **2025-10** (MTU15-DA starts) | 66 | 69 | **−3** |
+| 2025-11 | 73 | 72 | +1 |
+| 2025-12 | 78 | 78 | +0 |
+
+**The reserve-cost allocation channel essentially shuts off at MTU15-DA.**
+From ~€70M/month average pre-MTU15-DA to ~€0/month post — a
+**~70× collapse**.
+
+### Crucial observation: A87 expenses kept rising
+
+| Period | A87 expenses (€M/mo) | A87 income (€M/mo) | Ratio |
+|---|---:|---:|---:|
+| Pre-MTU15-DA avg | ~50 | ~120 | 0.42 (BRPs cover most) |
+| Post-MTU15-DA | ~70 | ~73 | 0.96 (covers itself) |
+
+Wait — A87 expenses rose Oct→Dec 2025 (€57→€65→€76) while A87 income
+collapsed. This means:
+
+- **REE is still paying BSPs ~€70M/month** for reserves and activation
+  (i.e., the operational cost of balancing didn't drop).
+- **REE stopped recovering ~€60-90M/month from BRPs** via the deviation-
+  proportional reserve-cost-allocation channel.
+- **The €60-90M/month gap had to be recovered through some OTHER channel**
+  — most likely: regulated tariff (consumer-side), uplift, or the
+  new voltage-control-service regulated payment introduced by BOE-A-
+  2025-13076 (June 2025 P.O. 7.4 redesign).
+
+### Welfare interpretation
+
+The reform sequence — specifically the cumulative effect of P.O. 7.4
+voltage-control-service redesign, RD 997/2025 reform, and MTU15-DA —
+**shifted ~€840M/year of balancing-system cost** from:
+
+- **Pre-reform**: BRPs whose deviations triggered the reserves
+  (causal-allocation principle: deviation-causer pays)
+
+- **Post-reform**: distributed to all electricity consumers via
+  regulated tariff or via the new voltage-control-service regulated
+  payment (mutualised cost recovery)
+
+This is potentially the **largest single welfare consequence** of the
+reform sequence we've identified to date — a redistribution of about
+€840M/year from causal deviators to all consumers. It's not a
+deadweight loss per se, but it is a transfer with incentive
+implications: removing the deviation-cost signal weakens BRP
+incentive to forecast accurately.
+
+### Caveats and what to verify
+
+1. The cdvbrp series (the actual published reserve-cost-per-MWh) only
+   exists in the 2026-01 onwards parsed data. We're inferring the
+   reserve-cost component from A87 minus ESIOS impdsvqh. Need to
+   double-check by parsing additional ESIOS families that may carry
+   the pre-2026 reserve-cost record.
+2. A87 reporting methodology may have changed at MTU15-DA in a way
+   we're not aware of — should cross-check against REE official
+   "Saldo financiero del operador del sistema" reports.
+3. The €840M/year figure is annualised from a 4-month observation;
+   precision is limited until 2026 quarterly data refreshes.
+4. The CNMC voltage-control resolution (BOE-A-2025-13076, June 2025)
+   explicitly redesigned P.O. 14.4 settlement payments — possibly
+   the regulatory anchor for the change. Read that section before
+   citing.
+
+If verified, this is a **modelable** policy fact:
+- Pre-reform: BRPs internalised reserve cost via deviation-share
+  allocation. Optimal-bidding equilibrium has a reserve-cost-aware
+  forecasting incentive.
+- Post-reform: BRPs no longer internalise reserve cost. Optimal-
+  bidding equilibrium loses the forecast-accuracy incentive on the
+  reserve-cost margin.
+
+Reproducing: `scripts/analysis/a87_reserve_decomposition.py`.
