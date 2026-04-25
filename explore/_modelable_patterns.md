@@ -1130,3 +1130,76 @@ careful disentangling of reform-attributable from co-occurring secular
 effects.
 
 Reproducing: `scripts/analysis/survivor_skeptic.py`.
+
+---
+
+## ⚠ FOURTH SKEPTICISM WAVE + new finding (2026-04-25)
+
+### (1) Within-month dispersion year-by-year — Apr-Sep
+| Year | ES SD | FR SD | ES − FR |
+|---|---:|---:|---:|
+| 2018 | 6.8 | 11.7 | −4.9 |
+| 2021 | 17.3 | 25.6 | −8.3 |
+| 2022 | 41.4 | 111.5 | −70.1 (gas crisis) |
+| 2023 | 31.9 | 34.2 | −2.3 |
+| 2024 | 34.5 | 34.7 | **−0.2** (already at parity) |
+| 2025 | 39.8 | 36.0 | **+3.8** (first ES > FR) |
+
+**The "ES doubles, FR flat" claim is overstated.** 2024 was already at
+parity. The Spain-specific 2025 elevation is +3.8 €/MWh vs FR same-
+calendar, not the headline +€10/MWh I had been quoting. Modest,
+real, but smaller than claimed.
+
+Winter 2024-25 ISP15 window: ES SD ~44, FR SD ~44. Already at
+parity in winter too. Spain-specific elevation in winter ISP15 is
+also small.
+
+### (2) DA 15-min bid replication post-MTU15-DA (2025-10+) — NEW PATTERN
+
+For each (date, hour, offer_code, version) cell, check whether the
+4 quarter-hour bids are identical or differentiated. Big-4 4Q cells:
+
+| Firm | 4Q cells | identical price | identical quantity | both same |
+|---|---:|---:|---:|---:|
+| **HC** | 9,364 | **8%** | 11% | 8% |
+| **IB** | 46,337 | **24%** | 20% | 20% |
+| GE | 38,101 | 63% | 59% | 52% |
+| GN | 47,467 | 63% | 62% | 61% |
+
+**Striking heterogeneity in use of new granularity:**
+
+- **IB and HC differentiate aggressively** (80% and 92% of cells use
+  different prices across quarters). They are USING the new 15-min DA
+  market.
+- **GE and GN replicate more often** (~50% identical). They use less
+  of the granularity.
+
+**This contradicts the prior H15 finding (nb09 memory note) that 80-99%
+of Big-4 bids replicate across quarters.** That nb09 finding was on
+IDA pre-MTU15-DA (when DA was still hourly). Post-MTU15-DA, the new DA
+15-min data shows substantial behavioral differentiation, ESPECIALLY
+for IB and HC.
+
+This is a **NEW reform-attributable behavioral pattern**: post-MTU15-DA,
+two of four Big-4 firms use the new granularity heavily, two use it
+moderately. Heterogeneity in granularity-adoption is itself
+modelable as a firm-specific adjustment cost or strategic choice.
+
+### Refined surviving-finding catalog (after 4 skepticism waves)
+
+1. **A87 ISP15-winter spike**: 4-month pulse Dec 2024-Mar 2025 at
+   €144-194M vs €67M baseline (2024 mean). Post-MTU15-DA returns to
+   €66-78M. **+€80-130M Spain-specific reform pulse.**
+2. **GE DA15/ID15 reservation collapse** (sell + buy side, both below
+   ALL same-calendar pre-reform). **Genuine reform-completion effect.**
+3. **Within-month price dispersion**: ES +3.8 €/MWh excess vs FR same-
+   calendar 2025 Apr-Sep. Modest Spain-specific elevation.
+4. **IB-specific DA60/ID15 reservation elevation** (91% vs 47-56%
+   same-calendar). Surviving firm-specific finding.
+5. **GE/IB strategic-style heterogeneity**: GE cap pricing, IB
+   gradient pricing. Cross-firm typology.
+6. **NEW: post-MTU15-DA 15-min granularity adoption** is heterogeneous
+   across Big-4: IB/HC differentiate 80-92% of 4Q cells, GE/GN only
+   ~50%.
+
+Reproducing: `scripts/analysis/dispersion_15min_check.py`.
