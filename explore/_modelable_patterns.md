@@ -987,3 +987,146 @@ secular trends.
 
 Reproducing: `scripts/analysis/buy_side_skeptical.py` and
 `scripts/analysis/forecast_bias_curtailment.py`.
+
+---
+
+## ⚠ THIRD SKEPTICISM WAVE — long-history scrutiny of "robust" survivors (2026-04-25)
+
+User: "continue similar robustness checks". Applied long-history
+trend-detection to the patterns I'd marked "robust." Most are secular.
+
+### HHI long history (2018-2026)
+
+| Year | HHI | Big-4 share |
+|---|---:|---:|
+| 2018 | 0.244 | 51.4% |
+| 2019 | 0.217 | 47.9% |
+| 2020 | 0.245 | 49.1% |
+| 2021 | 0.264 | 51.6% |
+| 2022 | 0.289 | 51.1% |
+| **2023** | **0.388** | 40.5% |
+| 2024 | 0.404 | 56.1% |
+| 2025 | 0.414 | 63.3% |
+| 2026 | 0.379 | 60.4% |
+
+**HHI was already rising since 2021** (0.264 → 0.289 → 0.388 across
+2021-2023). The biggest jump was **2022 → 2023 (+0.10)**, before any
+major reform. The 2024-2025 reform-window increases are smaller
+(+0.016 and +0.010). **HHI rise is mostly secular trend.**
+
+Big-4 share is U-shaped: dropped to 41% in 2023 (gas-crisis
+disaggregation), recovered to 63% in 2025. The 2024-2025 rise is real
+but on top of recovery from a 2023 dip.
+
+### XBID liquidity long history
+
+| Year | orders/h | trades/h |
+|---|---:|---:|
+| 2018 | 216 | 75 |
+| 2019 | 447 | 106 |
+| 2020 | 831 | 247 |
+| 2021 | 1,107 | 305 |
+| 2022 | 1,219 | 299 |
+| 2023 | 1,180 | 455 |
+| 2024 | 2,278 | 497 |
+| **2025** | **10,663** | **1,604** |
+| 2026 | 13,535 | 1,362 |
+
+**XBID orders/h has grown 100-200% per year since 2018.** From 2018
+to 2022 alone (pre-reform period) it grew 6× (216 → 1,219). The
+2024 → 2025 jump (4.7×) is the largest single-year jump but on top
+of a long-running trajectory. **The "15×" headline was inflated by
+pre-reform growth not separated.** Net reform attribution: the 2025
+4.7× jump on top of organic growth.
+
+### A87 long history — annual mean monthly net income
+
+| Year | A87 net income (€M/mo) |
+|---|---:|
+| 2018 | 13 |
+| 2019 | 10 |
+| 2020 | 12 |
+| **2021** | **43** ⚠ |
+| **2022** | **81** ⚠ (gas crisis) |
+| 2023 | 62 |
+| 2024 | 67 |
+| **2025** | **116** |
+
+**The biggest jump was 2020 → 2021** (+€31M, +260%), well before any
+reform. 2022 gas crisis pushed it further to €81M. Post-2022 the
+baseline settled at €60-80M. The 2025 mean of €116M is clearly
+elevated but the SHAPE of the increase matters:
+
+Monthly detail 2024-2025:
+- 2024 Dec: **€194M** (single highest, ISP15 first month)
+- 2025 Jan-Feb-Mar: €150-153M (ISP15 winter peak)
+- 2025 Apr-May: €65-79M (DA60/ID15 spring, lower)
+- 2025 Jun-Sep: €127-172M (DA60/ID15 summer, high)
+- 2025 Oct-Dec: **€66-78M** (DA15/ID15)
+
+**Post-MTU15-DA settles at €66-78M, the same baseline as 2023-2024
+(€60-67M annual mean).** The ISP15 winter SPIKE (€144-194M for 4
+months) is the reform-pulse; the post-MTU15-DA return to €66-78M
+suggests the structural change settles back to the 2023-2024
+baseline.
+
+**Net A87 reform-attributable signal:** the 4-month ISP15 winter spike
+(Dec 2024 - Mar 2025) at €144-194M, on top of an already-rising
+baseline. NOT the headline €38 → €160 → €72 swing I had been quoting,
+because the €38 baseline pre-IDA was actually elevated by 2022-2024
+secular changes.
+
+### Refined-again surviving findings
+
+After three skepticism waves, the cleanest reform-attributable
+findings shrink to:
+
+1. **A87 ISP15-winter spike** (Dec 2024 - Mar 2025 at €144-194M, vs
+   2023-2024 baseline €62-67M). 4-month pulse of +€80-130M.
+   Post-MTU15-DA returns to baseline.
+2. **GE DA15/ID15 reservation collapse**: 94% sell-side → 5% and
+   70% buy-side → 4%. Below ALL same-calendar pre-reform windows,
+   including 2023-24 winter at 63% sell. **Genuine reform-completion
+   collapse.**
+3. **Within-month price dispersion**: ES nearly doubles 23→44, FR
+   flat 35→44. France placebo isolates the Spain-specific reform
+   contribution. ~€10/MWh excess Spain dispersion.
+4. **IB-specific DA60/ID15 reservation elevation** (91% vs same-
+   calendar 47-56%). IB is the only firm where DA60/ID15 elevation
+   survives same-calendar.
+5. **GE/IB strategic-style heterogeneity**: GE does cap-pricing
+   (€800), IB does gradient pricing. Not a regime claim, a
+   cross-firm fact.
+
+What was ALSO weakening on closer look:
+- HHI: mostly secular 2021-2023; small reform-window contribution.
+- XBID 15×: 6× pre-reform growth dominates; reform adds maybe 4-5×
+  on top.
+- A87 €38→€160 framing: 2018-2020 baseline was €11M; pre-reform 2024
+  was €67M. The "€38" pre-IDA average mixes early years.
+
+### What this all means for the thesis
+
+The empirical contribution is now **carefully limited**:
+
+> The Spanish 15-min reform sequence produced (a) a 4-month settlement-
+> flow pulse during the asymmetric-granularity ISP15 window (A87 net
+> income peaking at €194M/mo vs €67M/mo 2024 baseline), (b) a sharp
+> collapse of dominant-firm CCGT reservation pricing at MTU15-DA (GE
+> from 94% to 5%, both buy and sell sides), (c) a Spain-specific
+> increase in within-month price dispersion (vs France placebo), and
+> (d) sustained reservation-pricing elevation in Iberdrola (IB)
+> through the asymmetric-granularity window.
+
+> Many co-occurring patterns in 2022-2025 — rising HHI, growing XBID
+> liquidity, increasing curtailment, cross-border flow shifts, and
+> the secular CCGT reservation-pricing trend — are driven by
+> renewable deployment, gas-crisis aftermath, and bilateral-contract
+> reallocation, NOT directly by the reform sequence.
+
+This is a NARROWER thesis than the "10 patterns of a single mechanism"
+framing. It's also more honest. The empirical contribution is the
+careful disentangling of reform-attributable from co-occurring secular
+effects.
+
+Reproducing: `scripts/analysis/survivor_skeptic.py`.
