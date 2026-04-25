@@ -92,3 +92,21 @@ GE median Lerner by (regime, hour-of-day):
 2. Consider adding the hour-of-day heatmap as a provisional fourth thesis figure (nb14). Probably belongs in the body to complement Fig 2's time-series view.
 3. Consider a version of fig2 with bootstrap CI ribbons around the monthly medians — tighter visual evidence.
 4. Document in thesis text that the placebo failure for GE likely reflects concurrent bilateral-contract reallocation (Rule 28.8), not a pure null result — IB's placebo p=0.085 is the cleaner signal that the Lerner rise DOES track the reform sequence.
+
+## 5. Post-blackout confound (added 2026-04-25)
+
+The **2025-04-28 Iberian blackout falls inside the DA60/ID15 regime** (2025-03-19 to 2025-09-30). REE's *operación reforzada* — increased CCGT and nuclear commitment via P.O. 3.2 technical-restrictions dispatch — has been in continuous application since 2025-04-29 (~€666M cumulative cost through Mar 2026). Plus a cascade of regulatory measures (RDL 7/2025, RD 997/2025, multiple CNMC P.O. modifications) modifies voltage-control and balancing-market rules through Jan 2026.
+
+This means the DA60/ID15 Lerner peak attribution to MTU15-IDA reform mechanics is confounded by:
+
+1. **Operación reforzada increased out-of-market CCGT commitment** — changes DA equilibrium even though dispatch is via restricciones técnicas.
+2. **Sept-Oct 2025 emergency voltage measures** — concurrent regulatory shocks.
+3. **CNMC sanctioning proceedings** opened in April 2026 against ~100 firms — investigative pressure on bidding behaviour.
+
+**Possible cleaner cut**: estimate Lerner only in the **pre-blackout DA60/ID15 sub-window (2025-03-19 to 2025-04-27)**. ~40 days of clean post-MTU15-IDA pre-blackout data. If GE's Lerner is already elevated in that sub-window, MTU15-IDA reform mechanics carry it; if not, the blackout/operación-reforzada carries the bulk.
+
+This **strengthens** the placebo-failure interpretation in §3: GE's MTU15-IDA shift is not localised to that boundary because the entire post-MTU15-IDA window is also the post-blackout window. IB's cleaner placebo (p=0.085) is consistent with IB being less affected by the operación-reforzada CCGT commitment (more hydro-heavy portfolio).
+
+Memory note: `ref_post_blackout_regulation.md` documents the full BOE/CNMC/ENTSO-E cascade.
+
+**Action item**: add a §13 to nb12 (or a small standalone notebook) that estimates Lerner specifically in the **pre-blackout DA60/ID15 sub-window** as a confound check. Quick to implement, would be the cleanest robustness check we have for the central claim.
