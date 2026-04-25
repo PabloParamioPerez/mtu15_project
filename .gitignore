@@ -30,6 +30,11 @@ data/**
 !data/external/omie_reference/README.md
 !data/metadata/.gitkeep
 data/metadata/*.csv
+# ESIOS folder documentation (not the bulk data)
+!data/raw/esios/
+!data/raw/esios/**/
+!data/raw/esios/**/README.md
+!data/raw/esios/**/.gitkeep
 
 # Docs
 /docs

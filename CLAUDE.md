@@ -73,8 +73,38 @@ All notebooks live in `explore/` and are for exploration only — not thesis out
 Do not duplicate analysis across notebooks. Check what is already covered before adding a new section.
 
 ## External data sources
-- **OMIE** — primary source; downloaded via `00_sync_*` scripts
-- **ESIOS (REE)** — secondary source for balancing/constraints data; requires `ESIOS_TOKEN` env var. Admin script: `scripts/admin/explore_esios.py`. Access not yet obtained.
+
+Three sources, kept strictly separate at the data layer:
+
+- **OMIE** (primary) — Iberian wholesale market operator. Downloaded via
+  `scripts/pipelines/omie/*/00_sync_*.py`. Raw at `data/raw/omie/`,
+  processed at `data/processed/omie/`. Symlinked to external SSD.
+- **ENTSO-E Transparency Platform** — pan-European balancing /
+  generation. Downloaded via `scripts/pipelines/entsoe/*/00_sync_*.py`
+  using `ENTSOE_TOKEN` from `.env`. Raw at `data/raw/entsoe/`, processed
+  at `data/processed/entsoe/`. Spain control area = `10YES-REE------0`.
+  See `src/mtu/ingestion/entsoe_common.py`.
+- **ESIOS (REE)** — Spanish national operator data (settlement detail,
+  technical-restrictions prices, aFRR offers, unit outages). Public
+  archive endpoint `https://api.esios.ree.es/archives/{id}/download`
+  served WITHOUT authentication. Per-subject (per-BRP) archives require
+  market-participant role registration we do not have. Downloaded via
+  `scripts/pipelines/esios/*/00_sync_*.py`. Raw at `data/raw/esios/`,
+  processed at `data/processed/esios/`. See
+  `src/mtu/ingestion/esios_common.py` and `data/raw/esios/README.md`
+  for the source map and tier ordering.
+
+**Source separation rule.** Never mix sources within a single processed
+parquet without an explicit `source` column. If you find ESIOS-sourced
+content under `entsoe/` (or vice versa), it is a bug — fix the path,
+do not relabel.
+
+**Source-overlap policy.** OMIE programmes (`pdbc`, `pdbce`, `pibci`,
+`pibcic`, `phf`, `phfc`) cover the same conceptual ground as ESIOS
+`p48cierre` / `totalp48*` / `totalpdbf` / `totalpdvp`. We use the OMIE
+versions (finer granularity, longer history) and skip the ESIOS
+duplicates. ENTSO-E A75 (actual generation per type) covers
+ESIOS `REE_ActualGen_` / `REE_AggGenOutput`; we use ENTSO-E.
 
 ## Data layers
 - **Raw** — verbatim OMIE files. Never modify.
