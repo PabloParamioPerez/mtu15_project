@@ -68,11 +68,14 @@ PARSED_FAMILIES_QH = (
     "endlibqh",
     "endexpqh",
     "endimpqh",
+    # Reserve-cost streams added 2026-04-25 to test the A87/ESIOS gap:
+    "imresecqh",   # secondary-regulation reserve cost per ISP (EUR)
 )
 
-# Hourly-resolution families (date;hour;value, no quarter column).
+# Hourly-resolution families (one row per day, 24 hourly columns).
 PARSED_FAMILIES_H = (
     "cdsvbrp",
+    "imexdedv",   # excess/deficit of deviations per hour (EUR)
 )
 
 

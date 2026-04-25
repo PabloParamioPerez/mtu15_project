@@ -1423,3 +1423,46 @@ If verified, this is a **modelable** policy fact:
   reserve-cost margin.
 
 Reproducing: `scripts/analysis/a87_reserve_decomposition.py`.
+
+### ⚠ RETRACTION (verified 2026-04-25 evening)
+
+The €840M/yr "sharp break at MTU15-DA" claim above is **WRONG** —
+it was inferred from `A87 − impdsvqh` without direct measurement of
+the reserve-cost component. After extending the parser to include
+`imresecqh` (secondary-regulation reserve cost, EUR per ISP) and
+`imexdedv` (excess/deficit of deviations, EUR per hour), the picture
+is much more gradual:
+
+| Regime | A87 inc | imp_abs | imresecqh | A87 ≈ imp+resec? |
+|---|---:|---:|---:|---:|
+| ISP15 win | 160 | 86 | 71 | YES (157 ≈ 160) |
+| DA60/ID15 | 121 | 60 | 37 | gap of +€23 (other reserves?) |
+| DA15/ID15 | 72 | 58 | 30 | gap of **−€16** (post-MTU15-DA refund?) |
+
+The corrected reading:
+
+1. **Secondary-regulation reserve cost dropped by half across the reform
+   sequence**: €71 → €30M/mo, a **gradual decline** of about €40M/mo
+   = **€480M/yr in actual system-cost savings**. Real and reform-
+   attributable, but NOT a sharp MTU15-DA jump.
+
+2. **The MTU15-DA-specific shift is the −€16M/mo gap** in DA15/ID15:
+   A87 is LESS than imp_abs + imresecqh, suggesting a new offset/
+   refund channel introduced post-MTU15-DA. The `imexdedv` (excess/
+   deficit of deviations) flips from negative pre-MTU15-DA to
+   positive (~+€7M/mo) post — small but consistent with the
+   direction.
+
+3. The **earlier "discrete €840M/yr cost shift" claim is an artifact**
+   of inferring from incomplete data. The actual €40M/mo gradual
+   savings is still meaningful but is system-cost reduction (less
+   reserve activated), not a redistribution from BRPs to consumers.
+
+**Lesson**: when the direct measurement is available, use it. Inferring
+a residual from totals minus partial components is fragile. The
+imresecqh stream was always there; my parser didn't include it
+initially.
+
+Refined finding: REE's secondary-regulation reserve cost halved across
+the reform sequence — €71 → €30M/mo. Gradual, not discrete. About
+€480M/year reduction in this single cost line.
