@@ -49,8 +49,16 @@ import requests
 API_URL = "https://api.esios.ree.es/archives/{archive_id}/download"
 
 # Verified archive IDs (extend as new families are added).
+#
+# Settlement vintages — REE publishes liquicomun in two stages:
+#   A2 (provisional) — released M+1, restated until C2 is final
+#   C2 (definitive) — released M+3, canonical for historical analysis
+#
+# For thesis use we take C2 by default and only fall back to A2 for
+# the most recent month(s) where C2 is not yet published.
 ARCHIVES = {
-    "liquicomun":            3,    # A2_liquicomun monthly settlement ZIP
+    "liquicomun_a2":         3,    # A2 provisional settlement (latest month)
+    "liquicomun_c2":         8,    # C2 definitive settlement (historical)
     # Tier 2 — scaffolded but not synced yet:
     # "totalasigsec":         (lookup),
     # "curvas_ofertas_afrr":  (lookup),

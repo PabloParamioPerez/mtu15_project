@@ -77,11 +77,18 @@ PARSED_FAMILIES_H = (
 
 
 def _identify_family(filename: str) -> str | None:
-    """Return the recognised family prefix for an A2_liquicomun inner
-    filename, or None if not in our parsed set."""
+    """Return the recognised family prefix for a liquicomun inner
+    filename, or None if not in our parsed set.
+
+    Filenames look like:
+        A2_impdsvqh_20260401_20260430  (provisional settlement, archive 3)
+        C2_impdsvqh_20240101_20240131  (definitive settlement,  archive 8)
+
+    The two share the same inner-file format; only the leading vintage
+    code differs.
+    """
     name = Path(filename).name
-    # Filenames look like 'A2_impdsvqh_20260401_20260430' (no extension)
-    m = re.match(r"^A2_([A-Za-z0-9]+)_\d{8}_\d{8}$", name)
+    m = re.match(r"^(?:A2|C2)_([A-Za-z0-9]+)_\d{8}_\d{8}$", name)
     if not m:
         return None
     fam = m.group(1)
@@ -131,12 +138,51 @@ def _parse_qh_file(path: Path, family: str) -> pd.DataFrame:
 
 
 def _parse_h_file(path: Path, family: str) -> pd.DataFrame:
-    """Parse an hourly inner file (no quarter column)."""
+    """Parse an hourly inner file in the WIDE day-x-24-hour format used
+    by cdsvbrp, cdvbrp, etc.
+
+    Format example (cdsvbrp):
+        cdsvbrp;
+        2024;02;09;12;10;17;
+        L 01;7.13;26.24;...;28.46;;     ← Lunes 01, then 24 hourly values
+        M 02;29.67;...;31.43;;          ← Martes 02
+        ...
+
+    The leading day code is `<day-of-week-letter> <day-of-month>` where
+    the letter is L/M/X/J/V/S/D (Spanish weekday initials). Day-of-month
+    is the 2-digit number. The month + year come from the filename
+    (`A2/C2_<family>_YYYYMMDD_YYYYMMDD`) or the second header line.
+
+    Some hourly files publish the data in long format (one row per
+    (date, hour, value) triple). Detect the format from the first
+    data line and parse accordingly.
+    """
+    # Pull year/month from filename: <prefix>_<family>_<startYYYYMMDD>_<endYYYYMMDD>
+    fn_match = re.match(
+        r"^(?:A2|C2)_[A-Za-z0-9]+_(\d{4})(\d{2})(\d{2})_\d{8}$",
+        path.name,
+    )
+    if fn_match is None:
+        return pd.DataFrame()
+    yr_int = int(fn_match.group(1))
+    mo_int = int(fn_match.group(2))
+
     rows: list[dict] = []
     with path.open("r", encoding="latin1") as f:
-        for i, line in enumerate(f):
-            if i < 2:
-                continue
+        lines = list(f)
+    if len(lines) < 3:
+        return pd.DataFrame()
+
+    # Detect format from the first non-header line
+    sample = lines[2].strip().rstrip(";")
+    sample_parts = sample.split(";")
+
+    # Long-format detection: first field is dd/mm/yyyy
+    is_long = bool(re.match(r"^\d{2}/\d{2}/\d{4}$", sample_parts[0]))
+
+    if is_long:
+        # date;hour;value;
+        for line in lines[2:]:
             parts = line.strip().rstrip(";").split(";")
             if len(parts) < 3:
                 continue
@@ -147,13 +193,38 @@ def _parse_h_file(path: Path, family: str) -> pd.DataFrame:
             except (ValueError, TypeError):
                 continue
             rows.append({
-                "date": d,
-                "hour": h,
-                "quarter": pd.NA,
-                "value": v,
-                "family": family,
-                "source_file": path.name,
+                "date": d, "hour": h, "quarter": pd.NA, "value": v,
+                "family": family, "source_file": path.name,
             })
+    else:
+        # Wide format: '<L|M|X|J|V|S|D> DD;v1;v2;...;v24;'
+        for line in lines[2:]:
+            parts = line.strip().rstrip(";").split(";")
+            if len(parts) < 25:
+                continue
+            day_code = parts[0].strip()
+            # Day of month is the trailing integer in day_code
+            dom_match = re.search(r"(\d{1,2})$", day_code)
+            if not dom_match:
+                continue
+            dom = int(dom_match.group(1))
+            try:
+                d = pd.Timestamp(year=yr_int, month=mo_int, day=dom).date()
+            except (ValueError, TypeError):
+                continue
+            for h_idx in range(24):
+                raw = parts[1 + h_idx].strip()
+                if raw == "":
+                    continue
+                try:
+                    v = float(raw.replace(",", "."))
+                except ValueError:
+                    continue
+                rows.append({
+                    "date": d, "hour": h_idx + 1, "quarter": pd.NA, "value": v,
+                    "family": family, "source_file": path.name,
+                })
+
     if not rows:
         return pd.DataFrame()
     df = pd.DataFrame(rows)
