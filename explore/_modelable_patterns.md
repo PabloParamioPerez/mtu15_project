@@ -852,3 +852,138 @@ rise) + reform completion (MTU15-DA collapse) + firm heterogeneity
 (GE cap vs IB gradient).
 
 Reproducing: `scripts/analysis/skepticism_check_patterns.py`.
+
+---
+
+## ⚠ MORE SKEPTICISM — buy-side, forecast bias, curtailment, cross-border (2026-04-25 evening)
+
+User: "continue similar robustness checks and try different ideas".
+Applied same-calendar logic to four new angles.
+
+### Buy-side bid pattern (P9b)
+
+Aggregate retailer buy-side %p < €30 (low-reservation buying) by
+same-calendar window:
+
+| Window | %p<€30 | %p<€0 |
+|---|---:|---:|
+| 2022-23 winter pre-IDA | 15% | 3.5% |
+| 2023-24 winter pre-IDA | **31%** | 7.5% |
+| 2024-25 ISP15 window | 27% | 18% |
+| 2023 Apr-Sep pre-IDA | 9% | 3.6% |
+| **2024 Apr-Sep pre-IDA + 3-sess** | **50%** | **27%** |
+| 2025 Apr-Sep DA60/ID15 | 52% | 28% |
+| 2025 Oct-Dec DA15/ID15 | 37% | 18% |
+
+The big buy-side reservation-buying jump happened **2023 → 2024**
+(9% → 50% in spring/summer), before any major reform. Continues into
+2025. Not reform-driven; trend-driven (renewable surplus).
+
+GE-specific buy-side: bidding heavily below €30 across 2024-2025
+(66-75%), then collapsing to **4.3% in DA15/ID15** with wavg bid going
+from −€87 to +€87. **GE-specific DA15/ID15 collapse on the buy-side
+mirrors the sell-side collapse.** Both reservations retire at MTU15-DA.
+
+### Forecast bias (P12)
+
+Wind forecast bias (signed daily error in GWh, +ve = under-forecast):
+
+| Window | wind_bias | solar_bias |
+|---|---:|---:|
+| 2018 Apr-Sep | −0.43 | −0.28 |
+| 2022 Apr-Sep (gas crisis) | −0.25 | −1.97 |
+| 2023 Apr-Sep | −1.11 | −4.02 |
+| 2024 Apr-Sep | −1.27 | −2.59 |
+| **2025 Apr-Sep** | **−5.22** | +4.32 |
+| 2025 Oct-Apr (DA15/ID15) | **−9.02** | −8.68 |
+
+Wind forecast becoming more downward-biased over time (forecasts too
+high, actual production lower). Linked to fast renewable installation
+that outpaces forecaster calibration. **Forecasting issue, not market
+design.** Not reform-attributable.
+
+### Curtailment frequency (P13)
+
+% of hours with DA price ≤ €0 in same-calendar Apr-Sep:
+
+| Year | %p≤€0 | %p≤€10 |
+|---|---:|---:|
+| 2022 (gas crisis) | 0.0% | 0.7% |
+| 2023 | 1.4% | 5.1% |
+| **2024** | **13.7%** | **26.4%** |
+| 2025 (DA60/ID15) | 15.6% | 29.6% |
+
+The big curtailment-frequency jump was **2023 → 2024** (+12pp), not
+2024 → 2025. Renewable-deployment-driven, not reform-driven.
+
+### ES-FR cross-border shift (P14)
+
+Signed (ES − FR) DA spread by Apr-Sep window:
+
+| Year | mean signed | %ES>FR |
+|---|---:|---:|
+| 2018 | +€12 | 84% |
+| 2022 (gas crisis) | **−€163** | 20% |
+| 2023 | −€0.2 | 58% |
+| **2024** | **+€15** | **65%** |
+| 2025 (DA60/ID15) | +€11 | 60% |
+
+Spain shifted from being **net-exporter** (cheaper than FR) in 2022 to
+**net-importer-more-often** (65% of hours ES > FR) in 2024-25. The
+shift happened **2023 → 2024**, before reform. Tracks the renewable-
+deployment trajectory in Spain vs nuclear-heavy France.
+
+## Pattern of secular trends 2022-2025
+
+The Spanish electricity market is going through MASSIVE structural
+changes that confound reform attribution:
+
+1. **Gas-crisis aftermath** (2022 was anomaly with €203 average prices).
+2. **Accelerating renewable installation** (drives curtailment frequency,
+   forecast bias direction, low-price hours).
+3. **Bilateral-contract reallocation** (Rule 28.8 elimination March 2025).
+4. **Cross-border flow direction shift** (ES exports → ES imports).
+
+Many of the patterns I attributed to the reform sequence are accompanying
+these trends, not caused by the reform.
+
+## What clearly survives — refined claim list
+
+After two waves of skepticism testing (same-calendar, France placebo,
+within-tech, anticipation, cross-border, forecast, curtailment), the
+robust reform-attributable findings are:
+
+1. **A87 settlement flow swing** (€38 → €160 → €72M/mo, ISP15-pivoted)
+   — Spain-specific, pre/post December comparison.
+2. **Within-month price dispersion**: ES doubles, FR flat. France placebo
+   isolates Spain-specific reform effect.
+3. **GE DA15/ID15 reservation collapse** on both sell-side (94% → 5%) and
+   buy-side (70% → 4%). Below ALL same-calendar pre-reform windows.
+   Reform completion (MTU15-DA) closure.
+4. **IB-specific DA60/ID15 elevation** (91% vs same-calendar 47-56%). IB
+   is the only firm where DA60/ID15 elevation survives.
+5. **GE / IB reservation-style heterogeneity**: GE does cap (€800)
+   pricing, IB does gradient (€100-300) pricing. Robust cross-firm
+   typology.
+6. **HHI concentration rise** (0.28 → 0.42) — standard metric.
+7. **XBID liquidity 15× growth** — Spain-specific by SIDC product
+   design (FR not on Iberian XBID).
+
+The "reform causes 10 patterns" framing was an over-interpretation. The
+defensible thesis claim is much narrower:
+
+> The Spanish reform sequence produced changes in (1) aggregate balancing
+> settlement flows, (2) within-month price dispersion (Spain-specifically),
+> (3) market concentration, (4) the post-MTU15-DA collapse of dominant-
+> firm reservation pricing strategies, and (5) cross-firm strategic-style
+> heterogeneity (GE cap vs IB gradient). Many other observable patterns
+> in 2022-2025 (curtailment, forecast bias, cross-border flows, secular
+> reservation-pricing rise) are driven by renewable deployment and other
+> non-reform structural changes, NOT by the reform sequence.
+
+This is a **defensible, narrower** thesis. The empirical contribution is
+more disciplined — distinguishing reform-attributable from co-occurring
+secular trends.
+
+Reproducing: `scripts/analysis/buy_side_skeptical.py` and
+`scripts/analysis/forecast_bias_curtailment.py`.
