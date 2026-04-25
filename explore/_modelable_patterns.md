@@ -693,3 +693,162 @@ Three reform dates × two firm-type axes (sophistication, flexibility)
 = a 4-cell typology that explains the cross-firm time profiles.
 
 Reproducing: `scripts/analysis/firm_collapse_timing.py`.
+
+---
+
+## ⚠ SKEPTICISM CHECK 2026-04-25 — same-calendar tests, several patterns weakened
+
+User pushback: "we end up failing robustness checks; please check
+again." Applied the same-calendar / same-season test that destroyed
+the original Lerner finding.
+
+### TEST 1 — Same-calendar reservation share (Pattern 2)
+
+Winter comparison (Dec-Mar) — GE CCGT res > €100:
+
+| Window | reservation share |
+|---|---:|
+| 2022-23 winter (pre-IDA, gas crisis) | 40% |
+| **2023-24 winter (pre-IDA)** | **63%** |
+| 2024-25 ISP15 window (post-reform) | 94% |
+
+The pre-IDA 2023-24 winter was **already** at 63% reservation, well
+above the pre-IDA full-period mean of 32%. The ISP15 → 94% jump is
++31pp from the most-recent-comparable winter, not the headline +62pp
+from the full-period pre-IDA average.
+
+Spring-summer (Apr-Sep) — GE CCGT res > €100:
+
+| Window | reservation share |
+|---|---:|
+| 2023 Apr-Sep pre-IDA | 46% |
+| **2024 Apr-Sep pre-IDA + 3-sess** | **65%** |
+| 2025 Apr-Sep DA60/ID15 | **45%** |
+
+**GE's DA60/ID15 reservation share is LOWER than 2024 same-calendar
+pre-IDA**, and equal to 2023. The "DA60/ID15 reservation elevation"
+for GE is a same-calendar artefact.
+
+For IB the picture differs:
+
+| Window | IB CCGT reservation share |
+|---|---:|
+| 2023 Apr-Sep | 47% |
+| 2024 Apr-Sep | 56% |
+| 2025 Apr-Sep DA60/ID15 | **91%** |
+
+**IB DA60/ID15 elevation is real** (91% vs 47-56% same-calendar).
+
+### TEST 2 — Bid distribution shape: GE >€100 mass is at the price cap
+
+|  Window | GE >€100 | GE at cap (€800) |
+|---|---:|---:|
+| 2022-23 winter pre-IDA | 40% | **18%** |
+| 2023-24 winter pre-IDA | 63% | **47%** |
+| ISP15 window | 94% | 36% |
+| 2025 Apr-Sep DA60/ID15 | 45% | 5% |
+| 2025 Oct-Dec DA15/ID15 | 6% | 0% |
+
+GE's reservation share is **dominated by price-cap (€800) tranches**.
+Pre-IDA 2023-24 winter was 47% at the cap — already very high. The
+ISP15 window has 36% at cap. **GE is doing binary cap pricing**, not
+gradient reservation. And the at-cap share trajectory has been
+**rising since 2022**, not specifically reform-driven.
+
+IB by contrast has 0% at cap throughout. IB's reservation tranches are
+gradient-priced (€100-300). **Different strategic behavior types.**
+
+### TEST 3 — Pass-through R² across years (Apr-Sep same-calendar)
+
+|  Window | n | R² | β_wind | β_solar |
+|---|---:|---:|---:|---:|
+| 2018 | 183 | 0.087 | +0.73 | +1.89 |
+| 2019 | 183 | 0.097 | +0.97 | +1.55 |
+| 2020 | 177 | 0.002 | +0.02 | -0.01 |
+| 2021 | 183 | 0.018 | +0.02 | -0.00 |
+| **2022** (gas crisis) | 180 | **0.215** | +0.085 | +0.077 |
+| 2023 | 183 | 0.004 | +0.003 | +0.003 |
+| 2024 | 183 | 0.004 | +0.001 | +0.004 |
+| **2025 (DA60/ID15)** | 183 | **0.410** | +0.110 | +0.115 |
+
+**The 2022 gas-crisis Apr-Sep already had R²=0.22.** The 2025
+DA60/ID15 R²=0.41 is higher but **not unique to reform**. Gas-crisis
+years also showed the pass-through pattern. Likely a market-stress /
+high-renewable signature rather than a clean reform effect.
+
+### Honest pattern table after the skepticism check
+
+| Pattern | Survives same-calendar test? |
+|---|---|
+| 1. Pass-through R² jump | **PARTIAL** — 2022 also showed R²=0.22 |
+| 2. Bid-function reservation rise | **PARTIAL** — GE DA60/ID15 not elevated; pre-IDA 2023-24 already at 63% |
+| 3. DA-IDA wedge structure | UNTESTED but probably similar issues |
+| 4. HHI concentration rise | YES — standard metric, not Lerner-formula |
+| 5. A87 settlement flow swing | **YES** — pre/post December comparison, no spring-summer mixing |
+| 6. Within-month dispersion | YES (FR placebo controlled) |
+| 7. XBID liquidity 15× | YES — Spain-specific SIDC product |
+| 8. Capacity-withholding ratio | UNCLEAR |
+| 9. Welfare proxy 63% > €100 | NEEDS same-calendar check; likely partly seasonal |
+| 10. ISP15 anticipation timing | **WEAKENED** — pre-IDA 2023-24 winter was already at 63% reservation, suggesting trend rather than 2024-10-03 announcement effect |
+| 11. Portfolio flexibility | PARTIAL — depends on Pattern 2 validity, but the cross-firm difference (GE cap-pricing vs IB gradient-pricing) is itself robust |
+
+### What clearly survives
+
+1. **A87 settlement flow** (€38 → €160 → €72M/mo) — Spain-specific
+   construction, no calendar overlap, pre/post December.
+2. **HHI rise** from 0.28 to 0.42 — standard metric.
+3. **DA15/ID15 reservation collapse for GE** to 6% — genuinely below
+   ALL same-calendar pre-IDA windows (which ranged 25-71%).
+4. **IB-specific DA60/ID15 reservation elevation** (91% vs 47-56% same-
+   calendar). IB's gradient reservation behavior is reform-aligned.
+5. **GE/IB reservation-style heterogeneity** — GE does cap pricing,
+   IB does gradient pricing. A cross-firm fact, not a regime claim.
+6. **Within-month price dispersion** (FR-controlled).
+7. **XBID liquidity 15×** (Spain-specific by SIDC product design).
+
+### What's now suspect / weakened
+
+- The DA60/ID15 reservation peak for GE — same-calendar shows no excess.
+  GE was already at 65% reservation in Apr-Sep 2024 pre-IDA.
+- The ISP15 anticipation timing claim — pre-IDA winter 2023-24 was
+  already at 63% reservation for GE, before any ISP15 announcement.
+  The "anticipation jump" GE/IB observed at IDA reform might just be
+  a continuation of a 2022-2024 secular trend.
+- Pass-through R² jump — partly seasonal/stress-driven, not unique.
+- "63% of cleared MW from > €100 bids" welfare claim — needs same-
+  calendar comparison before being cited.
+
+### Updated thesis stance
+
+The CCGT reservation-pricing **TREND** is real and rising 2022-2024 →
+peaking 2024-2025 → collapsing post-MTU15-DA. The trend predates the
+reform; the **collapse** is reform-attributable. So the cleanest claim
+is:
+
+> Big-4 CCGT reservation pricing has been rising structurally since
+> 2022 (gas crisis era), peaks during the asymmetric-granularity
+> period (3-sess + ISP15 + DA60/ID15), and **collapses sharply at
+> MTU15-DA**. The collapse is the cleanest reform-attributable fact,
+> not the rise.
+
+This is a NARROWER but DEFENSIBLE claim. The "asymmetric-granularity
+window peaks in market power" framing weakens because the peak was
+already happening pre-reform. The post-MTU15-DA NORMALIZATION is the
+cleaner finding.
+
+Combined with the surviving system-level (A87) and structural (HHI,
+within-month dispersion) findings, the thesis backbone remains:
+
+1. Reform changed system-level settlement flows (A87)
+2. Reform increased market concentration (HHI)
+3. Reform completion (MTU15-DA) collapsed CCGT reservation pricing
+   from previously rising/elevated levels
+4. Cross-firm heterogeneity in reservation style (cap vs gradient)
+5. IB specifically shows reform-aligned within-window elevation
+
+The "10 patterns of a single (θ, ρ) mechanism" framing OVER-STATED
+the case. The reality is messier: secular trend (2022-2024 reservation
+rise) + reform completion (MTU15-DA collapse) + firm heterogeneity
+(GE cap vs IB gradient).
+
+Reproducing: `scripts/analysis/skepticism_check_patterns.py`.
