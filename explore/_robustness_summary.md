@@ -110,3 +110,95 @@ This **strengthens** the placebo-failure interpretation in §3: GE's MTU15-IDA s
 Memory note: `ref_post_blackout_regulation.md` documents the full BOE/CNMC/ENTSO-E cascade.
 
 **Action item**: add a §13 to nb12 (or a small standalone notebook) that estimates Lerner specifically in the **pre-blackout DA60/ID15 sub-window** as a confound check. Quick to implement, would be the cleanest robustness check we have for the central claim.
+
+## 6. Seasonal price-level artefact (added 2026-04-25)
+
+Implementing §5's pre-blackout sub-window cut surfaced a **larger and more
+serious confound than the blackout itself**.
+
+GE median Lerner, **same calendar weeks (March 19 – April 27) across years**:
+
+| Year | Regime status | Avg DA price (€/MWh) | Avg supply slope | GE median L |
+|---|---|---:|---:|---:|
+| 2022 | pre-IDA (gas crisis) | 203.4 | 162.8 | 0.050 |
+| 2023 | pre-IDA | 81.5 | 296.0 | 0.244 |
+| 2024 | pre-IDA | 23.6 | 943.2 | **0.525** |
+| 2025 (pre-blackout) | DA60/ID15 | 52.7 | 370.1 | **0.658** |
+| 2025 (post-blackout) | DA60/ID15 | 96.8 | 196.2 | 0.310 |
+
+**GE's Lerner in March-April has been climbing every year — including in
+the pre-IDA regime — and it tracks the inverse of the average price.** The
+2024 March-April period (entirely pre-reform) already shows L=0.525, far
+above the pre-IDA full-year median of 0.052. The 2025 pre-blackout window
+peaks even higher because that period had even lower prices.
+
+IB shows the same pattern (2022: 0.025 → 2023: 0.024 → 2024: 0.221 → 2025
+pre-blackout: 0.383).
+
+### Mechanism
+
+The Lerner formula
+$$L_i = q_i / (p^* \cdot (1-s_i) \cdot |\partial S/\partial p|)$$
+becomes mechanically large when $p^*$ is small AND $|\partial S/\partial p|$
+is small. In low-demand, high-renewable spring months, both happen
+simultaneously: surplus renewable supply pushes clearing into the
+near-zero-price part of the curve, where the supply curve is flat (many
+renewables bidding at €0 or below). The denominator collapses and Lerner
+inflates.
+
+This is a **known weakness of Hortaçsu-Puller / Cournot-FOC structural
+estimators at low-price points**: they assume an interior profit-max
+solution with a well-defined slope. At very low prices many generators
+operate below average cost and the static-profit-maximisation FOC is
+misspecified.
+
+### Implications for the thesis
+
+1. **The DA60/ID15 Lerner peak is partly a seasonal price-level artefact**,
+   not a clean reform effect. The DA60/ID15 regime spans March-September,
+   pulling in Spring's low-price hours that mechanically inflate L.
+2. **This is a more serious confound than the blackout** because it predates
+   all reforms (visible already in 2024 March-April pre-IDA data).
+3. **The system-level findings (nb11) are NOT subject to this confound**.
+   A87's net-income jump is a pre/post December comparison; A86 |V_imb|
+   regressions absorb month-of-year FE. nb11's evidence remains robust.
+4. **The narrower nb13 finding — GE IDA offer-price jump from €103 to
+   €348** — should be checked for the same seasonal effect. If 2024
+   March-April pre-IDA also shows elevated IDA offers, that finding is
+   similarly confounded.
+
+### Updated framing
+
+The defensible claim from nb12 is now:
+> Big-4 implied Lerner indices are highly sensitive to clearing-price level
+> (low-price hours produce mechanically high estimates), and this
+> sensitivity has structurally increased across the renewable-deployment
+> trajectory of the past 4 years. Within this trend, **DA60/ID15 shows a
+> further elevation, but a substantial fraction is not reform-attributable**.
+
+The cleanest cuts that survive this caveat:
+- **Pre-IDA → DA15/ID15 comparison at similar prices** (2022 pre-IDA at
+  €203 vs DA15/ID15 at €80: latter has L=0.10 — still higher than what we'd
+  expect at €80 in 2023, where pre-IDA full was 0.052).
+- **Hour-of-day decomposition**: peak-hour markups (h13-18) when CCGT is
+  on margin, where the FOC is well-posed.
+- **Within-firm-tech subset**: GE×CCGT specifically, where the structural
+  estimator is most defensible.
+
+### Action items
+
+1. **Re-run nb12 with month-of-year FE** to absorb the seasonal price effect
+   (or weight by inverse-volatility of prices). Quick.
+2. **Check whether nb13 §1's IDA offer-price finding survives a same-
+   calendar comparison** with March-April 2024 (pre-IDA). If 2024 also
+   shows €350+/MWh in spring, the bid-shading interpretation is weakened.
+3. **Reframe nb12 thesis claim** to "low-price-amplified Lerner has risen
+   structurally, with a further DA60/ID15 elevation but unclean
+   attribution".
+4. **Possibly demote fig2 (nb14) from thesis body to appendix** depending
+   on how the seasonal correction lands. The system-level fig1 (A87) is
+   not affected.
+
+Memory note for future sessions: `ref_post_blackout_regulation.md` documents
+the full regulatory cascade; this section documents the seasonal confound
+on top of the blackout confound.
