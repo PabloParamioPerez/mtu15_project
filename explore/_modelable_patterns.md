@@ -456,8 +456,60 @@ This is a clean structural model anchored in the data. Reproducing:
 - Per-firm heterogeneity: GN/HC don't follow GE/IB pattern as cleanly.
   Possibly because their CCGT cleared volumes are too small post-reform
   to dominate the bid distribution.
-- Welfare implication: reservation tranches that don't clear are zero
-  welfare cost (just price-discovery noise); but if reservation tranches
-  RAISE the marginal-clearing tranche price by squeezing out cheaper
-  competitors, that's a genuine welfare cost. Quantifying needs a
-  counterfactual market clearing.
+
+---
+
+## Pattern 9 — Welfare proxy: 63% of ISP15-window cleared CCGT MW came from > €100 bids (executed 2026-04-25)
+
+The reservation-pricing pattern (Pattern 2) is **not** all "tranches that don't clear" — a substantial fraction **does** clear, setting marginal prices. Welfare-proxy analysis on Big-4 CCGT IDA cleared MW:
+
+| Regime | Cleared GWh | Rev M€ | **%MW from bids > €100** | %Rev from bids > €100 |
+|---|---:|---:|---:|---:|
+| pre-IDA | 277,043 | 28,323 | 9.9% | 19.1% |
+| 3-sess | 1,324 | 131.7 | **29.1%** | 35.6% |
+| **ISP15 window** | 1,303 | 161.1 | **63.4%** | **68.0%** |
+| DA60/ID15 | 4,952 | 405.6 | 8.5% | 11.4% |
+| DA15/ID15 | 6,318 | 571.4 | **3.1%** | 3.7% |
+
+Per-firm CCGT extreme contrast (% of cleared MW from > €100 bids):
+- GE: 12% → 26% → **56%** → 6% → **0.27%**
+- IB: 18% → 19% → 52% → 15% → 9%
+- GN: 6% → 38% → **74%** → 9% → 3%
+- HC: 30% → 15% → 45% → 5% → 3%
+
+**Welfare interpretation:**
+
+- In ISP15 window, 63% of Big-4 CCGT IDA cleared MWh came from bids
+  originally priced above €100/MWh. These bids were not "pure
+  reservation" — they were marginal in actual market clearing.
+- Each MWh from a > €100 bid earned the clearing price (which itself
+  was elevated). The strategic effect compounds: high bids both INCLUDE
+  themselves at the margin (raising the firm's revenue) AND raise the
+  clearing price (transferring rents from consumers to all generators).
+- DA15/ID15 collapse to 3% means **the reform sequence ultimately
+  eliminated the high-price-clearing channel**. Post-MTU15-DA, Big-4
+  CCGT IDA clears almost entirely from competitive (< €100) bids.
+
+**Strategic markup proxy** (cleared high-bid MW × (p* − €50)):
+
+| Regime | days | shaded rev (M€/day) |
+|---|---:|---:|
+| pre-IDA | 651 | 6.23 |
+| 3-sess | 40 | 0.69 |
+| ISP15 window | 61 | 1.12 |
+| DA60/ID15 | 15 | 1.70 |
+| DA15/ID15 | 12 | 0.95 |
+
+Per-day shaded-revenue magnitudes are smaller post-reform because
+**total cleared CCGT MW collapsed** post-renewable-substitution. The
+proportional metric (% MW from > €100) is the cleaner reform-shift
+indicator. The absolute markup matters for welfare aggregation but
+needs to be weighted by total CCGT clearing.
+
+This is the **euros-of-rent** anchor for the structural model. The
+$\theta$ parameter from the model maps to:
+
+$$\theta_r \times \text{(MW clearing)}_r \times \text{(price uplift from reservation)} = \text{strategic transfer}_r$$
+
+Reproducing: `scripts/analysis/welfare_proxy.py`. Output panel saved
+to `data/derived/welfare_proxy_panel.parquet`.
