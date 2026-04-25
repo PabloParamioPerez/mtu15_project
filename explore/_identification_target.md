@@ -485,6 +485,35 @@ Per-BRP granular settlement is **not** disclosed on ENTSO-E (§3.13.4 specifies 
 
 Leading with the system layer and using the firm layer as a corroborating narrower claim is a substantially stronger position than the original D13 "descriptive + negative-identification" framing. The system-level evidence was already in the data; nb11 just event-studied it formally.
 
+### D17 — Seasonal-/price-level correction tightens the firm-level claim (2026-04-25)
+
+`_robustness_summary.md` §6-§8 documents two confounds discovered the morning of 2026-04-25:
+
+(1) The 2025-04-28 blackout falls inside DA60/ID15, complicating attribution.
+(2) GE's Lerner in March-April has been climbing every year since 2022 tracking the inverse of clearing price (2022: 0.05, 2023: 0.24, 2024: 0.53, 2025: 0.66 in the same calendar weeks). The Hortaçsu-Puller formula mechanically inflates at low prices when the supply curve is flat.
+
+OLS regime contrasts with **price-bin fixed effects** (the cleanest control for the seasonal/price-level artefact, asks "at the same clearing-price level, is Lerner different across regimes?") give:
+
+| Firm | DA60/ID15 vs pre-IDA | DA15/ID15 vs pre-IDA |
+|---|---:|---:|
+| GE | **+0.318*** | +0.080 |
+| IB | **+0.135*** | **−0.028*** |
+| GN | −0.038 | −0.055 |
+| HC | −0.022 | −0.024 |
+
+(All * = p<0.001, n in tens of thousands per firm.)
+
+**The qualitative pattern survives.** GE's and IB's Lerner peak in DA60/ID15 above what the price level alone explains; both partially reverse at MTU15-DA, with IB going below pre-IDA baseline. GN/HC are dominated by the bilateral-contract reallocation story.
+
+**The magnitude is smaller than D15/D16 originally claimed.** The thesis cannot say "GE peaked at 35%" without caveat — the matched-price elevation is +0.318 (raw was +0.299), so the price-level effect doesn't explain the peak, but the raw 0.351 itself includes a substantial mechanical inflation from spring low-price hours.
+
+**Refined finalized framing (replaces D16):**
+
+> The Spanish reform sequence produced measurable, concordant changes across three independent empirical layers. (1) System level: A87 monthly settlement flows, A86 imbalance volumes, A85 imbalance-price dispersion and A84 reserve-spread all jump at ISP15 and partially moderate at MTU15-DA, irrespective of the firm-level identification problems (nb11). (2) Structural firm level: conditional on clearing-price level, Endesa's and Iberdrola's implied Lerner indices peak in the asymmetric-granularity window (DA60/ID15) at +0.318 and +0.135 above pre-IDA baselines, partially reversing at MTU15-DA when the asymmetry closes. Naturgy and HC-Energía show small or below-baseline Lerner across post-reform regimes, dominated by bilateral-contract reallocation at Rule 28.8 elimination (nb12, seasonally-corrected). (3) Behavioural: post-MTU15-DA IDA sell-side offer prices fall to the lowest summer levels in the 8-year sample (€99.6/MWh GE, €108.6/MWh IB May-Sep 2025); the originally-claimed "+238% IDA-reform offer-price jump" was an artefact of an anomalously low 2024 pre-IDA spring (nb13, recalibrated).
+
+The peak-friction-at-DA60/ID15 story still holds for GE and IB; the magnitude is real even after the cleanest price-level control; the GN/HC and the IDA-offer-price components of the original framing weaken substantially. The system layer is unaffected.
+
+
 ### D15 — Structural markup + bid/liquidity/revenue (nb12 + nb13)
 
 Three-day scope expansion (2026-04-25) closed seven ✗ rows of the outcome-coverage matrix using only OMIE/ENTSO-E public data:

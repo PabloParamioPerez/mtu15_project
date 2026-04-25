@@ -202,3 +202,148 @@ The cleanest cuts that survive this caveat:
 Memory note for future sessions: `ref_post_blackout_regulation.md` documents
 the full regulatory cascade; this section documents the seasonal confound
 on top of the blackout confound.
+
+## 7. Seasonally-corrected Lerner — central claim survives, narrowed (added 2026-04-25 morning)
+
+OLS regime contrasts vs pre-IDA reference, three control specs.
+Reproducing: `scripts/analysis/seasonal_correction_lerner.py`.
+
+**Spec 3 (price-bin FE) is the cleanest control** — asks "at the same
+clearing-price level, is Lerner different across regimes?" — and is what
+the thesis should cite. Spec 1 (month FE) controls for calendar
+seasonality only. Spec 2 (month + year FE) over-absorbs because year
+dummies are nearly collinear with the regime sequence; treat as a worst-
+case sensitivity rather than a preferred spec.
+
+### Regime contrasts (Lerner, vs pre-IDA reference, OLS coefficients)
+
+| Firm | Regime | Raw med | Spec 1 (month FE) | Spec 2 (m+y FE) | **Spec 3 (price-bin FE)** |
+|---|---|---:|---:|---:|---:|
+| GE | 3-sess        | 0.240 | +0.226 | −0.040 | **+0.226** |
+| GE | ISP15 window  | 0.191 | +0.166 | −0.200 | **+0.174** |
+| GE | DA60/ID15     | 0.351 | +0.310 | −0.125 | **+0.318** |
+| GE | DA15/ID15     | 0.103 | +0.098 | −0.333 | **+0.080** |
+| IB | 3-sess        | 0.042 | +0.022 | −0.065 | +0.006 |
+| IB | ISP15 window  | 0.045 | +0.024 | −0.066 | +0.027 |
+| IB | DA60/ID15     | 0.112 | +0.157 | +0.058 | **+0.135** |
+| IB | DA15/ID15     | 0.022 | −0.020 | −0.118 | **−0.028** |
+| GN | all           | ~0.00 | … | … | mostly negative or null |
+| HC | all           | ~0.00 | … | … | mostly negative or null |
+
+(All standard errors below 0.012 with n in tens of thousands; every Spec 3
+coef in the GE/IB rows is significant at p<0.001.)
+
+### What the seasonally-corrected story says
+
+**For GE and IB**, the qualitative pattern survives and is sharper after
+controlling for clearing-price level:
+
+1. **DA60/ID15 elevation is real** even at the same price level. GE's
+   Lerner is +0.318 above pre-IDA at matched prices; IB's is +0.135. The
+   raw "GE peaked at 0.351" overstated the magnitude (because some of it
+   is the spring-low-price effect bringing the formula into its mechanical
+   blow-up regime), but the matched-price elevation is still substantial.
+2. **DA15/ID15 partial reversal** also survives. GE's matched-price
+   contrast is +0.080 (much smaller than DA60/ID15's +0.318); IB drops
+   to **−0.028**, *below* pre-IDA baseline. Consistent with the reform
+   narrative that MTU15-DA closed the asymmetric-granularity arbitrage
+   window.
+3. **Pre-MTU15-IDA regimes (3-sess, ISP15 window) show smaller
+   elevations** than DA60/ID15. GE's are +0.226 and +0.174, IB's are
+   +0.006 and +0.027. The DA60/ID15 peak is the clear local maximum.
+
+**For GN and HC**, the seasonally-corrected pattern is consistently
+negative (their Lerner drops below pre-IDA in every post-reform regime).
+This is the bilateral-contract reallocation story: their selling-agent
+share collapsed at Rule 28.8 elimination, mechanically reducing $q_i$
+in the formula.
+
+### Refined thesis claim from nb12
+
+> Conditional on clearing-price level, Endesa's (GE) and Iberdrola's (IB)
+> implied Lerner indices show a robust DA60/ID15 elevation of +0.318 and
+> +0.135 respectively above pre-IDA baselines (both p<0.001), partially
+> reversing at MTU15-DA (GE +0.080, IB −0.028). The peak in the asymmetric-
+> granularity window (post-MTU15-IDA, pre-MTU15-DA) is consistent with
+> the strategic-arbitrage interpretation: when intraday and day-ahead
+> markets had mismatched settlement clocks, Big-4 firms with active
+> selling roles had room to extract higher implied markups; closure of
+> the asymmetry at MTU15-DA reduced this room. The Big-4 aggregate is not
+> homogeneous: Naturgy (GN) and HC-Energía (HC) show consistently below-
+> pre-IDA Lerner across all post-reform regimes, dominated by the
+> bilateral-contract reallocation around the March 2025 Rule 28.8
+> elimination, not by strategic bidding.
+
+### What this means for nb14 fig2
+
+Provisional **fig2 stays**, but with caveats and possibly a price-bin-
+controlled supplementary panel. The seasonally-uncorrected raw figure
+(monthly Big-4 medians) is descriptively useful — it shows the time
+profile of the elevation — but the body text must cite the **Spec 3
+matched-price contrasts** rather than raw regime medians. Consider:
+
+- **Option A** (lighter): keep fig2 as the descriptive monthly median,
+  cite the price-bin-corrected regime-contrast table in the body text,
+  put the table in the body or appendix.
+- **Option B** (heavier): replace fig2 with a side-by-side raw vs price-
+  bin-corrected version. More honest but visually busier.
+
+I lean toward Option A — descriptive figure stays, rigorous numbers in
+the table.
+
+## 8. nb13 §1 IDA offer-price — claim weakened, narrowed (added 2026-04-25 morning)
+
+GE IDA sell-side wavg offer price, **same calendar weeks** across years:
+
+| Year | Window | Regime | n_sess | Avg offer (€/MWh) |
+|---|---|---|---:|---:|
+| 2022 | Mar 19 – Apr 27 | pre-IDA (gas crisis) | 236 | **249.4** |
+| 2023 | Mar 19 – Apr 27 | pre-IDA | 239 | **306.4** |
+| 2024 | Mar 19 – Apr 27 | pre-IDA | 161 | 44.5 |
+| 2024 | Jun 14 – Aug 31 | post-IDA, 3-sess | 176 | 341.7 |
+| 2025 | Mar 19 – Apr 27 | DA60/ID15 (pre-blackout) | 113 | 264.7 |
+| 2025 | May – Sep      | DA60/ID15 (post-blackout) | 442 | **99.6** |
+
+The original nb13 §1 framing was "GE pre-IDA full-mean €103 → 3-sess
+€348 = +238% jump at IDA reform". This **does not survive** a same-
+calendar-weeks comparison:
+
+- 2022 pre-IDA spring (€249) and 2023 pre-IDA spring (€306) were both
+  at or above the supposedly-elevated 3-sess level (€342). The €103
+  pre-IDA mean was dragged down by 2024's anomalously low spring (€45),
+  not by structural pre-reform pricing behaviour.
+- 2024 Jun-Aug 3-sess (€342) is similar magnitude to 2022 and 2023
+  spring offers. So the 3-sess elevation might just reflect summer 2024
+  having gas prices comparable to 2022-2023 spring.
+
+**What does survive:** the **post-MTU15-DA collapse**. 2025 May–Sep
+post-blackout DA60/ID15 shows €99.6 — the lowest summer figure of the
+8-year sample. IB shows the same: €108 May–Sep 2025 vs €270 in 2022.
+
+### Refined claim from nb13 §1
+
+> Big-4 IDA sell-side offer prices in DA15/ID15 (post-MTU15-DA) are
+> structurally lower than in any prior comparable summer in the 2018-2025
+> sample. The original framing of an "IDA offer price jump at the IDA
+> reform" was an artefact of the 2024 pre-IDA spring being anomalously
+> low; comparable-calendar-weeks comparisons across years show that
+> 2022-2023 spring offer prices were already at the 3-sess and DA60/ID15
+> levels.
+
+The behavioural-layer claim weakens substantially. nb13 §1's IDA-offer-
+price story should be reframed around the **DA15/ID15 collapse to
+historic lows**, not the IDA-reform jump.
+
+## Action item summary (post-correction)
+
+1. **Update nb12 narrative** to use Spec-3 (price-bin FE) regime
+   contrasts as the headline result. Raw regime medians become a
+   robustness note, not the central claim.
+2. **Update nb13 §1 narrative** to focus on the DA15/ID15 IDA offer-
+   price collapse, drop the "+238% jump" framing.
+3. **Update `_identification_target.md` D15/D16** to reflect the
+   refined three-layer claim with the price-bin-corrected magnitudes.
+4. **Keep nb14 fig2** for now; cite Spec-3 regime contrasts in body
+   text. Reconsider in week of thesis writing.
+5. **System layer (nb11) is unchanged** — A87 and other ISP15-pivoting
+   findings are not subject to either confound.
