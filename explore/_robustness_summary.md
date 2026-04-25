@@ -544,3 +544,99 @@ than-FR pre-IDA to more-expensive-than-FR in 3-sess and DA60/ID15.
    excess is +5–10 €/MWh (real but smaller than raw change suggests).
 
 Reproducing: `scripts/analysis/france_da_placebo.py`.
+
+## 11. HHI panel — concentration rises across reform sequence (added 2026-04-25 afternoon)
+
+Herfindahl-Hirschman Index of DA cleared sell-side market shares. Three
+variants:
+
+| Regime | HHI (all firms) | HHI (Big-4 only) | Big-4 share | HHI (CCGT only) |
+|---|---:|---:|---:|---:|
+| pre-IDA | 0.283 | 0.096 | 48.6% | 0.460 |
+| 3-sess | **0.421** | **0.311** | 63.4% | 0.608 |
+| ISP15 window | 0.396 | 0.220 | 55.8% | 0.530 |
+| **DA60/ID15** | **0.425** | **0.313** | **66.5%** | 0.596 |
+| DA15/ID15 | 0.386 | 0.257 | 63.2% | 0.581 |
+
+**The full-market HHI rises from 0.283 to 0.42** (49% increase), with
+Big-4 share climbing from 49% to 66%. By FTC/DOJ thresholds, HHI > 0.25
+is "highly concentrated" and HHI > 0.40 is "very highly concentrated".
+Spain crosses that threshold at the IDA reform and stays there.
+
+CCGT-only HHI is even higher (0.46 → 0.60+). CCGT in Spain is
+structurally concentrated.
+
+This is a **descriptive concentration finding that does not require
+the Cournot-FOC interpretation**. It's a robust, standard market-power
+metric. Useful for thesis: the concentration shift is real even after
+the structural-Lerner finding was reframed as a composition artefact.
+
+## 12. Capacity withholding ratio (cleared / offered, sell-side) — pattern not consistent with strategic withholding (added 2026-04-25 afternoon)
+
+If firms strategically withhold capacity, the cleared/offered ratio
+should DECLINE in the alleged-withholding regime. Per-firm daily mean
+ratio:
+
+| Firm | pre-IDA | 3-sess | ISP15 | DA60/ID15 | DA15/ID15 |
+|---|---:|---:|---:|---:|---:|
+| GE | 0.241 | 0.127 | 0.148 | **0.642** | **0.720** |
+| IB | 0.135 | 0.030 | 0.046 | 0.112 | 0.092 |
+| GN | 0.099 | 0.008 | 0.014 | 0.031 | 0.048 |
+| HC | 0.145 | 0.006 | 0.024 | 0.036 | 0.139 |
+
+**GE's clearance rate INCREASED** from 24% pre-IDA to 64-72% post-MTU15.
+Opposite of strategic withholding. GE is offering less and clearing
+more of what it offers post-reform — consistent with bilateral-contract
+intermediation reducing GE's "pure-price" sell-side exposure.
+
+GN, HC, IB show ratios DECLINING in the post-reform regimes, but only
+slightly, and the absolute levels (0.01-0.10) are very low. They were
+already over-offering pre-reform; post-reform they over-offer more.
+
+**No clear strategic-withholding signature** in this measure either.
+
+## 13. Bid-shading regression (offer − clearing in IDA, sell-side) — GE-specific 3-sess and ISP15 elevation (added 2026-04-25 afternoon)
+
+Quantity-weighted IDA sell-side offer price minus clearing price, per
+(date, session, firm-group). OLS with regime + price-bin FE, vs pre-IDA
+reference.
+
+| Firm | pre-IDA mean | 3-sess | ISP15 | DA60/ID15 | DA15/ID15 |
+|---|---:|---:|---:|---:|---:|
+| GE | €21.7 | **+€250** | **+€218** | +€53 | −€12 |
+| IB | €22.0 | +€19 | +€15 | +€30 | +€25 |
+| GN | €0.2 | +€44 | +€38 | +€43 | +€37 |
+| HC | €2.3 | +€25 | +€13 | −€1 | −€14 |
+| Fringe | −€0.0 | −€26 | −€22 | +€15 | +€8 |
+
+(All p<0.001 except HC DA60/ID15.)
+
+**GE's bid-shading peaks at the 3-sess and ISP15 windows** (+€250 and
++€218 above pre-IDA average shade), normalises at MTU15-DA (−€12). This
+is one of the cleanest reform-aligned findings we have:
+- Pre-IDA: GE offered +€22 above clearing on average
+- Post-IDA-reform: GE offered +€272 above clearing on average
+- Post-MTU15-DA: GE offered +€10 above clearing on average
+
+**Caveats:**
+- The regime windows here cover 6-21 months each; +€250 average is
+  consistent with GE pricing high-price-step tranches in low-demand
+  hours where they don't expect to clear — a "reservation" or
+  "shadow-bidding" strategy more than active price extraction.
+- The *Δ Q* and Lerner findings show GE's CCGT didn't clear much in
+  low-demand spring 2024, so the wavg-shade is dominated by those
+  not-clearing tranches. Strategic interpretation needs care.
+- IB shows modest sustained shading (+€15-30) across all post-reform
+  regimes including DA15/ID15. So the GE pattern is not uniform across
+  Big-4.
+- Fringe shows the OPPOSITE pattern: shading negative in 3-sess and
+  ISP15 (offering BELOW clearing), turning positive at DA60/ID15.
+  Suggests Fringe is reactive to clearing rather than strategically
+  shading.
+
+**This is the cleanest behavioural-layer finding so far** that aligns
+with the reform-attribution narrative for GE specifically. It's
+descriptive (offer-curve shape) rather than welfare-relevant directly,
+but tighter than the Lerner-formula approach.
+
+Reproducing: `scripts/analysis/hhi_withholding_bidshading.py`.
