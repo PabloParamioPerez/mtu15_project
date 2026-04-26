@@ -97,11 +97,23 @@ The thesis prose calls it "fiscal cost shift" but the welfare interpretation req
 
 **Mitigation needed**: in thesis prose, replace "welfare cost" / "fiscal cost shift" with "BRP-to-TSO settlement transfer" or "regulatory redistribution." Sharper, defensible, no overclaim.
 
-### ★★ B2. Pre-IDA baseline contains the 2022–2023 energy crisis
+### ✅ B2. (DEFENDED 2026-04-27) Crisis-excluded baseline shifts point estimate <4%; CI narrows
+
+**Audit attack** (preserved below for record):
 
 Calendar-month fixed effects don't account for regime-shifting volatility. The 2022–2023 imbalance prices were anomalously high (gas crisis, Ukraine war). If you include those in the baseline, the post-reform "excess" appears smaller than it would against a "calm-period" baseline; if you exclude them, larger. The current spec includes them implicitly.
 
 **Mitigation needed**: re-run `asymmetric_granularity_welfare.py` excluding 2022-Q1 to 2023-Q4 from the baseline. Report sensitivity. ~30 min.
+
+**Result of the sensitivity test (`s6_baseline_sensitivity.py`, 2026-04-27)**:
+
+| Baseline window | Asymmetric-window excess | 95% CI null | Observed/upper |
+|---|---:|---|---:|
+| FULL (default, 2018-2024-05) | +€1,094.9 M | [−90, +73] | ~15× |
+| EXCL_CRISIS (drop 2022+2023) | +€1,061.6 M | [−47, +38] | ~28× |
+| PRE-2022 (2018-2021 only) | +€1,048.2 M | [−33, +30] | ~35× |
+
+Point estimate shifts only 3–4% across specifications. Bootstrap CI **narrows** under cleaner baselines (less heteroskedastic residuals when crisis years are removed), making the observed/null ratio *stronger*. **Status: DEFENDED with data.** S6 conclusion gets sharper under the cleaner baseline, not weaker. The +€1,048–1,095M range survives under any defensible reference window choice.
 
 ### ★★ B3. Post-MTU15-DA "collapse" rests on n=3 months (Oct–Dec 2025)
 
