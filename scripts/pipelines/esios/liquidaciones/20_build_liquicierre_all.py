@@ -35,8 +35,16 @@ def main() -> None:
         return
 
     df = pd.concat(parts, ignore_index=True)
+    # Coerce mixed-type date column (some month files have date as
+    # datetime.date, others as NaN float) to consistent pandas datetime.
+    df["date"] = pd.to_datetime(df["date"], errors="coerce")
     print(f"Concatenated: {len(df):,} rows from {len(parts)} per-month files.")
-    print(f"  date range:  {df['date'].min()} → {df['date'].max()}")
+    valid_dates = df["date"].dropna()
+    if len(valid_dates):
+        print(f"  date range:  {valid_dates.min().date()} → {valid_dates.max().date()}")
+    n_missing = df["date"].isna().sum()
+    if n_missing:
+        print(f"  missing-date rows: {n_missing:,} (filename did not parse to YYYYMMDD)")
     print(f"  BSPs ({df['bsp'].nunique()}): {sorted(df['bsp'].dropna().unique())}")
     print(f"  Info codes ({df['info'].nunique()}): {sorted(df['info'].dropna().unique())}")
     print(f"  Archives: {df['archive'].value_counts().to_dict()}")

@@ -109,13 +109,32 @@ def main() -> None:
 
     print(f"[load] {LIQUI_ALL}")
     df = pd.read_parquet(LIQUI_ALL)
-    df["date"] = pd.to_datetime(df["date"])
+    df["date"] = pd.to_datetime(df["date"], errors="coerce")
+    df = df.dropna(subset=["date"]).copy()
     df["regime"] = df["date"].apply(assign_regime)
 
-    # We focus on three Info codes that capture aFRR provision and
-    # exclude system-only blocks (REE / RESNUP / RESNDW etc.).
-    PROVISION_INFOS = ["RMRSP", "RMRSN", "COEFPAR"]
-    df = df[df["info"].isin(PROVISION_INFOS)].copy()
+    # Format dispatch: legacy `liquicierre` uses RMRSP/RMRSN/COEFPAR
+    # (reserve margins + participation coefficient). Post-ISP15
+    # `liquicierresrs` uses a richer transaction-level schema —
+    # EnAcSuTo (energy activated up total) and EnAcBaTo (energy
+    # activated down total) are the conceptual analogues. We map the
+    # post-ISP15 fields to the same three logical buckets so the share
+    # metric is regime-comparable:
+    #   bucket "up_provision"  ← RMRSP (legacy)  | EnAcSuTo (new)
+    #   bucket "down_provision" ← RMRSN (legacy) | EnAcBaTo (new)
+    #   bucket "participation"  ← COEFPAR (legacy) | EneLiqTo (new, total liquidated)
+    BUCKET_MAP = {
+        # legacy
+        "RMRSP":   "up_provision",
+        "RMRSN":   "down_provision",
+        "COEFPAR": "participation",
+        # post-ISP15
+        "EnAcSuTo": "up_provision",
+        "EnAcBaTo": "down_provision",
+        "EneLiqTo": "participation",
+    }
+    df["bucket"] = df["info"].map(BUCKET_MAP)
+    df = df[df["bucket"].notna()].copy()
     df["abs_ctd"] = df["ctd"].abs()
 
     rows = []
@@ -123,46 +142,48 @@ def main() -> None:
         firms_universe = list(mapping.keys()) + ["Fringe"]
         df["firm"] = df["bsp"].apply(lambda b: assign_firm(b, mapping))
 
-        # System totals per (regime, info)
+        # System totals per (regime, bucket)
         sys_tot = (
-            df.groupby(["regime", "info"], as_index=False)["abs_ctd"]
+            df.groupby(["regime", "bucket"], as_index=False)["abs_ctd"]
             .sum()
             .rename(columns={"abs_ctd": "system_total"})
         )
 
-        # Firm sums per (regime, firm, info)
+        # Firm sums per (regime, firm, bucket)
         firm_sum = (
-            df.groupby(["regime", "firm", "info"], as_index=False)["abs_ctd"]
+            df.groupby(["regime", "firm", "bucket"], as_index=False)["abs_ctd"]
             .sum()
             .rename(columns={"abs_ctd": "firm_total"})
         )
 
-        m = firm_sum.merge(sys_tot, on=["regime", "info"], how="left")
+        m = firm_sum.merge(sys_tot, on=["regime", "bucket"], how="left")
         m["share_pct"] = m["firm_total"] / m["system_total"] * 100
 
-        # Pivot: one row per (regime, firm); cols are share for each info
+        # Pivot: one row per (regime, firm); cols are share for each bucket
         wide = m.pivot_table(
             index=["regime", "firm"],
-            columns="info",
+            columns="bucket",
             values="share_pct",
             aggfunc="first",
         ).reset_index()
         wide.columns.name = None
         wide = wide.rename(
             columns={
-                "RMRSP":  "share_RMRSP_pct",
-                "RMRSN":  "share_RMRSN_pct",
-                "COEFPAR": "share_COEFPAR_pct",
+                "up_provision":   "share_up_pct",
+                "down_provision": "share_down_pct",
+                "participation":  "share_part_pct",
             }
         )
-        # Combined (geometric mean) — ignore zeros gracefully
-        for c in ("share_RMRSP_pct", "share_RMRSN_pct", "share_COEFPAR_pct"):
+        # Combined (geometric mean over the three buckets that are
+        # actually present in this regime — handles the legacy/new
+        # format split cleanly).
+        for c in ("share_up_pct", "share_down_pct", "share_part_pct"):
             if c not in wide.columns:
                 wide[c] = np.nan
         wide["share_combined_pct"] = (
-            wide["share_RMRSP_pct"].fillna(0)
-            * wide["share_RMRSN_pct"].fillna(0)
-            * wide["share_COEFPAR_pct"].fillna(0)
+            wide["share_up_pct"].fillna(0)
+            * wide["share_down_pct"].fillna(0)
+            * wide["share_part_pct"].fillna(0)
         ).pow(1 / 3)
         wide["mapping"] = mapping_name
         rows.append(wide)
@@ -173,9 +194,9 @@ def main() -> None:
             "mapping",
             "regime",
             "firm",
-            "share_RMRSP_pct",
-            "share_RMRSN_pct",
-            "share_COEFPAR_pct",
+            "share_up_pct",
+            "share_down_pct",
+            "share_part_pct",
             "share_combined_pct",
         ]
     ]
@@ -201,9 +222,9 @@ def main() -> None:
                     index=False,
                     columns=[
                         "firm",
-                        "share_RMRSP_pct",
-                        "share_RMRSN_pct",
-                        "share_COEFPAR_pct",
+                        "share_up_pct",
+                        "share_down_pct",
+                        "share_part_pct",
                         "share_combined_pct",
                     ],
                     float_format=lambda x: f"{x:6.2f}" if pd.notna(x) else "  -   ",

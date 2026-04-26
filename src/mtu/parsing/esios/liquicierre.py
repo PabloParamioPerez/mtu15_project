@@ -112,63 +112,99 @@ def parse_liquicierre_xml(path: Path, archive: str) -> pd.DataFrame:
                 pos = ivl.find("{*}Pos")
                 pos_int = int(pos.attrib.get("v", 0)) if pos is not None else None
 
-                # Quantity field has multiple possible names
-                ctd_value = None
-                for ctd_tag in ("Ctd", "CtdBaj", "CtdSub"):
-                    e = ivl.find(f"{{*}}{ctd_tag}")
-                    if e is not None:
-                        try:
-                            ctd_value = float(e.attrib.get("v", "nan"))
-                        except (ValueError, TypeError):
-                            pass
-                        break
-
-                # Price field (optional)
-                precio_value = None
-                for px_tag in ("Precio", "PrecioBaj", "PrecioSub"):
-                    e = ivl.find(f"{{*}}{px_tag}")
-                    if e is not None:
-                        try:
-                            precio_value = float(e.attrib.get("v", "nan"))
-                        except (ValueError, TypeError):
-                            pass
-                        break
-
-                # ClPto (point classifier — Schedule, Up, Down, etc.)
-                clpto = ivl.find("{*}ClPto")
-                clpto_v = clpto.attrib.get("v") if clpto is not None else None
-
                 ts = (
                     period_start + step * (pos_int - 1)
                     if (period_start and pos_int)
                     else None
                 )
 
-                rows.append(
-                    {
-                        "bsp": bsp,
-                        "info": info,
-                        "clpto": clpto_v,
-                        "period_start_utc": ts,
-                        "pos": pos_int,
-                        "ctd": ctd_value,
-                        "precio": precio_value,
-                        "unidad_medida": unidad_medida,
-                        "unidad_precio": unidad_precio,
-                        "source_file": path.name,
-                        "archive": archive,
-                    }
-                )
+                # ClPto (legacy point classifier — Schedule, Up, Down)
+                clpto = ivl.find("{*}ClPto")
+                clpto_v = clpto.attrib.get("v") if clpto is not None else None
+
+                if archive == "liquicierre":
+                    # Legacy format: one Ctd + optional Precio per Intervalo,
+                    # with Info code on the SeriesTemporales discriminating.
+                    ctd_value = None
+                    for ctd_tag in ("Ctd", "CtdBaj", "CtdSub"):
+                        e = ivl.find(f"{{*}}{ctd_tag}")
+                        if e is not None:
+                            try:
+                                ctd_value = float(e.attrib.get("v", "nan"))
+                            except (ValueError, TypeError):
+                                pass
+                            break
+                    precio_value = None
+                    for px_tag in ("Precio", "PrecioBaj", "PrecioSub"):
+                        e = ivl.find(f"{{*}}{px_tag}")
+                        if e is not None:
+                            try:
+                                precio_value = float(e.attrib.get("v", "nan"))
+                            except (ValueError, TypeError):
+                                pass
+                            break
+                    rows.append(
+                        {
+                            "bsp": bsp,
+                            "info": info,
+                            "clpto": clpto_v,
+                            "period_start_utc": ts,
+                            "pos": pos_int,
+                            "ctd": ctd_value,
+                            "precio": precio_value,
+                            "unidad_medida": unidad_medida,
+                            "unidad_precio": unidad_precio,
+                            "source_file": path.name,
+                            "archive": archive,
+                        }
+                    )
+                else:
+                    # Post-ISP15 format: many price/energy fields per Intervalo,
+                    # no Info field on SeriesTemporales. Emit one row per
+                    # (BSP, ISP, field-name) tuple, treating field name as
+                    # the "info" discriminator and the value as ctd or precio
+                    # by prefix (Pre* = price, En* = energy).
+                    for child in ivl:
+                        tag = _strip_ns(child.tag)
+                        if tag == "Pos":
+                            continue
+                        try:
+                            val = float(child.attrib.get("v", "nan"))
+                        except (ValueError, TypeError):
+                            continue
+                        is_price = tag.startswith("Pre")
+                        rows.append(
+                            {
+                                "bsp": bsp,
+                                "info": tag,                # field name as discriminator
+                                "clpto": clpto_v,
+                                "period_start_utc": ts,
+                                "pos": pos_int,
+                                "ctd": None if is_price else val,
+                                "precio": val if is_price else None,
+                                "unidad_medida": unidad_medida,
+                                "unidad_precio": unidad_precio,
+                                "source_file": path.name,
+                                "archive": archive,
+                            }
+                        )
 
     df = pd.DataFrame(rows)
     if not df.empty:
-        # Pull date from filename: liquicierre_YYYYMMDD.xml etc.
-        stem = path.stem.replace(".1", "").replace(".2", "")
-        # filename "liquicierre_YYYYMMDD" or "liquicierresrs_YYYYMMDD.N"
-        for token in stem.split("_"):
-            if token.isdigit() and len(token) == 8:
-                df["date"] = pd.to_datetime(token, format="%Y%m%d").date()
-                break
+        # Filename patterns observed:
+        #   liquicierre_YYYYMMDD.xml
+        #   liquicierre_YYYYMMDD.N.xml          (vintage suffix .1, .2, .3, .4)
+        #   liquicierresrs_YYYYMM.xml           (partial-month single-payload)
+        # Extract first 8-digit run, falling back to first 6-digit run.
+        import re
+        m = re.search(r"(\d{8})", path.stem)
+        if m:
+            df["date"] = pd.to_datetime(m.group(1), format="%Y%m%d").date()
+        else:
+            m = re.search(r"(\d{6})", path.stem)
+            if m:
+                # Partial-month payload — assign first day of month
+                df["date"] = pd.to_datetime(m.group(1), format="%Y%m").date()
     return df
 
 
