@@ -29,7 +29,9 @@ The F7 ledger row acknowledges this in a caveat. The caveat is honest but the ma
 
 **Result of the sensitivity test (`f7_hydro_strict_sensitivity.py`, 2026-04-27)**: **100.0% survival.** Strict criteria applied: (i) split hydro into Reservoir (Hidráulica Generación + Hidráulica de Bombeo Puro) vs Run-of-river (RE Mercado Hidráulica + RE Tar. CUR Hidráulica), matching only within subtype; (ii) K-ratio (capacity_L/capacity_S) ∈ [1/3, 3]. All 7 IB hydro plants matched under strict criteria; per-unit attributions identical to baseline within €0.001M (rounding noise). Reason: IB hydro plants are large (132–1651 MW), and the BASELINE closest-capacity rule already implicitly selected only large-reservoir Fringe matches — small run-of-river Fringe plants (median 2.2 MW) were never the closest-capacity option. The hypothetical 1000-MW-vs-30-MW match concern of A1 was theoretical, not actual. **Status: DEFENDED with data.** The complementary A2 attack (operational-vs-strategic conflation — large-reservoir EDP/Acciona Fringe matches may themselves bid non-competitively) remains independent and unaffected by this test.
 
-### ★★★ A2. Synthetic-firm method conflates strategic conduct with operational constraints
+### ⚠ A2. (FRAMED 2026-04-27) Operational-vs-strategic conflation — addressed by framing footnote
+
+**Audit attack** (preserved below for record):
 
 The Ciarreta–Espinosa method asks: "what if IB bid like Fringe?" But Fringe hydro plants bid the way they do partly because they HAVE TO — small reservoirs, run-of-river spillage avoidance, no firm storage rights. Fringe hydro bidding €0 may be necessity, not competitive behavior.
 
@@ -38,6 +40,8 @@ So replacing IB hydro with Fringe doesn't isolate "IB strategic markup" — it i
 **Defense (partial)**: this is a generic feature of the synthetic-firm method, not a bug introduced by us. Ciarreta–Espinosa (2010) cite the same caveat. The two-decade replication of the IB > Endesa pattern strengthens the "strategic" interpretation against pure-portfolio-composition explanations because portfolios differ across periods.
 
 **Mitigation needed**: add an explicit "operational-vs-strategic" footnote to the F7 row. Frame the €820M as "the rent that IB extracts under its operational structure that Fringe could not extract under their operational structure" — which is still economically meaningful, just not "pure strategic markup."
+
+**Result of mitigation (2026-04-27)**: framing footnote added in three places: (i) `CLAIMS_LEDGER.md` F7 row caveat 3 (alongside the A1 sensitivity result); (ii) `_modelling_track.md` §0 caveat for the per-IB-unit finding; (iii) `_coherence_audit.md` new dedicated section "Operational-vs-strategic framing for F7/F8". Standard framing: read the €530M as "rent IB extracts that operationally-comparable large-reservoir European peers do not" (matched Fringes are mostly EDP Portugal large hydros + EHN Acciona — themselves portfolio operators, not pure-fringe benchmarks). Cross-firm direction (IB > matched peers) survives; magnitude has upper-bound interpretation. **Status: addressed by framing.** Cannot be data-defended (no perfectly-competitive benchmark exists); the framing is the right answer.
 
 ### ★★ A3. F8 within-month price quartiles are endogenous
 
@@ -206,11 +210,15 @@ If complexification doesn't translate to price-setting, B8 is a curious behaviou
 
 ## §5 — Methodology / general
 
-### ★★ E1. Two-decade Ciarreta–Espinosa replication is not independent
+### ⚠ E1. (FRAMED 2026-04-27) Replaced with "method-replication across periods, pattern persistence" framing
+
+**Audit attack** (preserved below for record):
 
 The thesis cites Ciarreta–Espinosa 2010 finding (IB > Endesa, 2002–2005, with vertical-integration ruled out) as supporting evidence for our 2024–2026 finding. But we use the SAME synthetic-firm method they used. So the "two-decade replication" is the same method applied to a different period — not an independent confirmation. If the method has biases (e.g. operational-vs-strategic conflation per A2), both periods carry the same bias.
 
 **Mitigation needed**: in thesis prose, frame the Ciarreta–Espinosa parallel as "method validation across periods" rather than "independent confirmation." More modest, more accurate.
+
+**Result of mitigation (2026-04-27)**: framing updated in CLAIMS_LEDGER F7 row, `_modelling_track.md` §0, and `_coherence_audit.md` (two paragraphs). Standard wording: "two-decade pattern persistence" or "method-replication across periods" — explicit that the same estimator family produces the same direction in different data, NOT independent confirmation. The cross-firm direction (IB > Endesa) is what survives; the mechanism story differs (CTC stranded-cost regulation in 2002–2005 vs hydro-portfolio + asymmetric-granularity in 2024–2026). **Status: FRAMED.**
 
 ### ★ E2. aFRR market design vs DA market design are not symmetric
 
