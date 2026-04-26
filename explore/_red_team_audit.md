@@ -10,7 +10,9 @@ For attacks I think the project can defend, I add a "Defense" line. For attacks 
 
 The whole structural-firm chapter rests on F7 (IB ≈ 98% of Big-4 cleared-price-difference rent) and F8 (IB hydro Q4 dispatch 63% vs Fringe 42%). Six attack vectors.
 
-### ★★★ A1. Hydro plant-pair matching is fragile and untested for sensitivity
+### ✅ A1. (DEFENDED 2026-04-27) Hydro plant-pair matching survives stricter criteria 100%
+
+**Audit attack** (preserved below for record):
 
 F7's per-IB-unit decomposition attributes ~€530M to IB hydro (TAMEGA €203M, SIL €103M, DUER €92M, TAJO €90M). The method substitutes each IB hydro plant with a same-tech, same-capacity Fringe plant. **Spanish hydro plants are NOT exchangeable along this match dimension**:
 
@@ -24,6 +26,8 @@ A TAMEGA reservoir-hydro plant matched against a Galician run-of-river Fringe pl
 The F7 ledger row acknowledges this in a caveat. The caveat is honest but the magnitude of the artifact is not bounded.
 
 **Mitigation needed**: re-run `synthetic_firm_per_unit_ib.py` under restrictive matching (require same `storage_class` + same `hydro_basin` from `lista_unidades.csv` if those fields exist; otherwise require capacity within ±10% AND in same `zone`). Report what fraction of the €530M survives. ~½ day.
+
+**Result of the sensitivity test (`f7_hydro_strict_sensitivity.py`, 2026-04-27)**: **100.0% survival.** Strict criteria applied: (i) split hydro into Reservoir (Hidráulica Generación + Hidráulica de Bombeo Puro) vs Run-of-river (RE Mercado Hidráulica + RE Tar. CUR Hidráulica), matching only within subtype; (ii) K-ratio (capacity_L/capacity_S) ∈ [1/3, 3]. All 7 IB hydro plants matched under strict criteria; per-unit attributions identical to baseline within €0.001M (rounding noise). Reason: IB hydro plants are large (132–1651 MW), and the BASELINE closest-capacity rule already implicitly selected only large-reservoir Fringe matches — small run-of-river Fringe plants (median 2.2 MW) were never the closest-capacity option. The hypothetical 1000-MW-vs-30-MW match concern of A1 was theoretical, not actual. **Status: DEFENDED with data.** The complementary A2 attack (operational-vs-strategic conflation — large-reservoir EDP/Acciona Fringe matches may themselves bid non-competitively) remains independent and unaffected by this test.
 
 ### ★★★ A2. Synthetic-firm method conflates strategic conduct with operational constraints
 
