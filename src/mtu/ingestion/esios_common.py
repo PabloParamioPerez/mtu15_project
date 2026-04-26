@@ -59,11 +59,16 @@ API_URL = "https://api.esios.ree.es/archives/{archive_id}/download"
 ARCHIVES = {
     "liquicomun_a2":         3,    # A2 provisional settlement (latest month)
     "liquicomun_c2":         8,    # C2 definitive settlement (historical)
-    # Tier 2 — scaffolded but not synced yet:
-    # "totalasigsec":         (lookup),
-    # "curvas_ofertas_afrr":  (lookup),
-    # "totalrp48prec":        (lookup),
-    # "indisponibilidades":   (lookup),
+    # Tier 2 — secondary/tertiary regulation + technical-restriction prices.
+    # Verified active 2026-04-27 against the public archive endpoint.
+    # Empty-archive note: id=27 (totalrp48prec) returns an empty ZIP for any
+    # date range; deprecated. Use 28 (totalrp48preccierre, closure version)
+    # which is what we want for stable historical analysis anyway.
+    "liquicierre":           17,   # aFRR settlement detail (2015 → 2024-12-03)
+    "totalrp48preccierre":   28,   # technical-restriction (RZ) closure prices (2015 → now)
+    "ree_balancing_bids":   181,   # mFRR bid-level (2022-05-24 → 2024-12-10), DAILY chunks
+    "liquicierresrs":       203,   # aFRR settlement (post-ISP15 format, 2024-11-22 → now)
+    "curvas_ofertas_afrr":  234,   # aFRR offer curves (2024-11-20 → now), DAILY chunks, .xls payload
 }
 
 USER_AGENT = "mtu15-thesis-esios-sync/1.0"
@@ -99,6 +104,27 @@ def month_chunks(start_ym: str, end_ym: str) -> Iterable[tuple[str, str, str]]:
         )
         yield cur.strftime("%Y%m"), ps, pe
         cur += 1
+
+
+def day_chunks(start_date: str, end_date: str) -> Iterable[tuple[str, str, str]]:
+    """Yield (yyyymmdd, period_start_iso, period_end_iso) per day inclusive.
+
+    Used for archives that exceed the CDN per-request size budget at monthly
+    granularity (e.g. ree_balancing_bids id=181, curvas_ofertas_afrr id=234).
+    """
+    import pandas as pd
+
+    start = pd.Timestamp(start_date)
+    end = pd.Timestamp(end_date)
+    if end < start:
+        raise ValueError("end-date cannot be before start-date")
+
+    cur = start
+    while cur <= end:
+        ps = cur.strftime("%Y-%m-%dT00:00:00+00:00")
+        pe = cur.strftime("%Y-%m-%dT23:59:59+00:00")
+        yield cur.strftime("%Y%m%d"), ps, pe
+        cur += pd.Timedelta(days=1)
 
 
 # ---- HTTP fetch --------------------------------------------------------
@@ -186,3 +212,154 @@ def _backoff(attempt: int, max_retries: int, reason: str) -> None:
         f"sleeping {delay}s"
     )
     time.sleep(delay)
+
+
+# ---- Generic single-archive sync loop ---------------------------------
+
+def sync_archive_loop(
+    *,
+    archive_id: int,
+    chunks: Iterable[tuple[str, str, str]],
+    raw_root: Path,
+    file_stem: str,
+    market: str,
+    category: str,
+    file_family: str,
+    manifest_csv: Path,
+    session: requests.Session,
+    timeout: int = 600,
+    max_retries: int = 4,
+    overwrite: bool = False,
+    extract: bool = True,
+    is_zip_hint: bool | None = None,
+    refresh_recent: int = 0,
+    payload_suffix: str = ".zip",
+) -> dict[str, int]:
+    """Generic per-chunk sync loop for a single ESIOS archive.
+
+    Layout: raw_root/<chunk_key>/<file_stem>_<chunk_key><payload_suffix>
+    plus optional extracted/ subdir if extract=True.
+
+    `is_zip_hint`: if False, the payload is written verbatim without ZIP
+    extraction (used for archives that return non-ZIP payloads, e.g. .xls).
+    If True or None (default), call extract_zip which auto-detects.
+
+    Returns a dict with keys downloaded / skipped / empty.
+    """
+    from mtu.parsing.omie_common import (
+        append_csv_row,
+        ensure_dir,
+        sha256_file,
+        utc_now_iso,
+    )
+
+    ensure_dir(raw_root)
+    chunks_list = list(chunks)
+    total = len(chunks_list)
+    totals = {"downloaded": 0, "skipped": 0, "empty": 0}
+
+    for i, (key, ps_iso, pe_iso) in enumerate(chunks_list):
+        chunk_dir = raw_root / key
+        ensure_dir(chunk_dir)
+
+        # Existing-file pattern check
+        pattern = f"{file_stem}_{key}*"
+        existing = list(chunk_dir.glob(pattern))
+        is_refresh = (refresh_recent > 0) and (i >= total - refresh_recent)
+        if existing and not overwrite and not is_refresh:
+            print(f"[SKIP]    {existing[0].name}")
+            totals["skipped"] += 1
+            continue
+        if existing and is_refresh and not overwrite:
+            print(f"[REFRESH] {existing[0].name}")
+
+        body, status = fetch_archive(
+            session=session,
+            archive_id=archive_id,
+            start_iso=ps_iso,
+            end_iso=pe_iso,
+            timeout=timeout,
+            max_retries=max_retries,
+        )
+
+        if status == "empty":
+            print(f"[EMPTY]   {key} (no payload)")
+            totals["empty"] += 1
+            try:
+                chunk_dir.rmdir()
+            except OSError:
+                pass
+            continue
+
+        # Auto-detect ZIP magic if no explicit hint
+        is_zip = body.startswith(b"PK\x03\x04") if is_zip_hint is None else is_zip_hint
+        suffix = payload_suffix if is_zip else _infer_suffix(body, payload_suffix)
+        out_name = f"{file_stem}_{key}{suffix}"
+        out_path = chunk_dir / out_name
+
+        tmp = out_path.with_suffix(out_path.suffix + ".part")
+        tmp.write_bytes(body)
+        tmp.replace(out_path)
+
+        n_inner = 0
+        if extract and is_zip:
+            extracted_dir = chunk_dir / "extracted"
+            ensure_dir(extracted_dir)
+            extracted_paths = extract_zip(body, extracted_dir)
+            n_inner = len(extracted_paths)
+
+        append_csv_row(
+            manifest_csv,
+            {
+                "downloaded_at": utc_now_iso(),
+                "source_url": (
+                    f"esios:archive_{archive_id}"
+                    f"?start_date={ps_iso}&end_date={pe_iso}"
+                ),
+                "market": market,
+                "category": category,
+                "file_family": file_family,
+                "filename": out_name,
+                "size_bytes": out_path.stat().st_size,
+                "sha256": sha256_file(out_path),
+                "is_zip": is_zip,
+                "file_date": _key_to_iso_date(key),
+                "version_suffix": "",
+                "notes": (
+                    f"esios_public_archive;status={status};"
+                    f"n_inner={n_inner}"
+                ),
+            },
+        )
+
+        totals["downloaded"] += 1
+        print(
+            f"[OK]      {out_name} "
+            f"({out_path.stat().st_size/1e6:.2f} MB, {n_inner} inner files)"
+        )
+
+    return totals
+
+
+def _infer_suffix(body: bytes, default: str) -> str:
+    """Infer a sensible file extension from payload magic bytes."""
+    if body.startswith(b"PK\x03\x04"):
+        return ".zip"
+    if body.startswith(b"\xd0\xcf\x11\xe0"):
+        return ".xls"      # OLE2 compound document (Excel 97-2003)
+    if body.startswith(b"PK\x03\x04") and b"xl/" in body[:1024]:
+        return ".xlsx"
+    if body[:4] == b"<?xm" or body[:1] == b"<":
+        return ".xml"
+    if body[:1] == b"{" or body[:1] == b"[":
+        return ".json"
+    return default
+
+
+def _key_to_iso_date(key: str) -> str:
+    """Convert chunk key to ISO date for manifest. Accepts YYYYMM or YYYYMMDD."""
+    if len(key) == 6:
+        return f"{key[:4]}-{key[4:]}-01"
+    if len(key) == 8:
+        return f"{key[:4]}-{key[4:6]}-{key[6:]}"
+    return key
