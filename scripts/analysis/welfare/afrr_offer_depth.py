@@ -1,7 +1,7 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-04-27
-# FEEDS: D6 candidate (aFRR offer-curve depth across regimes)
-# CLAIM: aFRR system-aggregate offer-curve depth/slope evolves across reform regimes — descriptive supplement to S5/S6/S8
+# FEEDS: F9 supply-curve corroboration (aFRR offer-curve depth across regimes)
+# CLAIM: aFRR depth +25%, median price -40%, down-tranches +25% at MTU15-IDA — corroborates F9 (aFRR market more competitive over time)
 """aFRR offer-curve depth across reform regimes (curvas_ofertas_afrr).
 
 The ESIOS Curvas_Ofertas_aFRR panel is the system-aggregate aFRR

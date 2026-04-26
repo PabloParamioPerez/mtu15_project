@@ -1,7 +1,7 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-04-27
-# FEEDS: F9 candidate (per-firm aFRR provision concentration)
-# CLAIM: IB dominance in DA market (F7) extends to aFRR provision — cross-market robustness check
+# FEEDS: F9 (per-firm aFRR provision concentration; cross-market test of F7 IB-dominance)
+# CLAIM: IB aFRR share fell from 39.1% peak (3-sess) to 26.7% (post-MTU15-DA), opposite trajectory from F7 in DA — F7 IB-dominance is DA-specific
 """Per-BSP × per-firm decomposition of aFRR provision (F9 candidate).
 
 Tests whether the IB-canonical thesis (F7: IB carries ~98% of joint

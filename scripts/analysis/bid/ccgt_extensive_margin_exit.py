@@ -1,7 +1,7 @@
 # STATUS: ALIVE
-# LAST-AUDIT: 2026-04-26
-# FEEDS: W3 (refinement to extensive-margin); modelling-track participation channel
-# CLAIM: Extensive-margin CCGT exit at MTU15-IDA — units that bid in DA pre-reform stop participating post-reform
+# LAST-AUDIT: 2026-04-27
+# FEEDS: D4 (Fringe extensive-margin exit at MTU15-IDA: 23 small Fringe + 3 HC units, ~6.8% of pre-reform DA volume; Big-4 zero exits)
+# CLAIM: Extensive-margin Fringe exit at MTU15-IDA. Note: original W3 framing (CCGT bid simplification) is dead (X14) — this script's exit-audit finding survived as D4.
 """Extensive-margin participation response to MTU15-IDA (W3 reframe).
 
 Hypothesis. The aggregate CCGT bid-granularity drop at MTU15-IDA

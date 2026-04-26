@@ -1,7 +1,7 @@
 # STATUS: ALIVE
-# LAST-AUDIT: 2026-04-26
-# FEEDS: W3 (verification); modelling-track CCGT bid simplification
-# CLAIM: Within-unit DA bid tranche count for named complex-bidders (TAPOWER/SRI4R/ARCOS1/CTN4) pre vs post MTU15-IDA
+# LAST-AUDIT: 2026-04-27
+# FEEDS: B8 (within-unit IB CCGT bid complexification 5.49→8.73 tpp, IB-specific); X14 (killed the prior aggregate "5-7→1-2 tranches" claim — MAV-format-change parser artefact)
+# CLAIM: Within-unit DA bid tranche count for named complex-bidders (TAPOWER/SRI4R/ARCOS1/CTN4) pre vs post MTU15-IDA. Three of four COMPLEXIFY (not simplify), killing W3 aggregate claim → reborn as B8 IB-specific complexification.
 """W3 verification: within-unit tranche-count comparison for the four
 named CCGT complex-bidders.
 

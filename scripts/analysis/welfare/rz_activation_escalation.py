@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-04-27
-# FEEDS: S8 candidate — reform-induced redispatch escalation
+# FEEDS: S8 (reform-induced RZ-redispatch escalation; persists post-MTU15-DA, separate mechanism from S6 granularity friction)
 # CLAIM: RZ system-security activations roughly DOUBLED post-IDA, persisting post-MTU15-DA — structural reform effect not blackout-driven
 """RZ activation escalation across reform regimes.
 
