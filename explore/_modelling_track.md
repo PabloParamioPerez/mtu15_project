@@ -50,6 +50,17 @@ Three independent Phase 2 tests on different mechanism predictions converge on t
 
 **Cross-market check (F9, 2026-04-27): IB-dominance is DA-specific.** ESIOS `liquicierre`/`liquicierresrs` (publicly accessible per-BSP aFRR settlement, ~23 BSPs, 2015-now panel at PT15M resolution) lets us decompose secondary-regulation provision per firm. Under the LIBERAL mapping (IB = {IMA, IGR, IGN} where IMA carries 128 GWh/post-MTU15-DA-day — the dominant Iberdrola portfolio BSP), IB's aFRR share is **31.8% pre-IDA → 39.1% peak in 3-sess → 32.9% ISP15-win → 27.1% DA60/ID15 → 26.7% DA15/ID15**. **IB's aFRR share has FALLEN 12pp since the 2024-06 IDA reform peak**, while Fringe (TTE/EnergyaVM/Acciona/Axpo/Alpiq + others) has *risen* from 10.9% to 26.7% — the aFRR market is becoming MORE competitive over time. **This is the OPPOSITE direction from F7 in the DA market** (where IB ≈ 98% of Big-4 transfer, regime-invariant). The two together yield a sharper claim: **F7 IB-dominance is DA-market-specific, not a generic firm-level structural fact**. The thesis's IB-canonical reading does not over-claim system-wide IB dominance; aFRR is structurally more competitive than DA. F9 strengthens F7 by ruling out broad-firm-dominance interpretations. **Caveat**: BSP↔firm mapping is not authoritatively published — the 3-letter REE BSP codes (IMA/IGR/IGN/END/GN/HC/EV) don't appear in ESIOS sujetos-del-mercado exports. The LIBERAL mapping is magnitude-suggestive (IGN exact-matches OMIE IGNU = Iberdrola Nuclear; IMA/IGR pattern-fit Iberdrola family with no plausible non-IB owners of ~128 GWh/day aFRR). The CONSERVATIVE mapping (IB = {IGN} only) gives IB 0.5–2.4% across all regimes — clearly dominated by IMA/IGR (which lump into Fringe under conservative) — confirming that under either reading IB's aFRR share is qualitatively non-dominant.
 
+**F9 supply-curve corroboration (2026-04-27):** ESIOS `Curvas_Ofertas_aFRR` (system-aggregate offer curves at PT15M resolution, 2024-11-20 → present, 7.5M tranches) shows the same competitive-aFRR narrative from a different angle. Offer-curve depth and price-level by regime (script `afrr_offer_depth.py`):
+
+| Regime | aFRR-up MW/ISP | aFRR-up median €/MW | aFRR-down MW/ISP | aFRR-down median €/MW | Down tranches/ISP |
+|---|---:|---:|---:|---:|---:|
+| 3-sess (partial, 11 days) | 1948 | 10.29 | 1990 | 6.21 | 68 |
+| ISP15 win | 1825 | 10.07 | 1981 | 6.33 | 68 |
+| **DA60/ID15** | **2274** | **6.35** | **2549** | **4.89** | **87** |
+| DA15/ID15 | 2215 | 6.22 | 2494 | 5.22 | 84 |
+
+**Three coherent shifts at MTU15-IDA**: (i) **+25% offer volume** (up 1825→2274 MW/ISP; down 1981→2549) — more capacity available; (ii) **−40% median price** (€10→€6 up; €6→€5 down) — competitive pressure; (iii) **+25% tranche granularity on down-side** (68→87 tranches/ISP) — finer price discovery, while up-side tranche count stays flat (~68). All three shifts point the same direction as F9's per-BSP finding: the aFRR market deepened and got more competitive at MTU15-IDA, exactly when DA was undergoing the asymmetric-granularity friction (S6) and the IB-canonical rent extraction (F7) intensified. **The two markets diverged at the same reform date**: DA toward concentration, aFRR toward competition. This is a clean cross-market contrast supporting the §0 reading that F7 is DA-specific.
+
 ---
 
 ## §1 — Cournot-Nash with quasi-inelastic demand
