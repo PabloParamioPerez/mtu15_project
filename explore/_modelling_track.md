@@ -61,6 +61,23 @@ Three independent Phase 2 tests on different mechanism predictions converge on t
 
 **Three coherent shifts at MTU15-IDA**: (i) **+25% offer volume** (up 1825→2274 MW/ISP; down 1981→2549) — more capacity available; (ii) **−40% median price** (€10→€6 up; €6→€5 down) — competitive pressure; (iii) **+25% tranche granularity on down-side** (68→87 tranches/ISP) — finer price discovery, while up-side tranche count stays flat (~68). All three shifts point the same direction as F9's per-BSP finding: the aFRR market deepened and got more competitive at MTU15-IDA, exactly when DA was undergoing the asymmetric-granularity friction (S6) and the IB-canonical rent extraction (F7) intensified. **The two markets diverged at the same reform date**: DA toward concentration, aFRR toward competition. This is a clean cross-market contrast supporting the §0 reading that F7 is DA-specific.
 
+**Tertiary regulation (mFRR) corroboration (2026-04-27):** The same competitive-balancing narrative appears in the system-aggregate mFRR offer curve (`REE_BalancingEnerBids` panel, 2022-05 → 2024-12-10, 20.2M tranches at PT15M). At the **2024-06 IDA reform** (6 → 3 session reduction):
+
+| Metric | Up direction | Down direction |
+|---|---|---|
+| Tranches per ISP | +15% (119 → 137) | +27% (110 → 139) — finer offer granularity |
+| Median price | -9% (€123 → €112) | **−€30 shift** (€22 → **−€8**) — went negative |
+| Q90-Q10 spread | **-42%** (€149 → €86) | +4% (€119 → €123) |
+
+Two notable signatures: (a) the **mFRR up-side spread collapsed -42%** post-IDA-reform — the offer curve became dramatically flatter, consistent with easier entry / homogenisation of bidder behaviour; (b) the **mFRR down-side median price went NEGATIVE** (€22 → −€8) — BSPs paying to be allowed to provide down-regulation, characteristic of renewable-saturation periods where curtailment-avoidance is valuable. Both findings reinforce the aFRR result: **balancing markets (both secondary aFRR and tertiary mFRR) became more competitive across the post-IDA reform window**, exactly the opposite of the DA-market F7 concentration trajectory.
+
+**Synthesis (DA vs balancing reform-direction divergence):**
+- **DA market**: concentration ↑ (F7 IB ~98% of Big-4 transfer; ~€820M post-IDA rent; F8 hydro Q4 dispatch +21pp gap stable)
+- **aFRR market**: competition ↑ (F9 IB share fell 12pp; supply curve +25% volume, -40% price, +25% granularity)
+- **mFRR market**: competition ↑ (offer curve +15-27% granularity, -42% up-side spread, down-side price went negative)
+
+Both balancing markets diverged from DA at the same reform date. This is decisive evidence that F7 IB-dominance is DA-market-specific and not a generic firm-level structural fact.
+
 ---
 
 ## §1 — Cournot-Nash with quasi-inelastic demand

@@ -37,7 +37,9 @@ from pathlib import Path
 import pandas as pd
 
 
-_FILENAME_RE = re.compile(r"REE_BalancingEnerBids_(\d{8})(\d{2})(\d{2})\.csv$")
+_FILENAME_RE = re.compile(
+    r"REE_BalancingEnerBids_(\d{8})(\d{2})(\d{2})(?:\.\d+)?\.csv$"
+)
 
 
 def parse_balancing_bids_csv(path: Path) -> pd.DataFrame:
@@ -48,17 +50,25 @@ def parse_balancing_bids_csv(path: Path) -> pd.DataFrame:
     yyyymmdd, hh, ii = m.group(1), m.group(2), m.group(3)
     date = pd.to_datetime(yyyymmdd, format="%Y%m%d").date()
 
-    # Skip the first label row, use row 2 as header.
-    try:
-        df = pd.read_csv(
-            path,
-            sep=";",
-            skiprows=1,
-            decimal=",",
-            engine="python",
-            on_bad_lines="skip",
-        )
-    except Exception:
+    # Skip the first label row, use row 2 as header. Files are
+    # Latin-1 encoded (Spanish accents in the NAME field). Try Latin-1
+    # first; fall back to UTF-8 then to a permissive read on errors.
+    df = None
+    for enc in ("latin-1", "utf-8"):
+        try:
+            df = pd.read_csv(
+                path,
+                sep=";",
+                skiprows=1,
+                decimal=",",
+                engine="python",
+                on_bad_lines="skip",
+                encoding=enc,
+            )
+            break
+        except Exception:
+            continue
+    if df is None:
         return pd.DataFrame()
 
     # Drop unnamed trailing column from the trailing-semicolon delimiter.
@@ -85,9 +95,14 @@ def parse_balancing_bids_csv(path: Path) -> pd.DataFrame:
 
 
 def parse_balancing_bids_dir(extracted_dir: Path) -> pd.DataFrame:
-    """Parse all CSVs in an extracted/ day directory and concatenate."""
+    """Parse all CSVs in an extracted/ day directory and concatenate.
+
+    Glob "*.csv" rather than "REE_BalancingEnerBids_*.csv" because some
+    early files have vintage suffixes like ".1.csv" — the underlying
+    regex in parse_balancing_bids_csv accepts either form.
+    """
     parts = []
-    for p in sorted(extracted_dir.glob("REE_BalancingEnerBids_*.csv")):
+    for p in sorted(extracted_dir.glob("REE_BalancingEnerBids_*csv")):
         try:
             sub = parse_balancing_bids_csv(p)
             if not sub.empty:
