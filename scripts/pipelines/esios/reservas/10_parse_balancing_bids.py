@@ -1,0 +1,136 @@
+"""Parse extracted REE_BalancingEnerBids per-day directories into per-month Parquet.
+
+Each day-directory under data/raw/esios/reservas/balancing_bids/<yyyymmdd>/extracted/
+contains 96 ISP CSVs. We aggregate to per-month parquet for efficiency.
+
+Output:
+    data/processed/esios/reservas/balancing_bids_<yyyymm>.parquet
+"""
+from __future__ import annotations
+
+import argparse
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
+SRC_DIR = PROJECT_ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+import pandas as pd  # noqa: E402
+
+from mtu.parsing.esios.balancing_bids import parse_balancing_bids_dir  # noqa: E402
+from mtu.parsing.omie_common import (  # noqa: E402
+    append_csv_row,
+    ensure_dir,
+    utc_now_iso,
+)
+
+MARKET = "esios_reservas"
+CATEGORY = "regulacion_terciaria"
+FILE_FAMILY = "balancing_bids"
+PARSER_NAME = "esios.balancing_bids.parse_balancing_bids_dir"
+
+
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser()
+    p.add_argument("--overwrite", action="store_true")
+    p.add_argument("--start-month", default=None, help="YYYY-MM")
+    p.add_argument("--end-month", default=None, help="YYYY-MM")
+    return p.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+
+    raw_root = PROJECT_ROOT / "data/raw/esios/reservas/balancing_bids"
+    processed_dir = PROJECT_ROOT / "data/processed/esios/reservas"
+    ingestion_log = PROJECT_ROOT / "data/metadata/ingestion_log.csv"
+    ensure_dir(processed_dir)
+
+    if not raw_root.exists():
+        print(f"No raw root: {raw_root}")
+        return
+
+    # Group day-dirs by month
+    by_month: dict[str, list[Path]] = defaultdict(list)
+    for day_dir in sorted(raw_root.iterdir()):
+        if not day_dir.is_dir():
+            continue
+        name = day_dir.name
+        if not name.isdigit() or len(name) != 8:
+            continue
+        yyyymm = name[:6]
+        if args.start_month and yyyymm < args.start_month.replace("-", ""):
+            continue
+        if args.end_month and yyyymm > args.end_month.replace("-", ""):
+            continue
+        by_month[yyyymm].append(day_dir)
+
+    counts = {"success": 0, "skipped": 0, "failed": 0, "empty": 0}
+
+    for yyyymm, day_dirs in sorted(by_month.items()):
+        out_path = processed_dir / f"{FILE_FAMILY}_{yyyymm}.parquet"
+        if out_path.exists() and not args.overwrite:
+            counts["skipped"] += 1
+            continue
+
+        status = "success"
+        error_message = ""
+        rows_output = 0
+        try:
+            parts = []
+            for d in day_dirs:
+                ext = d / "extracted"
+                if not ext.exists():
+                    continue
+                sub = parse_balancing_bids_dir(ext)
+                if not sub.empty:
+                    parts.append(sub)
+            if not parts:
+                df = pd.DataFrame()
+            else:
+                df = pd.concat(parts, ignore_index=True)
+            rows_output = len(df)
+            if df.empty:
+                counts["empty"] += 1
+                if out_path.exists():
+                    out_path.unlink()
+            else:
+                df.to_parquet(out_path, index=False)
+                counts["success"] += 1
+                print(
+                    f"[OK]      {FILE_FAMILY}_{yyyymm}: {len(df):,} rows, "
+                    f"{len(day_dirs)} days"
+                )
+        except Exception as e:
+            status = "failed"
+            error_message = f"{type(e).__name__}: {e}"
+            counts["failed"] += 1
+            print(f"[FAIL] {yyyymm} -> {error_message}")
+
+        append_csv_row(
+            ingestion_log,
+            {
+                "ingested_at": utc_now_iso(),
+                "market": MARKET,
+                "category": CATEGORY,
+                "file_family": FILE_FAMILY,
+                "filename": f"{FILE_FAMILY}_{yyyymm}",
+                "parser_name": PARSER_NAME,
+                "raw_file_kind": "csv-extracted-daily",
+                "status": status,
+                "error_message": error_message,
+                "rows_output": rows_output,
+            },
+        )
+
+    print(
+        f"\nDone. success={counts['success']}, skipped={counts['skipped']}, "
+        f"empty={counts['empty']}, failed={counts['failed']}"
+    )
+
+
+if __name__ == "__main__":
+    main()
