@@ -323,6 +323,34 @@ This is a cleaner welfare-relevant statement than A02 alone. The rule's friction
 
 **Status of §4 model.** Alive, sharpened. The asymmetric-granularity prediction now anchors a cleaner welfare-relevant number — net fiscal surplus, not gross transfer.
 
+### Run 2026-04-27 — S8: persistent redispatch escalation across all post-IDA regimes
+
+A second system-layer effect not captured by §4's granularity-friction model. Per-month RZ system-security activations (TipoRedespacho 61 in `totalrp48preccierre`, 2015 → 2026-04 panel) vs same-calendar pre-IDA baseline:
+
+| Regime | Months | Total RZ (GWh/mo) | Excess vs baseline | Excess % |
+|---|---|---:|---:|---:|
+| pre-IDA | 114 | 269.5 | (baseline) | 0% |
+| 3-sess | 6 | 485.3 | +215 | **+82%** |
+| ISP15 win | 4 | 502.4 | +220 | **+80%** |
+| DA60/ID15 | 7 | 427.8 | +159 | **+60%** |
+| **DA15/ID15** | 3 | 414.2 | +157 | **+61%** |
+
+Bootstrap null CI [-93, +110] GWh/mo. All post-IDA regimes 1.4–2.0× above the upper bound — significant.
+
+**The DA15/ID15 (post-MTU15-DA) elevation is the decisive feature.** S6's granularity-friction effect collapsed at MTU15-DA (€94M/mo → €7M/mo). S8's RZ-redispatch effect did NOT — it stays elevated at +60% post-MTU15-DA. The granularity-friction model in §4 therefore explains S6 but does NOT explain S8.
+
+**Mechanism candidate (untested)**: the 6→3 IDA-session reduction at 2024-06 may have broken a prior matching of imbalance-settlement granularity to DA dispatch, increasing the residual that REE must redispatch via RZ. This is a market-design effect that's structurally different from the asymmetric-granularity friction §4 models — it operates at a different layer (operational / network-security rather than balance-fiscal) and with a different reform trigger (IDA session reduction rather than ISP15-vs-DA60 mismatch).
+
+**Direct cost**: ~€10–14M/month above pre-IDA baseline at regime-mean RZ closure prices €60–90/MWh × +157 GWh/mo excess; ~€200–280M cumulative across the 20-month post-IDA window. This is direct REE→generator transfer cost, not deadweight loss; the welfare interpretation requires a counterfactual that isn't currently available.
+
+**Implications for §4.** The §4 model cleanly explains S6 (collapses at MTU15-DA) but does NOT explain S8. A two-channel system-layer welfare analysis is more accurate:
+- **Channel 1 (S6, asymmetric-granularity friction)**: closed by MTU15-DA reform.
+- **Channel 2 (S8, IDA-session-reduction redispatch escalation)**: NOT closed by MTU15-DA; persists, suggesting a separate structural mechanism originating in the 6→3 IDA session reduction.
+
+The §4 framework should therefore be cited as the right model for the S6 number, but with an appended footnote that the system-layer welfare reading is incomplete without S8 (the redispatch channel). A future modelling extension could formalise the IDA-session-reduction → redispatch-residual link as a separate operational-design friction.
+
+**Status of §4 + S8.** §4 model alive but partial. S8 added as alive system-layer claim but mechanism-formalisation still untested. The thesis can present three system-layer numbers (S5 four-way concordance + S6 fiscal cost shift + S8 redispatch escalation) that together describe the reform sequence's operational impact at the system layer.
+
 ---
 
 ## §5 — Bid complexification under finer ISP (B8)

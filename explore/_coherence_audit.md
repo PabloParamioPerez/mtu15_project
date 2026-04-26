@@ -165,3 +165,49 @@ The §0 / final thesis-claim paragraph above (lines 116–122) should be revised
 > Iberdrola — the larger of the two Big-4 dominant firms by installed capacity (~18.5 GW vs ~13.4 GW for Endesa) — has been the dominant marginal price-setter in the Spanish day-ahead market across at least two decades, with **regime-invariant** strategic-dispatch concentration of its hydro fleet (Bushnell-style, F8: ~63% top-quartile dispatch vs ~42% Fringe across PRE-blackout, POST-blackout, and post-MTU15-DA). The MTU15-IDA reform did NOT create Iberdrola's price-setting power; the +14 pp pre-reform Q4-gap shows it pre-existed (Ciarreta–Espinosa 2010 documented the same IB > Endesa cross-firm pattern for 2002–2005). The reform's effect partitions into two channels: (i) at the **system layer**, asymmetric granularity (DA60/ID15) generated ~€90–95M/month in BRP→TSO net imbalance fiscal cost shift, with the post-MTU15-DA collapse to ~€7M/month (8% of the asymmetric-window level) demonstrating clean granularity-friction welfare loss; (ii) at the **firm layer**, Iberdrola's cleared-price-difference rent realises in absolute terms most strongly under high-price post-MTU15-DA conditions (~73% of the €820M post-IDA total), while the *relative* markup peaks in the clean DA60/ID15 PRE-blackout window (+48% on low €12.51 prices vs +12.3% on €77.90 post-MTU15-DA). The 2025-04-28 Iberian blackout and subsequent "operación reforzada" period is a modest amplifier (post-blackout DA60/ID15 fiscal-surplus mean is +24% above the clean April-2025 figure) but not the source of either channel. Endesa's larger cleared volume reflects nuclear baseload (price-taking), not strategic-marginal presence; its elevated Hortaçsu–Puller-style implied Lerner reads as rent collection on prices Iberdrola sets, not as price-setting itself. Vertical integration is ruled out (D5: Endesa is 2.4× more net-seller than Iberdrola, the opposite direction). The mechanism story for the day-ahead-market firm-layer rent triangulates across three IO methodologies (Hortaçsu–Puller implied Lerner with F6 Cournot tercile validation; Allaz–Vila commitment-value with F5 within-firm placebo on Endesa; Ciarreta–Espinosa synthetic-firm with per-IB-unit hydro pivot in F7) anchored by a direct Bushnell-style F8 dispatch test. The CCGT bid-complexification finding (B8) is a real bid-structure observation specific to Iberdrola but does not translate to clearing-price impact for the named units.
 
 This revised claim is **defensive against viva**: every regime-attribution number is explicitly decomposed PRE-blackout / POST-blackout / post-MTU15-DA, every channel has a clean separation argument, and the magnitude numbers are not double-counted between system and firm layers.
+
+---
+
+## F9 + S8 additions (2026-04-27)
+
+After publishing the post-blackout claim above, two more findings landed from the ESIOS taxonomy expansion. Both are coherent with — and strengthen — the existing reading.
+
+### F9 (alive structural-firm) — IB-dominance is DA-market-specific
+
+ESIOS `liquicierre`/`liquicierresrs` (2015-now per-BSP aFRR settlement, ~23 BSPs at PT15M) lets us decompose secondary-regulation provision per firm. Under LIBERAL mapping (IB = {IMA, IGR, IGN}, with IMA dominating at ~128 GWh/post-MTU15-DA-day), IB's aFRR share trajectory: **31.8% pre-IDA → 39.1% peak in 3-sess → 32.9% ISP15-win → 27.1% DA60/ID15 → 26.7% DA15/ID15**. Fringe rose 11% → 27% over the same period.
+
+This is the **opposite direction from F7** (where IB ≈ 98% of Big-4 DA-market transfer is regime-invariant). The aFRR market is *becoming more competitive* over the reform period.
+
+**Coherence reading:** F7's IB-dominance claim is **DA-market-specific**, not generic. F9 strengthens F7 by ruling out broad-firm-dominance interpretations: IB is dominant in DA where its hydro+CCGT marginal capacity is the price-setter (per F8 strategic dispatch), but does NOT extend that dominance to aFRR procurement where REE explicitly diversifies and qualified-provider entry has been growing.
+
+**Caveat for viva**: BSP↔firm mapping is not authoritatively published; LIBERAL mapping rests on inference from magnitude + OMIE prefix-matching (IGN ↔ IGNU = Iberdrola Generación Nuclear is exact; IMA / IGR are pattern-fit). CONSERVATIVE mapping (IB = {IGN} only) gives IB 0.5–2.4% across all regimes — qualitatively the same conclusion (aFRR is *not* IB-dominant).
+
+### S8 (alive system-layer) — RZ activation escalation persists post-MTU15-DA
+
+Per-month RZ system-security activations (TipoRedespacho 61 in `totalrp48preccierre`) vs same-calendar pre-IDA baseline:
+
+| Regime | RZ activations (GWh/mo) | Excess vs baseline |
+|---|---|---|
+| pre-IDA (114 mo) | 269.5 | (baseline) |
+| 3-sess (6 mo) | 485.3 | **+82%** |
+| ISP15-win (4 mo) | 502.4 | **+80%** |
+| DA60/ID15 (7 mo) | 427.8 | **+60%** |
+| **DA15/ID15** (3 mo) | **414.2** | **+61%** |
+
+Bootstrap null CI [-93, +110] GWh/mo — all post-IDA regimes 1.4–2.0× above the upper bound.
+
+**The post-MTU15-DA persistence is the decisive feature.** S6 (asymmetric-granularity fiscal cost shift) collapsed at MTU15-DA from €94M/mo to €7M/mo. S8 (RZ redispatch volume) STAYS elevated at +60% in DA15/ID15. Neither granularity friction nor the blackout explains S8: this is a **structural reform-induced redispatch escalation**.
+
+**Direct cost**: at regime-mean RZ closure prices €60–90/MWh × +157 GWh/mo excess, ~€10–14M/month direct redispatch cost above pre-IDA baseline; ~€200–280M cumulative across the 20-month post-IDA window.
+
+**Coherence reading:** S8 adds a third channel to the two-channel synthesis. The Spanish reform produced THREE distinct operational/welfare effects:
+
+1. **System-layer fiscal cost shift (S6)**: ~€90–95M/month in asymmetric-granularity window, **collapses at MTU15-DA**. Granularity-friction signature.
+2. **Firm-layer market-power rent (F7/F8)**: structural / regime-invariant; IB ~€820M cleared-price-difference total post-IDA, dominated in absolute € by post-MTU15-DA conditions.
+3. **System-layer redispatch escalation (S8)**: ~+157 GWh/mo (+60–80%) of additional RZ activation, **persists at MTU15-DA**. Mechanism untested but candidate is the 6→3 IDA-session reduction creating new operational residuals beyond what the price-setting market handles.
+
+S8 + S6 together give a sharper system-layer reading: granularity-friction welfare cost (S6) is closed by re-symmetrisation, but the IDA-session-reduction operational cost (S8) is NOT. The reform package was thus partially welfare-improving (closing S6 at MTU15-DA) but not fully (S8 still elevated).
+
+### Updated three-channel thesis claim (post-2026-04-27)
+
+The Spanish reform package (2024-06 IDA + 2024-12 ISP15 + 2025-03 MTU15-IDA + 2025-10 MTU15-DA) produced three separable effects: (i) **system-layer asymmetric-granularity fiscal cost shift** (S6: ~€90–95M/mo in DA60/ID15 and ISP15 windows, ~€7M/mo at MTU15-DA — clean granularity-friction welfare loss that the MTU15-DA reform closed); (ii) **system-layer redispatch escalation** (S8: ~+€10–14M/mo direct RZ cost above pre-IDA baseline, persisting through all post-IDA regimes including post-MTU15-DA — *not* closed by re-symmetrisation, suggesting a separate structural mechanism likely originating in the 6→3 IDA-session reduction); (iii) **firm-layer market-power rent in the DA market** (F7/F8: Iberdrola structural price-setter, regime-invariant ~63% hydro Q4-dispatch vs Fringe 42%, ~€820M cleared-price-difference rent post-IDA, dominated by post-MTU15-DA price levels). The aFRR market does NOT show parallel firm-level concentration (F9: IB share *fell* 12pp 2024-06 → 2025-12), confirming that the F7 IB-dominance claim is DA-specific and that REE's aFRR procurement is structurally more competitive. The blackout/operación-reforzada period is a modest modulator on (i) and (iii) but not the source of any channel; vertical integration is ruled out as the explanation for cross-firm market-power heterogeneity (D5). The mechanism story for the firm-layer rent triangulates across four IO methodologies (Hortaçsu–Puller implied Lerner F1/F2 with Cournot tercile validation F6; Allaz–Vila commitment-value F5 with within-firm placebo on Endesa; Ciarreta–Espinosa synthetic-firm F7 with per-IB-unit hydro pivot; direct Bushnell-style strategic-dispatch F8). Ciarreta–Espinosa (2010) document the same IB > Endesa cross-firm pattern for 2002–2005 under different mechanism (CTC regulation) — two-decade replication of the same negative result that vertical integration does not explain Spanish DA cross-firm market-power heterogeneity.
