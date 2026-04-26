@@ -5,11 +5,6 @@ Output:
 
 System-aggregate aFRR offer-curve panel (2024-11-20 → present),
 PT15M resolution. NOT per-firm.
-
-Note: the parse step depends on xlrd to read .xls (OLE2 compound
-documents). xlrd is not currently a project dependency — invoke
-parse with `uv run --with xlrd python ...` until the dep is added
-to pyproject.toml.
 """
 from __future__ import annotations
 
