@@ -28,6 +28,9 @@ data/**
 !data/external/omie_reference/
 !data/external/omie_reference/*.csv
 !data/external/omie_reference/README.md
+!data/external/esios/
+!data/external/esios/*.csv
+!data/external/esios/README.md
 !data/metadata/.gitkeep
 data/metadata/*.csv
 # ESIOS folder documentation (not the bulk data)
