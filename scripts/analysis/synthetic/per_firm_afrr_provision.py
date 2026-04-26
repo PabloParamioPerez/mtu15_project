@@ -139,7 +139,6 @@ def main() -> None:
 
     rows = []
     for mapping_name, mapping in MAPPINGS.items():
-        firms_universe = list(mapping.keys()) + ["Fringe"]
         df["firm"] = df["bsp"].apply(lambda b: assign_firm(b, mapping))
 
         # System totals per (regime, bucket)

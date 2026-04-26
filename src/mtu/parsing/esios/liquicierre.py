@@ -42,7 +42,6 @@ from __future__ import annotations
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Iterable
 
 import pandas as pd
 
