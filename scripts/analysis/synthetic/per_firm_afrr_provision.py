@@ -1,7 +1,7 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-04-27
 # FEEDS: F9 (per-firm aFRR provision concentration; cross-market test of F7 IB-dominance)
-# CLAIM: IB aFRR share fell from 39.1% peak (3-sess) to 26.7% (post-MTU15-DA), opposite trajectory from F7 in DA — F7 IB-dominance is DA-specific
+# CLAIM: Mapping-independent: combined Big-4-mapped BSPs (END+GN+HC+EV+IGN) share fell ~70%→46%, Fringe rose 11%→27%. Mapping-dependent (LIBERAL IB={IMA,IGR,IGN}): IB share fell 39%→27%; under CONSERVATIVE IB={IGN}, IB is 0.5–2%. Either way: aFRR is structurally non-dominant for IB and getting more competitive — opposite of F7 in DA.
 """Per-BSP × per-firm decomposition of aFRR provision (F9 candidate).
 
 Tests whether the IB-canonical thesis (F7: IB carries ~98% of joint
