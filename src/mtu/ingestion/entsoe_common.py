@@ -191,6 +191,12 @@ def fetch_document(
         if r.status_code == 400 and b"No matching data found" in r.content:
             return r.content, "empty"
 
+        if r.status_code == 429 and attempt < max_retries:
+            # Rate limited — back off and retry. ENTSO-E suggests waiting 60s+.
+            last_err = f"HTTP 429 rate limit"
+            time.sleep(60 + 30 * attempt)
+            continue
+
         if 500 <= r.status_code < 600 and attempt < max_retries:
             last_err = f"HTTP {r.status_code}"
             _backoff(attempt, max_retries, last_err)

@@ -1,10 +1,14 @@
-"""Parse ENTSO-E cross-border flow documents (A11 physical, A09 scheduled, A61 NTC).
+"""Parse ENTSO-E A73 per-unit actual generation XMLs into per-ISP records.
 
-These all share the GL_MarketDocument schema with quantity per ISP. We
-parse all three subdirs into per-ISP records.
+A73 returns one TimeSeries per generation unit. Each TimeSeries carries:
+  - registeredResource.mRID  (the unit EIC code)
+  - registeredResource.name  (the operator's plant name)
+  - MktPSRType.psrType      (B04 CCGT, B10 PS, B11 RoR, B12 reservoir, B14 nuclear, ...)
+  - Period > Point with position + quantity (MW per ISP)
 
-Output:
-  data/processed/entsoe/transmission/{subdir}_all.parquet
+The download is split per psrType into raw subdirs (a73_b04/, a73_b10/,
+a73_b11/, a73_b12/, a73_b14/). We parse each subdir and write one
+parquet per (psr_type, month) into data/processed/entsoe/generation/a73/.
 """
 from __future__ import annotations
 
@@ -15,6 +19,11 @@ from pathlib import Path
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
+RAW_BASE = PROJECT_ROOT / "data/raw/entsoe/generation"
+OUT_DIR = PROJECT_ROOT / "data/processed/entsoe/generation/a73"
+
+# psrType subdirs we expect.
+PSR_DIRS = ["a73_b04", "a73_b10", "a73_b11", "a73_b12", "a73_b14"]
 
 
 def _localname(tag: str) -> str:
@@ -31,13 +40,16 @@ def parse_one(path: Path) -> pd.DataFrame:
     for ts in root.iter():
         if _localname(ts.tag) != "TimeSeries":
             continue
-        in_dom = out_dom = None
-        for child in ts:
+        unit_eic = unit_name = psr_type = None
+        for child in ts.iter():
             ln = _localname(child.tag)
-            if ln == "in_Domain.mRID":
-                in_dom = child.text
-            elif ln == "out_Domain.mRID":
-                out_dom = child.text
+            txt = child.text
+            if ln == "registeredResource.mRID" and unit_eic is None:
+                unit_eic = txt
+            elif ln == "registeredResource.name" and unit_name is None:
+                unit_name = txt
+            elif ln == "psrType" and psr_type is None:
+                psr_type = txt
         for period in ts.iter():
             if _localname(period.tag) != "Period":
                 continue
@@ -76,51 +88,37 @@ def parse_one(path: Path) -> pd.DataFrame:
                 rows.append({
                     "isp_start_utc": t.replace(tzinfo=None),
                     "mtu_minutes": step_min,
-                    "in_domain": in_dom,
-                    "out_domain": out_dom,
+                    "unit_eic": unit_eic or "UNKNOWN",
+                    "unit_name": unit_name or "UNKNOWN",
+                    "psr_type": psr_type or "UNKNOWN",
                     "quantity_mw": qty,
                 })
     return pd.DataFrame(rows)
 
 
-def parse_dir(subdir: str) -> None:
-    raw = PROJECT_ROOT / f"data/raw/entsoe/{subdir}"
-    out_dir = PROJECT_ROOT / "data/processed/entsoe/transmission"
-    out_dir.mkdir(parents=True, exist_ok=True)
+def parse_dir(subdir: str) -> int:
+    raw = RAW_BASE / subdir
     if not raw.exists():
-        return
-    dfs = []
+        return 0
+    out_sub = OUT_DIR / subdir
+    out_sub.mkdir(parents=True, exist_ok=True)
+    n = 0
     for f in sorted(raw.glob("*.xml")):
         if f.stat().st_size < 50 or f.read_bytes()[:8] == b"<empty/>":
             continue
         df = parse_one(f)
-        if not df.empty:
-            dfs.append(df)
-    if not dfs:
-        print(f"{subdir}: no data")
-        return
-    df = pd.concat(dfs, ignore_index=True).drop_duplicates(["isp_start_utc"])
-    out = out_dir / f"{subdir}_all.parquet"
-    df.to_parquet(out, index=False)
-    print(f"{subdir}: {len(df):,} rows → {out}")
+        if df.empty:
+            continue
+        df.to_parquet(out_sub / f"{f.stem}.parquet", index=False)
+        n += 1
+    return n
 
 
 def main() -> None:
-    for sub in [
-        "flows_physical_fr_to_es",
-        "flows_physical_es_to_fr",
-        "flows_physical_es_to_pt",
-        "flows_physical_pt_to_es",
-        "flows_scheduled_fr_to_es",
-        "flows_scheduled_es_to_fr",
-        "flows_scheduled_es_to_pt",
-        "flows_scheduled_pt_to_es",
-        "ntc_fr_to_es",
-        "ntc_es_to_fr",
-        "ntc_es_to_pt",
-        "ntc_pt_to_es",
-    ]:
-        parse_dir(sub)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    for sub in PSR_DIRS:
+        n = parse_dir(sub)
+        print(f"{sub}: {n} monthly files parsed")
 
 
 if __name__ == "__main__":

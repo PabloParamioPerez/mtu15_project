@@ -38,7 +38,7 @@ NUCLEAR_NAMEPLATE = {
 }
 EIC_TO_OMIE = {
     '18WALZ1-12345-0E': 'ALZ1',
-    '18WALZ2-12345-0K': 'ALZ2',
+    '18WALZ2-12345-04': 'ALZ2',  # actual ENTSO-E EIC (was 0K — wrong)
     '18WASC1-12345-0Z': 'ASC1',
     '18WASC2-12345-0P': 'ASC2',
     '18WCOF1-12345-0O': 'COF1',
@@ -51,6 +51,7 @@ NAME_TO_OMIE = {
     'ASCO 1': 'ASC1', 'ASCO 2': 'ASC2',
     'COFRENTES': 'COF1',
     'TRILLO': 'TRL1', 'TRILLO 1': 'TRL1',
+    'VANDELLOS': 'VAN2',  # XML name (no roman/arabic suffix in feed)
     'VANDELLOS 2': 'VAN2', 'VANDELLOS II': 'VAN2',
     'CN VANDELLOS II': 'VAN2',
 }

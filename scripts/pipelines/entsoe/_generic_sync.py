@@ -22,6 +22,8 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
+import time
+
 from mtu.ingestion.entsoe_common import (  # noqa: E402
     SPAIN_EIC, USER_AGENT, fetch_document, load_token, month_chunks,
 )
@@ -106,6 +108,10 @@ def main() -> None:
             n_dl += 1
             if not args.quiet:
                 print(f"[{args.doc_type}] {yyyymm} OK ({len(body)//1024} KB)")
+            # Pace requests: 0.4s between successful calls keeps us well under
+            # the ENTSO-E ~400 req/min token rate limit when running multiple
+            # concurrent scripts.
+            time.sleep(0.4)
         except Exception as e:
             n_fail += 1
             if not args.quiet:
