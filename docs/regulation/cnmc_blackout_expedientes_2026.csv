@@ -1,0 +1,57 @@
+expediente,date_opened,firm,article_lse,severity,category,notes
+SNC/DE/021/26,2026-04-16,RED ELÉCTRICA DE ESPAÑA S.A.U.,64.25,very_serious,TSO,first wave - REE
+SNC/DE/023/26,2026-04-16,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/024/26,2026-04-16,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/025/26,2026-04-16,BAHIA DE BIZKAIA ELECTRICIDAD S.L.,65.8,serious,voltage_control,
+SNC/DE/026/26,2026-04-16,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/027/26,2026-04-16,ASOC NUCLEAR ASCÓ-VANDELLÓS II AIE (ANAV),65.8,serious,voltage_control,nuclear
+SNC/DE/028/26,2026-04-16,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/029/26,2026-04-16,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/030/26,2026-04-16,ASOC NUCLEAR ASCÓ-VANDELLÓS II,65.8,serious,voltage_control,nuclear
+SNC/DE/031/26,2026-04-16,NATURGY CICLOS COMBINADOS S.L.,65.8,serious,voltage_control,CCGT
+SNC/DE/032/26,2026-04-16,NATURGY CICLOS COMBINADOS S.L.,65.8,serious,voltage_control,CCGT
+SNC/DE/033/26,2026-04-17,NATURGY CICLOS COMBINADOS S.L.,65.8,serious,voltage_control,CCGT
+SNC/DE/034/26,2026-04-16,NATURGY GENERACIÓN S.L.U.,65.8,serious,voltage_control,
+SNC/DE/035/26,2026-04-16,NATURGY GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/036/26,2026-04-16,C.N. ALMARAZ-TRILLO AIE,65.8,serious,voltage_control,nuclear-Almaraz-Trillo
+SNC/DE/037/26,2026-04-16,IBERDROLA GENERACIÓN S.A.U.,65.8,serious,voltage_control,
+SNC/DE/038/26,2026-04-16,IBERDROLA GENERACIÓN S.A.U.,65.8,serious,voltage_control,
+SNC/DE/039/26,2026-04-16,IBERDROLA GENERACIÓN S.A.U.,65.8,serious,voltage_control,
+SNC/DE/040/26,2026-04-16,IBERDROLA GENERACIÓN S.A.U.,65.8,serious,voltage_control,
+SNC/DE/041/26,2026-04-16,REPSOL GENERACIÓN ELÉCTRICA S.A.,65.8,serious,voltage_control,
+SNC/DE/047/26,2026-04-23,IBERDROLA GENERACIÓN NUCLEAR S.L.,64.37,very_serious,unauthorized_reduction,Cofrentes (IB 100%)
+SNC/DE/048/26,2026-04-23,C.N. ALMARAZ-TRILLO A.I.E.,64.37,very_serious,unauthorized_reduction,Almaraz (IB 53% + Endesa 36% + Naturgy 11%)
+SNC/DE/049/26,2026-04-23,ASOC NUCLEAR ASCÓ-VANDELLÓS II AIE (ANAV),65.34,serious,nuclear_obligation,
+SNC/DE/050/26,2026-04-23,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/051/26,2026-04-23,CONTOUR GLOBAL LA RIOJA S.L.,65.8,serious,voltage_control,
+SNC/DE/052/26,2026-04-23,ENGIE CARTAGENA S.L.,65.8,serious,voltage_control,CCGT
+SNC/DE/053/26,2026-04-23,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/054/26,2026-04-23,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/055/26,2026-04-23,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/056/26,2026-04-23,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/057/26,2026-04-23,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/058/26,2026-04-23,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/059/26,2026-04-23,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/060/26,2026-04-23,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/061/26,2026-04-23,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/062/26,2026-04-23,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/063/26,2026-04-23,ENDESA GENERACIÓN S.A.,65.8,serious,voltage_control,
+SNC/DE/064/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/071/26,2026-04-23,TOTALENERGIES CLIENTES S.A.U.,65.8,serious,voltage_control,
+SNC/DE/073/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/075/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/076/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/077/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/078/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/079/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/080/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/081/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/082/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/083/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/084/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/085/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/086/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/087/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/088/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/089/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
+SNC/DE/090/26,2026-04-23,IBERDROLA S.A.,65.8,serious,voltage_control,
