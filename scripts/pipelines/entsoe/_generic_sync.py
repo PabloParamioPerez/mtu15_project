@@ -40,6 +40,10 @@ def main() -> None:
     p.add_argument("--out-domain", default=None, help="For cross-border flows, set this")
     p.add_argument("--biz-domain", default=None, help="For some queries (biddingZone)")
     p.add_argument("--out-biz-domain", default=None, help="For A65 load (outBiddingZone_Domain)")
+    p.add_argument("--control-domain", default=None,
+                   help="For A85 imbalance prices (controlArea_Domain only — no in_Domain)")
+    p.add_argument("--area-domain", default=None,
+                   help="For A24 aggregated balancing bids (area_Domain only — no in_Domain)")
     p.add_argument("--extra-param", action="append", default=[], help="key=value extras")
     p.add_argument("--overwrite", action="store_true")
     p.add_argument("--quiet", action="store_true")
@@ -78,6 +82,10 @@ def main() -> None:
             params["processType"] = args.process_type
         if args.use_acquiring_domain:
             params["acquiring_Domain"] = args.in_domain
+        elif args.control_domain:
+            params["controlArea_Domain"] = args.control_domain
+        elif args.area_domain:
+            params["area_Domain"] = args.area_domain
         elif args.out_biz_domain:
             params["outBiddingZone_Domain"] = args.out_biz_domain
         elif args.out_domain:
