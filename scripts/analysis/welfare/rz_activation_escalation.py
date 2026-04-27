@@ -1,7 +1,7 @@
-# STATUS: ALIVE
+# STATUS: WOUNDED
 # LAST-AUDIT: 2026-04-27
-# FEEDS: S8 (reform-induced RZ-redispatch escalation; persists post-MTU15-DA, separate mechanism from S6 granularity friction)
-# CLAIM: RZ system-security activations roughly DOUBLED post-IDA, persisting post-MTU15-DA — structural reform effect not blackout-driven
+# FEEDS: S8 (wounded — RZ activations doubled post-IDA, but renewable-control regression collapses the persistent post-MTU15-DA effect; only ISP15-window 4-month elevation survives)
+# CLAIM: WOUNDED. Original framing "RZ activations roughly doubled post-IDA, persisting post-MTU15-DA — structural reform effect" retracted 2026-04-27 PM after `s8_renewable_control.py` showed renewable-share growth (+80% in pre-IDA window alone) statistically explains most of the post-IDA RZ elevation. Only the ISP15-window-specific elevation (+156 GWh/mo, p=0.022) survives the renewable control.
 """RZ activation escalation across reform regimes.
 
 Side-finding from the S7 anchor cross-check (`s7_rz_anchor_validation.py`):

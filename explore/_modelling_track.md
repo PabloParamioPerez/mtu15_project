@@ -351,7 +351,10 @@ This is a cleaner welfare-relevant statement than A02 alone. The rule's friction
 
 **Status of §4 model.** Alive, sharpened. The asymmetric-granularity prediction now anchors a cleaner welfare-relevant number — net fiscal surplus, not gross transfer.
 
-### Run 2026-04-27 — S8: persistent redispatch escalation across all post-IDA regimes
+### Run 2026-04-27 — S8: persistent redispatch escalation across all post-IDA regimes (LATER WOUNDED)
+
+**⚠️ S8 demoted to wounded 2026-04-27 (later same day).** The renewable-control regression (`s8_renewable_control.py`) showed that ~80% of the post-IDA RZ elevation is statistically explained by Spanish renewable-share growth (+80% wind+solar generation in pre-IDA window alone). Only the ISP15-window-specific elevation (4 months Dec 2024 – Mar 2025, +156 GWh/mo p=0.022) survives the renewable control; DA60/ID15 and DA15/ID15 regime effects collapse to zero (p≈0.5). The "persistence post-MTU15-DA" feature was the key signature of the original claim, and it doesn't survive. The original analysis is preserved below for record; the WOUND is documented in `CLAIMS_LEDGER.md` S8 row and in the §4 synthesis below.
+
 
 A second system-layer effect not captured by §4's granularity-friction model. Per-month RZ system-security activations (TipoRedespacho 61 in `totalrp48preccierre`, 2015 → 2026-04 panel) vs same-calendar pre-IDA baseline:
 
@@ -377,7 +380,7 @@ Bootstrap null CI [-93, +110] GWh/mo. All post-IDA regimes 1.4–2.0× above the
 
 The §4 framework should therefore be cited as the right model for the S6 number, but with an appended footnote that the system-layer welfare reading is incomplete without S8 (the redispatch channel). A future modelling extension could formalise the IDA-session-reduction → redispatch-residual link as a separate operational-design friction.
 
-**Status of §4 + S8.** §4 model alive but partial. S8 added as alive system-layer claim but mechanism-formalisation still untested. The thesis can present three system-layer numbers (S5 four-way concordance + S6 fiscal cost shift + S8 redispatch escalation) that together describe the reform sequence's operational impact at the system layer.
+**Status of §4 + S8 (revised 2026-04-27 PM after C1 audit attack).** §4 model alive and clean. S8 demoted to wounded after `s8_renewable_control.py` showed that controlling for monthly Spanish wind+solar generation collapses the DA60/ID15 and DA15/ID15 regime coefficients (p≈0.5); only the ISP15-window 4-month effect (+156 GWh/mo, p=0.022) survives. The two-channel reading remains the right system-layer synthesis: **S6** (granularity-friction fiscal cost shift, robust) + **S5** (four-way ENTSO-E concordance). S8 is no longer a clean third channel; it remains as a wounded narrower claim about the ISP15-window adjustment period. The thesis system-layer chapter should lead with S5 + S6 and treat S8 as a footnote about adjustment-period dynamics, not a separate "redispatch-escalation channel." The two phenomena (renewable expansion + IDA reform sequence) are partially co-temporal in Spain 2018–2025, making clean causal separation infeasible at thesis-scale data.
 
 ---
 

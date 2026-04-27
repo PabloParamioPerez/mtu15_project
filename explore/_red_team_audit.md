@@ -155,7 +155,9 @@ Bootstrapping pre-IDA residuals to construct the null distribution assumes the u
 
 ## §3 — S8 (RZ activation escalation) — third-most exposed
 
-### ★★★ C1. Mechanism untested; alternatives uncontrolled
+### ⚠️ C1. (PARTIAL RETRACTION 2026-04-27) S8 demoted to wounded — renewable growth statistically explains most of the elevation
+
+**Audit attack** (preserved below for record):
 
 The S8 ledger row says "Mechanism interpretation (candidate, untested): 6→3 IDA session reduction broke matching of imbalance-settlement granularity to DA dispatch." But the +60-82% RZ activation could be:
 
@@ -168,6 +170,18 @@ The S8 ledger row says "Mechanism interpretation (candidate, untested): 6→3 ID
 The "structural reform-induced" claim is one of many candidates. With no IV or RD design, S8 cannot identify which.
 
 **Mitigation needed**: weaken the S8 ledger language from "structural reform-induced redispatch escalation" to "RZ activation level shifts ~+60% above pre-IDA baseline; mechanism uncertain (candidates: IDA-session reduction, renewable-share growth, post-blackout policy)." Frame it as a fact-without-causal-attribution.
+
+**Result of mitigation (2026-04-27)**: ran `s8_renewable_control.py` regressing monthly RZ activations on regime dummies + cal-month FE + monthly average wind+solar generation. Spanish renewable generation grew **+80% during the pre-IDA window alone** (8 GW Jan-2018 → 14 GW Jun-2024), so the renewable-growth alternative is empirically substantial and not co-incidental.
+
+| Specification | DA60/ID15 β (GWh/mo) | DA15/ID15 β (GWh/mo) | What survives? |
+|---|---:|---:|---|
+| Spec 1 (regime only) | +125 *** | +96 *** | (baseline) |
+| Spec 2 (+ cal-month FE) | +120 *** | +96 *** | matches existing S8 |
+| Spec 3 (+ renew_mw control) | **−27 (p=0.61)** | **−43 (p=0.42)** | ISP15-win only (+156, p=0.02) |
+
+**Renewable coefficient is +0.033 GWh-RZ per MW-renew (p<0.001).** The +6 GW of renewable expansion alone implies ~+200 GWh/mo additional RZ — statistically explaining most of the post-IDA elevation we observed. The DA60/ID15 and DA15/ID15 regime effects are not robust to the renewable control.
+
+**S8 demoted from alive to wounded (2026-04-27).** The "post-MTU15-DA persistence" feature (the key signature of the original claim) does NOT survive the renewable control. What survives is a narrower 4-month ISP15-window-specific elevation (+156 GWh/mo, p=0.022) that is not explained by renewable growth alone — possibly reflecting the adjustment period to the new ISP15 settlement clock before MTU15-IDA introduced matching trading granularity. Status: **PARTIAL RETRACTION**. Alive count 28 → 27; wounded count 4 → 5.
 
 ### ★★ C2. Cost calc uses published price, but S7 just established that's the wrong number
 
