@@ -43,15 +43,23 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 KEYCLOAK_URL = "https://keycloak.tp.entsoe.eu/realms/tp/protocol/openid-connect/token"
 FMS_URL = "https://fms.tp.entsoe.eu"
 
-# Best-guess paths from File Library Guide / TP UI naming. Adjust after probe.
+# Verified paths discovered via the Export_log_r3.csv catalog (probe 2026-04-27).
+# Files are all-Europe; per-country filtering happens at parse time.
 KNOWN_PATHS = {
-    "balancing_energy_bids":     "/TP_export/BalancingEnergyBids_12.3.h_v1_r3/",
-    "balancing_bid_conversion":  "/TP_export/BidConversion_12.3.c_v1_r3/",
-    "aggregated_bid_offers":     "/TP_export/AggregatedBids_12.3.e_v1_r3/",
-    "redispatching":             "/TP_export/Redispatching_13.1.A_v1_r3/",
-    "countertrading":            "/TP_export/Countertrading_13.1.B_v1_r3/",
-    "congestion_costs":          "/TP_export/CongestionCosts_13.1.C_v1_r3/",
-    "accepted_aggregated_offers": "/TP_export/AcceptedAggregatedOffers_17.1.D/",
+    "balancing_energy_bids":      "/TP_export/BalancingEnergyBids_12.3.B_C_r3/",
+    "aggregated_balancing_bids":  "/TP_export/AggregatedBalancingEnergyBids_12.3.E_r3/",
+    "current_balancing_state":    "/TP_export/CurrentBalancingState_12.3.A_r3/",
+    "procured_balancing_capacity": "/TP_export/ProcuredBalancingCapacity_12.3.F_r3/",
+    "cross_zonal_balancing":      "/TP_export/CrossZonalBalancingCapacity_12.3.H_12.3.I_r3/",
+    "redispatching_internal":     "/TP_export/RedispatchingInternal_13.1.A_r3.1/",
+    "redispatching_xb":           "/TP_export/RedispatchingCrossBorder_13.1.A_r3.1/",
+    "countertrading":             "/TP_export/Countertrading_13.1.B_r3.1/",
+    "imbalance_prices":           "/TP_export/ImbalancePrices_17.1.G_r3/",
+    "imbalance_volumes":          "/TP_export/TotalImbalanceVolumes_17.1.H_r3/",
+    "activated_balancing_prices": "/TP_export/PricesOfActivatedBalancingEnergy_17.1.F_r3/",
+    "balancing_reserves_contract": "/TP_export/AmountAndPricesPaidOfBalancingReservesUnderContract_17.1.B_C_r3/",
+    "bid_availability_changes":   "/TP_export/ChangesToBidAvailability_IFs_mFRR9.9_aFRR9.6_9.8_r3/",
+    "financial_balancing":        "/TP_export/FinancialExpensesAndIncomeForBalancing_17.1.I_r3/",
 }
 
 
@@ -80,19 +88,36 @@ def load_creds() -> tuple[str, str]:
 
 
 def get_token(user: str, password: str) -> str:
-    r = requests.post(
-        KEYCLOAK_URL,
-        data={
-            "client_id": "tp-fms-public",
-            "grant_type": "password",
-            "username": user,
-            "password": password,
-        },
-        headers={"Content-Type": "application/x-www-form-urlencoded"},
-        timeout=30,
-    )
-    r.raise_for_status()
-    return r.json()["access_token"]
+    """Exchange TP credentials for an access token. Never logs the password.
+
+    Wraps every failure path in a sanitized error so neither the password,
+    nor the request body, nor an HTTP-error trace can leak the credential.
+    """
+    try:
+        r = requests.post(
+            KEYCLOAK_URL,
+            data={
+                "client_id": "tp-fms-public",
+                "grant_type": "password",
+                "username": user,
+                "password": password,
+            },
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+            timeout=30,
+        )
+    except requests.RequestException:
+        raise RuntimeError("Keycloak network error (no body printed for confidentiality).")
+    if r.status_code != 200:
+        # NEVER print r.text or r.request.body — they may contain the credential.
+        raise RuntimeError(
+            f"Keycloak auth failed: HTTP {r.status_code}. "
+            "Check TP_USERNAME / TP_PASSWORD in .env. "
+            "(Body suppressed for confidentiality.)"
+        )
+    try:
+        return r.json()["access_token"]
+    except (ValueError, KeyError):
+        raise RuntimeError("Keycloak returned unexpected response shape.")
 
 
 def list_files(token: str, path: str, page_size: int = 5000) -> list[dict]:
@@ -109,15 +134,30 @@ def list_files(token: str, path: str, page_size: int = 5000) -> list[dict]:
         timeout=60,
     )
     r.raise_for_status()
-    return r.json().get("contentItemList", [])
+    # Response key is itemList (not contentItemList).
+    return r.json().get("itemList", [])
 
 
-def download_file(token: str, file_path: str, out_path: Path) -> int:
+def download_file(token: str, item: dict, out_path: Path) -> int:
+    """Download via /downloadFileContent. Payload shape:
+    {topLevelFolder, folder, filename, lastUpdateTimestamp, downloadAsZip}.
+    """
+    content = item.get("content") or {}
+    filename = content.get("filename") or item.get("name") or ""
+    folder = (item.get("typeSpecificAttributeMap") or {}).get("path") or ""
+    last_upd = item.get("lastUpdatedTimestamp") or ""
+    payload = {
+        "topLevelFolder": item.get("topLevelFolder") or "TP_export",
+        "folder": folder,
+        "filename": filename,
+        "lastUpdateTimestamp": last_upd,
+        "downloadAsZip": False,
+    }
     r = requests.post(
-        f"{FMS_URL}/downloadFile",
+        f"{FMS_URL}/downloadFileContent",
         headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-        json={"path": file_path},
-        timeout=300,
+        json=payload,
+        timeout=600,
     )
     r.raise_for_status()
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -151,22 +191,25 @@ def main() -> None:
         return
 
     out_dir = PROJECT_ROOT / "data/raw/entsoe" / args.out_subdir
-    n_dl = 0
+    n_dl = n_skip = 0
     for it in items[: args.max_files]:
-        name = it.get("name") or ""
+        c = it.get("content") or {}
+        name = c.get("filename") or it.get("name") or ""
         if not name:
             continue
         out = out_dir / name
         if out.exists() and out.stat().st_size > 0:
+            n_skip += 1
             continue
         try:
-            n = download_file(token, it.get("path") or f"{path}{name}", out)
+            n = download_file(token, it, out)
             print(f"  OK {name} ({n} bytes)")
             n_dl += 1
         except Exception as e:
-            print(f"  FAIL {name}: {e}")
+            # Don't print exception details — they may include URL params.
+            print(f"  FAIL {name}: {type(e).__name__}")
 
-    print(f"[FMS] downloaded {n_dl}; saved under {out_dir}")
+    print(f"[FMS] downloaded {n_dl}, skipped {n_skip}; saved under {out_dir}")
 
 
 if __name__ == "__main__":
