@@ -331,6 +331,32 @@ A86 (volumes) and A84 (activation price level) are noisy at monthly aggregation.
 - The pre-IDA baseline implicitly includes the energy-crisis years 2022–2023, when imbalance prices spiked. Calendar-month FE handles seasonality but not regime-shifting volatility. A more conservative baseline would restrict to 2018–2021 (or "calm" months only); not done here.
 - The +€996M figure is consistent with the descriptive S1 alive claim (€38 → €160 → €72M/mo) but quantifies the cumulative deviation. S6 is a sharper aggregation of S1.
 
+### Refinement 2026-04-27 — Month-by-month decomposition of the +€1.1B
+
+The headline regression integral averages over 10 monthly observations within the asymmetric window. The actual month-by-month profile is:
+
+| Sub-period | Months | Mean excess (€M/mo) | Cumulative (€M) |
+|---|---:|---:|---:|
+| Pre-IDA (Jan-May 2024) | 5 | ±10 (noise floor) | ±10 |
+| 3-sess (Jul-Nov 2024) | 5 | +7.4 | +38 |
+| **ISP15-win (Dec 2024 – Feb 2025)** | **3** | **+136.3** | **+408.9** |
+| MTU15-IDA mid (Mar 2025) | 1 | +137.9 | +138 |
+| **DA60/ID15 stable (Apr-Sep 2025)** | **6** | **+90.9** | **+545.4** |
+| ↳ excluding June 2025 op.reforzada outlier | 5 | +80.6 | +403 |
+| **Post-MTU15-DA (Oct-Dec 2025)** | **3** | **+14.6** | **+43.9** |
+
+**Three observations sharpen the §4 mechanism story:**
+
+1. **The dominant leg is ISP15-win + MTU15-IDA-mid (Dec 2024 – Mar 2025): +€546.8M in 4 months at +€137M/mo** — that's 50% of the headline in 40% of the window-time. The 15-min imbalance settlement rule (effective 2024-12-01) is the **primary** driver. Mechanically: settling 15-min positions separately quadruples the gross settlement base relative to hourly netting; the immediate post-ISP15 surge is consistent with the BRP-mechanical-exposure jump.
+
+2. **DA60/ID15 (Apr-Sep 2025) sustains the transfer at a lower level** (+€91M/mo, ~33% lower than ISP15-win). Plausible reading: MTU15-IDA introduced 15-min intraday products that gave BRPs new tools to self-correct positions before real-time, partially closing the BRP-exposure gap even though the DA-vs-imbalance asymmetry persisted. So MTU15-IDA didn't structurally change the asymmetry but did give participants a new behavioural channel to dampen its consequences.
+
+3. **MTU15-DA closure (Oct 2025) collapses the excess by ~6×** — this is the cleanest piece of policy evidence in the project. When DA aligned to 15-min and the settlement clocks matched, the transfer evaporated to near pre-reform levels, even with the post-blackout operación-reforzada period still in effect.
+
+**The June 2025 outlier (+€142.5M)** sits inside the DA60/ID15 sub-period but is driven by operación-reforzada: A01 reserve activation cost doubled to €51M (2× neighboring months) and A02 BRP-paid spiked to €172M. Removing this single month drops the DA60/ID15-window total from €545M to €403M and the mean from €91M to €80M/mo — still meaningful elevation, but ~26% of that sub-period's cumulative excess sits in one anomalous month.
+
+**Revised mechanism reading for the §4 model**: the asymmetric-granularity friction operates primarily through **the DA-vs-imbalance settlement-clock mismatch** (active from Dec 1, 2024 to Sep 30, 2025), with MTU15-IDA introducing a behavioural dampening channel (15-min intraday self-correction). The "asymmetric-granularity window" is correctly defined; the original §4 framing implicitly conflated the imbalance-clock change with the IDA-clock change, but the data shows the imbalance-clock change is doing most of the work. The §4 model should be interpreted with the imbalance-vs-DA granularity gap as the primary friction, not the DA-vs-IDA gap.
+
 ### Refinement 2026-04-25 — A87 NET fiscal balance (A02 − A01)
 
 A02 alone could rise mechanically if more reserves are activated (because more BRPs pay imbalance settlement, but the TSO also pays BSPs more for those reserves). Subtracting A01 expenses isolates the **system rent** — the fiscal surplus the TSO collects from the imbalance settlement above what it pays out for reserves.
