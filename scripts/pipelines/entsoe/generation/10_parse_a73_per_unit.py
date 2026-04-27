@@ -48,6 +48,9 @@ def parse_one(path: Path) -> pd.DataFrame:
                 unit_eic = txt
             elif ln == "registeredResource.name" and unit_name is None:
                 unit_name = txt
+            elif ln == "name" and unit_name is None:
+                # PowerSystemResources > name carries plant name for nuclear
+                unit_name = txt
             elif ln == "psrType" and psr_type is None:
                 psr_type = txt
         for period in ts.iter():
