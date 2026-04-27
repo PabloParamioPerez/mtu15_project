@@ -20,7 +20,7 @@
 - **F5** — Allaz–Vila slope, peak vs off-peak split, IB sign-flip / GE within-firm placebo.
 - **F6** — Cournot tercile sort, IB cleanly fits, GE mixed.
 - **F7** — Synthetic-firm method (Ciarreta–Espinosa style), joint Big-4 ~€833M; per-firm: IB ALONE carries ~€820M; per-IB-unit: hydro 64% / CCGT 36%; named B8 CCGT complex-bidders carry ~0.
-- **F8** — Bushnell-signature direct test: IB hydro 63% Q4-concentrated vs Fringe 42% (+21pp), intensifies at MTU15-IDA (56% → 63%).
+- **F8** — Bushnell-signature direct test: IB hydro Q4-concentrated structurally more than Fringe; gap +17pp (avg 2018-2025), persistent across years. Original "intensifies at MTU15-IDA (56→63%)" framing partially retracted 2026-04-27 — was a windowing artifact; year-by-year analysis shows the gap is structurally stable, NOT reform-amplified.
 
 **Apparent tension #1: F1 says GE Lerner +0.318; F7 per-firm says GE has near-zero independent price impact.**
 
