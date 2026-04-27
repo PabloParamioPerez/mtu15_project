@@ -98,7 +98,47 @@ Both balancing markets diverged from DA at the same reform date. This is decisiv
 
 **Key reading.** IB pivotality is dominantly **time-of-day-driven** (evening peak across all weather/water/VRE conditions), NOT scarcity-state-driven. The classical Bushnell water-value mechanism is rejected (F8 wounded refinement); the wind-doldrum scarcity mechanism is rejected (H3); the cold-mornings demand-spike mechanism is rejected (H2). The shape is consistent with **Allaz–Vila forward-position-driven dispatch** (§2): IB's contractual coverage profile likely fixes optimal evening-peak dispatch regardless of scarcity state. F5's peak-hour signal for IB ($\Delta\beta_{\text{peak}}=+0.049^{*}$ at MTU15-DA) is the corroborating evidence at the bid-evolution level.
 
-**Implication for the structural-firm chapter.** F10 sharpens the §0 IB-canonical claim: IB is the marginal price-setter in the Spanish DA market not just at extreme scarcity events but **structurally, across the diurnal and seasonal cycle**, with intensification at evening peaks. The €820M F7 transfer is broadly distributed (62.9% strongly-pivotal × 91.9% of transfer) rather than tail-driven. The thesis can lead with F10 as the simplest one-paragraph headline of IB market power: *"IB is strongly or extremely pivotal at 63% of post-MTU15-IDA hours, capturing 92% of cross-firm market-power transfer."* The mechanism (per F8 Bushnell rejection + F10 hour-shape) is forward-commitment / structural dispatch protocol, not water-value optimization.
+**Implication for the structural-firm chapter.** F10 sharpens the §0 IB-canonical claim: IB is the marginal price-setter in the Spanish DA market not just at extreme scarcity events but **structurally, across the diurnal and seasonal cycle**, with intensification at evening peaks. The €820M F7 transfer is broadly distributed (62.9% strongly-pivotal × 91.9% of transfer) rather than tail-driven. The thesis can lead with F10 as the simplest one-paragraph headline of IB market power: *"IB is strongly or extremely pivotal at 63% of post-MTU15-IDA hours, capturing 92% of cross-firm market-power transfer."*
+
+### Mechanism synthesis (2026-04-27): IB's market power is Cournot-structural, NOT Bushnell or Allaz–Vila
+
+After running direct tests of three mechanism candidates (Bushnell water-value F8, Allaz–Vila granularity asymmetry, scarcity-driven pivotality), only Cournot quantity-setting under inelastic residual demand survives clean direct testing. The thesis modelling chapter should lead with this reading.
+
+**Direct test results, mechanism by mechanism:**
+
+| Mechanism | Direct test | Result | Surviving role |
+|---|---|---|---|
+| **Cournot (§1, F6, F10)** | (a) Lerner concentrates in steep-supply tercile (F6 IB +0.126/+0.087/+0.044, T1→T3 monotone); (b) IB pivotality 62.9% × 92% of transfer (F10) | **PASS** for IB cleanly; partial for GE; rejected for GN/HC | **PRIMARY** mechanism for IB market power |
+| **Allaz–Vila granularity-asymmetry (§2, F5)** | DA60/ID15 vs DA15/ID15 IB rel markup: **12.67% vs 12.29%** — flat | **REJECT** at aggregate level (no granularity-asymmetry premium) | Survives only at IDA repositioning level (F5 peak-hour sign-flip), distinct from DA-spot pricing |
+| **Bushnell water-value (§6, F8)** | ρ(IB Q4 hydro share, reservoir) = $-0.169$; β = $-0.487$ pp/TWh, p=0.868; Fringe placebo $-0.380$ STRONGER than IB | **REJECT** | Bushnell mechanism rejected as the source of IB Q4 concentration |
+| **Scarcity-state pivotality (F10 H1/H2/H3)** | Drought × evening, cold mornings, wind doldrums all show same time-of-day shape — pivotality is hour-driven not scarcity-driven | **REJECT** all three scarcity hypotheses | Pivotality is structural-compositional |
+| **Vertical integration / net-position (D5)** | GE 2.4× more net-seller than IB but GE has no F7 rent | **REJECT** for IB > GE pattern | Doesn't explain cross-firm asymmetry |
+
+**The surviving mechanism story.** IB exercises Cournot-style markup on residual demand made inelastic by IB's structural ownership of the marginal dispatchable capacity (CCGT + reservoir hydro on the Spanish supply margin). The pattern is dominantly **compositional**: IB happens to own the units that the supply curve sits on, and IB's Lerner reflects the inverse residual-demand elasticity at the cleared price. The pattern is **not driven by reform-induced behaviour change** — IB's per-MWh rel markup is regime-invariant at ~12% across DA60/ID15 and DA15/ID15.
+
+**What the reform DID change at the IB level.** The reform did not change IB's per-MWh markup. It changed (a) the absolute price level (DA60/ID15 €57 → DA15/ID15 €78 — driven by post-blackout operación reforzada and load growth, not by IB's strategic conduct), so the absolute € rent rises in DA15/ID15 (€598M of the €820M sits there); and (b) the IDA-repositioning behavior captured by F5's peak-hour sign-flip (an Allaz–Vila signal at the *intraday* repositioning level, separate from the DA spot-pricing level where the granularity-asymmetry channel does not manifest).
+
+**What the reform DID create — at the system level (S6).** The €1.1B BRP→TSO settlement transfer (S6) is the granularity-friction signature, separate from IB's Cournot rent. It collapsed at MTU15-DA when the asymmetry resolved. **The two channels are non-additive across the financial system** (same generators participate in both): the thesis should cite S6 and F7 as separate channels of reform impact, not as a single "reform cost."
+
+**Triangulation across alive claims for the IB-canonical case study:**
+
+| Test | Mechanism dimension | IB result |
+|---|---|---|
+| F1/F2 matched-price Lerner | Cournot: Spec 3 contrast | IB +0.135 vs pre-IDA (significant) |
+| F6 Cournot tercile | Cournot: inverse-slope test | IB monotone T1→T3 (+0.126→+0.044) |
+| F7 synthetic-firm | Aggregate market-power transfer | IB ~98% of joint Big-4 (€820M) |
+| F7 per-IB-unit | Mechanism within IB | Hydro 64%, CCGT 36%, named CCGT complex-bidders ~zero |
+| F8 Q4 hydro share | Strategic dispatch concentration | IB +17pp vs Fringe (regime-invariant) |
+| F10 pivotality | Cournot via inelastic residual demand | IB pivotal at 62.9% of hours (capturing 92% of transfer) |
+
+All six tests converge on Cournot-structural-pivotality. The thesis structural-firm chapter should lead with this as a tightly-triangulated empirical claim, citing IB as the canonical strategic firm and using GE/GN/HC as cross-firm placebos that don't show the Cournot pattern (per F4 Rule 28.8 caveat for GN/HC; per W1 nuclear-baseload composition for GE).
+
+**What the data DOES NOT support** (honest caveats for the thesis):
+- IB's market power is NOT "caused by" the MTU15 reform. It is structurally pre-existing; the reform amplified the absolute rent through price-level effects but not the Cournot wedge.
+- IB's Q4 hydro concentration is NOT a Bushnell water-value signature. It is structural and regime-invariant; mechanism is plausibly forward-commitment (F5 IDA-repositioning) or fixed dispatch protocol, not reservoir shadow-pricing.
+- IB's pivotality is NOT scarcity-state-driven. It is dominantly time-of-day-driven (evening peak across all weather/water/VRE conditions), supporting a structural-compositional reading.
+
+This is a clean, defensible mechanism story that combines positive structural findings (Cournot-pivotality alive) with explicit rejection of three alternative mechanisms (Bushnell, Allaz–Vila aggregate, scarcity-pivotality). The committee can be told the project ran direct tests of all three alternatives and rejected each — sharper than just citing supportive evidence for the preferred mechanism.
 
 ---
 
