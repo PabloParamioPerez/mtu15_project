@@ -153,3 +153,20 @@ The project tracks empirical claim status in `CLAIMS_LEDGER.md` at the repo root
 For active notebooks in `explore/`, the same four fields appear as a markdown cell-1.
 
 **Status meanings.** *Alive* — passed all documented robustness checks; safe to cite. *Wounded* — survives in narrowed form; cite only with caveat. *Dead* — retracted or contradicted; do not cite as positive result, may appear in identification appendix as "attempted but failed".
+
+## OVB-robustness discipline for regression-based claims
+
+Whenever a regression coefficient drives a claim, follow this protocol before promoting the claim to alive:
+
+1. **Sparse-FE baseline**: report the simplest spec (regime/calendar FE only).
+2. **Augmented spec**: add at least one batch of plausible omitted variables (renewable generation, load, price level, fuel proxy, market share) that are economically motivated.
+3. **Compare**: report β estimates side-by-side. If the headline coefficient changes magnitude by <50% and keeps the same sign, the claim is OVB-robust. If sign flips or magnitude collapses, the original spec was confounded — wound or kill the claim.
+4. **Document**: include the sparse vs augmented β and corresponding p-values in the ledger row, not just the headline coefficient.
+
+**Pattern recognition**: in this project we have one example (S8) where adding a renewable-growth control flipped the post-IDA RZ coefficient from +120 GWh/mo (p=0.006) to −27 (p=0.61), forcing a demotion alive→wounded. We have one example (F11) where the |gap| coefficient is OVB-robust but the directional gap term IS sign-unstable across specs; the headline survives because it relies on |gap|, but the directional asymmetry must not be cited.
+
+**Practical signals OVB is in play:**
+- Regressor of interest is correlated with a known scarcity/cycle indicator (renewable capacity growth, fuel costs, load).
+- Adding economically-plausible controls flips the sign or collapses magnitude.
+- The "puzzling" coefficient sign (opposite of textbook prediction) tightens or reverses with controls.
+- R² jumps materially when controls are added (added regressors are not noise).
