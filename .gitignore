@@ -31,6 +31,9 @@ data/**
 !data/external/esios/
 !data/external/esios/*.csv
 !data/external/esios/README.md
+!data/external/esios_reference/
+!data/external/esios_reference/*.csv
+!data/external/esios_reference/README.md
 !data/metadata/.gitkeep
 data/metadata/*.csv
 # ESIOS folder documentation (not the bulk data)

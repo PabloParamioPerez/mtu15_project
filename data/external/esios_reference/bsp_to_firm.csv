@@ -1,0 +1,35 @@
+bsp,firm,confidence,note
+IMA,IB,high,Iberdrola Mercado de Aprovisionamiento (the IB trading-arm BSP)
+IGN,IB,high,Iberdrola Generación Nuclear (Cofrentes operator; CNMC SNC/DE/047/26 64.37 defendant)
+IGR,IB,high,Iberdrola Generación Renovable
+IGE,IB,medium,Iberdrola Generación Eléctrica (older naming; partly subsumed into IGS)
+IGS,IB,medium,Iberdrola Generación SA (older naming for IGE)
+END,GE,high,Endesa Generación
+ENC,GE,medium,Endesa Comercializadora / Endesa Carbón (subsidiary)
+EV,GE,medium,Endesa Vendedora? (one of the three Endesa retail/trading arms)
+EN1,GE,medium,Endesa 1 (sub-BSP)
+GN,GN,high,Gas Natural / Naturgy Generación
+GN3,GN,high,Naturgy sub-BSP 3
+GN4,GN,high,Naturgy sub-BSP 4
+GNE,GN,high,Naturgy Energía (sub-BSP)
+HC,HC,high,EDP España (Hidrocantábrico legacy code)
+GDF,Engie,high,Gaz de France / Engie España (legacy code)
+GAL,Engie,medium,Engie Galicia / España subsidiary
+TTE,Totalenergies,high,TotalEnergies
+GST,Totalenergies,medium,Total Gas y Servicios subsidiary
+CEP,Cepsa,high,Compañía Española de Petróleos (Cepsa Gas y Power)
+ACC,Acciona,high,Acciona Energía
+AC2,Acciona,medium,Acciona sub-BSP 2 (likely ACC2EBR plant operator)
+AXP,Axpo,high,Axpo Iberia
+AX2,Axpo,medium,Axpo sub-BSP 2
+AXC,Axpo,medium,Axpo sub-BSP C
+ALP,Alpiq,high,Alpiq Energía España
+BBE,BBE,high,Bahía de Bizkaia Electricidad
+EVM,EnergyaVM,high,Energya VM (ENERGYA VM Generación / Comercialización)
+VM2,EnergyaVM,medium,Energya VM sub-BSP 2
+WM1,EnergyaVM,low,WM1 - possibly Energya VM Wind Manager
+REE,REE_TSO,high,Red Eléctrica de España (TSO; system-side aFRR adjustments)
+NEX,Nexus,low,Nexus Energía? Or Naturgy Nexus subsidiary?
+ELB,Iberdrola,low,Possibly Iberdrola Energía Limpia (low confidence)
+BZE,Other,low,Energía Bizkaia? (distinct from BBE)
+GL3,Other,low,Unknown sub-BSP
