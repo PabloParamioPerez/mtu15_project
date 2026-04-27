@@ -230,13 +230,29 @@ These are different markets with different windows but the SAME underlying gener
 
 **Mitigation needed**: add an explicit "non-additive across channels" footnote to the three-channel synthesis paragraph in `_coherence_audit.md` and `_modelling_track.md`. Total system impact ≤ sum of channels.
 
-### ★★ D2. The pdbce BRP-routing reallocation contaminates Big-4 categorisation
+### ⚠ D2. (PARTIALLY DEFENDED 2026-04-27) Migration footprint bounded at 1.6% of IB transfer
+
+**Audit attack** (preserved below for record):
 
 Per nb12's data caveat: `grupo_empresarial` is the *settlement BRP*, not the physical owner. Rule 28.8 elimination (March 2025) reallocated bilateral-contract settlement flows. So the "GE", "IB" groupings shift across regimes due to contract structure, not just behaviour. F7's per-firm decomposition uses these BRP-level groupings for the post-MTU15-IDA period (post-Rule-28.8) — so "IB carries €820M" reflects IB's **post-Rule-28.8 BRP scope**, not its physical-asset scope.
 
 **Defense**: the F7 method substitutes IB's BIDS with Fringe BIDS at the unit level. So the analysis is bid-level, not BRP-level. The grupo_empresarial categorisation enters only at the per-firm aggregation stage.
 
 **Mitigation needed**: verify in `synthetic_firm_per_firm.py` that the per-firm aggregation uses physical-unit-to-firm mapping, not the BRP-shifting categorisation. ~30 min check.
+
+**Result of verification (2026-04-27)**:
+
+1. **Matching table internally consistent with F7 panel period**. Of the 62 matched Big-4 CCGT/Hydro plants in `synthetic_plant_match.parquet`, **zero have a mismatch** between `firm_L` (matching-table firm) and the post-MTU15-IDA pdbce dominant `grupo_empresarial`. The matching script aggregated 2024-01+ pdbce data which contained pre-migration EHN-attributed sessions for 3 plants (ACC1EBR, ACC2EBR, IPG), but the matching-table `firm_L='GE'` for these plants matches their post-2025-03-19 BRP. So the per-firm decomposition for the F7 analysis period is consistent.
+
+2. **Three units shifted firm assignment at exactly Rule 28.8 (March 2025)**: ACC1EBR, ACC2EBR, IPG (all EHN-Acciona small hydro plants) migrated from `grupo_empresarial='EHN'` to `'GE'` precisely at 2025-03-01. These are real BRP migrations, IDA-reform-coincident.
+
+3. **Material impact on F7 IB-canonical headline is bounded**. Of these 3 migration units, ACC2EBR is matched-S for IB's EBRA hydro plant. Per `synthetic_firm_per_unit_ib.csv`, EBRA contributes **€12.9M of €823.9M IB transfer = 1.6%**. The substitution at this matched pair replaces EBRA-IB offers with ACC2EBR offers — which post-2025-03-19 are submitted under GE BRP rather than EHN. If GE-style offers are systematically more aggressive than EHN-Acciona's true competitive baseline, the F7 method UNDER-states IB's markup at EBRA → biases mp_IB DOWNWARD. Conversely if the operational owner (Acciona) submits stable offers regardless of BRP attribution, the bias is zero.
+
+4. **GE/GN/HC firm-level totals (-€23M, +€14M, +€70M) include similar matching ambiguities** for TJEG/GDNA/TEES → ACC1EBR/ACC2EBR/IPG (GE), UFBG → ACC2EBR (GN), HCHI → ACC2EBR (HC). Magnitudes are themselves small relative to the IB headline and don't break the IB-canonical reading.
+
+**Status: PARTIALLY DEFENDED.** The internal consistency check (zero mismatches) defends the F7 IB-canonical headline. The 1.6%-of-IB bound on migration-induced bias is small and does not break the IB-canonical reading. The bid-vs-BRP distinction (substitution uses unit_code, not firm) is exactly the right defense — F7 substitutes physical-plant offers, not BRP-attributed offers, so the F7 method is bid-level not BRP-level. The per-firm AGGREGATION (where firm_L is the categorizer) inherits the small migration bias quantified above.
+
+**Recommendation**: cite the IB +€820M as "robust to BRP-migration bias of at most 1.6%". Document the migration units in F7 ledger row. No re-run of the synthetic-firm pipeline needed; the verification result is dispositive.
 
 ### ★ D3. F7 vs B8 internal tension
 
