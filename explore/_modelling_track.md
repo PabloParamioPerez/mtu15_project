@@ -78,6 +78,28 @@ Two notable signatures: (a) the **mFRR up-side spread collapsed -42%** post-IDA-
 
 Both balancing markets diverged from DA at the same reform date. This is decisive evidence that F7 IB-dominance is DA-market-specific and not a generic firm-level structural fact.
 
+**F10 pivotality decomposition (2026-04-27): IB pivotality is structural, time-of-day-driven, NOT scarcity-driven.** Direct decomposition of F7's hourly mp_IB transfer (`f7_pivotality_decomposition.py`, n=13,058 post-MTU15-IDA ISPs). Pivotality buckets:
+
+| Bucket | Threshold | Share of hours | Share of transfer | Concentration |
+|---|---|---:|---:|---:|
+| non-pivotal | $\|\text{mp}_{IB}\| < $€0.5 | 10.1% | -0.8% | -0.08× |
+| mildly pivotal | €0.5 ≤ mp_IB < €5 | 27.0% | 8.9% | 0.33× |
+| **strongly pivotal** | €5 ≤ mp_IB < €20 | **49.5%** | **54.2%** | 1.10× |
+| **extremely pivotal** | mp_IB ≥ €20 | **13.4%** | **37.6%** | 2.80× |
+
+**Headline**: IB is strongly or extremely pivotal at **62.9% of post-MTU15-IDA ISPs, capturing 91.9% of transfer**. The 13.4% of "extremely pivotal" hours alone capture 37.6% of total transfer (concentration ratio 2.8×) — these are the structural-scarcity-pricing hours. **In US electricity markets, firms are typically considered pivotal at 3-5% of hours; IB being pivotal at the majority of post-MTU15-IDA hours is a major structural-firm-level finding.**
+
+**Time-of-day shape**: pivotality peaks at h17-h24 (71-74% strongly-pivotal share) and dips slightly at h11-h16 (~60% — solar saturation lowers prices), but no full mid-day collapse. **Seasonal**: winter (Dec-Feb) higher than summer (78-84% vs 53-58%).
+
+**Mechanism diagnostic (testing user-stated hypotheses):**
+- **H1 drought × evening peak** (drought = reservoir D1-D3, evening = h19-22): 76.7% strongly pivotal vs 62.8% for drought × off-evening — but the F7 panel is **reservoir-truncated to dry conditions** (no wet observations across the 10-month window), so wet × evening counterfactual cannot be tested.
+- **H2 cold mornings**: winter mornings 78.9% pivotal, but winter NON-mornings are HIGHER (84.1%) — mechanism is winter evenings, not winter mornings.
+- **H3 wind-doldrum × evening**: VRE Q1-low × evening 71.5% pivotal vs Q1-low × off-evening 52.8% — but the same pivotality shows up at evening across all VRE quintiles (driven by hour-of-day, not VRE level).
+
+**Key reading.** IB pivotality is dominantly **time-of-day-driven** (evening peak across all weather/water/VRE conditions), NOT scarcity-state-driven. The classical Bushnell water-value mechanism is rejected (F8 wounded refinement); the wind-doldrum scarcity mechanism is rejected (H3); the cold-mornings demand-spike mechanism is rejected (H2). The shape is consistent with **Allaz–Vila forward-position-driven dispatch** (§2): IB's contractual coverage profile likely fixes optimal evening-peak dispatch regardless of scarcity state. F5's peak-hour signal for IB ($\Delta\beta_{\text{peak}}=+0.049^{*}$ at MTU15-DA) is the corroborating evidence at the bid-evolution level.
+
+**Implication for the structural-firm chapter.** F10 sharpens the §0 IB-canonical claim: IB is the marginal price-setter in the Spanish DA market not just at extreme scarcity events but **structurally, across the diurnal and seasonal cycle**, with intensification at evening peaks. The €820M F7 transfer is broadly distributed (62.9% strongly-pivotal × 91.9% of transfer) rather than tail-driven. The thesis can lead with F10 as the simplest one-paragraph headline of IB market power: *"IB is strongly or extremely pivotal at 63% of post-MTU15-IDA hours, capturing 92% of cross-firm market-power transfer."* The mechanism (per F8 Bushnell rejection + F10 hour-shape) is forward-commitment / structural dispatch protocol, not water-value optimization.
+
 ---
 
 ## §1 — Cournot-Nash with quasi-inelastic demand
