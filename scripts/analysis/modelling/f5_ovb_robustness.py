@@ -122,17 +122,18 @@ def main() -> None:
     df["p_da_sq"] = df["p_da"] ** 2
     print(f"Panel rows: {len(df):,}")
 
-    # Distinguish exogenous (weather, calendar, structural FE) from
-    # potentially-bad controls (price level, jointly determined with q_DA and ΔQ_IDA).
+    # All controls below are valid: VRE is exogenous (weather), p_da is
+    # predetermined relative to ΔQ_IDA (DA clears BEFORE IDA bidding, so p_da
+    # is observed at the time of IDA repositioning — NOT jointly determined
+    # with the outcome). p_da is correlated with q_DA (multicollinearity) but
+    # that's not bad-control bias on β(q_DA → ΔQ_IDA).
     specs = [
-        ("Spec 1 (original)",                     [],                          False, False),
-        # Exogenous-only specs (cleaner OVB test):
-        ("Spec 2-EX (+ VRE only)",                ["vre_mw"],                  False, False),
-        ("Spec 3-EX (+ VRE + hour FE)",           ["vre_mw"],                  True,  False),
-        ("Spec 4-EX (+ VRE + hour FE + DOW FE)",  ["vre_mw"],                  True,  True),
-        # Including p_da is BAD CONTROL (mediator); shown for comparison:
-        ("Spec 5-BAD (+ p_da; bad control)",      ["p_da"],                    False, False),
-        ("Spec 6-BAD (full incl. p_da, p_da²)",   ["p_da", "p_da_sq", "vre_mw"], True,  True),
+        ("Spec 1 (original sparse)",                  [],                              False, False),
+        ("Spec 2 (+ VRE only)",                       ["vre_mw"],                      False, False),
+        ("Spec 3 (+ VRE + hour FE)",                  ["vre_mw"],                      True,  False),
+        ("Spec 4 (+ VRE + hour FE + DOW FE)",         ["vre_mw"],                      True,  True),
+        ("Spec 5 (+ p_da)",                           ["p_da"],                        False, False),
+        ("Spec 6 (full: VRE + p_da + p_da² + FE)",    ["p_da", "p_da_sq", "vre_mw"],   True,  True),
     ]
 
     print()

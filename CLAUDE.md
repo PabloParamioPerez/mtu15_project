@@ -165,31 +165,36 @@ Whenever a regression coefficient drives a claim, follow this protocol before pr
 
 ### Good controls vs bad controls (simultaneity / mediator bias)
 
-Critical distinction often missed: not all "controls" reduce bias. **Bad controls** are variables jointly determined with the outcome (mediators, colliders, equilibrium objects) — including them introduces simultaneity bias and may block the very mechanism being measured.
+Critical distinction often missed: not all "controls" reduce bias. **The bad-control critique applies specifically to controls jointly determined with the OUTCOME Y, NOT with another regressor X.** A control that is correlated only with another independent variable is fine — it's just multicollinearity (affects coefficient interpretation, doesn't introduce simultaneity bias on the X→Y effect).
 
-**Good controls** (exogenous, predetermined):
+**Good controls** for estimating β(X → Y) — predetermined or exogenous relative to Y:
 - Weather variables (wind, solar generation as input — not as bid response)
 - Calendar effects (hour-of-day, day-of-week, month, year)
 - Infrastructure (interconnection capacity, installed capacity)
 - Reform-date indicators / regime dummies
-- Lagged values of outcome's covariates measured before bidding rounds
+- Variables determined in earlier markets/sessions before Y is realized (e.g. day-ahead price `p_da` is predetermined relative to intraday repositioning `ΔQ_IDA`, since DA clears before IDA bidding — `p_da` is a valid control for an IDA-side regression even if it's correlated with the DA-side regressor `q_DA`)
+- Lagged values of outcome's covariates
 
-**Bad controls** (jointly determined with outcome — DO NOT include without IV):
-- Equilibrium prices when outcome includes a price (e.g. controlling for `p_actual` when outcome is `mp_IB = p_actual − p_synth`).
-- Market shares determined by the firm's own offers (e.g. controlling for `IB-share` when outcome is `mp_IB`).
-- Cleared quantities when outcome is a quantity-response in the same market.
-- Imbalance volumes when outcome is imbalance-driven settlement.
+**Bad controls** — jointly determined with Y (mediators, descendants of Y, colliders with Y):
+- Equilibrium prices when outcome includes that price (e.g. controlling for `p_actual` when outcome is `mp_IB = p_actual − p_synth` — mechanical joint determination).
+- Market shares determined by the firm's own offers in the same equilibrium (e.g. controlling for `IB-share` when outcome is `mp_IB`).
+- Cleared quantities when outcome is a quantity-response in the same market and round.
+- Imbalance volumes when outcome is imbalance-driven settlement in the same ISP.
+
+**Key distinction (often confused):**
+- A control Z is jointly determined with another regressor X but predetermined relative to Y → **multicollinearity** with X (β interpretation may shift toward "holding Z fixed") but no simultaneity bias on β(X→Y). Z is a **valid control**.
+- A control Z is jointly determined with Y → **simultaneity / mediator bias** on β(X→Y). Z is a **bad control**.
 
 **Concrete project examples:**
 
 - **S8 (alive→wounded, 2026-04-27)**: adding renewable-capacity-growth control (good — exogenous infrastructure proxy) flipped post-IDA RZ coefficient from +120 GWh/mo (p=0.006) to −27 (p=0.61). Legitimate OVB correction; demotion was justified.
 
-- **F11 (caveats updated 2026-04-27)**: β(|gap|) is robust at −0.04 to −0.05 across both sparse-FE and augmented-exogenous specs (VRE-only, VRE+FE) — survives proper OVB-cleaning. The previously-claimed sign-flip in β(gap) only appeared after adding `p_actual²` (BAD control — `p_actual` is mechanically related to `mp_IB`); under good-control-only specs, β(gap) is mildly positive +0.003 to +0.013 (small, consistent with weak textbook prediction).
+- **F11 (caveats updated 2026-04-27)**: β(|gap|) is robust at −0.04 to −0.05 across both sparse-FE and augmented-exogenous specs. The previously-claimed sign-flip in β(gap) only appeared after adding `p_actual²` — and `p_actual` IS a bad control here because `mp_IB = p_actual − p_synth` is a mechanical joint determination with the outcome. Under good-control-only specs, β(gap) is mildly positive +0.003 to +0.013 (small, consistent with weak textbook prediction).
 
-- **F5 (further demoted 2026-04-27)**: IB peak-hour Δβ_peak collapses from +0.049 (sparse) to +0.003 under exogenous-only controls (VRE + hour FE + DOW FE) — vanishes BEFORE adding any bad control. The original signal was OVB-driven by hour-of-day variation within the peak partition, not a real Allaz–Vila signal. Bad-control specs (with `p_da`) further push it negative but that's not the load-bearing test.
+- **F5 (further demoted 2026-04-27)**: IB peak-hour Δβ_peak collapses from +0.049 (sparse) to +0.003 under purely exogenous controls (VRE + hour FE + DOW FE) — vanishes BEFORE considering the `p_da` specs. The Spec 5-6 specs add `p_da`, which is actually a VALID control here (predetermined relative to ΔQ_IDA, since DA clears before IDA bidding); they push Δβ_peak further negative (−0.017 to −0.026). The F5 demotion holds under both pure-exogenous specs AND specs with `p_da` — even more robust than initially claimed.
 
-**Practical signals OVB or bad-control is in play:**
-- Regressor of interest is correlated with a known scarcity/cycle indicator → likely OVB.
-- Adding **exogenous** controls flips sign or collapses magnitude → legitimate OVB correction (wound the claim).
-- Sign flip appears ONLY when adding equilibrium prices, shares, or cleared quantities → likely bad-control artifact (do not over-correct; rely on the exogenous-controls spec).
-- R² jumps from including bad controls is mechanically large (mediators by construction explain a lot of the outcome) — not a sign of correct identification.
+**Practical signals:**
+- Adding a control that is jointly determined with Y flips sign / changes magnitude → likely bad-control artifact (do not interpret as OVB correction; rely on the exogenous-controls spec).
+- Adding an exogenous or predetermined-relative-to-Y control flips sign or collapses magnitude → legitimate OVB correction (wound the claim).
+- A control is correlated with another regressor X but predetermined relative to Y → not a bad control; multicollinearity may shift β(X) interpretation but the underlying causal estimand is unaffected.
+- R² jumps from including jointly-determined-with-Y controls are mechanically large (mediators by construction explain Y) — not a sign of correct identification.
