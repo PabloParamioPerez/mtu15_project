@@ -214,6 +214,47 @@ The clearing-price-quartile cut (CUT 2 in the script output) gives noisier resul
 - F5 can now be cited in the structural chapter as: *"For peak demand hours, the slope of GE's and IB's IDA repositioning on DA cleared quantity attenuates or flips sign across the reform, consistent with the Allaz–Vila prediction that finer IDA granularity reduces the strategic commitment value of forward sales. The pattern does not extend to off-peak hours, where the marginal-capacity tech is non-CCGT, providing a within-firm placebo for the mechanism."*
 - The within-firm placebo (peak vs off-peak for GE going opposite ways) is the strongest single-firm Allaz–Vila evidence in the project — closer to identification than F5 looked at first pass.
 
+### Refinement 2026-04-27 — Bushnell water-value test FAILS for IB; F8 mechanism is plausibly Allaz–Vila not Bushnell
+
+Script: `scripts/analysis/lerner/f8_bushnell_water_value.py`. Direct test of the classical Bushnell (2003) hydro-thermal model against IB's Q4 dispatch concentration. Bushnell predicts: low reservoir → high shadow price of stored water → tighter Q4 concentration. Data: ENTSO-E A72 weekly Spanish reservoir-filling indicator 2018-2026 (n=92 monthly observations, range 4.85–15.36 TWh stored hydro energy), merged with IB and Fringe monthly Q4 hydro shares from `hydro_strategic_dispatch.py`.
+
+**Pearson correlations (predicted ρ < 0):**
+
+| Series | ρ vs reservoir | Reading |
+|---|---:|---|
+| IB Q4 share | $-0.169$ | Weakly negative — predicted direction, tiny magnitude |
+| IB-Fringe gap | $-0.014$ | Essentially zero — gap is reservoir-invariant |
+| **Fringe Q4 share** | $\mathbf{-0.380}$ | **Placebo STRONGER than treatment** — non-strategic firms track scarcity more than IB |
+| IB hydro GWh | $+0.409$ | Sanity check passes (more reservoir → more IB hydro generation) |
+
+**OLS regression with cal-month + year FE** (n=92, R²=0.373):
+- IB Q4 share: $\beta_{\text{reservoir}} = -0.487$ pp/TWh, SE 2.92, **p=0.868** (null)
+- Gap: $\beta_{\text{reservoir}} = +1.450$ pp/TWh, SE 2.53, **p=0.567** (wrong sign, null)
+
+**Decile cuts** (IB Q4 share by reservoir decile):
+
+| Decile | Mean reservoir TWh | IB Q4 % | Fringe Q4 % | Gap pp |
+|---:|---:|---:|---:|---:|
+| D1 (driest) | 5.94 | 65.1 | 48.3 | 16.8 |
+| D5 | 9.34 | 57.7 | 40.2 | 17.5 |
+| D10 (wettest) | 13.82 | 58.9 | 38.2 | 20.7 |
+
+No monotonic gradient. The +17pp gap is structurally constant across reservoir conditions.
+
+**Reading.** The classical Bushnell water-value mechanism — low reservoir raises the shadow price of stored water, prompting tighter strategic concentration in top-price hours — **is rejected for IB Spanish hydro**. The Fringe placebo failure (-0.380 vs IB's -0.169) is the sharpest single signal: if anything, *non-strategic* run-of-river plants concentrate in top-price hours more strongly when reservoirs are low (because they have less scheduling flexibility, not more strategic intent). IB's Q4 concentration is reservoir-invariant.
+
+**Implications for §1 (Cournot) and §2 (Allaz–Vila).** With Bushnell rejected, the most plausible remaining mechanisms for the F8 +17pp Q4-concentration gap are:
+
+1. **Allaz–Vila forward-position-driven dispatch (§2)**. IB's contractual coverage profile (vertical integration, retail load, OTC forwards) may determine optimal Q4 timing regardless of water availability. If IB's expected residual exposure is concentrated in evening peak hours, then Q4 dispatch is the optimal hedging response — invariant to reservoir state. F5's peak-hour result for IB and GE ($\Delta\beta_{\text{peak}} = +0.049^{*}$ for IB, sign-flip from -0.025 to +0.024 across MTU15-DA) is consistent with this reading.
+
+2. **Operational-protocol fixed dispatch heuristic.** IB's hydro-management software may routinely dispatch at evening peak based on a fixed price-prediction protocol, not reservoir-conditional optimization.
+
+3. **Ramping/cycling constraints** that mechanically favour evening peak ramping for large-reservoir multi-cascade systems (TAMEGA, SIL, DUER cascades require coordinated peak-ramp dispatch).
+
+**Diagnostic implication for the modelling chapter.** The modelling chapter cannot lead with a Bushnell story for IB hydro — the direct test fails. Allaz–Vila remains the best surviving mechanism candidate, with Cournot inverse-slope (§1, F6) as a complementary structural-firm-level corroborator. The F8 row in the ledger has been retitled from "Bushnell signature" to "Q4-concentrated dispatch with non-Bushnell mechanism."
+
+**No new claim row.** The Bushnell-rejection is a refinement of F8 wounded; the surviving claim is the +17pp structural gap, with mechanism reframed.
+
 ---
 
 ## §3 — Pigouvian imbalance-settlement framing
