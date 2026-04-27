@@ -159,14 +159,37 @@ For active notebooks in `explore/`, the same four fields appear as a markdown ce
 Whenever a regression coefficient drives a claim, follow this protocol before promoting the claim to alive:
 
 1. **Sparse-FE baseline**: report the simplest spec (regime/calendar FE only).
-2. **Augmented spec**: add at least one batch of plausible omitted variables (renewable generation, load, price level, fuel proxy, market share) that are economically motivated.
-3. **Compare**: report β estimates side-by-side. If the headline coefficient changes magnitude by <50% and keeps the same sign, the claim is OVB-robust. If sign flips or magnitude collapses, the original spec was confounded — wound or kill the claim.
-4. **Document**: include the sparse vs augmented β and corresponding p-values in the ledger row, not just the headline coefficient.
+2. **Augmented exogenous spec**: add controls that are **predetermined or exogenous** to the outcome — weather/RES generation (B01+B16+B18+B19), structural calendar/hour/DOW FE, infrastructure capacity, regulatory regime indicators.
+3. **Compare β across specs**: if the headline coefficient is stable in sign and ≥50% magnitude across the sparse and augmented-exogenous specs, the claim is OVB-robust. If sign flips or magnitude collapses, wound or kill the claim.
+4. **Document**: include sparse-vs-augmented β and p-values in the ledger row, not just the headline coefficient.
 
-**Pattern recognition**: in this project we have one example (S8) where adding a renewable-growth control flipped the post-IDA RZ coefficient from +120 GWh/mo (p=0.006) to −27 (p=0.61), forcing a demotion alive→wounded. We have one example (F11) where the |gap| coefficient is OVB-robust but the directional gap term IS sign-unstable across specs; the headline survives because it relies on |gap|, but the directional asymmetry must not be cited.
+### Good controls vs bad controls (simultaneity / mediator bias)
 
-**Practical signals OVB is in play:**
-- Regressor of interest is correlated with a known scarcity/cycle indicator (renewable capacity growth, fuel costs, load).
-- Adding economically-plausible controls flips the sign or collapses magnitude.
-- The "puzzling" coefficient sign (opposite of textbook prediction) tightens or reverses with controls.
-- R² jumps materially when controls are added (added regressors are not noise).
+Critical distinction often missed: not all "controls" reduce bias. **Bad controls** are variables jointly determined with the outcome (mediators, colliders, equilibrium objects) — including them introduces simultaneity bias and may block the very mechanism being measured.
+
+**Good controls** (exogenous, predetermined):
+- Weather variables (wind, solar generation as input — not as bid response)
+- Calendar effects (hour-of-day, day-of-week, month, year)
+- Infrastructure (interconnection capacity, installed capacity)
+- Reform-date indicators / regime dummies
+- Lagged values of outcome's covariates measured before bidding rounds
+
+**Bad controls** (jointly determined with outcome — DO NOT include without IV):
+- Equilibrium prices when outcome includes a price (e.g. controlling for `p_actual` when outcome is `mp_IB = p_actual − p_synth`).
+- Market shares determined by the firm's own offers (e.g. controlling for `IB-share` when outcome is `mp_IB`).
+- Cleared quantities when outcome is a quantity-response in the same market.
+- Imbalance volumes when outcome is imbalance-driven settlement.
+
+**Concrete project examples:**
+
+- **S8 (alive→wounded, 2026-04-27)**: adding renewable-capacity-growth control (good — exogenous infrastructure proxy) flipped post-IDA RZ coefficient from +120 GWh/mo (p=0.006) to −27 (p=0.61). Legitimate OVB correction; demotion was justified.
+
+- **F11 (caveats updated 2026-04-27)**: β(|gap|) is robust at −0.04 to −0.05 across both sparse-FE and augmented-exogenous specs (VRE-only, VRE+FE) — survives proper OVB-cleaning. The previously-claimed sign-flip in β(gap) only appeared after adding `p_actual²` (BAD control — `p_actual` is mechanically related to `mp_IB`); under good-control-only specs, β(gap) is mildly positive +0.003 to +0.013 (small, consistent with weak textbook prediction).
+
+- **F5 (further demoted 2026-04-27)**: IB peak-hour Δβ_peak collapses from +0.049 (sparse) to +0.003 under exogenous-only controls (VRE + hour FE + DOW FE) — vanishes BEFORE adding any bad control. The original signal was OVB-driven by hour-of-day variation within the peak partition, not a real Allaz–Vila signal. Bad-control specs (with `p_da`) further push it negative but that's not the load-bearing test.
+
+**Practical signals OVB or bad-control is in play:**
+- Regressor of interest is correlated with a known scarcity/cycle indicator → likely OVB.
+- Adding **exogenous** controls flips sign or collapses magnitude → legitimate OVB correction (wound the claim).
+- Sign flip appears ONLY when adding equilibrium prices, shares, or cleared quantities → likely bad-control artifact (do not over-correct; rely on the exogenous-controls spec).
+- R² jumps from including bad controls is mechanically large (mediators by construction explain a lot of the outcome) — not a sign of correct identification.
