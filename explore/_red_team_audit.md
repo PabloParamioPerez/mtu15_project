@@ -87,13 +87,27 @@ All IB findings (F1–F9) are correlations, comparative statics, or descriptive.
 
 **Framing**: thesis prose should consistently use "consistent with" / "structural reading" / "implied" rather than "caused by" / "identifies" / "establishes that". Already largely done but worth a global pass.
 
-### ★ A6. Vertical-integration ruling out (D5) has a confounder
+### ⚠ A6. (PARTIALLY DEFENDED 2026-04-27) Direction robust, magnitude reform-amplified
+
+**Audit attack** (preserved below for record):
 
 D5: GE +2,316 GWh net seller; IB +958 GWh; therefore vertical-integration doesn't explain IB > GE market power. But "net seller" position post-Rule-28.8 is itself an outcome of bilateral-contract reallocation — it's not exogenous to the reform package. The 2.4× ratio is post-March-2025, after Rule 28.8 elimination.
 
 **Defense**: Ciarreta–Espinosa (2010) found the same negative result for 2002–2005, when Rule 28.8 was different. Two-decade replication of "vertical-integration doesn't explain" strengthens the conclusion. But the LEVEL of GE's net-seller position in our data is post-reform.
 
 **Framing**: cite the two-decade pattern as the load-bearing evidence; treat the 2.4× ratio as illustrative of one period.
+
+**Result of mitigation (2026-04-27)**: ran `d5_sell_side_long_run.py` to compute annual GE vs IB sell-side cleared volume across 2018–2026 (sell side is unaffected by Rule 28.8 buy-side bilateral-contract bidding artifacts).
+
+| Era | GE / IB sell-side ratio |
+|---|---:|
+| 2018–2021 (clean pre-reform) | **1.12** (basically tied; in 2020-2021 IB > GE) |
+| 2022–2024 (energy crisis incl.) | 1.88 |
+| 2025–2026 (post-Rule-28.8) | **2.48** |
+
+The **2.4× magnitude is not a clean structural fact** — it reflects a combination of hydrologic-year variation, Rule 28.8 BRP reallocation, and nuclear-maintenance scheduling. **However**, in NO era is IB clearly more net-seller than GE on average; the 2024–2026 window where our F1–F8 market-power tests run has GE consistently more net-seller (ratio 1.9–2.5×). **The QUALITATIVE direction (vertical integration cannot explain IB > GE) is robust; the QUANTITATIVE 2.4× ratio is reform-amplified.**
+
+D5 row updated to cite "GE more net-seller than IB" as the directional fact (load-bearing) rather than the 2.4× magnitude. Status: **PARTIALLY DEFENDED.** The audit attack's nit on the magnitude is correct; the audit attack's broader point (D5 unfit for vertical-integration ruling-out) does NOT land — the directional ruling-out survives.
 
 ---
 
