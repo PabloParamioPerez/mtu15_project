@@ -102,6 +102,37 @@ def main() -> None:
     out = pd.DataFrame(rows).sort_values("DA60_POST_blackout_MWh", ascending=False)
     print(out.to_string(index=False))
 
+    # 4. Per-firm aFRR up-REVENUE by reform regime (F20)
+    print()
+    print("=" * 72)
+    print("Per-firm aFRR up-activation REVENUE 2025 by reform regime (EUR M)")
+    print("Joining PreSubPo (€/MWh) × EnAcSuTo (MWh) on (bsp, period_start_utc)")
+    print("=" * 72)
+    prc = df[df["info"] == "PreSubPo"][["bsp", "period_start_utc", "precio", "firm", "date"]].rename(
+        columns={"precio": "price_eur_mwh"})
+    qty = df[df["info"] == "EnAcSuTo"][["bsp", "period_start_utc", "ctd"]].rename(
+        columns={"ctd": "mwh"})
+    rev_df = prc.merge(qty, on=["bsp", "period_start_utc"], how="inner")
+    rev_df = rev_df[rev_df["mwh"] > 0]
+    rev_df["rev_eur"] = rev_df["mwh"] * rev_df["price_eur_mwh"]
+    rev_df["ts"] = pd.to_datetime(rev_df["date"])
+
+    def regime(d):
+        if d < pd.Timestamp("2025-03-19"):
+            return "pre-MTU15"
+        if d < pd.Timestamp("2025-04-28"):
+            return "DA60_PRE_blackout"
+        if d < pd.Timestamp("2025-10-01"):
+            return "DA60_POST_blackout"
+        return "DA15/ID15"
+
+    rev_df["reg"] = rev_df["ts"].apply(regime)
+    rev = rev_df.groupby(["reg", "firm"])["rev_eur"].sum().div(1e6).round(2)
+    pivot_rev = rev.unstack("firm").fillna(0)
+    cols_rev = [f for f in big4 if f in pivot_rev.columns] + \
+               [f for f in pivot_rev.columns if f not in big4]
+    print(pivot_rev[cols_rev].to_string())
+
     # Save outputs
     out_dir = PROJECT / "data/derived/results"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -109,6 +140,7 @@ def main() -> None:
     if len(pivot_actv) > 0:
         pivot_actv.to_csv(out_dir / "per_firm_afrr_activation_yearly.csv")
     out.to_csv(out_dir / "per_firm_afrr_blackout_split.csv", index=False)
+    pivot_rev.to_csv(out_dir / "per_firm_afrr_revenue_by_regime.csv")
     print(f"\nwrote {out_dir}/per_firm_afrr_*.csv")
 
 
