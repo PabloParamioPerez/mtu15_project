@@ -154,6 +154,37 @@ For active notebooks in `explore/`, the same four fields appear as a markdown ce
 
 **Status meanings.** *Alive* — passed all documented robustness checks; safe to cite. *Wounded* — survives in narrowed form; cite only with caveat. *Dead* — retracted or contradicted; do not cite as positive result, may appear in identification appendix as "attempted but failed".
 
+## Seasonality + weather controls (mandatory for cross-regime claims)
+
+Spanish electricity has huge seasonality (winter heating, summer AC, hydro inflows, solar daily/seasonal cycles) and weather sensitivity (wind 5×, solar 10×, temperature 30%+). The reform regimes span different calendar windows:
+- pre-IDA: 78 months across all seasons
+- 3-sess: Jun-Dec 2024
+- ISP15-win: Dec 2024-Mar 2025 (winter)
+- DA60/ID15: Apr-Sep 2025 (summer/early-fall)
+- DA15/ID15: Oct 2025-Jan 2026 (fall/early-winter)
+
+Any across-regime claim that does NOT control for seasonality is suspect by default — apparent regime effects can be calendar-mix artefacts. **B9 illustrated this** (commit a8fe1bd → c684989): the raw-means "IB compressed at DA60/ID15" was a seasonal artefact; under same-calendar comparison, IB-CCGT yield actually *rose* +0.48 above pre-IDA same-cal.
+
+**Mandatory minimum for any cross-regime claim:**
+
+1. **Same-calendar-month comparison.** Restrict pre-IDA to the same calendar months as the post-reform window and compare. DA60/ID15 (Apr-Sep) vs pre-IDA Apr-Sep multi-year. DA15/ID15 (Oct-Jan) vs pre-IDA Oct-Jan. ISP15-win (Dec-Mar) vs pre-IDA Dec-Mar. This absorbs seasonality via window matching.
+
+2. **Calendar-month FE in regressions** (when sample allows). Standard spec: `Y ~ regime + cal_month_FE + other_controls + …`. If day-level outcomes are noisy (small denominators in ratios), aggregate to monthly first.
+
+3. **Weather controls when relevant:**
+   - Spanish wind+solar (B16+B18+B19 from ENTSO-E A75) for price/dispatch/imbalance outcomes
+   - Reservoir filling (ENTSO-E A72) for hydro outcomes
+   - Temperature / load proxy for demand-related outcomes
+   - Cross-border interconnection state for price-comparison work
+
+4. **Year FE** for long-trend processes (Spanish renewable capacity grew ~6× over 2018-2025).
+
+**Verdict criteria:**
+- Raw across-regime means alone: NOT acceptable as a primary finding. May appear as descriptive context only.
+- Same-calendar-month robustness: minimum acceptable test.
+- Cal-month FE + weather controls: preferred for any regression.
+- If the seasonality-controlled result has the same sign and >50% magnitude of the raw result, the finding is robust. Otherwise wound or kill.
+
 ## OVB-robustness discipline for regression-based claims
 
 Whenever a regression coefficient drives a claim, follow this protocol before promoting the claim to alive:
