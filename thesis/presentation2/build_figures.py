@@ -38,6 +38,72 @@ def code(s: str) -> None:
     cells.append(nbf.v4.new_code_cell(s.strip()))
 
 
+# -- context for an external reviewer (e.g. another LLM doing an independent read)
+md("""
+# Context for an external reviewer
+
+This notebook is a working draft for the Part-I chapter of an empirical-IO master's thesis at **CEMFI (Madrid)** on Spain's MTU15 electricity-market reform sequence. It synthesises findings + a structural model for a 30-min preliminary-results presentation in May 2026, continuing from a February 2026 thesis proposal that proposed a sequential-markets extension of \\citet{ItoReguant} with strategic forward sales (the Allaz–Vila microfoundation; later rejected, see notebook).
+
+## Spanish electricity market — institutional brief
+
+- **OMIE** runs the wholesale markets: **Day-Ahead (DA)** uniform-price auction at noon D-1; **Intraday Auctions (IDA)** ~3 sessions/day after the 2024-06 reform; **Continuous Intraday (CID)** real-time matching close to delivery.
+- **REE** (Spain's TSO) handles feasibility, balancing activation, system security. Imbalance settlement runs through **ESIOS**, REE's information system.
+- **BRP (Balancing Responsible Party)** = the agent financially responsible for matching schedule to delivery. A BRP includes generation (renewable + dispatchable) and/or retail load.
+- **The Big-4** firms = Iberdrola (IB), Endesa (GE), Naturgy (GN), HC-Energía (HC); plus a "Fringe" of smaller producers + retailers + imports.
+
+## The reform sequence (the policy intervention this thesis assesses)
+
+| Date | Code | Change | Granularity |
+|---|---|---|---|
+| 2024-06-14 | IDA-3sess | 6 local MIBEL IDA sessions → 3 European IDAs under SIDC | trading (intraday) |
+| 2024-12-01 | **ISP15** | Imbalance settlement period: 60-min → 15-min | settlement |
+| 2025-03-19 | **ID15** (MTU15-IDA) | Intraday products: 60-min → 15-min | trading (intraday) |
+| 2025-10-01 | **DA15** (MTU15-DA) | Day-ahead products: 60-min → 15-min | trading (DA) |
+
+The **asymmetric-granularity window** is the 10 months from 2024-12-01 to 2025-10-01: ISP/ID at 15-min while DA still at 60-min — the headline of this chapter.
+
+The **2025-04-28 Iberian blackout** (mid-window) triggered REE "operación reforzada" (forced increased CCGT/nuclear commitment under P.O. 3.2). Confound for any DA60/ID15-window claim; addressed via blackout-split robustness checks (Figure 5).
+
+## Glossary
+
+- **MTU** = market time unit (60 or 15 min). **ISP** = imbalance settlement period.
+- **EU GL EB Article 52(d) dual pricing** (Spanish convention "k1/k2") = imbalance settlement charges different prices depending on whether a BRP's deviation HELPS or HURTS the system.
+- **A87** (ENTSO-E TP) = financial expenses and income for balancing — the system-aggregate BRP→TSO settlement series, the S6 outcome.
+- **prdvbaqh / prdvsuqh** (ESIOS liquicomun) = per-ISP downward / upward imbalance settlement prices, post-ISP15.
+- **endrozrqh / endlibqh / endreeoqh / endrehiqh / endretqh / endcurqh** (ESIOS liquicomun) = per-segment net imbalance volumes per ISP for 7 segments: conventional plants in/out of regulation zones, RE wind/hydro/thermal, regulated retailers (CUR), free-market retailers (LIB).
+- **β_seg** (Pigouvian counterfactual) = per-segment marginal social cost of imbalance from the S7 multivariate OLS regression. β_LIB ≈ €8/MWh, β_conv-RZ ≈ €220/MWh.
+
+## Data sources used in this notebook
+
+- **ESIOS** `liquicomun_all.parquet`: 4.4M rows × 181 settlement families, 2024-01 → 2026-04 (parser was extended this morning from 19 → 181 families to unlock the post-ISP15 directional prices).
+- **ENTSO-E** balancing: A85 imbalance prices ES + FR, A86 imbalance volumes, A87 financial balance.
+- **ENTSO-E** generation: A65 D-1 forecast load, A75 wind+solar actual, A73 per-unit dispatch.
+- **Pre-IDA baseline**: 78 months 2018-01 → 2024-05 (used in same-calendar-month comparison for regime contrasts vs the asymmetric / post-MTU15-DA windows).
+
+## Scope: this notebook is Part I of a 5-part thesis
+
+Part I = **system-layer asymmetric-granularity friction**, what we present in May. The other 4 parts cover ~30 additional empirical findings:
+- Part II — firm-level structural market power (IB Cournot rent ~€820M post-MTU15-IDA, regime-invariant)
+- Part III — cross-market firm specialisation (IB→DA hydro, GE→aFRR, Naturgy→post-blackout CCGT)
+- Part IV — post-CNMC strategic-availability conduct (replication of the 2023 SBO3 three-situation pivotality test; within-firm fleet substitution)
+- Part V — behavioural + identification appendix
+
+These are off-arc for the May talk by deliberate choice. Several supporting documents (`thesis/drafts/master_thesis_proposal.md`, `explore/_modelling_track.md`, `CLAIMS_LEDGER.md`, `explore/_audits.md`) flesh out Parts II–V for thesis-grade defense.
+
+## What this notebook is asking for
+
+A **second opinion on Part I** — primarily:
+1. Is the IO claim (two-policy-levers framing) well-supported by the empirical findings?
+2. Is the two-stage equilibrium model in Section 2 economics-grade for a CEMFI master's thesis? Is the identification argument credible?
+3. Are there obvious gaps, bad-control concerns, or alternative explanations we missed?
+4. Is the regime-invariant 60-65% renewable burden share interpretable as we frame it (forecast-error correlation with system imbalance), or is it driven by something else?
+
+The goal is ensemble reading: Claude (built the notebook) is checking with a second LLM (you) before the May talk.
+
+---
+
+""")
+
 # -- header
 md("""
 # Preliminary results — May 2026 CEMFI presentation (IO-framed)
