@@ -966,7 +966,7 @@ I do **not** estimate a full structural model. Instead I lay out a two-block fra
 
 The two-block framing connects to:
 - **\citet{HortacsuPuller2008}**-style implied-markup logic and residual-demand conduct tests on the dispatchable side (block 1)
-- **\citet{ItoReguant}** sequential-markets framing, here specialised to the asymmetric-clock window (block 2)
+- **\citet{ItoReguant}**-style sequential-markets institutional framing for block 2, without estimating a sequential strategic-bidding model here
 - A **\citet{Pigou1920}** counterfactual incidence benchmark via per-segment marginal-cost pricing (block 2)
 
 ## 2.1 Setup and notation
@@ -1040,7 +1040,7 @@ This block rationalises the **relative-markup persistence side of F7**: the IB D
 
 ## 2.3 Block 2 — Clock-asymmetric imbalance settlement
 
-Consider the same latent forecast-error process across regimes: $J = 4$ iid quarter-hour shocks $\varepsilon^i_k \sim \mathcal{N}(0, \sigma^2_i)$ per delivery hour, for each segment $i \in \{R, C\}$. The same physical errors are realised in all three regimes; only the settlement convention differs. Aggregating across segments gives two clean cross-regime objects:
+Consider the same latent forecast-error process across regimes: $J = 4$ iid quarter-hour shocks $\varepsilon^i_k \sim \mathcal{N}(0, \sigma^2_i)$ per delivery hour, for each segment $i \in \{R, C\}$. **For the model comparison, I hold fixed the same latent error draws across regimes; only the settlement convention differs.** This is a modelling device — in the empirical world, DA15/IDA15 may itself change scheduling, forecasting, and operational behaviour, so the realised error process need not be invariant across policy regimes; that channel is folded into the reduced-form $\alpha$. Aggregating across segments gives two clean cross-regime objects:
 
 **Hourly netting (pre-IDA, $K_{ISP} = 1$).** Errors net within the hour before settlement:
 $$
@@ -1078,8 +1078,8 @@ The BRP→TSO settlement transfer $T$ is **not** a deadweight loss — it is a r
 | # | Block-2 / block-1 quantity | Empirical anchor |
 |---|---|---|
 | **P1 — Mechanical gross-up benchmark** | $T_{15}(\alpha=0) / T_{60} = \sqrt{J} = 2$ for $J=4$ | The $\sqrt{J}=2$ result is a mechanical benchmark for the gross-up in absolute imbalance volume when moving from hourly netting to quarter-hour absolute settlement under iid latent quarter-hour errors. **S6** disciplines realised euro magnitudes against same-calendar baselines, not the mechanical ratio against a near-zero pre-IDA bid-imbalance baseline. |
-| **P2 — Reduced-form attenuation $\alpha$** | $T_{15}(\alpha)/T_{15}(0) = (1-\alpha)$; under a restrictive multiplicative-attenuation benchmark, explained-variance share rescales roughly with $(1-\alpha)^2$ | **S6** asymmetric→symmetric ratio €7.4M / €91M ≈ 0.08 implies a reduced-form attenuation $\alpha_{S6} \approx 0.92$, with the important caveat that the symmetric post-MTU15-DA window currently has only $n=3$ monthly observations. **B6** R² collapse 0.171 → 0.028 gives a directional back-of-envelope $\alpha_{B6} \approx 0.6$ under a restrictive multiplicative-attenuation benchmark, not a structural estimate. Both are reduced-form attenuations, folding together DA15 trading, IDA15 use, imbalance prices, quantities, blackout-period operation, and residual seasonality. The two estimands measure different things (volume-times-price aggregate vs. variance-share regression). I treat $\alpha$ as a band $[0.6, 0.92]$ and use the lower bound in the simulation. |
-| **P3 — Persistent IB price-setting channel** | $\mathcal L = B q^* / p^*_{DA}$, no dependence on $J$, $K_{ISP}$, $M$, or $\alpha$ in this block | **F7/F8** support persistence of IB's DA price-setting channel across regimes. Relative markups are more stable than absolute euro rents; the €820M is a window-conditional aggregate over the post-MTU15-IDA period, not a constant per-regime primitive. |
+| **P2 — Reduced-form attenuation $\alpha$** | $T_{15}(\alpha)/T_{15}(0) = (1-\alpha)$; under a restrictive multiplicative-attenuation benchmark, explained-variance share rescales roughly with $(1-\alpha)^2$ | Using the blackout-split S6 estimate, €7.4M/mo (post-MTU15-DA) vs €91M/mo (asymmetric DA60/ISP15) gives $\alpha_{S6} \approx 0.92$. The alternative monthly-decomposition estimate gives €14.6M/mo for Oct–Dec 2025 (against the same €91M/mo baseline), implying $\alpha \approx 0.84$; both should be read as reduced-form attenuations, not structural estimates. I use the blackout-split number in the headline because it isolates from the operación-reforzada June 2025 outlier. **Important caveat**: the symmetric post-MTU15-DA window has only $n=3$ monthly observations. **B6** R² collapse 0.171 → 0.028 gives a directional back-of-envelope $\alpha_{B6} \approx 0.6$ under a restrictive multiplicative-attenuation benchmark, not a structural estimate. All three are reduced-form attenuations, folding together DA15 trading, IDA15 use, imbalance prices, quantities, blackout-period operation, and residual seasonality. The estimands measure different things (volume-times-price aggregate vs. variance-share regression vs. blackout-split decomposition). I treat $\alpha$ as a band $[0.6, 0.92]$ and use the lower bound in the simulation. |
+| **P3 — Persistent IB price-setting channel** | $\mathcal L = B q^* / p^*_{DA}$, no dependence on $J$, $K_{ISP}$, $M$, or $\alpha$ in this block | **F7** directly supports persistence of IB's DA price-setting channel; **F8** provides complementary matching-free evidence of persistent IB hydro high-price-quartile concentration (a firm-side diagnostic, not a transfer measure). Relative markups are more stable than absolute euro rents; the €820M is a window-conditional aggregate over the post-MTU15-IDA period, not a constant per-regime primitive. |
 | **P4 — Cross-segment renewable share invariance** | $s_R = \mu_R\sigma_R / \sum_j \mu_j\sigma_j$, under common $\alpha$ and fixed mix | **Figure 7** wind+LIB share 60–65% invariant across all post-ISP15 regimes — consistent. |
 | **P5 — Pigouvian counterfactual redistribution** | Incidence weights move from $\mu_i\sigma_i$ to $\mu_i\sigma_i\beta_i$ with $\beta_R \ll \beta_C$, holding physical imbalance volumes fixed | **Figure 6** renewable share 63% → 6% under per-segment β rule — consistent (incidence statement, not efficiency). |
 
@@ -1120,7 +1120,8 @@ mu_R           = 1.0               # renewable mass (continuum normalised)
 # --- Block 2: imbalance / segment parameters ---
 # Convention:
 #   J     = 4 latent quarter-hour forecast-error draws per delivery hour
-#           (the underlying physical resolution of wind/solar errors; common across regimes).
+#           (model comparison grid; NOT a claim that wind/solar errors have a unique
+#           physical resolution -- they could be measured at 5-min, 15-min, hourly, etc.).
 #   K_ISP = physical settlement-interval count per hour
 #           (= 1 under hourly netting, = 4 under quarter-hour settlement).
 #   M     = K_ISP / K_DA  (clock mismatch).
@@ -1253,7 +1254,7 @@ ax.bar(labels, volumes, color=colors, edgecolor='white')
 for i, v in enumerate(volumes):
     ax.text(i, v + 5, f'{v:.0f}', ha='center', fontsize=9.5)
 ax.set_ylabel('|imbalance volume| per hour (MWh)')
-ax.set_title('P1 — Aggregate transfer ratio  T₁₅/T₆₀ = √J·(1−α)', fontsize=10.5)
+ax.set_title('P1 — Settlement-volume ratio  T₁₅/T₆₀ = √J·(1−α)', fontsize=10.5)
 
 # Panel B: P4 — renewable share invariance under uniform rule
 ax = axes[1]
