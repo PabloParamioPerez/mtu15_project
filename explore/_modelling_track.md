@@ -4,7 +4,21 @@ Working note. Replaces `_modelable_patterns.md` (now archived).
 
 Goal: organise alive empirical claims around economic models. Each section is a candidate model that (a) rationalises ≥2 alive claims in `CLAIMS_LEDGER.md` and (b) makes one or more sharp predictions that current empirical work either does or could test. Sections end with a "Priority empirical refinement" line: the single focused analysis that would most advance the model. Refinements are *candidates* for Phase 2 of the project plan, not commitments. Each runs only on user approval and only after passing the stop-rule in `CLAUDE.md`.
 
-References: `CLAIMS_LEDGER.md` (claim status, evidence pointers) | `_identification_target.md` (identification provenance, frozen post-Week 1) | `RESEARCH_LOG.md` (chronological diary).
+References: `CLAIMS_LEDGER.md` (claim status, evidence pointers) | `_identification_target.md` (identification provenance, frozen post-Week 1) | `RESEARCH_LOG.md` (chronological diary) | `thesis/drafts/master_thesis_proposal.md` (5-part synthesis written 2026-04-28).
+
+## Map to thesis-proposal Parts
+
+The thesis proposal organises 37 alive findings into 5 Parts. This file's §-numbering is historical (sections were added in run-order). The mapping:
+
+| Thesis Part | Modelling-track sections | Lead alive claims | Status |
+|---|---|---|---|
+| **I — System asymmetric-granularity friction** | §3 Pigouvian + §4 asymmetric-granularity welfare | S5, **S6 (€1.1B)**, S7, B7 | alive — Part I theory anchor is §4 |
+| **II — Firm structural market power (IB-canonical)** | §0 cross-firm synthesis + §1 Cournot-pivotality | F7, F8, F10, F11, F2, F6 | alive — surviving mechanism is Cournot-structural-pivotality (§1) |
+| **III — Cross-market firm specialisation** | §III below (cross-market reading folded into §0; no standalone section) | F9 (aFRR), F15 (CCGT), F19, F20 | alive — §III paragraph below summarises |
+| **IV — Post-blackout enforcement and modern firm conduct** | §6 strategic availability under within-firm fleet substitution | F14, F15, F17, F18, F21, F22 | alive — §6 added 2026-04-28 |
+| **V — Behavioural + identification appendix** | §5 bid complexification + §2 Allaz–Vila (rejected, appendix-grade) | B1, B3, B4, B5, **B6**, B7, B8, B9 | §5 alive; §2 rejected 2026-04-27 |
+
+**Mechanism-side surviving theory after the 2026-04-27 OVB sweep**: §1 (Cournot-pivotality) and §4 (asymmetric-granularity friction) at the firm and system layers respectively; §3 (Pigouvian) as a static welfare framing for S7; §5 (bid complexification) as the behavioural mirror; §6 (strategic availability) as the Part IV anchor. **§2 (Allaz–Vila) is rejected** at both DA-spot aggregate and IDA-repositioning levels and should not be cited as a surviving mechanism.
 
 ---
 
@@ -139,6 +153,30 @@ All six tests converge on Cournot-structural-pivotality. The thesis structural-f
 - IB's pivotality is NOT scarcity-state-driven. It is dominantly time-of-day-driven (evening peak across all weather/water/VRE conditions), supporting a structural-compositional reading.
 
 This is a clean, defensible mechanism story that combines positive structural findings (Cournot-pivotality alive) with explicit rejection of three alternative mechanisms (Bushnell, Allaz–Vila aggregate, scarcity-pivotality). The committee can be told the project ran direct tests of all three alternatives and rejected each — sharper than just citing supportive evidence for the preferred mechanism.
+
+---
+
+## Part III addendum — Cross-market firm specialisation
+
+**Sketch.** The four large Spanish firms occupy distinct niches across distinct markets after MTU15-IDA. The reform did not homogenise market power — it sharpened firm specialisation. The thesis-proposal Part III makes this an organising claim; the modelling track previously folded the evidence into §0 ("F9 cross-market check"). This addendum collects that material under one heading.
+
+**Anchor findings.**
+- **F7 + F8** — DA market: IB-dominant; ~98% of joint Big-4 transfer; hydro-dispatch concentration +17pp gap vs Fringe.
+- **F9** — aFRR balancing market: IB share fell 12pp from 2024-06 reform peak (39.1% → 26.7%) while Fringe rose; aFRR market deepened (+25% volume, −40% price, +25% granularity).
+- **F19, F20** — aFRR up-activation: GE captured 34.28% of post-blackout aFRR up-volume and €13.8M revenue in DA15/ID15 vs IB €9.1M (GE 52% above IB). The post-blackout balancing windfall went to Endesa, not Iberdrola.
+- **F15** — Post-blackout CCGT generation: Naturgy +7.1pp share gain; IB −2pp. Operación reforzada targeted Naturgy's CCGT-heavy peaker fleet.
+- mFRR offer-curve corroboration (in §0 above): tertiary-regulation tranche granularity +15-27%, up-side spread −42%, down-side prices went negative — both balancing markets diverged from DA at the same 2024-06 reform date.
+
+**Reading.** Each firm picks its niche given its portfolio composition. IB has the largest dispatchable hydro + CCGT-on-margin → DA-side Cournot-pivotality (Part II §0/§1). GE has a large CCGT + nuclear baseload → aFRR-side activation (F19, F20). Naturgy holds 18 of 50 Spanish CCGT plants (peaker-heavy) → post-blackout generation surge + technical-restrictions conduct (F15 + Part IV §6). The reform did NOT change portfolios; it changed the relative payoff to each market layer.
+
+**Rule-out**: F9 strengthens F7 by ruling out a generic "IB dominates everywhere" reading. The IB-canonical pattern in §0/§1 is DA-market-specific, not a project-wide claim about market power.
+
+**Methodology lineage** (per thesis proposal Part III):
+- Bunn–Day on portfolio bidding across multiple markets.
+- Reguant on Spanish balancing-market participation.
+- Allaz–Vila in extended sequential-market form (note: the granularity-asymmetry version of Allaz–Vila in §2 is rejected; the extended-sequential-market form for cross-market portfolio choice is a different application and does not depend on the §2 finding).
+
+**Status**: alive as a descriptive empirical pattern with mechanism interpretation (portfolio-driven niche choice). No standalone refinement script — the evidence comes from §0's cross-market subsections plus the F19/F20 aFRR per-firm decomposition. Not a separately-modellable mechanism in the §1–§6 sense; it is the *consequence* of firms with heterogeneous portfolios responding to a multi-market environment, not a single-mechanism model.
 
 ---
 
@@ -379,6 +417,48 @@ If the rule were Pigouvian (each segment paying its own marginal contribution), 
 
 **Status of §3 model.** Alive. The Pigouvian-misalignment framing is empirically supported.
 
+### Refinement 2026-04-28 — Direct per-segment € decomposition: actual vs Pigouvian counterfactual
+
+The β regression measures correlations; for the May talk we want a direct €-attribution. Built `pigouvian_burden_shares.csv` from S6 cumulative-excess totals × per-segment volume shares (actual rule) and × β-weighted volume shares (Pigouvian counterfactual).
+
+**Asymmetric-window decomposition (DA60/ID15, €545M cumulative excess vs same-cal pre-IDA baseline)**:
+
+| Segment | Actual paid (uniform) | Pigouvian counterfactual | Δ (over-/under-paid) |
+|---|---:|---:|---:|
+| LIB free-market retailers | €226M (41.5%) | €22M (4.0%) | **+€204M overpaid** |
+| Wind RE | €140M (25.7%) | €77M (14.2%) | +€63M overpaid |
+| Conv-NRZ | €51M (9.3%) | €0M (0%) | +€51M overpaid |
+| Conv-RZ (regulation zone) | €69M (12.6%) | €195M (35.7%) | **−€126M underpaid** |
+| COR retailers (regulated) | €20M (3.7%) | €130M (23.8%) | **−€110M underpaid** |
+| Hydro RE | €11M (1.9%) | €72M (13.2%) | −€61M underpaid |
+| Thermal RE | €29M (5.3%) | €50M (9.1%) | −€21M underpaid |
+
+**~58% of the €545M cumulative excess is structurally misallocated** under the uniform allocation rule. The cross-segment redistribution favours dispatchable-portfolio segments (conv-RZ + COR + hydro RE + thermal RE) at the expense of inflexible-portfolio segments (LIB retailers + wind + conv-NRZ).
+
+**Direct answer to "did renewables pay more in liquidaciones?"**: YES. LIB free-market retailers (renewable-heavy retail load) + wind RE together paid **€366M** of the €545M asymmetric-window cumulative excess under the actual rule, vs **€99M** under the Pigouvian counterfactual — a **€267M overpayment** driven by the rule's structural unfairness, not by these segments' marginal contribution to system stress.
+
+**Caveats:**
+- The Pigouvian counterfactual uses β estimates that have R²≈0.36, so the share normalisation is approximate (we renormalise positive contributions to 1.0).
+- Per-segment volumes are aggregate ESIOS `endXXqh` series (verified to be imbalance volumes, not gross flows: mean 244 MWh abs per ISP).
+- We do NOT have direct per-BRP settlement amounts (gated). The decomposition is a reduced-form attribution under the assumption that segments map cleanly to BRP types.
+- The €545M is the cumulative excess vs same-cal pre-IDA baseline (the S6 quantity), not the total imbalance settlement amount in the regime. We are decomposing the EXCESS, i.e. the rents created by the asymmetric-granularity window.
+
+**Status:** §3 sharpened. The Pigouvian-incidence claim now has direct €-attribution evidence anchored on S6 totals.
+
+### Unparsed-family inventory (2026-04-28, thesis follow-up)
+
+Audit of `data/raw/esios/liquidaciones/*/extracted/` reveals **234 unique ESIOS settlement family names extracted, but only 19 parsed into `liquicomun_all.parquet`**. The user has 215 unparsed families on disk. Several are highly relevant for per-BRP / per-segment work for the thesis chapter:
+
+- **`endesvlb`** (11 files) — "energía neta de desvíos LIB" = free-market retailer imbalance volumes. Could decompose LIB's €204M overpayment.
+- **`grdesvio`** (28 files) — "grupos de desvío" = imbalance groups, likely per-BRP-group.
+- **`ccbbrp` / `ccbrpbs3` / `ccbrprad3`** — per-BRP cost components.
+- **`costedsv` / `prdsvcos` / `prexcdsv`** — imbalance cost decompositions.
+- **`liqsegme`** (28 files) — settlement by segment ("liquidación segmentada"!) — most promising candidate for direct per-segment € verification.
+- **`dsvcontr`** — imbalance contributions.
+- **`tipoliqu`** — settlement-type classifier.
+
+**Action for thesis chapter** (post-May presentation): write a parser extension to `src/mtu/parsing/esios_liquicomun.py` to add these families to `liquicomun_all.parquet`, with priority to `liqsegme` (segment-level settlement) and `endesvlb` (LIB-specific volumes). This converts the May talk's reduced-form Pigouvian claim into a direct empirical anchor.
+
 ---
 
 ## §4 — Asymmetric-granularity friction (welfare)
@@ -531,6 +611,42 @@ The §4 framework should therefore be cited as the right model for the S6 number
 **Implications for the thesis.** Cite B8 as a behavioural complement to F1/F2 (Lerner) and F5 (Allaz–Vila). The cross-firm contrast is the IO content: bid-complexity response to finer ISP is *not* mechanical — only firms with strategic-marginal CCGT capacity invest in finer price ladders.
 
 **Priority empirical refinement (not run).** Within IB, regress within-unit Lerner on within-unit tranches-per-period, with month + price-bin FE. If IB's bid complexification co-moves with IB's market power, it strengthens the structural reading: complexification IS the strategic instrument. ~½ day if pursued.
+
+---
+
+## §6 — Strategic availability under within-firm fleet substitution
+
+**Sketch.** The classical Joskow–Kahn (2002 EJ) capacity-withholding framework was developed for California 2000–2001: firms strategically reduce plant availability to engineer supply scarcity and price spikes. Crampes–Moreaux extend the static withholding intuition to capacity-allocation problems where firms control multiple plants in the same regulatory zone. The CNMC's 2023 SBO3 case (€41.5M sanction against Naturgy) operationalised this for the Spanish technical-restrictions market via a **three-situation pivotality test**: classify each (plant × ISP) cell as zone-pivotal vs zone-non-pivotal vs zone-irrelevant, then test whether the firm's RTT bid price differs systematically across the three situations. The CNMC framework treated cross-firm pivotality (Naturgy SBO3 exploiting Endesa PGR5's unavailability in zone-Z); the project extends this to **within-firm fleet pivotality** — firm idles plant A inside its own fleet to engineer pivotality for plant B.
+
+**Why this section is needed.** The post-2025-04-28 blackout produced ~50 CNMC expedientes (Article 64.37 + 65.34) against IB/GE/GN/REP. The conduct pattern documented in those expedientes — and replicated in OMIE data via the F17/F18/F21/F22 cluster — is not rationalised by any of §1–§5. Cournot quantity-setting (§1) is about price-taking residual demand; Allaz–Vila (§2, rejected) was about granularity-mediated forward commitment; Pigouvian misalignment (§3) is about settlement-rule design; asymmetric-granularity friction (§4) is system-layer; bid complexification (§5) is about within-unit ladders. The strategic-availability mechanism is distinct: it operates on plant-level binary availability and within-firm cross-plant substitution, not on quantity offers or bid structure. Part IV of the thesis proposal points at this gap.
+
+**Alive claims this rationalises.**
+- **F17** — within-firm pair substitution: BES3→BES5 (Endesa Besós); ARCOS3→ARCOS1 (Naturgy Arcos); SROQ1→SROQ2 (Iberdrola San Roque); CTN4→CTN3 (Iberdrola Cartagena). The four documented pairs each show one plant losing share while a same-fleet substitute gains.
+- **F18** — sanctioned plants ALL lost share post-blackout. Direct evidence the within-firm reshuffle is enforcement-responsive, not random.
+- **F21** — three-situation pivotality test replication is widespread across Big-4 CCGT, not isolated to SBO3.
+- **F22** — Naturgy fleet-wide bid-price wedge 11–35% in pivotal vs competitive hours, with SBO3 still showing +14% wedge after the 2023 sanction. The conduct adapted but did not stop.
+- **F14** (negative implication) — the simple cross-firm moral-hazard reading (one firm undersupplies voltage control to capture a CCGT windfall at another firm's expense) is rejected: nuclear unaccounted reduction is system-wide 22-38%, not firm-specific.
+- **F15** (mechanism diagnostic) — post-blackout CCGT windfall went to Naturgy (+7.1pp), not IB (-2pp). The strategic-availability rent flows to the firm with the largest matching plant fleet (Naturgy 18 of 50 Spanish CCGT plants), not the firm with the largest overall portfolio.
+- **F16** (regime-shift signature) — IB CCGT supply-curve slope (FE-controlled) jumped from 0.95 MW/€ pre-blackout to 4.55 MW/€ post (4.8×). The strategic-CCGT posture *broke* under operación reforzada — IB no longer found it optimal to engineer fine-grained pivotality once REE was forcibly committing CCGT capacity. Mechanism diagnostic: when the regulator removes the firm's availability decision, the strategic instrument disappears.
+
+**Sharp predictions (testable; mostly tested).**
+1. Sanctioned plants face higher detection costs, so post-2023 SBO3 conduct should migrate from explicit RTT bid-price-wedges (which CNMC measures directly) to implicit DA blocking (extreme-high tranches at the OMIE €1000 cap on a fraction of supply). **F22 confirms**: explicit wedge persists at smaller magnitude; the implicit DA blocking is documented separately in the F22 evidence.
+2. Within-firm fleet substitution should be observable as paired share movements within a regulatory zone. **F17 confirms** for four explicit pairs.
+3. The strategic-availability rent should flow to the firm with the largest matching fleet in the binding constraint. **F15 confirms**: Naturgy CCGT-fleet captured the post-blackout windfall.
+4. Once REE forces availability via P.O. 3.2 (operación reforzada), the strategic instrument should disappear in the affected technology. **F16 confirms**: IB CCGT supply-curve flattened 4.8× post-blackout.
+5. (Untested) The cross-firm pivotality framework that the CNMC applied to SBO3 should generalise to other Spanish regulatory zones and other plant pairs. F21 begins this; full panel replication for all CNMC zones × 2024–2026 is a candidate refinement.
+
+**Methodology lineage.**
+- Joskow & Kahn (2002 EJ) — capacity-withholding diagnostics from California 2000–2001; methodology for inferring strategic withholding from availability data.
+- Crampes & Moreaux — capacity-allocation in multi-plant firms; water-value reasoning extended to capacity choice.
+- CNMC Resolución SBO3 (2023) — the three-situation pivotality test, directly replicable. See `docs/regulation/cnmc_resolutions/README_economic_methodology.md`.
+- 13-year CNMC enforcement record — `docs/regulation/cnmc_historical_sanctions_2013-2026.md`. €25M IB hydro 2015 (Article 65.27) → €25.3M Naturgy + Endesa 2019 CCGT availability cases → €41.5M Naturgy SBO3 2023 → ~50 post-blackout expedientes 2026.
+
+**Status of §6 model.** Alive — supports the strategic-availability mechanism with within-firm fleet substitution as the modern adaptation post-2023 enforcement. Six alive claims (F14 negative, F15, F16, F17, F18, F21, F22) rationalise consistently. The mechanism is distinct from §1–§5 and complements them: §1 explains DA-market price-setting (IB-canonical); §6 explains technical-restrictions and post-blackout CCGT/balancing conduct (Naturgy-canonical, with GE on the aFRR side per F19/F20).
+
+**Priority empirical refinement (not run).** Cross-zone replication of F17 within-firm pair substitution: identify all CNMC regulatory zones with ≥2 plants from the same firm, classify (plant × ISP) cells as pivotal/non-pivotal/irrelevant per the SBO3 three-situation framework, regress availability and bid-price-wedge on situation interacted with firm. Expected runtime: ~1.5 days. Would convert F17 from descriptive ("4 pairs documented") to systematic ("X out of N within-firm pairs in CNMC zones show substitution conduct").
+
+**Connection back to the thesis proposal.** Part IV anchor — see `thesis/drafts/master_thesis_proposal.md` § Part IV. The within-firm fleet-substitution framing is the thesis's structural extension of the CNMC's cross-firm SBO3 framework.
 
 ---
 
