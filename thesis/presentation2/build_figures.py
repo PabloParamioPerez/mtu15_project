@@ -55,16 +55,23 @@ The Feb-deck Ito–Reguant (2016) theoretical extension predicted three things: 
 | IO category | Empirical finding | Slide / Figure |
 |---|---|---|
 | **Welfare** (BRP-side regulatory redistribution) | €1,094.9M BRP→TSO settlement transfer over 10 months; bootstrap CI [-90, +73]M, observed ≈15× upper bound | Fig 2 (S6) |
-| **Mechanism design** (clock-symmetry restores incentive compatibility) | Symmetric clocks at MTU15-DA collapse the transfer 6× (€91M/mo → €7.4M/mo) **even with the post-blackout operación reforzada in effect** | Fig 2 + Fig 5 (S6) |
-| **Conduct** (BRP strategic bidding under asymmetric clocks) | Forecast-error→imbalance pass-through R² rises 7× under clean reform conditions (DA60/ID15 PRE-blackout: 0.171), 16× under reform + blackout (POST-blackout: 0.365), then collapses to 0.028 post-MTU15-DA. The collapse is the cleanest signature; the blackout amplifies but does not create the mechanism | Fig 3 (B6) |
-| **Pigouvian incidence** (non-Pigouvian uniform settlement creates segment-heterogeneous burden) | Per-segment marginal imbalance cost is 5–15× heterogeneous: conv-RZ €210–300/MWh (drives 13% of volume) vs LIB free retailers ≤€37/MWh (drives 38% of volume). Uniform settlement rule means the segments that drive volume don't pay the marginal cost they impose; *inflexible-portfolio firms (renewables-heavy retailers) effectively subsidize flexible-portfolio firms (dispatchable-plant operators)* | **Fig 6 (S7)** |
+| **Mechanism design — Lever 1 (clock-symmetry)** | Symmetric clocks at MTU15-DA collapse the transfer 6× (€91M/mo → €7.4M/mo) **even with the post-blackout operación reforzada in effect**. ✓ Already implemented | Fig 2 + Fig 5 (S6) |
+| **Conduct** (BRP strategic bidding under asymmetric clocks) | Forecast-error→imbalance VOLUME pass-through R² rises 7× under clean reform (0.171), 16× under reform + blackout (0.365), then collapses to 0.028 post-MTU15-DA. The collapse is the cleanest signature for clock-symmetry working at the volume layer | Fig 3 (B6) |
+| **Pigouvian incidence (direct dual-pricing decomposition)** | Per-segment imbalance € reconstructed via `signed_seg × prdvbaqh/prdvsuqh` reproduces 78–81% of `impdsvqh` with correlation 0.93. In DA60/ID15: LIB free-market retailers paid €108M, wind RE paid €77M, conv-RZ only €46M of €294M reconstructed. *Renewable-portfolio segments structurally bear the largest € share under the uniform allocation rule.* | **Fig 6 (S7 — direct F3)** |
+| **Mechanism design — Lever 2 (Pigouvian rule redesign — NOT addressed by MTU15-DA)** | Wind + LIB retailers pay 60–65% of imbalance € in EVERY post-ISP15 regime, including post-MTU15-DA. Clock-symmetry shrinks the *scale* of the redistribution but does NOT fix the *structure*. ✗ Open | **Fig 7 (regime invariance)** |
 | **Identification** (clean reduced-form) | Same-calendar-month pre-IDA baseline + bootstrap; cross-country placebo (Spain DA volatility responds 2–3× more than France across reform dates) | Fig 1 (S5) + Fig 4 (B7) |
 
 ## The IO claim load-bearing this talk
 
-> The MTU15 reform sequence created a 10-month asymmetric-granularity window during which a €1.1B settlement transfer flowed from BRPs to the TSO. The transfer is non-Pigouvian by construction (segment-heterogeneous marginal costs under uniform settlement rule), so it redistributes rents *across* BRPs in addition to redistributing them BRPs→TSO: dispatchable-portfolio firms capture the imbalance-pricing margin (winners); inflexible-portfolio firms (renewable-heavy retailers) pay it (losers). Symmetric clocks at MTU15-DA close the channel — clock-symmetry is a welfare-relevant mechanism-design lever. The 2025-04-28 Iberian blackout amplifies the within-DA60/ID15 magnitude but does not create the friction (clean PRE-blackout April 2025 alone is €75.7M; post-MTU15-DA collapse holds despite operación reforzada).
+> The MTU15 reform sequence revealed **two distinct mechanism-design failures**, each requiring a separate policy lever:
+>
+> 1. **Asymmetric clock scales** create a BRP→TSO transfer of €1.1B over 10 months. **Lever: clock-symmetry** at MTU15-DA. Reduces the total scale by ~6× (€91M/mo → €7M/mo). ✓ Already implemented.
+>
+> 2. **Non-Pigouvian uniform-rate allocation** redistributes the burden across heterogeneous-marginal-cost segments. **Lever: settlement-rule redesign** (Pigouvian per-segment pricing). Wind + LIB free-market retailers consistently pay 60-65% of imbalance € in EVERY post-ISP15 regime, including post-MTU15-DA. ✗ Not addressed by clock-symmetry; remains open.
+>
+> Empirically: clock-symmetry shrinks the asymmetric-granularity window's magnitude but leaves the cross-segment redistribution structure intact. Renewable-portfolio segments are NOT relieved by MTU15-DA — they retain their 60-65% share of the (smaller) total. The 2025-04-28 Iberian blackout amplifies the within-DA60/ID15 magnitude but does not create either friction (clean PRE-blackout April 2025 alone is €75.7M; post-MTU15-DA scale-collapse holds despite operación reforzada).
 
-This is the system-layer reform impact. The thesis as a whole maps three additional IO channels (firm-level Cournot-pivotality, cross-market firm specialisation, post-CNMC strategic-availability conduct) — covered in Parts II–IV of [`thesis/drafts/master_thesis_proposal.md`](../drafts/master_thesis_proposal.md) but **off-arc for this preliminary-results talk**.
+This is the system-layer reform impact, decomposed into scale and structure. The thesis as a whole maps three additional IO channels (firm-level Cournot-pivotality, cross-market firm specialisation, post-CNMC strategic-availability conduct) — covered in Parts II–IV of [`thesis/drafts/master_thesis_proposal.md`](../drafts/master_thesis_proposal.md) but **off-arc for this preliminary-results talk**.
 
 ## Theoretical anchor (post-2026-04-27)
 
@@ -559,128 +566,276 @@ fig.savefig(FIG_DIR/'fig05_S6_blackout_robustness.pdf')
 plt.show()
 """)
 
-# ---- FIGURE 6 — S7 Pigouvian incidence (IO load-bearing)
+# ---- FIGURE 6 — S7 Pigouvian incidence (IO load-bearing, F3 direct decomposition)
 md("""
 ## Figure 6 — S7: Pigouvian incidence — direct €-decomposition
 
-Under Spain's actual uniform-allocation settlement rule, each segment's share of total imbalance settlement € equals its share of imbalance volume. Under a Pigouvian counterfactual, each segment would pay its own marginal cost coefficient β × volume.
+The €1.1B is now decomposed per segment using **direct dual-pricing** (F3 rule):
 
-**Direct €-decomposition of the €545M DA60/ID15 cumulative excess** (anchored on S6 monthly decomposition, non-Pigouvian counterfactual computed from `pigouvian_clean_results.csv` β estimates):
+> per_seg_€_per_ISP = max(seg_volume, 0) × prdvsuqh + min(seg_volume, 0) × prdvbaqh
 
-The figure compares (left) what each segment actually paid under the uniform rule vs (right) what they would have paid under a Pigouvian rule that prices each segment at its estimated marginal cost. The cross-segment redistribution is the IO bite.
+where `prdvsuqh` and `prdvbaqh` are the per-ISP up/down imbalance settlement prices (post-ISP15, available 2024-12 onwards in the rebuilt `liquicomun_all.parquet`). Aggregated over each regime, F3 reproduces 78–81% of the system imbalance settlement € (`impdsvqh`) with correlation 0.93 — close enough to use as a defensible per-segment attribution.
 
-**Headline finding (DA60/ID15 asymmetric window):**
-- **LIB free-market retailers** paid **€226M** under the actual rule but would have paid only **€22M** under Pigouvian — they **overpaid €204M**.
-- **Wind RE** paid €140M actual vs €77M Pigouvian — **overpaid €62M**.
-- **Conv-RZ (large dispatchable plants in regulation zones)** paid €69M actual vs €195M Pigouvian — **underpaid €126M**.
-- **COR regulated retailers** paid €20M actual vs €130M Pigouvian — **underpaid €110M**.
+**The Pigouvian counterfactual** is computed as `β_seg × volume_seg` (from the segment-level OLS in `pigouvian_clean_results.csv`), normalised so positive contributions sum to 1, then scaled to the same regime-totals as the F3 actual.
 
-**~58% of the €545M cumulative excess is structurally misallocated** by the uniform rule. The cross-segment redistribution favours dispatchable-portfolio segments (conv-RZ + COR + hydro RE + thermal RE) at the expense of inflexible-portfolio segments (LIB retailers + wind + conv-NRZ).
+**DA60/ID15 (asymmetric window) — direct settlement €:**
+- **LIB free-market retailers** paid **€108M** under the actual rule (37% of system total) — by far the largest.
+- **Wind RE** paid **€77M** (26%) — second largest, despite being a "renewable" segment with low marginal cost.
+- **Conv-RZ + thermal RE + hydro RE** (the dispatchable segments) paid only **€76M combined** (26% combined) — much less than under a Pigouvian rule would charge them.
 
-This **directly answers** the question *"did renewables pay more in liquidaciones?"* — YES. LIB retailers + wind together paid **€366M** of the €545M asymmetric-window cumulative excess under the actual rule, vs **€99M** under Pigouvian — a €267M overpayment driven by the rule's structural unfairness, not by the renewable segments' marginal contribution to system stress.
+**Direct answer to "did renewables pay more in liquidaciones?"**: YES. LIB retailers + wind together paid **€186M of €294M reconstructed (~63%)** in the DA60/ID15 asymmetric window — a redistribution from inflexible-portfolio segments to dispatchable ones, embedded in the rule's structure.
 """)
 
 code("""
-# Build the burden-share decomposition: actual (uniform rule) vs Pigouvian counterfactual
+# F3 direct per-segment € + β-based Pigouvian counterfactual.
+# F3 computed inline from liquicomun_all.parquet so the notebook is self-contained.
 import numpy as np
 
+con = duckdb.connect()
+con.execute("SET memory_limit='4GB'")
+
+# Build wide panel post-ISP15 with the new directional prices
+con.execute(f\"\"\"
+CREATE OR REPLACE TEMPORARY VIEW _wide AS
+SELECT date, hour, quarter,
+  COALESCE(MAX(CASE WHEN family='endrozrqh' THEN value END),0) AS conv_rz,
+  COALESCE(MAX(CASE WHEN family='endronzqh' THEN value END),0) AS conv_nrz,
+  COALESCE(MAX(CASE WHEN family='endreeoqh' THEN value END),0) AS wind,
+  COALESCE(MAX(CASE WHEN family='endrehiqh' THEN value END),0) AS hydro_re,
+  COALESCE(MAX(CASE WHEN family='endretqh'  THEN value END),0) AS thermal_re,
+  COALESCE(MAX(CASE WHEN family='endcurqh'  THEN value END),0) AS cor_ret,
+  COALESCE(MAX(CASE WHEN family='endlibqh'  THEN value END),0) AS lib_ret,
+  COALESCE(MAX(CASE WHEN family='endexpqh'  THEN value END),0) AS export_u,
+  COALESCE(MAX(CASE WHEN family='endimpqh'  THEN value END),0) AS import_u,
+  MAX(CASE WHEN family='prdvbaqh' THEN value END) AS price_down,
+  MAX(CASE WHEN family='prdvsuqh' THEN value END) AS price_up,
+  MAX(CASE WHEN family='impdsvqh' THEN value END) AS imp_eur_actual
+FROM '{PROJECT}/data/processed/esios/liquicomun_all.parquet'
+WHERE date >= '2024-12-01' AND quarter IS NOT NULL
+GROUP BY 1,2,3
+\"\"\")
+SEGS = ['conv_rz','conv_nrz','wind','hydro_re','thermal_re','cor_ret','lib_ret','export_u','import_u']
+seg_eur_cols = ',\\n  '.join([
+    f"GREATEST({s},0)*price_up + LEAST({s},0)*price_down AS {s}_eur" for s in SEGS
+])
+agg = ',\\n  '.join([f"SUM({s}_eur)/1e6 AS {s}_meur" for s in SEGS])
+f3_wide = con.execute(f\"\"\"
+SELECT
+  CASE WHEN date < DATE '2025-03-19' THEN 'ISP15-win'
+       WHEN date < DATE '2025-10-01' THEN 'DA60/ID15'
+       ELSE 'DA15/ID15' END AS regime,
+  COUNT(*) AS n_isps, SUM(imp_eur_actual)/1e6 AS imp_total_meur,
+  {agg}
+FROM (
+  SELECT *, {seg_eur_cols} FROM _wide
+  WHERE price_up IS NOT NULL AND price_down IS NOT NULL AND imp_eur_actual IS NOT NULL
+)
+GROUP BY 1 ORDER BY 1
+\"\"\").df()
+# Long-format
+records = []
+for _, row in f3_wide.iterrows():
+    seg_total_abs = sum(abs(row[f'{s}_meur']) for s in SEGS)
+    for s in SEGS:
+        records.append({
+            'regime': row['regime'], 'segment': s,
+            'n_isps': int(row['n_isps']),
+            'imp_total_meur': float(row['imp_total_meur']),
+            'seg_meur': float(row[f'{s}_meur']),
+            'seg_abs_share': abs(row[f'{s}_meur'])/seg_total_abs if seg_total_abs > 0 else 0,
+        })
+f3 = pd.DataFrame(records)
+f3 = f3[~f3['segment'].isin(['export_u','import_u'])].copy()
+
+# β-based Pigouvian counterfactual (from the OLS regression)
 s7 = pd.read_csv(PROJECT/'data/derived/results/pigouvian_clean_results.csv')
 s7 = s7[~s7['segment'].isin(['export_u', 'import_u'])].copy()
-
-# Per regime: renormalise volume shares (after dropping tiny segments) and compute Pigouvian shares
-records = []
+s7 = s7.rename(columns={'regime': 'regime_raw'})
+# Match the regime naming used in f3 ('ISP15-win' vs 'ISP15 win')
+s7['regime'] = s7['regime_raw'].str.replace(' ', '-')
+pigou_records = []
 for regime, g in s7.groupby('regime'):
-    actual = g['volume_share'].values
-    actual = actual / actual.sum()
     pigou_raw = (g['beta'].clip(lower=0) * g['volume_share']).values
-    pigou = pigou_raw / pigou_raw.sum() if pigou_raw.sum() > 0 else np.zeros_like(pigou_raw)
+    pigou_share = pigou_raw / pigou_raw.sum() if pigou_raw.sum() > 0 else np.zeros_like(pigou_raw)
     for i, (_, row) in enumerate(g.iterrows()):
-        records.append({
-            'regime': regime, 'segment': row['segment'],
-            'beta': row['beta'], 'p': row['p'],
-            'actual_share': actual[i], 'pigou_share': pigou[i],
-        })
-b = pd.DataFrame(records)
+        pigou_records.append({'regime': regime, 'segment': row['segment'],
+                              'pigou_share': float(pigou_share[i])})
+pigou = pd.DataFrame(pigou_records)
 
-# Anchor on S6 cumulative excess per regime (€M)
-TOTALS = {'ISP15 win': 546.8, 'DA60/ID15': 545.4, 'DA15/ID15': 43.9}
-b['regime_total_meur'] = b['regime'].map(TOTALS)
-b['actual_meur'] = b['actual_share'] * b['regime_total_meur']
-b['pigou_meur']  = b['pigou_share']  * b['regime_total_meur']
-b['redist_meur'] = b['pigou_meur'] - b['actual_meur']
+m = f3.merge(pigou, on=['regime','segment'], how='left')
+m['pigou_meur'] = m['pigou_share'] * m['imp_total_meur']
+m['redist_meur'] = m['pigou_meur'] - m['seg_meur']
 
-# Save
-b.to_csv(PROJECT/'data/derived/results/pigouvian_burden_shares.csv', index=False)
-
-# Focus on the headline window — DA60/ID15
 SEG_LABELS = {
     'conv_rz':    'Conv. plants (regulation zone)',
     'conv_nrz':   'Conv. plants (non-RZ)',
     'wind':       'Wind (RE)',
-    'hydro':      'Hydro (RE)',
+    'hydro_re':   'Hydro (RE)',
     'thermal_re': 'Thermal RE',
     'cor_ret':    'COR retailers (regulated)',
     'lib_ret':    'LIB free-market retailers',
 }
-post = b[b['regime'] == 'DA60/ID15'].copy()
-post['label'] = post['segment'].map(SEG_LABELS)
-post = post.sort_values('actual_meur', ascending=True)
+m['label'] = m['segment'].map(SEG_LABELS)
+m['actual_meur'] = m['seg_meur'].abs()  # display as positive € (settlement € BRPs paid)
+m['pigou_meur_abs'] = m['pigou_meur'].abs()
 
-# Two-panel: left=actual vs pigouvian €, right=redistribution (over/under-paid)
+# Focus on the asymmetric window (DA60/ID15)
+post = m[m['regime'] == 'DA60/ID15'].sort_values('actual_meur', ascending=True).reset_index(drop=True)
+
 fig, axes = plt.subplots(1, 2, figsize=(13.5, 5.8), sharey=True)
 xs = np.arange(len(post))
 W = 0.4
 
-# Left panel: side-by-side actual vs Pigouvian
+# LEFT panel: side-by-side actual (F3) vs Pigouvian counterfactual
 ax = axes[0]
 ax.barh(xs - W/2, post['actual_meur'], height=W, color='#a83a3a',
-        edgecolor='white', label='Actual (uniform rule)')
-ax.barh(xs + W/2, post['pigou_meur'], height=W, color='#5b8a72',
+        edgecolor='white', label='Actual (F3 dual-pricing)')
+ax.barh(xs + W/2, post['pigou_meur_abs'], height=W, color='#5b8a72',
         edgecolor='white', label='Pigouvian counterfactual')
 ax.set_yticks(xs)
 ax.set_yticklabels(post['label'], fontsize=10)
 ax.axvline(0, color='black', lw=0.5)
-ax.set_xlabel('Settlement € paid by segment (€M, asymmetric window)')
-ax.set_title('Actual vs Pigouvian payment by segment\\n(DA60/ID15, €545M cumulative excess)', fontsize=11)
+ax.set_xlabel('Settlement € paid (€M, DA60/ID15 asymmetric window)')
+ax.set_title('Actual (direct dual-pricing) vs Pigouvian counterfactual\\n(DA60/ID15, system total ≈ €294M)', fontsize=11)
 ax.legend(loc='lower right', fontsize=9, frameon=True)
-for i, (a, p) in enumerate(zip(post['actual_meur'], post['pigou_meur'])):
-    if abs(a) > 5:
-        ax.text(a + 4, i - W/2, f'€{a:.0f}M', va='center', ha='left', fontsize=8.5, color='#a83a3a')
-    if abs(p) > 5:
-        ax.text(p + 4, i + W/2, f'€{p:.0f}M', va='center', ha='left', fontsize=8.5, color='#5b8a72')
-ax.set_xlim(0, max(post['actual_meur'].max(), post['pigou_meur'].max()) * 1.20)
+for i, (a, pi) in enumerate(zip(post['actual_meur'], post['pigou_meur_abs'])):
+    if a > 3:
+        ax.text(a + 2, i - W/2, f'€{a:.0f}M', va='center', ha='left', fontsize=8.5, color='#a83a3a')
+    if pi > 3:
+        ax.text(pi + 2, i + W/2, f'€{pi:.0f}M', va='center', ha='left', fontsize=8.5, color='#5b8a72')
+ax.set_xlim(0, max(post['actual_meur'].max(), post['pigou_meur_abs'].max()) * 1.20)
 
-# Right panel: redistribution (over/under-paid relative to Pigouvian)
+# RIGHT panel: redistribution per segment (Pigouvian − Actual)
 ax = axes[1]
-def redist_color(v):
-    if v > 30:  return '#5b8a72'   # would pay more under Pigouvian (currently underpaying)
-    if v < -30: return '#a83a3a'   # would pay less under Pigouvian (currently overpaying)
+redist = post['pigou_meur_abs'] - post['actual_meur']
+def col(v):
+    if v > 15:   return '#5b8a72'   # currently underpaying (would pay more)
+    if v < -15:  return '#a83a3a'   # currently overpaying (would pay less)
     return '#9aa7b3'
-ax.barh(xs, post['redist_meur'],
-        color=[redist_color(v) for v in post['redist_meur']],
-        edgecolor='white')
+ax.barh(xs, redist, color=[col(v) for v in redist], edgecolor='white')
 ax.axvline(0, color='black', lw=0.5)
-ax.set_xlabel('Redistribution: Pigouvian − Actual (€M)')
-ax.set_title('Cross-segment redistribution\\n(positive = currently underpaying)', fontsize=11)
-for i, v in enumerate(post['redist_meur']):
-    if abs(v) > 5:
-        ax.text(v + (4 if v > 0 else -4), i, f'€{v:+.0f}M',
+ax.set_xlabel('Redistribution under Pigouvian rule (€M)')
+ax.set_title('Cross-segment redistribution\\n(positive = currently UNDERpaying)', fontsize=11)
+for i, v in enumerate(redist):
+    if abs(v) > 3:
+        ax.text(v + (2 if v > 0 else -2), i, f'€{v:+.0f}M',
                 va='center', ha='left' if v > 0 else 'right', fontsize=9)
-xmax = max(abs(post['redist_meur'].min()), post['redist_meur'].max())
+xmax = max(abs(redist.min()), redist.max())
 ax.set_xlim(-xmax * 1.20, xmax * 1.20)
 
-fig.suptitle('S7 — Pigouvian incidence: who pays the €545M and who would pay under marginal-cost pricing?\\n' +
-             'LIB retailers + wind overpay €266M; Conv-RZ + COR + hydro underpay €297M ⇒ ~58% of the asymmetric-window total is misallocated.',
-             fontsize=11, y=1.04)
+over = post[redist < -15]['actual_meur'].sum() - post[redist < -15]['pigou_meur_abs'].sum()
+under = post[redist > 15]['pigou_meur_abs'].sum() - post[redist > 15]['actual_meur'].sum()
+fig.suptitle(f'S7 — Pigouvian incidence in the asymmetric window (direct F3 dual-pricing decomposition)\\n' +
+             f'LIB retailers + wind overpay ~€{over:.0f}M | Conv-RZ + COR + hydro RE underpay ~€{under:.0f}M | rule structurally favours dispatchable segments',
+             fontsize=10.5, y=1.04)
 fig.tight_layout()
 fig.savefig(FIG_DIR/'fig06_S7_pigouvian_incidence.png')
 fig.savefig(FIG_DIR/'fig06_S7_pigouvian_incidence.pdf')
 plt.show()
 
-# Print compact summary for the talk
-print('=== Per-segment € decomposition, DA60/ID15 (€545M) ===')
-print(post[['segment', 'actual_meur', 'pigou_meur', 'redist_meur']].sort_values(
+# Print summary for the talk
+print('=== Per-segment € decomposition, DA60/ID15 (F3 dual-pricing direct) ===')
+print(post[['segment','actual_meur','pigou_meur_abs']].sort_values(
     'actual_meur', ascending=False).to_string(index=False))
+""")
+
+# ---- FIGURE 7 — Regime-invariance of the burden share (the new finding)
+md("""
+## Figure 7 — Renewable-segment burden share is regime-invariant
+
+The new finding from the F3 direct decomposition: **wind + LIB free-market retailers consistently pay 60-65% of imbalance settlement € in EVERY post-ISP15 regime, including post-MTU15-DA**. Clock-symmetry at MTU15-DA reduces the *scale* of the redistribution (S6: €91M/mo → €7M/mo) but does NOT relieve the burden *structure*: renewable-portfolio segments retain their ~60-65% share of the (smaller) total.
+
+This **qualifies the IO claim** about MTU15-DA. There are two distinct mechanism-design failures, requiring two distinct policy levers:
+
+| Failure | Lever | What it fixes |
+|---|---|---|
+| Asymmetric clocks → BRP→TSO transfer scales | Clock-symmetry at MTU15-DA | Reduces total magnitude (S6 €1.1B → €44M/regime) ✓ |
+| Uniform-rate allocation across heterogeneous-MC segments | Pigouvian rule (charge each seg its β/MC) | Redistributes burden across segments — NOT addressed by MTU15-DA |
+
+The Spanish reform sequence solved problem 1 but left problem 2 open. Regulatory implication: settlement-rule design is independent from market-clock design, and the May talk's IO claim should be that **clock-symmetry is one of two welfare-relevant levers, not a complete fix**.
+""")
+
+code("""
+# Stacked-bar visualisation: burden share by segment in each regime
+# (Re-uses the f3 DataFrame computed inline above for Figure 6.)
+# If running this cell standalone, run the Figure 6 cell first to populate f3.
+import numpy as np
+
+# Order regimes chronologically; segment-row by total share desc within DA60
+REGIME_ORDER = ['ISP15-win', 'DA60/ID15', 'DA15/ID15']
+f3['regime'] = pd.Categorical(f3['regime'], REGIME_ORDER, ordered=True)
+f3 = f3.sort_values('regime')
+
+# Compute share within regime (using abs to handle sign; F3 reproduction is dominantly negative)
+f3['share_pct'] = 100 * f3['seg_meur'].abs() / f3.groupby('regime')['seg_meur'].transform(lambda s: s.abs().sum())
+
+SEG_ORDER = ['wind','lib_ret','conv_rz','conv_nrz','thermal_re','cor_ret','hydro_re']
+SEG_LABELS = {
+    'wind':       'Wind (RE)',
+    'lib_ret':    'LIB free-market retailers',
+    'conv_rz':    'Conv. plants (regulation zone)',
+    'conv_nrz':   'Conv. plants (non-RZ)',
+    'thermal_re': 'Thermal RE',
+    'cor_ret':    'COR retailers (regulated)',
+    'hydro_re':   'Hydro (RE)',
+}
+SEG_COLORS = {
+    'wind':       '#cc9b6d',  # warm — renewable
+    'lib_ret':    '#a83a3a',  # red — renewable retail
+    'conv_rz':    '#4a6fa5',  # blue — conv dispatchable
+    'conv_nrz':   '#6b9080',  # green-blue
+    'thermal_re': '#9d7263',  # brown
+    'cor_ret':    '#5b8a72',  # green
+    'hydro_re':   '#8aa6b8',  # gray-blue
+}
+
+fig, ax = plt.subplots(figsize=(13.5, 5.5))
+xs = np.arange(len(REGIME_ORDER))
+WIDTH = 0.5
+bottom = np.zeros(len(REGIME_ORDER))
+
+# Highlight renewable segments
+RENEWABLE = {'wind','lib_ret'}
+
+for seg in SEG_ORDER:
+    sub = f3[f3['segment']==seg].set_index('regime').reindex(REGIME_ORDER)
+    vals = sub['share_pct'].fillna(0).values
+    label = SEG_LABELS[seg]
+    if seg in RENEWABLE:
+        label = '[RE] ' + label  # mark renewables
+    ax.bar(xs, vals, WIDTH, bottom=bottom, color=SEG_COLORS[seg],
+           edgecolor='white', linewidth=1.2, label=label)
+    # Annotate share inside each bar
+    for x, b, v in zip(xs, bottom, vals):
+        if v > 4:
+            ax.text(x, b + v/2, f'{v:.0f}%', ha='center', va='center',
+                    fontsize=10, color='white', fontweight='bold')
+    bottom += vals
+
+# Horizontal annotation: combined wind+lib share per regime
+combined = f3[f3['segment'].isin(RENEWABLE)].groupby('regime', observed=False)['share_pct'].sum()
+for x, r in zip(xs, REGIME_ORDER):
+    pct = combined.get(r, 0)
+    ax.annotate(f'wind+LIB\\n{pct:.0f}%', xy=(x, 0.5), xytext=(0, -32),
+                textcoords='offset points',
+                ha='center', fontsize=10.5, fontweight='bold', color='#5b3a3a')
+
+ax.set_xticks(xs)
+ax.set_xticklabels(REGIME_ORDER, fontsize=11)
+ax.set_ylabel('Share of imbalance settlement € (%)')
+ax.set_ylim(0, 105)
+ax.set_title('Wind + LIB free-market retailers consistently pay 60-65% of imbalance settlement € across every post-ISP15 regime —\\n'
+             'MTU15-DA shrinks the total but does NOT relieve the renewable-segment share',
+             fontsize=11.5)
+ax.legend(loc='upper right', bbox_to_anchor=(1.32, 1.0), fontsize=9.5, frameon=False)
+fig.tight_layout()
+fig.savefig(FIG_DIR/'fig07_burden_share_regime_invariance.png')
+fig.savefig(FIG_DIR/'fig07_burden_share_regime_invariance.pdf')
+plt.show()
+
+# Print the headline number
+print('=== Renewable burden share by regime (wind + lib_ret) ===')
+print(combined.to_string())
 """)
 
 # -- summary cell
@@ -690,11 +845,12 @@ md("""
 | # | Figure | Headline | IO category | Slide-talking point |
 |---|---|---|---|---|
 | 1 | S5 4-panel | Four ENTSO-E metrics jump concordantly at ISP15, moderate at MTU15-DA | Identification (joint null rejection across 4 outcomes) | "Joint null is rejected — this isn't one outlier metric" |
-| 2 | **S6 €1.1B** | BRP→TSO transfer ≈15× upper bootstrap bound; collapses to €7.4M/mo at MTU15-DA | **Welfare** (BRP-side regulatory redistribution) + **mechanism design** (clock-symmetry restores IC) | "Headline magnitude. Confirms Feb-deck Ito–Reguant prediction." |
-| 3 | B6 pass-through | R² rises 7× under clean reform (DA60/ID15 PRE-blackout: 0.171 vs pre-IDA-late 0.023); 16× under reform + blackout (POST-blackout: 0.365); collapses to 0.028 post-MTU15-DA | **Conduct** (BRP strategic bidding under asymmetric clocks) | "Microfoundation in one figure. The post-MTU15-DA collapse is the cleanest signature; the blackout amplifies but does not create the mechanism." |
+| 2 | **S6 €1.1B** | BRP→TSO transfer ≈15× upper bootstrap bound; collapses to €7.4M/mo at MTU15-DA | **Welfare** (BRP-side regulatory redistribution) + **mechanism design** (clock-symmetry restores IC) | "Headline magnitude. Confirms Feb-deck Ito–Reguant prediction. Clock-symmetry lever ✓." |
+| 3 | B6 pass-through | R² rises 7× under clean reform (DA60/ID15 PRE-blackout: 0.171 vs pre-IDA-late 0.023); 16× under reform + blackout (POST-blackout: 0.365); collapses to 0.028 post-MTU15-DA | **Conduct** (BRP strategic bidding under asymmetric clocks) | "Microfoundation in one figure. The post-MTU15-DA volume collapse is the cleanest signature; the blackout amplifies but does not create the mechanism." |
 | 4 | B7 placebo | Spain within-day SD responds 2–3× more than France across reform dates | Identification (cross-country DiD) | "Cross-country control the Feb proposal said wasn't yet available" |
 | 5 | S6 blackout split | DA15 collapse holds DESPITE operación reforzada | §4 robustness (n=3 caveat for Oct–Dec 2025) | "Defensive figure for Q&A — friction is reform-driven, not blackout-driven" |
-| **6** | **S7 Pigouvian** | LIB retailers (41% volume) face €8/MWh; conv-RZ (13% volume) face €220/MWh — 27× mismatch under uniform allocation rule | **Pigouvian incidence** — the IO bite: cross-segment redistribution under non-Pigouvian rule | "The €1.1B redistributes BRPs→TSO AND across BRP segments: inflexible-portfolio firms subsidize flexible-portfolio firms" |
+| **6** | **S7 Pigouvian (F3 direct)** | LIB retailers paid €108M, wind €77M, conv-RZ only €46M of €294M reconstructed in DA60/ID15 — direct dual-pricing decomposition (78% of system total reconstructed; corr 0.93) | **Pigouvian incidence** — the IO bite: cross-segment redistribution embedded in the rule | "Direct dual-pricing decomposition: renewables paid €186M of €294M; counterfactual would charge dispatchable plants instead. €178M of redistribution structurally misallocated." |
+| **7** | **Burden-share regime invariance** | Wind + LIB retailers consistently pay 60-65% of imbalance € in EVERY post-ISP15 regime — including post-MTU15-DA | **Mechanism design — second lever** (clock-symmetry didn't fix this; Pigouvian rule redesign would) | "Clock-symmetry shrinks the SCALE; the rule's STRUCTURE retains its renewable-loading. Two distinct mechanism-design failures, two distinct policy levers." |
 
 All 6 PDFs saved to `../figures/` for direct embedding in Beamer slides. PNGs safety-capped to ~1890 px wide (under the 2000-px session cap; previous build at savefig.dpi=200 hit ~2670 px and broke a working session).
 
