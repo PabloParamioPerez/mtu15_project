@@ -971,21 +971,29 @@ The two-block framing connects to:
 
 ## 2.1 Setup and notation
 
-**Time line.** One delivery hour $H$. Day-ahead clears at $t=0$ at hourly granularity ($K_{DA}$ commitment periods per hour); imbalances are settled per ISP at $t=1$ ($K_{ISP}$ settlement periods per hour). The clock-granularity ratio is
+**Time line.** One delivery hour $H$. Day-ahead clears at $t=0$ at $K_{DA}$ commitment periods per hour; imbalances are settled at $t=1$ at $K_{ISP}$ settlement periods per hour. I use two distinct objects:
 
-$$ m \;=\; \frac{K_{ISP}}{K_{DA}} \;\in\; \{1,\ 4\}. $$
+$$ G \;\equiv\; K_{ISP} \quad \text{(number of physical settlement intervals per hour)}, \qquad M \;\equiv\; \frac{K_{ISP}}{K_{DA}} \quad \text{(clock-mismatch ratio)}. $$
 
-Pre-IDA and post-MTU15-DA: $m=1$ (symmetric clocks). The asymmetric-granularity window (Dec 2024 – Sep 2025): $m=4$ (DA committed hourly, ISPs settled quarter-hourly). I use **regime labels** below ("pre-IDA", "asymmetric DA60/ID15", "symmetric DA15/ID15") rather than overloading a single $K$ symbol.
+The relevant regimes are:
 
-**Day-ahead market.** A uniform-price auction with complex orders clears DA quantities and prices at $t=0$. (Spain's DA auction is uniform-price; complex conditions — minimum income, scheduled stop, indivisibility — are layered on simple bids. It is *not* a discriminatory auction.)
+| Regime | $K_{DA}$ | $K_{ISP}$ | $G$ | $M$ |
+|---|---:|---:|---:|---:|
+| Pre-IDA (hourly) | 1 | 1 | 1 | 1 |
+| Asymmetric DA60/ISP15 (Dec 2024 – Sep 2025) | 1 | 4 | 4 | 4 |
+| Symmetric DA15/ISP15 (Oct 2025 → ) | 4 | 4 | 4 | 1 |
+
+Symmetric DA15/ISP15 has $G=4$ but $M=1$ — there are still four physical quarter-hour settlement intervals, but the DA commitment matches the ISP granularity, so there is no clock-mismatch. The Round-1 abuse of writing the symmetric regime as "$m=4$" is what this revision fixes.
+
+**Day-ahead market.** A uniform-price auction with complex orders clears DA quantities and prices at $t=0$. Spain's DA auction is uniform-price; complex conditions (minimum income, scheduled stop, indivisibility) are layered on simple bids. It is *not* a discriminatory auction.
 
 **Players.**
-- **Atomistic renewables** (mass $\mu_R$): each $i$ commits $q^R_i$ in DA; per-ISP supply realises as $S^R_{i,k} = q^R_i / K_{ISP} + \varepsilon_{i,k}$ with $\varepsilon_{i,k} \overset{iid}{\sim} \mathcal{N}(0, \sigma_R^2)$. Renewables are price-takers in DA.
-- **Strategic dispatchables** ($N_C$ finite firms, the Big-4): each $j$ chooses $q^C_j$ as Cournot quantity in DA, taking residual demand into account; per-ISP supply is approximated as deterministic at $q^C_j / K_{ISP}$ (operational variability abstracted). Marginal cost $C'_C(q) = c + \gamma q$.
+- **Atomistic renewables** (mass $\mu_R$): each $i$ commits $q^R_i$ in DA; per-ISP supply realises as $S^R_{i,k} = q^R_i / G + \varepsilon_{i,k}$ with $\varepsilon_{i,k} \overset{iid}{\sim} \mathcal{N}(0, \sigma_R^2)$. Renewables are price-takers in DA.
+- **Strategic dispatchables** ($N_C$ finite firms, the Big-4): each $j$ chooses $q^C_j$ as Cournot quantity in DA, taking residual demand into account; per-ISP supply is approximated as deterministic at $q^C_j / G$ (operational variability abstracted). Marginal cost $C'_C(q) = c + \gamma q$.
 
 **Demand.** Linear inverse demand $p_{DA} = a - b\, Q^{tot}_{DA}$, $\,Q^{tot}_{DA} = \mu_R\, q^R + N_C\, q^C$.
 
-**Settlement rule.** Uniform per-MWh allocation under EU GL EB Article 52(d) dual-pricing: BRP $i$'s realised per-ISP imbalance is $\mathrm{imb}_{i,k} = (1-\alpha)\,\varepsilon_{i,k}$, where $\alpha \in [0,1]$ is the IDA/DA15 absorption parameter ($\alpha=0$ under asymmetric clocks; $\alpha>0$ once symmetric IDA15 + DA15 trading is available). The per-MWh settlement rate $\bar p_{ISP}$ averages $k_{hurt}$ vs $k_{help}$ at the realised system-imbalance sign. Throughout this section I treat $\bar p_{ISP}$ as the empirical average rate; the theoretical results do not depend on the dual-pricing detail.
+**Settlement rule.** Under the Spanish dual-pricing imbalance-settlement rule, BRP $i$'s realised per-ISP imbalance is $\mathrm{imb}_{i,k} = (1-\alpha)\,\varepsilon_{i,k}$, where $\alpha \in [0,1]$ is the IDA/DA15 absorption parameter ($\alpha=0$ under asymmetric clocks; $\alpha>0$ once symmetric IDA15 + DA15 trading is available). The per-MWh settlement rate $\bar p_{ISP}$ averages $k_{hurt}$ vs $k_{help}$ at the realised system-imbalance sign. Throughout this section I treat $\bar p_{ISP}$ as the empirical average rate; the theoretical results do not depend on the dual-pricing detail.
 
 ## 2.2 Block 1 — Day-ahead residual-demand Cournot
 
@@ -1011,59 +1019,72 @@ The Lerner index follows from the FOC ($p^*_{DA} - \mathrm{MC} = B\,q^*$):
 $$
 \mathcal L \;=\; \frac{p^*_{DA} - (c + \gamma q^*)}{p^*_{DA}} \;=\; \frac{B\,q^*}{p^*_{DA}}.
 $$
-The Cournot rent and Lerner depend on $(A, B, N_C, \gamma)$ — **demand and dispatchable-cost primitives only**. They do not depend on $m$, $\alpha$, or any settlement-block parameter, because in this stripped-down block dispatchable BRPs absorb essentially no settlement (their own forecast-error variance is small relative to renewables and we abstract from their per-ISP exposure). Hence:
+The Cournot rent and Lerner depend on $(A, B, N_C, \gamma)$ — **demand and dispatchable-cost primitives only**. They do not depend on $G$, $M$, $\alpha$, or any settlement-block parameter, because in this stripped-down block dispatchable BRPs absorb essentially no settlement (their own forecast-error variance is small relative to renewables and we abstract from their per-ISP exposure). Hence:
 
 - **Cournot Lerner is invariant across clock regimes** in this block, conditional on $\mu_R$ and $\theta_R$ being held fixed across the comparison window.
-- $\partial p^*_{DA} / \partial m = 0$ and $\partial p^*_{DA} / \partial \alpha = 0$ **in this stripped-down block** — the model is silent on more subtle DA-side feedbacks (e.g. dispatchable plants re-optimising plant availability across regimes, which is the territory of Part IV).
+- $\partial p^*_{DA} / \partial M = 0$ and $\partial p^*_{DA} / \partial \alpha = 0$ **in this stripped-down block** — the model is silent on more subtle DA-side feedbacks (e.g. dispatchable plants re-optimising plant availability across regimes, which is the territory of Part IV).
 
-This block disciplines the **regime-invariance side** of the empirical pattern (F7: IB DA rent ≈ €820M does not shift across DA60/ID15 vs DA15/ID15).
+This block rationalises the **relative-markup persistence side of F7**: the IB DA price-setting channel is persistent across clock regimes, while absolute euro rents vary with price levels and window lengths.
 
 ## 2.3 Block 2 — Clock-asymmetric imbalance settlement
 
-Per ISP, atomistic renewable $i$'s imbalance is $(1-\alpha)\,\varepsilon_{i,k}$. The aggregate renewable BRP→TSO settlement transfer per delivery hour is, in expectation,
-$$
-T(m,\alpha) \;=\; m\cdot \mu_R \cdot \sigma_R\,(1-\alpha)\cdot \sqrt{2/\pi}\,\cdot\, \bar p_{ISP}\;\cdot\; \sqrt{m}/\sqrt{m}.
-$$
-The natural way to read this is: under symmetric pre-IDA clocks ($m=1$), the per-hour aggregate-imbalance volume is $\mu_R\sigma_R\sqrt{2/\pi}$ from a single hourly settlement period. Under the asymmetric window ($m=4$, $\alpha=0$), the SAME per-ISP forecast-error variance generates four ISPs of $|\varepsilon|$ that do **not** cancel out across the hour but instead are summed in absolute value — giving an aggregate imbalance volume of $m \cdot \mu_R\sigma_R\sqrt{2/\pi}$, i.e. $\sqrt{m} = 2$ times the pre-IDA "what one summed ISP would have looked like" benchmark, *or* equivalently $m = 4$ times the per-ISP magnitude. **The empirically relevant ratio is $\sqrt{m}=2$**, because the comparison is "hour-aggregate imbalance volume in $m=4$ vs $m=1$ regimes when per-ISP variance is held fixed". Once symmetric IDA15+DA15 trading kicks in ($m=4$, $\alpha>0$), the volume scales by an additional $(1-\alpha)$. Empirical: €91M/mo asymmetric → €7.4M/mo symmetric implies $\alpha \approx 0.92$.
+Consider the same latent forecast-error process across regimes: $G$ iid quarter-hour shocks $\varepsilon_k \sim \mathcal{N}(0, \sigma^2_R)$, $k = 1, \dots, G$. Two settlement conventions:
 
-The cross-segment incidence under uniform allocation is
+**Hourly netting (pre-IDA, $K_{DA} = K_{ISP} = 1$).** Errors net within the hour before settlement:
+$$
+T_{60} \;=\; \mu_R \cdot \bar p_{ISP} \cdot \mathbb{E}\Big|\sum_{k=1}^{G}\varepsilon_k\Big| \;=\; \mu_R \cdot \bar p_{ISP} \cdot \sqrt{G}\,\sigma_R\,\sqrt{2/\pi}.
+$$
+
+**Quarter-hour settlement ($G = 4$, asymmetric or symmetric).** Each $\varepsilon_k$ is settled in absolute value:
+$$
+T_{15}(\alpha) \;=\; (1-\alpha)\cdot \mu_R \cdot \bar p_{ISP} \cdot \mathbb{E}\sum_{k=1}^{G}|\varepsilon_k| \;=\; (1-\alpha)\cdot \mu_R \cdot \bar p_{ISP} \cdot G\,\sigma_R\,\sqrt{2/\pi}.
+$$
+
+The cross-regime ratio under iid quarter-hour errors is
+$$
+\boxed{\;\frac{T_{15}(\alpha)}{T_{60}} \;=\; (1-\alpha)\,\sqrt{G}.\;}
+$$
+For $G=4$ this is $2(1-\alpha)$. The empirically relevant move is *from hourly netting to quarter-hour absolute-value settlement*; the $\sqrt{G}$ factor is mechanical (no diversification across the hour once errors are settled per ISP), and $(1-\alpha)$ captures DA15+IDA15 absorption. **No structural theorem in $M$ is being claimed** — the asymmetric and symmetric quarter-hour regimes share the same $G=4$ and the same per-ISP settlement scaffold; they differ in $\alpha$ (and, more subtly, in DA-side commitment-aversion that this block does not model).
+
+The cross-segment incidence under uniform allocation is, **assuming common $\alpha$ across segments and fixed segment mix** $(\mu_R, \mu_C, \sigma_R, \sigma_C)$ across regimes,
 $$
 s_R \;=\; \frac{\mu_R\, \sigma_R}{\mu_R\, \sigma_R + \mu_C\, \sigma_C}.
 $$
-This depends on segment-volume primitives only and is invariant to $m$ and $\alpha$. Under a Pigouvian per-segment rule that prices each segment at its marginal social cost $\beta_i$, the share weights become $\mu_i \sigma_i \beta_i$, redistributing burden away from low-$\beta$ segments (atomistic renewables under-invested in real-time flexibility) toward high-$\beta$ segments (dispatchables with large per-MWh adjustment costs).
+Under those assumptions $s_R$ is invariant to $G$ and to $\alpha$. Under a Pigouvian per-segment rule that prices each segment at its marginal social cost $\beta_i$, the share weights become $\mu_i \sigma_i \beta_i$, redistributing incidence away from low-$\beta$ segments toward high-$\beta$ segments, *relative to the current uniform allocation rule*. An endogenous forecast-effort extension would be needed to interpret this redistribution as an efficiency or moral-hazard result; in the current model forecast effort is exogenous, so the Pigouvian counterfactual is best read as an incidence statement, not as an efficiency claim.
 
 ## 2.4 What the two blocks deliver jointly
 
 The two blocks are deliberately stacked rather than merged. Block 1 says nothing about settlement; block 2 takes $p^*_{DA}$ as a fixed scalar and produces a settlement-transfer scalar. There is no two-way feedback channel in this section (extending the framework with such a channel — strategic forward-commitment à la Allaz–Vila — was attempted empirically and rejected via OVB-cleaning on 2026-04-27). The joint reading is:
 
-- **Strategic rent (block 1)**: regime-invariant, mapped to F7-type findings.
-- **Incidence / settlement redistribution (block 2)**: regime-sensitive in volume ($m \cdot (1-\alpha)$), regime-invariant in cross-segment shares ($s_R$ a function of $(\mu, \sigma)$ only). Pigouvian counterfactual changes the share weights but not the volume.
+- **Strategic rent (block 1)**: persistent across clock regimes in *relative* (Lerner-index) terms; absolute euro rents vary with price levels and window lengths.
+- **Incidence / settlement redistribution (block 2)**: regime-sensitive in aggregate volume — the hourly-netting → quarter-hour-settlement move scales the BRP→TSO transfer by $\sqrt{G}$, then $(1-\alpha)$ captures DA15+IDA15 absorption. Cross-segment shares are invariant under common $\alpha$ and fixed segment mix. Pigouvian counterfactual changes share weights but not aggregate volume.
 
-Crucially, the BRP→TSO settlement transfer $T$ is **not** a deadweight loss — it is a regulatory redistribution (recycled through retail tariffs and re-allocated across BRP segments). The welfare-relevant primitives are reserve-activation cost $C_{reserves}(m, \alpha)$ (which falls when imbalance volume falls) and the rule-aligned forecasting-investment incentives. I keep block 2 at the level of **incidence / settlement redistribution / mechanism design**; full welfare analysis is left for the thesis chapter.
+The BRP→TSO settlement transfer $T$ is **not** a deadweight loss — it is a regulatory redistribution (recycled through retail tariffs and re-allocated across BRP segments). The welfare-relevant primitive is reserve-activation cost $C_{reserves}(G, \alpha)$, which is the real-resource margin one would need to model to convert settlement transfers into welfare; reserve cost is not mechanically pinned by imbalance volume (it depends on activation prices, reserve scarcity, and direction). I keep block 2 at the level of **incidence / settlement redistribution / mechanism design**; full welfare analysis is left for the thesis chapter.
 
 ## 2.5 Predictions and how the empirical findings discipline them
 
 | # | Block-2 / block-1 quantity | Empirical anchor |
 |---|---|---|
-| **P1 — Cross-regime aggregate transfer ratio** | $T(m{=}4,\alpha)/T(m{=}1)= \sqrt{m}\cdot(1-\alpha) = 2(1-\alpha)$ | **S6 disciplines $\alpha$**: €91M/mo asymmetric vs ≈€0/mo pre-IDA implies $\sqrt m = 2$ amplification; €7.4M/mo symmetric DA15/ID15 implies $\alpha \approx 0.92$ from the asymmetric-symmetric comparison. |
-| **P2 — Forecast→imbalance pass-through R²** | scales as $(1-\alpha)^2$ | **B6** R² collapse 0.171 → 0.028 implies $\alpha \approx 0.6$ from the volume-side regression. **Inconsistency with P1's $\alpha \approx 0.92$** — flagged as a triangulation gap, not pretended away. The two estimates measure different things: P1 conditions on volume-times-price multiplied averages, P2 on volume-only second moments. The thesis chapter treats $\alpha$ as a band $[0.6, 0.92]$. |
-| **P3 — Cournot Lerner regime-invariance** | $\mathcal L = B q^* / p^*_{DA}$, no dependence on $m$ or $\alpha$ in this block | **F7** IB DA rent ≈ €820M regime-invariant across DA60/ID15 vs DA15/ID15 — *consistent with* the block-1 prediction. |
-| **P4 — Cross-segment renewable share invariance** | $s_R = \mu_R\sigma_R / \sum_j \mu_j\sigma_j$ | **Figure 7** wind+LIB share 60–65% invariant across all post-ISP15 regimes — consistent. |
-| **P5 — Pigouvian counterfactual redistribution** | weights flip from $\mu_i\sigma_i$ to $\mu_i\sigma_i\beta_i$ with $\beta_R \ll \beta_C$ | **Figure 6** renewable burden 63% → 6% under per-segment β rule — consistent. |
-| **F8 (matching-free structural-asymmetry test)** | implementation-level test in the spirit of Bushnell-style asymmetry checks; not a Bushnell estimator | **F8** is a matching-free identification check that asymmetric structural primitives (segment-conditional $\beta$) move incidence as predicted; it does not pretend to estimate dispatchable-side bid-shading parameters. |
+| **P1 — Cross-regime aggregate transfer ratio** | $T_{15}(\alpha) / T_{60} = \sqrt{G}\cdot(1-\alpha)$; for $G=4$, equals $2(1-\alpha)$ | **S6 disciplines $\alpha$**: €91M/mo asymmetric (G=4, α=0) vs ≈€0/mo pre-IDA (hourly netting) is consistent with the $\sqrt{G}=2$ mechanical scaling; €7.4M/mo symmetric DA15/ISP15 vs €91M/mo asymmetric implies $\alpha \approx 0.92$ from the asymmetric→symmetric comparison. |
+| **P2 — Forecast → imbalance attenuation** | In a simple multiplicative-attenuation benchmark where the forecast-error-driven component of imbalance is multiplied by $(1-\alpha)$ while residual variance is held fixed, the explained-variance share rescales roughly with $(1-\alpha)^2$ | **B6** R² collapse 0.171 → 0.028 gives a back-of-the-envelope $\alpha \approx 0.6$. This is *directional* discipline, not a structural estimate of $\alpha$. **Bands with P1's α≈0.92** to give a calibration interval $\alpha \in [0.6, 0.92]$ — the gap reflects the two estimands measuring different things (volume-times-price aggregate vs. variance-share regression), not a model failure to be papered over. |
+| **P3 — Persistent IB price-setting channel** | $\mathcal L = B q^* / p^*_{DA}$, no dependence on $G$, $M$, or $\alpha$ in this block | **F7/F8** support persistence of IB's DA price-setting channel across regimes. Relative markups are more stable than absolute euro rents; the €820M is an aggregate over the post-MTU15-IDA window, not a constant per-regime primitive. |
+| **P4 — Cross-segment renewable share invariance** | $s_R = \mu_R\sigma_R / \sum_j \mu_j\sigma_j$, under common $\alpha$ and fixed mix | **Figure 7** wind+LIB share 60–65% invariant across all post-ISP15 regimes — consistent. |
+| **P5 — Pigouvian counterfactual redistribution** | Incidence weights move from $\mu_i\sigma_i$ to $\mu_i\sigma_i\beta_i$ with $\beta_R \ll \beta_C$ | **Figure 6** renewable share 63% → 6% under per-segment β rule — consistent (incidence statement, not efficiency). |
+
+(F8's hydro high-price-concentration evidence is a firm-side / DA-market-power diagnostic and belongs to the structural-firm chapter, not this incidence block; it is mentioned under P3 as joint persistence evidence with F7, but not as a test of segment-conditional $\beta$.)
 
 The framework is **calibrated**, not point-identified: $(b, c, \gamma, \theta_R, \mu_R, \sigma_R, \mu_C, \sigma_C, \beta_R, \beta_C, \alpha)$ are calibrated objects disciplined by moments — DA-side curvature from price-quantity variation, dispatchable cost slope from `det_all` bid data (Hortaçsu–Puller-style first-stage), renewable forecast error variance from ENTSO-E A65 vs A75, segment shares from `liquicomun`, $\beta_i$ from S7-style segment-imbalance regressions, $\alpha$ from the asymmetric→symmetric S6 ratio (banded with B6). Whether a fully estimated structural model can be written down on top of this scaffold is a chapter-level question for the thesis, not a slide-level claim.
 
 ## 2.6 Two policy levers — incidence/redistribution decomposition
 
-The framework identifies two structurally distinct policy levers that map to two distinct settlement-redistribution channels:
+The framework **separates** two policy levers that map to two distinct settlement-redistribution channels:
 
 | Lever | Operates on | Empirical anchor | Status |
 |---|---|---|---|
-| **Lever 1: Clock symmetry ($\alpha \uparrow$)** | Volume of the BRP→TSO settlement transfer ($m\cdot(1-\alpha)$ scaling) | S6: €91M/mo → €7.4M/mo at MTU15-DA implies $\alpha \approx 0.92$ | **Implemented Oct 2025** (MTU15-DA) ✓ |
+| **Lever 1: Clock symmetry ($\alpha \uparrow$)** | Aggregate BRP→TSO settlement transfer; under iid quarter-hour errors, $T_{15}/T_{60} = \sqrt{G}(1-\alpha)$ | S6: €91M/mo → €7.4M/mo from asymmetric DA60/ISP15 to symmetric DA15/ISP15 implies $\alpha \approx 0.92$ | **Implemented Oct 2025** (MTU15-DA) ✓ |
 | **Lever 2: Pigouvian per-segment rule** | Cross-segment incidence weights ($\mu_i\sigma_i \to \mu_i\sigma_i\beta_i$) | Figure 6: renewable share 63% → 6% under counterfactual β rule | **Open** (requires real-time per-segment MC measurement; not in current Spanish rule) |
 
-Lever 1 reduces the redistribution volume; lever 2 changes who bears it. The Spanish reform sequence so far has implemented lever 1 only — consistent with the empirical regime-invariant 60–65% renewable burden share under the unchanged uniform-allocation rule.
+Lever 1 reduces the redistribution volume; lever 2 changes who bears it. The Spanish reform sequence so far has organised around lever 1 only — consistent with the empirical 60–65% renewable burden share that persists under the unchanged uniform-allocation rule.
 """)
 
 # Numerical simulation of the framework (block 1 + block 2)
@@ -1085,14 +1106,17 @@ N_C            = 4                 # number of strategic dispatchable firms (Big
 mu_R           = 1.0               # renewable mass (continuum normalised)
 
 # --- Block 2: imbalance / segment parameters ---
-K_DA           = 1                 # DA commitment periods per hour (hourly)
-K_ISP          = 4                 # ISP settlement periods per hour (quarter-hourly)
-m_asym         = K_ISP // K_DA     # clock-asymmetry ratio under MTU15 (= 4)
+# Convention: G = K_ISP = number of physical settlement intervals per delivery hour;
+#             M = K_ISP / K_DA = clock-mismatch ratio.
+# Pre-IDA hourly netting: G=1, M=1.  Asymmetric DA60/ISP15: G=4, M=4.  Symmetric DA15/ISP15: G=4, M=1.
+G              = 4                 # quarter-hour ISPs per delivery hour under MTU15
 sigma_R_per_isp = 60               # MWh per ISP renewable forecast-error std
 sigma_C_per_isp = 24               # MWh per ISP dispatchable forecast-error std
 mu_seg_R, mu_seg_C = 0.4, 0.6      # imbalance-segment mass shares
 p_uniform      = 50                # avg imbalance settlement rate (EUR/MWh)
 beta_R, beta_C = 8, 220            # per-segment marginal social cost (EUR/MWh) — S7-clean
+alpha_calib    = 0.6               # IDA15+DA15 absorption parameter; lower bound of band [0.6, 0.92]
+                                   #   from B6 R^2 attenuation; S6 ratio implies upper bound 0.92.
 n_hours        = 1000
 
 # --- Solve residual-demand Cournot (block 1) ---
@@ -1124,42 +1148,50 @@ print(f"  q^R per renewable = {eq_baseline['q_R']:>6.0f} MW")
 print(f"  Total cleared Q = {eq_baseline['Q']:>6.0f} MW")
 print(f"  Cournot Lerner  = {eq_baseline['Lerner']:>6.3f}  (in empirical Spanish 11-18% range)")
 print()
-print('  → Note: in this stripped-down block,  d p*_DA / d m = 0  and  d L / d m = 0.')
-print('    Block-1 rent disciplines the regime-invariance side of F7 (IB DA rent ~€820M).')
+print('  → Note: in this stripped-down block,  d p*_DA / d M = 0  and  d L / d M = 0.')
+print('    Block-1 rent rationalises the relative-markup persistence side of F7.')
 print()
 
 # --- Block 2: simulate per-ISP imbalances, settlement, incidence ---
+# Latent process: G=4 iid quarter-hour shocks per hour (same in all regimes).
+# Hourly netting (pre-IDA):       imb = |sum_k eps_k|     (one number per hour)
+# Quarter-hour settlement:        imb = sum_k |eps_k|     (no diversification)
+# Symmetric DA15/ISP15 absorption: per-ISP shock multiplied by (1 - alpha)
 def settlement_simulation(regime, alpha, sigma_R, sigma_C, mu_R_seg, mu_C_seg, n_hours):
     # regime in {'pre-IDA', 'asymmetric', 'symmetric'}
-    eps_R = rng.normal(0, sigma_R, size=(n_hours, m_asym))
-    eps_C = rng.normal(0, sigma_C, size=(n_hours, m_asym))
-    if regime == 'pre-IDA':                   # symmetric hourly clocks, m=1
+    eps_R = rng.normal(0, sigma_R, size=(n_hours, G))
+    eps_C = rng.normal(0, sigma_C, size=(n_hours, G))
+    if regime == 'pre-IDA':                   # hourly netting, no clock mismatch
         imb_R = np.abs(eps_R.sum(axis=1, keepdims=True))
         imb_C = np.abs(eps_C.sum(axis=1, keepdims=True))
-    elif regime == 'asymmetric':              # DA60/ISP15, m=4, alpha=0
+    elif regime == 'asymmetric':              # DA60/ISP15, G=4, M=4, alpha=0
         imb_R = np.abs(eps_R)
         imb_C = np.abs(eps_C)
-    elif regime == 'symmetric':               # DA15/ISP15, m=4, alpha-absorption from IDA15
+    elif regime == 'symmetric':               # DA15/ISP15, G=4, M=1, alpha>0
         imb_R = np.abs(eps_R) * (1 - alpha)
         imb_C = np.abs(eps_C) * (1 - alpha)
     return imb_R.sum(axis=1) * mu_R_seg, imb_C.sum(axis=1) * mu_C_seg
 
-vol_R_pre, vol_C_pre = settlement_simulation('pre-IDA',    0.0, sigma_R_per_isp, sigma_C_per_isp, mu_seg_R, mu_seg_C, n_hours)
-vol_R_asy, vol_C_asy = settlement_simulation('asymmetric', 0.0, sigma_R_per_isp, sigma_C_per_isp, mu_seg_R, mu_seg_C, n_hours)
-vol_R_sym, vol_C_sym = settlement_simulation('symmetric',  0.4, sigma_R_per_isp, sigma_C_per_isp, mu_seg_R, mu_seg_C, n_hours)
+vol_R_pre, vol_C_pre = settlement_simulation('pre-IDA',    0.0,         sigma_R_per_isp, sigma_C_per_isp, mu_seg_R, mu_seg_C, n_hours)
+vol_R_asy, vol_C_asy = settlement_simulation('asymmetric', 0.0,         sigma_R_per_isp, sigma_C_per_isp, mu_seg_R, mu_seg_C, n_hours)
+vol_R_sym, vol_C_sym = settlement_simulation('symmetric',  alpha_calib, sigma_R_per_isp, sigma_C_per_isp, mu_seg_R, mu_seg_C, n_hours)
 
 # Total settlement € per hour under uniform rule
 imp_pre = p_uniform * (vol_R_pre + vol_C_pre)
 imp_asy = p_uniform * (vol_R_asy + vol_C_asy)
 imp_sym = p_uniform * (vol_R_sym + vol_C_sym)
 
-print('=== Block 2: Imbalance settlement transfer T(m, alpha) ===')
-print(f"  Pre-IDA  (m=1, α=0):       T = €{imp_pre.mean():>7,.0f}/hour")
-print(f"  Asymmetric (m=4, α=0):     T = €{imp_asy.mean():>7,.0f}/hour  (ratio vs pre-IDA: {imp_asy.mean()/imp_pre.mean():.2f}× ≈ √m = 2)")
-print(f"  Symmetric (m=4, α=0.4):    T = €{imp_sym.mean():>7,.0f}/hour  (ratio vs asymmetric: {imp_sym.mean()/imp_asy.mean():.2f} = 1−α)")
+print('=== Block 2: Imbalance settlement transfer T (hourly netting vs quarter-hour settlement) ===')
+print(f"  Pre-IDA hourly netting (G=1, M=1, α=0):       T = €{imp_pre.mean():>7,.0f}/hour")
+print(f"  Asymmetric DA60/ISP15  (G=4, M=4, α=0):       T = €{imp_asy.mean():>7,.0f}/hour")
+print(f"     ratio vs hourly netting = {imp_asy.mean()/imp_pre.mean():.2f}×  ≈ √G = {G**0.5:.2f}")
+print(f"  Symmetric DA15/ISP15   (G=4, M=1, α={alpha_calib:.2f}):    T = €{imp_sym.mean():>7,.0f}/hour")
+print(f"     ratio vs asymmetric = {imp_sym.mean()/imp_asy.mean():.2f}  ≈ (1−α) = {1-alpha_calib:.2f}")
+print(f"     ratio vs hourly netting = {imp_sym.mean()/imp_pre.mean():.2f}  ≈ √G·(1−α) = {(G**0.5)*(1-alpha_calib):.2f}")
 print()
-print('  → Disciplines empirical S6: cross-regime transfer ratio √m·(1−α). The asymmetric→symmetric')
-print('    collapse implies α≈0.92; the B6 pass-through R² collapse implies α≈0.6 — banded triangulation.')
+print('  → S6 disciplines α via the asymmetric → symmetric collapse (≈0.92);')
+print('    B6 disciplines α via the pass-through R² attenuation (≈0.6, back-of-envelope).')
+print('    Banded calibration α ∈ [0.6, 0.92]. The plot below uses the lower bound 0.6.')
 print()
 
 # Per-segment burden shares per regime
@@ -1180,7 +1212,7 @@ for label, (vR, vC) in [('Pre-IDA', (vol_R_pre, vol_C_pre)),
     print(f"  {label:<22}  s_R = {sR*100:>5.1f}%   s_C = {sC*100:>5.1f}%   ratio R/C = {sR/sC:>4.1f}")
 print()
 print(f"  Theoretical s_R = μ_R*σ_R / (μ_R*σ_R + μ_C*σ_C) = "
-      f"{mu_seg_R*sigma_R_per_isp / (mu_seg_R*sigma_R_per_isp + mu_seg_C*sigma_C_per_isp)*100:.1f}%  (regime-invariant)")
+      f"{mu_seg_R*sigma_R_per_isp / (mu_seg_R*sigma_R_per_isp + mu_seg_C*sigma_C_per_isp)*100:.1f}%  (invariant under common α and fixed mix)")
 print(f"  → Matches empirical Figure 7: 60-65% wind+LIB share across all post-ISP15 regimes.")
 print()
 
@@ -1195,16 +1227,16 @@ print(f"  → Matches empirical Figure 6: renewable burden shifts from 63% → 6
 # === Plot: side-by-side comparison of equilibrium predictions ===
 fig, axes = plt.subplots(1, 3, figsize=(13.5, 4.5))
 
-# Panel A: P1 — settlement transfer T(m, alpha) by regime
+# Panel A: P1 — settlement transfer T by regime (hourly netting vs quarter-hour settlement)
 ax = axes[0]
-labels = ['Pre-IDA\n(m=1, α=0)', 'Asymmetric\n(m=4, α=0)', 'Symmetric\n(m=4, α=0.4)']
+labels = ['Hourly netting\n(G=1, α=0)', 'Asymmetric\nDA60/ISP15\n(G=4, M=4, α=0)', f'Symmetric\nDA15/ISP15\n(G=4, M=1, α={alpha_calib:.1f})']
 volumes = [(vol_R_pre + vol_C_pre).mean(), (vol_R_asy + vol_C_asy).mean(), (vol_R_sym + vol_C_sym).mean()]
 colors = ['#9aa7b3', '#a83a3a', '#5b8a72']
 ax.bar(labels, volumes, color=colors, edgecolor='white')
 for i, v in enumerate(volumes):
     ax.text(i, v + 5, f'{v:.0f}', ha='center', fontsize=9.5)
 ax.set_ylabel('|imbalance volume| per hour (MWh)')
-ax.set_title('P1 — Aggregate transfer volume scales with √m·(1−α)', fontsize=10.5)
+ax.set_title('P1 — Aggregate transfer ratio  T₁₅/T₆₀ = √G·(1−α)', fontsize=10.5)
 
 # Panel B: P4 — renewable share invariance under uniform rule
 ax = axes[1]
@@ -1217,7 +1249,7 @@ for i, s in enumerate(shares):
     ax.text(i, s*100 + 1.5, f'{s*100:.0f}%', ha='center', fontsize=10.5, fontweight='bold')
 ax.set_ylabel('Renewable share of total settlement (%)')
 ax.set_ylim(0, 100)
-ax.set_title('P4 — Cross-segment incidence invariant in m, α\n(uniform-allocation rule)', fontsize=10.5)
+ax.set_title('P4 — Cross-segment incidence invariant\n(under common α and fixed mix)', fontsize=10.5)
 ax.axhline(60, color='black', linestyle=':', alpha=0.4, lw=1)
 ax.axhline(65, color='black', linestyle=':', alpha=0.4, lw=1)
 ax.text(2.4, 62.5, 'empirical\n60-65%', fontsize=8, color='#5b3a3a')
@@ -1239,7 +1271,7 @@ for i, (u, p) in enumerate(zip([sR_unif, sC_unif], [sR_pigou, sC_pigou])):
     ax.text(i + W/2, p*100 + 1.5, f'{p*100:.0f}%', ha='center', fontsize=9, color='#5b8a72')
 
 fig.suptitle(f'Two-block framework — block-1 Cournot rent + block-2 settlement incidence  ' +
-             f'(p*_DA = €{eq_baseline["p_DA"]:.0f}/MWh, Cournot Lerner = {eq_baseline["Lerner"]*100:.1f}%, regime-invariant in this block)',
+             f'(p*_DA = €{eq_baseline["p_DA"]:.0f}/MWh, Cournot Lerner = {eq_baseline["Lerner"]*100:.1f}%, persistent in relative terms)',
              fontsize=11, y=1.00)
 fig.tight_layout()
 fig.savefig(FIG_DIR/'fig08_model_propositions.png')
@@ -1252,16 +1284,16 @@ md(r"""
 
 **Delivers** — a clean separation between two structurally distinct objects:
 
-1. **Block 1: Cournot rent in DA, regime-invariant.** $p^*_{DA}$ and $\mathcal{L}$ depend on residual-demand primitives $(A, B, N_C, \gamma)$ only; no clock parameter enters the FOCs in this stripped-down block. **F7** (IB DA rent ~€820M, regime-invariant across DA60/ID15 vs DA15/ID15) is consistent with the block-1 prediction. The Allaz–Vila commitment-value channel is **not** invoked — the OVB sweep on 2026-04-27 rejected it for our data.
+1. **Block 1: Cournot rent in DA, persistent across clocks in relative terms.** $p^*_{DA}$ and $\mathcal{L}$ depend on residual-demand primitives $(A, B, N_C, \gamma)$ only; no clock parameter enters the FOCs in this stripped-down block. **F7/F8** support persistence of IB's DA price-setting channel — relative markups are more stable than absolute euro rents, and the €820M aggregate is a window-conditional total, not a per-regime primitive. The Allaz–Vila commitment-value channel is **not** invoked — the OVB sweep on 2026-04-27 rejected it for our data.
 
-2. **Block 2: clock-asymmetric settlement transfer**, with cross-regime aggregate ratio $\sqrt{m}\cdot(1-\alpha)$ and cross-segment incidence $s_R = \mu_R\sigma_R / \sum_j \mu_j\sigma_j$ that is invariant in $(m, \alpha)$. **S6** disciplines $\alpha$ via the asymmetric → symmetric ratio (≈0.92); **B6** disciplines $\alpha$ via the pass-through R² collapse (≈0.6); the gap is transparent and treated as a banded calibration $\alpha \in [0.6, 0.92]$, not a single point estimate. **Figure 7** wind+LIB share invariance and **Figure 6** Pigouvian counterfactual redistribution are consistent with the block-2 incidence and per-segment-β predictions.
+2. **Block 2: clock-asymmetric settlement transfer**, with cross-regime aggregate ratio $T_{15}/T_{60} = \sqrt{G}\cdot(1-\alpha)$ under iid quarter-hour errors, and cross-segment incidence $s_R = \mu_R\sigma_R / \sum_j \mu_j\sigma_j$ that is invariant under common $\alpha$ and fixed mix. **S6** disciplines $\alpha$ via the asymmetric → symmetric ratio (≈0.92); **B6** disciplines $\alpha$ via the pass-through R² collapse (≈0.6, back-of-the-envelope); the gap is transparent and treated as a banded calibration $\alpha \in [0.6, 0.92]$, not a single point estimate. **Figure 7** wind+LIB share invariance and **Figure 6** Pigouvian counterfactual redistribution are consistent with the block-2 incidence and per-segment-β predictions.
 
 **Does not deliver:**
 
-- **No two-way feedback** between the blocks. In particular this section's $\partial p^*_{DA}/\partial m = 0$ holds only in the stripped-down block 1; it is not a general claim about Spanish DA prices being insensitive to clocks. Plant-availability re-optimisation across regimes (Part IV territory) is one channel that could break the invariance and is left for the thesis.
+- **No two-way feedback** between the blocks. In particular this section's $\partial p^*_{DA}/\partial M = 0$ holds only in the stripped-down block 1; it is not a general claim about Spanish DA prices being insensitive to clocks. Plant-availability re-optimisation across regimes (Part IV territory) is one channel that could break the invariance and is left for the thesis.
 - **No structural estimation.** The framework is calibrated, not point-identified. The chapter-level question of whether a fully estimated structural model can be written down on top of this scaffold is open.
-- **No deadweight-loss claim from $T$.** $T$ is a regulatory redistribution (BRP→TSO, recycled through retail tariffs), not a deadweight loss. The welfare-relevant primitive is reserve-activation cost $C_{reserves}(m, \alpha)$ plus rule-aligned forecasting incentives, neither of which I attempt to estimate at slide-level.
-- **Forecast-investment effort exogenous.** Endogenising it (renewables under-invest in forecasting under uniform allocation because they pay a redistribution recycled to all consumers) is a natural extension that maps lever 2 to a moral-hazard channel.
+- **No deadweight-loss claim from $T$.** $T$ is a regulatory redistribution (BRP→TSO, recycled through retail tariffs), not a deadweight loss. Reserve-activation cost $C_{reserves}(G, \alpha)$ may fall when imbalance volume falls, but this is not mechanically guaranteed — it depends on activation prices, reserve scarcity, and direction. Welfare estimation is left for the thesis chapter.
+- **Forecast-investment effort exogenous.** The Pigouvian counterfactual is read here as an *incidence* statement; an endogenous-effort extension would be required to interpret it as an efficiency or moral-hazard result.
 
 The framework serves as the **organising scaffold for thesis Part I**. Parts II–IV employ separate apparatus (multi-unit supply-function bidding à la Hortaçsu–Puller; CNMC three-situation framework; within-firm fleet substitution under Joskow–Kahn-style capacity withholding) — each with its own equilibrium structure, consistent with but not derivable from the two-block scaffold here.
 """)
