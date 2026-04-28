@@ -90,6 +90,31 @@ These two surviving anchors (§4 + §3) produce the same outcome predictions Ito
 Output saved to `../figures/` (PDF for Beamer; PNG safety-capped at savefig.dpi=140 → 1890 px wide max, under the 2000 px session cap).
 """)
 
+# -- 5-part thesis structure (the broader context)
+md("""
+## The 5-part thesis context
+
+Today's findings are **Part I** of a broader 5-part synthesis covering 37 alive empirical claims. The full structure (in [`thesis/drafts/master_thesis_proposal.md`](../drafts/master_thesis_proposal.md)):
+
+| Part | Story | Lead findings | In this notebook? |
+|---|---|---|---|
+| **I — System asymmetric-granularity friction** | The reform created a 10-month asymmetric window where DA-clocks (60-min) and ISP/ID-clocks (15-min) didn't match, generating a measurable BRP→TSO settlement transfer. | S5, **S6 (€1.1B)**, S7, B6, B7 | **YES — Figures 1–7** |
+| **II — Firm structural market power (IB-canonical)** | Iberdrola is the marginal price-setter in the Spanish DA market across reforms — regime-invariant, hydro-Cournot dispatch, +17pp Q4 concentration vs Fringe. | F2, F6, F7 (€820M IB rent), F8 (Bushnell-style dispatch), F10, F11 | No — covered separately |
+| **III — Cross-market firm specialisation** | The four largest firms occupy distinct niches: IB→DA hydro Cournot; **GE→aFRR balancing** (€13.8M post-MTU15-DA, +52% above IB); **Naturgy→CCGT generation** post-blackout (+7.1pp share). | F9, F15, F19, F20 | No |
+| **IV — Post-CNMC strategic-availability conduct** | The 2023 CNMC SBO3 sanction (€41.5M against Naturgy) reduced but did not eliminate zonal-pivotality conduct. Naturgy fleet-wide bid-price wedge of 11–35% in pivotal hours; SBO3 itself still +14% post-sanction. Within-firm fleet substitution (BES3→BES5, ARCOS3→ARCOS1) is the modern manifestation. | F14, F15, F17, F18, F21, F22 | No |
+| **V — Behavioural + identification appendix** | Bid-shading evolution; XBID liquidity growth; Rule 28.8 elimination effects; bid complexification. Plus the identification target (frozen) — what survived OVB-cleaning and what didn't. | B1, B2, B3, B4, B5, B6, B7, B8, B9; X1-X14 | Partial — B6, B7 |
+
+The thesis-claim sentence:
+
+> Spain's 2024–2025 reform sequence created a 10-month asymmetric-granularity window during which a measurable system-cost transfer flowed from market participants to the TSO, but the reform did not eliminate firm-level market power — instead, the four largest firms specialised across markets and adapted to post-2023 CNMC enforcement by relocating their pivotality conduct from explicit RTT bids to implicit DA blocking. The post-2025-04-28 blackout sharpened the firm-specialisation map without reordering it.
+
+This notebook covers Part I in detail. Sections:
+1. **Findings** — Figures 1–7 with empirical commentary
+2. **A theoretical model that rationalises the findings** — formal setup, propositions, numerical simulation
+
+---
+""")
+
 # -- imports + style
 code("""
 from pathlib import Path
@@ -864,6 +889,271 @@ All 6 PDFs saved to `../figures/` for direct embedding in Beamer slides. PNGs sa
 ### What this talk delivers in IO terms
 
 A clean **mechanism-design** finding: the Spanish settlement rule (uniform per-MWh allocation) is non-Pigouvian by construction, so under the asymmetric-granularity window it generated a €1.1B BRP→TSO transfer that is also a cross-segment redistribution between BRPs (inflexible-portfolio retailers paying flexible-portfolio dispatchable firms). Symmetric clocks at MTU15-DA close the channel — clock-symmetry is a welfare-relevant policy lever. The cross-country placebo (B7) plus the per-regime decomposition (S5/S6/B6) provide reduced-form identification. **The talk's headline IO claim:** *clock-symmetry under heterogeneous-marginal-cost segments is a real mechanism-design lever, not a market-microstructure footnote.*
+""")
+
+# ===== SECTION 2 — A theoretical model that rationalises the findings =====
+
+md(r"""
+# A theoretical model that rationalises the findings
+
+The four reduced-form findings (S6 €1.1B headline, B6 R² collapse, regime-invariant 60–65% renewable burden, Pigouvian counterfactual gap) all emerge from a single stylised model of imbalance settlement under asymmetric clocks. The model is closer to **\citet{ItoReguant}** in spirit than to \citet{AllazVila} — it is a **mechanical settlement-volume model**, not a strategic forward-commitment model. (The Allaz–Vila firm-level mechanism was rejected by the OVB sweep on 2026-04-27.)
+
+## Setup
+
+Consider one delivery hour $H$ divided into $K$ equal sub-periods (ISPs). The clock parameter $K$ takes two values:
+
+$$
+K = \begin{cases} 4 & \text{(asymmetric: DA committed at hourly resolution; ISP settled at 15-min)} \\ 1 & \text{(symmetric: DA, IDA, and ISP all at 60-min OR all at 15-min)} \end{cases}
+$$
+
+There are two BRP types, indexed $i \in \{R, C\}$:
+
+- **Renewable** (mass $\mu_R$, e.g. wind + free-market retailers): per-ISP supply realisation
+$$ S^R_k = \bar{S}^R + \varepsilon_k, \qquad \varepsilon_k \overset{iid}{\sim} \mathcal{N}(0, \sigma_R^2) $$
+- **Dispatchable** (mass $\mu_C$, e.g. CCGT + hydro reservoirs): per-ISP supply realisation
+$$ S^C_k = \bar{S}^C + \nu_k, \qquad \nu_k \overset{iid}{\sim} \mathcal{N}(0, \sigma_C^2), \qquad \sigma_C \ll \sigma_R $$
+
+Each BRP commits a day-ahead position $q^i$ at clock resolution $K$:
+
+- $K=4$ (asymmetric): one hourly DA position per BRP $\Rightarrow$ per-ISP DA share is $q^i / K$
+- $K=1$ (symmetric): per-period DA position $\Rightarrow$ BRP can target each ISP separately
+
+We assume each BRP commits its **conditional expected supply** (no strategic withholding in this benchmark).
+
+## Per-ISP imbalance
+
+Define BRP $i$'s per-ISP imbalance as the realised supply minus the per-ISP DA share:
+
+$$
+\mathrm{imb}^i_k = S^i_k - \frac{q^i}{K}
+$$
+
+Under asymmetric clocks ($K=4$), the BRP cannot adjust within the hour, so $\mathrm{imb}^R_k = \varepsilon_k$.
+
+Under symmetric clocks ($K=1$, all clocks at 60-min), the BRP commits a single position over the full ISP and the imbalance is $\bar\varepsilon_h = \frac{1}{4}\sum_k \varepsilon_k$ (the hourly mean error). Or under DA15+ID15 (post-MTU15-DA, $K=1$ effective), the BRP targets per-ISP and IDA correction reduces the residual to $\alpha\,\varepsilon_k$ for some $\alpha \in [0,1]$.
+
+## Settlement rule
+
+Total imbalance settlement amount per hour, **uniform-allocation rule** (all BRPs charged at average imbalance settlement price $p$):
+
+$$
+\mathrm{IMP}^{\text{uniform}}_h = p \cdot \sum_k \sum_i \mu_i \cdot \big| \mathrm{imb}^i_k \big|
+$$
+
+This sums **absolute** per-ISP imbalances — which is the ESIOS mechanic that drives Proposition 1 below.
+
+For a Pigouvian counterfactual, charge each segment at its own marginal social cost $\beta_i$ per MWh:
+
+$$
+\mathrm{IMP}^{\text{Pigouvian}}_h = \sum_k \sum_i \mu_i \cdot \beta_i \cdot \big| \mathrm{imb}^i_k \big|
+$$
+
+Cross-segment burden share under each rule:
+
+$$
+s_i^{\text{uniform}} = \frac{\mu_i \cdot \mathbb{E}\sum_k |\mathrm{imb}^i_k|}{\sum_j \mu_j \cdot \mathbb{E}\sum_k |\mathrm{imb}^j_k|}, \qquad
+s_i^{\text{Pigouvian}} = \frac{\mu_i \cdot \beta_i \cdot \mathbb{E}\sum_k |\mathrm{imb}^i_k|}{\sum_j \mu_j \cdot \beta_j \cdot \mathbb{E}\sum_k |\mathrm{imb}^j_k|}
+$$
+
+## Propositions
+
+**Proposition 1 (mechanical amplification at ISP15).** Per-hour aggregate imbalance volume rises by a factor $\sqrt{K}$ when settlement moves from hourly to ISP-resolution. Specifically, for $K=4$:
+
+$$
+\frac{\mathbb{E}\sum_k |\varepsilon_k|}{\mathbb{E}\,\big|\sum_k \varepsilon_k\big|} = \frac{K \sigma \sqrt{2/\pi}}{\sigma \sqrt{2K/\pi}} = \sqrt{K} = 2
+$$
+
+In words: the same physical forecast errors generate **twice** the settlement-relevant volume under ISP15 vs ISP60, by triangle-inequality alone. **Empirical match**: pre-IDA monthly settlement was ~€38M/mo; post-ISP15 winter monthly is ~€137M/mo. The 3.6× ratio exceeds the mechanical 2× because price levels rose (winter premium + post-blackout effects).
+
+**Proposition 2 (pass-through R² collapse).** Under asymmetric clocks, $\mathrm{imb}_k^R = \varepsilon_k$, so settlement-volume's variance is fully driven by forecast-error variance: $R^2(\varepsilon \to \mathrm{imb}) = 1$ in the limit. Under symmetric clocks, $\mathrm{imb}_k^R = \alpha\varepsilon_k$ with $\alpha < 1$ as IDA/DA15 correction absorbs forecast errors at the trading layer; settlement-volume R² collapses to $\alpha^2$. **Empirical match**: B6 R² $0.171$ (DA60/ID15 PRE-blackout) → $0.028$ (DA15/ID15) implies $\alpha \approx 0.4$ — reasonable IDA/DA15 absorption efficiency.
+
+**Proposition 3 (cross-segment burden invariance to clock symmetry).** Under uniform-allocation rule,
+
+$$
+s_R^{\text{uniform}} = \frac{\mu_R \sigma_R}{\mu_R \sigma_R + \mu_C \sigma_C}
+$$
+
+independent of $K$ (both segments scale by the same $\sqrt{K}$ factor). **Empirical match**: wind + LIB share is 60% / 63% / 65% across ISP15-win / DA60/ID15 / DA15/ID15 — regime-invariant.
+
+**Proposition 4 (Pigouvian counterfactual redistributes burden).** Under Pigouvian rule, the share is modulated by $\beta_R / \beta_C$. If dispatchable plants are activated only at scarcity (high $\beta_C$) while renewables miss at low-stress hours (low $\beta_R$), then $s_C^{\text{Pigouvian}} \gg s_C^{\text{uniform}}$. **Empirical match**: Figure 6 shows conv-RZ would pay €129M (vs €46M actual) and COR €86M (vs €10M actual) under Pigouvian rule.
+
+## Two policy levers
+
+The model identifies **two distinct mechanism-design failures**, each with its own lever:
+
+| Failure | Source in the model | Lever | Effect | Implementation status |
+|---|---|---|---|---|
+| Asymmetric clocks amplify settlement volume by $\sqrt{K}$ | Triangle-inequality on per-ISP imbalances when DA committed hourly | Clock-symmetry: enforce $K=1$ (DA15) | Total settlement € drops by $1/\sqrt{K} \approx 0.5$ | **MTU15-DA, Oct 2025** ✓ |
+| Uniform-allocation rule charges all segments the same per-MWh rate | $s_i^{\text{uniform}}$ depends only on $\mu_i \sigma_i$, not $\beta_i$ | Pigouvian per-segment pricing: charge segment $i$ at $\beta_i$ | Burden shifts toward high-MC segments (dispatchable), away from inflexible-portfolio (renewables) | Open mechanism-design problem |
+
+The Spanish reform sequence implemented lever 1 but left lever 2 untouched. The empirical regime-invariant 60–65% renewable burden under MTU15-DA confirms this: clock-symmetry alone does not redistribute burden across segments.
+""")
+
+# Numerical simulation of the model
+code(r"""
+# Numerical simulation of the four propositions
+import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(seed=42)
+
+# --- Parameters (calibrated so simulated burden share matches empirical 60-65%) ---
+K = 4                    # ISPs per hour under MTU15
+sigma_R_per_isp = 60     # MWh per ISP renewable forecast error std
+sigma_C_per_isp = 24     # MWh per ISP dispatchable forecast error std
+mu_R, mu_C = 0.4, 0.6    # mass shares — calibrated so mu_R*sigma_R / (mu_R*sigma_R + mu_C*sigma_C) ≈ 0.625
+p_uniform = 50           # average imbalance settlement price (EUR/MWh)
+beta_R, beta_C = 8, 220  # per-segment marginal social cost (EUR/MWh)
+                         # — calibrated to Pigouvian-clean-regression S7 estimates
+n_hours = 1000
+alpha = 0.4              # IDA/DA15 correction efficiency (post-MTU15-DA)
+
+# --- Simulation: per-hour imbalance volumes under each regime ---
+
+def simulate(K_clock, sigma_R, sigma_C, alpha_corr, n_hours):
+    # Returns per-hour total |imbalance|, separately for R and C segments.
+    eps_R = rng.normal(0, sigma_R, size=(n_hours, K))
+    eps_C = rng.normal(0, sigma_C, size=(n_hours, K))
+    if K_clock == 4:
+        # Asymmetric: per-ISP imbalance = eps_k
+        imb_R = np.abs(eps_R)
+        imb_C = np.abs(eps_C)
+    elif K_clock == 1:
+        # Symmetric pre-IDA: ONE hourly settlement at |sum of per-ISP epsilons|.
+        # Triangle inequality: |sum eps| ≤ sum |eps|, with E[|sum eps|]/E[sum|eps|] = 1/sqrt(K).
+        imb_R = np.abs(eps_R.sum(axis=1, keepdims=True))
+        imb_C = np.abs(eps_C.sum(axis=1, keepdims=True))
+    elif K_clock == 'symmetric_DA15':
+        # Symmetric post-MTU15-DA: per-ISP imbalance reduced by IDA/DA15 absorption (1-alpha)
+        imb_R = np.abs(eps_R) * (1 - alpha_corr)
+        imb_C = np.abs(eps_C) * (1 - alpha_corr)
+    return imb_R.sum(axis=1) * mu_R, imb_C.sum(axis=1) * mu_C, eps_R, eps_C
+
+vol_R_pre, vol_C_pre, eps_pre, _ = simulate(1, sigma_R_per_isp, sigma_C_per_isp, alpha, n_hours)
+vol_R_asy, vol_C_asy, eps_asy, _ = simulate(4, sigma_R_per_isp, sigma_C_per_isp, alpha, n_hours)
+vol_R_sym, vol_C_sym, eps_sym, _ = simulate('symmetric_DA15', sigma_R_per_isp, sigma_C_per_isp, alpha, n_hours)
+
+# Total settlement € per hour under uniform rule
+imp_pre = p_uniform * (vol_R_pre + vol_C_pre)
+imp_asy = p_uniform * (vol_R_asy + vol_C_asy)
+imp_sym = p_uniform * (vol_R_sym + vol_C_sym)
+
+print('=== P1: Mechanical amplification at ISP15 ===')
+print(f'  Pre-IDA (ISP60, K=1):     mean |imb|/hour = {(vol_R_pre + vol_C_pre).mean():>8.0f} MWh')
+print(f'  Asymmetric (DA60/ISP15):  mean |imb|/hour = {(vol_R_asy + vol_C_asy).mean():>8.0f} MWh')
+print(f'  Symmetric (DA15/ISP15):   mean |imb|/hour = {(vol_R_sym + vol_C_sym).mean():>8.0f} MWh')
+print(f'  Predicted ratio asymmetric/pre-IDA = sqrt(K) = {np.sqrt(K):.2f}')
+print(f'  Simulated ratio                              = {(vol_R_asy + vol_C_asy).mean() / (vol_R_pre + vol_C_pre).mean():.2f}')
+print()
+
+# Per-segment burden share under each regime + each rule
+def burden_shares(vol_R, vol_C, beta_R_use, beta_C_use):
+    total_uniform = (vol_R + vol_C).mean()
+    total_pigou   = (vol_R * beta_R_use + vol_C * beta_C_use).mean()
+    s_R_unif = vol_R.mean() / total_uniform
+    s_C_unif = vol_C.mean() / total_uniform
+    s_R_pigou = (vol_R * beta_R_use).mean() / total_pigou
+    s_C_pigou = (vol_C * beta_C_use).mean() / total_pigou
+    return s_R_unif, s_C_unif, s_R_pigou, s_C_pigou
+
+print('=== P3: Cross-segment burden share — uniform rule, by regime ===')
+for label, (vR, vC) in [('Pre-IDA', (vol_R_pre, vol_C_pre)),
+                       ('Asymmetric', (vol_R_asy, vol_C_asy)),
+                       ('Symmetric DA15', (vol_R_sym, vol_C_sym))]:
+    sR, sC, _, _ = burden_shares(vR, vC, beta_R, beta_C)
+    print(f'  {label:<20}  s_R = {sR*100:>5.1f}%   s_C = {sC*100:>5.1f}%   ratio R/C = {sR/sC:>4.1f}')
+print()
+print(f'Empirical: wind+LIB share 60/63/65% across regimes — regime-invariant. ' +
+      f'Predicted s_R = mu_R*sigma_R / (mu_R*sigma_R + mu_C*sigma_C) = ' +
+      f'{mu_R*sigma_R_per_isp/(mu_R*sigma_R_per_isp + mu_C*sigma_C_per_isp)*100:.0f}%.')
+print()
+
+print('=== P4: Pigouvian counterfactual (DA60/ISP15 asymmetric) ===')
+sR_unif, sC_unif, sR_pigou, sC_pigou = burden_shares(vol_R_asy, vol_C_asy, beta_R, beta_C)
+print(f'  Renewable share — uniform rule:    {sR_unif*100:>5.1f}%')
+print(f'  Renewable share — Pigouvian rule:  {sR_pigou*100:>5.1f}%')
+print(f'  Dispatchable share — uniform:      {sC_unif*100:>5.1f}%')
+print(f'  Dispatchable share — Pigouvian:    {sC_pigou*100:>5.1f}%')
+print(f'  Cross-segment redistribution: renewable share drops {(sR_unif - sR_pigou)*100:>4.1f} pp under Pigouvian')
+
+# === Plot: side-by-side comparison of the four propositions ===
+fig, axes = plt.subplots(1, 3, figsize=(13.5, 4.5))
+
+# Panel A: P1 — settlement volume by regime
+ax = axes[0]
+labels = ['Pre-IDA\n(ISP60)', 'Asymmetric\n(DA60/ISP15)', 'Symmetric\n(DA15/ISP15)']
+volumes = [(vol_R_pre + vol_C_pre).mean(), (vol_R_asy + vol_C_asy).mean(), (vol_R_sym + vol_C_sym).mean()]
+colors = ['#9aa7b3', '#a83a3a', '#5b8a72']
+ax.bar(labels, volumes, color=colors, edgecolor='white')
+for i, v in enumerate(volumes):
+    ax.text(i, v + 5, f'{v:.0f}', ha='center', fontsize=9.5)
+ax.set_ylabel('Mean |imbalance| per hour (MWh)')
+ax.set_title('P1 — Settlement volume by clock regime\n(model simulation, n=1000 hours)', fontsize=10.5)
+
+# Panel B: P3 — segment shares by regime under uniform rule
+ax = axes[1]
+shares = []
+for vR, vC in [(vol_R_pre, vol_C_pre), (vol_R_asy, vol_C_asy), (vol_R_sym, vol_C_sym)]:
+    s_R = vR.mean() / (vR + vC).mean()
+    shares.append(s_R)
+ax.bar(labels, [s*100 for s in shares], color=['#cc9b6d']*3, edgecolor='white')
+for i, s in enumerate(shares):
+    ax.text(i, s*100 + 1.5, f'{s*100:.0f}%', ha='center', fontsize=10.5, fontweight='bold')
+ax.set_ylabel('Renewable share of total settlement (%)')
+ax.set_ylim(0, 100)
+ax.set_title('P3 — Renewable burden share is invariant to clock symmetry\n(uniform-allocation rule)', fontsize=10.5)
+ax.axhline(60, color='black', linestyle=':', alpha=0.4, lw=1)
+ax.axhline(65, color='black', linestyle=':', alpha=0.4, lw=1)
+ax.text(2.4, 62.5, 'empirical\n60-65%', fontsize=8, color='#5b3a3a')
+
+# Panel C: P4 — uniform vs Pigouvian under asymmetric clocks
+ax = axes[2]
+sR_unif, sC_unif, sR_pigou, sC_pigou = burden_shares(vol_R_asy, vol_C_asy, beta_R, beta_C)
+xs = np.arange(2)
+W = 0.35
+ax.bar(xs - W/2, [sR_unif*100, sC_unif*100], W, label='Uniform rule', color='#a83a3a', edgecolor='white')
+ax.bar(xs + W/2, [sR_pigou*100, sC_pigou*100], W, label='Pigouvian counterfactual', color='#5b8a72', edgecolor='white')
+ax.set_xticks(xs)
+ax.set_xticklabels(['Renewable\n(low MC)', 'Dispatchable\n(high MC)'])
+ax.set_ylabel('Burden share (%)')
+ax.set_title('P4 — Pigouvian rule redistributes burden\n(asymmetric clocks, β_R=8, β_C=220 €/MWh)', fontsize=10.5)
+ax.legend(loc='upper right', fontsize=9, frameon=False)
+for i, (u, p) in enumerate(zip([sR_unif, sC_unif], [sR_pigou, sC_pigou])):
+    ax.text(i - W/2, u*100 + 1.5, f'{u*100:.0f}%', ha='center', fontsize=9, color='#a83a3a')
+    ax.text(i + W/2, p*100 + 1.5, f'{p*100:.0f}%', ha='center', fontsize=9, color='#5b8a72')
+
+fig.suptitle('Numerical illustration of the four propositions (model output)', fontsize=11.5, y=1.00)
+fig.tight_layout()
+fig.savefig(FIG_DIR/'fig08_model_propositions.png')
+fig.savefig(FIG_DIR/'fig08_model_propositions.pdf')
+plt.show()
+""")
+
+md(r"""
+## Discussion
+
+The model is **mechanical**: imbalance volume amplification under asymmetric clocks comes from the triangle inequality, not from strategic forward commitment. This is a sharper microfoundation than the original \citet{ItoReguant} extension I proposed in February — there's no need for Allaz–Vila-style strategic forward sales (which the OVB sweep on 2026-04-27 rejected anyway).
+
+**What the model captures cleanly:**
+- The order-of-magnitude S6 finding (€1.1B over the 10-month asymmetric window): comes from the $\sqrt{K}$ amplification of forecast errors when ISP-clock is finer than DA-clock.
+- The B6 R² collapse at MTU15-DA: comes from the IDA/DA15 absorption parameter $\alpha$ — symmetric clocks let BRPs correct at the trading layer rather than passing forecast errors mechanically into settlement volume.
+- The regime-invariant 60–65% renewable burden: under uniform allocation, the burden share depends only on segment volume contribution ($\mu_i \sigma_i$), not on clock parameter $K$.
+- The Pigouvian counterfactual: by introducing per-segment $\beta_i$, the burden shifts toward dispatchable plants (high $\beta_C$) and away from renewables (low $\beta_R$).
+
+**What the model abstracts from:**
+- Strategic forward commitment (Allaz–Vila) — empirically rejected (F5 demoted 2026-04-27).
+- Endogenous prices: $p$ is a parameter; in reality it depends on reserve activation and BRP imbalance distribution.
+- Interaction with cross-border interconnection (treated as exogenous in our placebo design).
+- Within-firm portfolio choice (Part III of the thesis).
+- The blackout amplification (modelled as a price-level shift rather than a structural change in $\sigma$).
+
+**Extensions for the thesis:**
+- Endogenise $p$ as a function of system imbalance and reserve cost (closes the welfare loop).
+- Add a strategic-bidding layer (Allaz–Vila or \citet{HortacsuPuller2008} multi-unit auctions) on top of the mechanical settlement layer to test whether firm-level conduct interacts with clock regime.
+- Calibrate $\sigma_R, \sigma_C, \beta_R, \beta_C$ to the empirical distribution per regime and re-derive predictions; check whether the simulated cross-segment redistribution matches Figure 6's €141M overpayment / €159M underpayment.
+- Welfare analysis: derive the consumer-surplus impact of each lever separately, accounting for the 1-year tariff-recycle lag.
+
+The model gives the thesis a **clean theoretical anchor** for Part I, distinct from the firm-level Cournot-pivotality apparatus that anchors Parts II–IV.
 """)
 
 nb["cells"] = cells
