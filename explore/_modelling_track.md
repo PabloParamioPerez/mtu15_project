@@ -459,6 +459,38 @@ Audit of `data/raw/esios/liquidaciones/*/extracted/` reveals **234 unique ESIOS 
 
 **Action for thesis chapter** (post-May presentation): write a parser extension to `src/mtu/parsing/esios_liquicomun.py` to add these families to `liquicomun_all.parquet`, with priority to `liqsegme` (segment-level settlement) and `endesvlb` (LIB-specific volumes). This converts the May talk's reduced-form Pigouvian claim into a direct empirical anchor.
 
+### Refinement 2026-04-28 (PM) — Findings from new-data exploration after parser extension
+
+After parser extension to 181 families, four exploration leads done on 2026-04-28:
+
+**Lead 1 — Up/down dual-pricing spread is large and regime-stable.** Mean prdvbaqh (down direction) − prdvsuqh (up direction) = €26-33/MWh per regime, with ISP15-win prices much higher in absolute terms (down €100, up €69) than DA60/ID15 (down €58, up €33). The spread is structurally similar across regimes; the level is winter-amplified. **Implication**: the asymmetric-window's €1.1B magnitude reflects (a) volume increase under ISP15 settlement and (b) higher absolute prices during the winter sub-period.
+
+**Lead 2 — S7 €210-300/MWh structural figure cross-validates against published reserve prices €60-90/MWh.** Published reserve activation prices (per-ISP from new families `prsecqhsu`, `prterqhsu`, `prRRqh`): secondary up €64-79, tertiary up €73-87, RR €62-75. The 3× gap to S7's regression-implied marginal cost confirms the existing S7 framing: published price is direct REE→generator transfer; S7 is structural-social cost (cascading effects). Both are correct measures of different concepts. **No change to S7 status.**
+
+**Lead 3 — F3 direct dual-pricing decomposition reproduces 78% of impdsvqh** (correlation 0.93). Direct empirical anchor for Figure 6. (Committed b8ec915.)
+
+**Lead 4 — Direction-correlation mechanism for the 60-65% renewable burden invariance:**
+
+Per-ISP correlation between segment signed imbalance and system signed imbalance, by regime:
+
+| Segment | ISP15-win | DA60/ID15 | DA15/ID15 |
+|---|---:|---:|---:|
+| **COR retailers (regulated)** | 0.79 | 0.79 | 0.72 |
+| **LIB free-market retailers** | 0.81 | 0.80 | 0.74 |
+| Wind RE | 0.51 | 0.49 | 0.61 |
+| Conv-RZ (regulation zone) | 0.49 | 0.51 | 0.62 |
+| Hydro RE | 0.15 | 0.35 | 0.12 |
+| Thermal RE | 0.08 | 0.28 | 0.24 |
+| Conv-NRZ | 0.14 | 0.26 | 0.21 |
+
+**The mechanism story:** dual pricing is mathematically Pigouvian — BRPs whose imbalance helps the system get the better price; BRPs whose imbalance hurts get charged at the worse price. **But in practice, renewables CAUSE their own system shorts** (wind/solar forecast errors). So their imbalance is systematically same-sign as system imbalance (correlation 0.5-0.8 vs ~0.2 for thermal/hydro/conv-NRZ). They systematically face the penalty side of the rule. The 60-65% regime-invariant renewable burden is therefore not just a pure non-Pigouvian artifact — it reflects the structural fact that renewable forecast errors are correlated with system stress.
+
+**Implication for the May talk's IO claim**: the "Pigouvian rule redesign" lever is not a simple fix — it would require *segment-conditional* pricing (charge a segment based on its own marginal cost regardless of system direction), departing from EU GL EB Article 52(d) dual-pricing. Such a redesign would face implementation challenges: (a) measuring per-segment marginal cost in real time is difficult; (b) it would weaken the incentive for BRPs to forecast accurately (since they'd pay their own MC regardless of helping/hurting). The May talk should acknowledge that "lever 2" is non-trivial, not just an unaddressed policy choice.
+
+**Implication for the thesis Part I** (system asymmetric-granularity friction): the welfare interpretation of the €1.1B should distinguish (a) settlement-rule misalignment (segment heterogeneity) from (b) forecast-error correlation structure (renewables cause their own penalty). Both contribute to the 60-65% renewable burden, but they call for different policy responses. The mechanism-design analysis is more nuanced than "Pigouvian rule fixes it" — it requires either separately addressing forecast-error correlation OR designing a rule that's robust to it.
+
+**Status: §3 sharpened with mechanism story.** Direction-correlation analysis adds depth to the Pigouvian-incidence story without altering the headline 60-65% renewable burden finding.
+
 ---
 
 ## §4 — Asymmetric-granularity friction (welfare)
