@@ -1171,7 +1171,10 @@ print('    Block-1 rent rationalises the relative-markup persistence side of F7.
 print()
 
 # --- Block 2: simulate latent shocks ONCE, apply three settlement rules to the same draws ---
-# Latent process: J=4 iid quarter-hour shocks per hour (same physical errors in all regimes).
+# Latent process: J=4 iid quarter-hour shocks per hour.
+# For the model comparison, the same latent error draws are applied across regimes
+# (a modelling device; in the empirical world, DA15/IDA15 may itself change
+#  scheduling/forecasting behaviour and that channel is folded into reduced-form alpha).
 # Hourly netting (pre-IDA, K_ISP=1):     imb = |sum_k eps_k|
 # Quarter-hour absolute (asymmetric):    imb = sum_k |eps_k|     (no diversification, alpha=0)
 # Quarter-hour with absorption (sym):    imb = sum_k |eps_k| * (1-alpha)
@@ -1222,17 +1225,17 @@ def burden_shares(vol_R, vol_C, beta_R_use, beta_C_use):
 
 print('=== Cross-segment burden share — uniform rule, by regime ===')
 for label, (vR, vC) in [('Pre-IDA', (vol_R_pre, vol_C_pre)),
-                       ('Asymmetric DA60/ID15', (vol_R_asy, vol_C_asy)),
-                       ('Symmetric DA15/ID15', (vol_R_sym, vol_C_sym))]:
+                       ('Asymmetric DA60/ISP15', (vol_R_asy, vol_C_asy)),
+                       ('Symmetric DA15/ISP15', (vol_R_sym, vol_C_sym))]:
     sR, sC, _, _ = burden_shares(vR, vC, beta_R, beta_C)
-    print(f"  {label:<22}  s_R = {sR*100:>5.1f}%   s_C = {sC*100:>5.1f}%   ratio R/C = {sR/sC:>4.1f}")
+    print(f"  {label:<23}  s_R = {sR*100:>5.1f}%   s_C = {sC*100:>5.1f}%   ratio R/C = {sR/sC:>4.1f}")
 print()
 print(f"  Theoretical s_R = μ_R*σ_R / (μ_R*σ_R + μ_C*σ_C) = "
       f"{mu_seg_R*sigma_R_per_isp / (mu_seg_R*sigma_R_per_isp + mu_seg_C*sigma_C_per_isp)*100:.1f}%  (invariant under common α and fixed mix)")
 print(f"  → Matches empirical Figure 7: 60-65% wind+LIB share across all post-ISP15 regimes.")
 print()
 
-print('=== Pigouvian counterfactual (asymmetric DA60/ID15) ===')
+print('=== Pigouvian counterfactual (asymmetric DA60/ISP15) ===')
 sR_unif, sC_unif, sR_pigou, sC_pigou = burden_shares(vol_R_asy, vol_C_asy, beta_R, beta_C)
 print(f"  Renewable share — uniform rule:    {sR_unif*100:>5.1f}%")
 print(f"  Renewable share — Pigouvian rule:  {sR_pigou*100:>5.1f}%   ({(sR_unif - sR_pigou)*100:+.1f} pp shift)")
