@@ -49,17 +49,18 @@ def main() -> None:
     con.execute("SET threads=4")
 
     # Pull IDA at native 15-min granularity, post-MTU15-IDA only (date >= 2025-03-19).
+    # PIBCIE.assigned_power_mw is signed natively per OMIE spec §5.2.2.3.
+    # Simple SUM gives net IDA position change.  All Big-4 records are offer_type=1
+    # so this matches the legacy CASE WHEN result for them; correct for all firms.
     print("[1/3] Loading IDA 15-min cleared volumes per firm-period (post-MTU15-IDA)…")
     ida_qh = con.execute(f"""
         SELECT date, period,                                              -- period 1..96 = quarter-hours
                COALESCE(grupo_empresarial, 'NA') AS firm,
-               SUM(CASE WHEN offer_type IN (1,3) THEN  assigned_power_mw
-                        WHEN offer_type IN (8,9) THEN -assigned_power_mw
-                        WHEN offer_type = 10     THEN  assigned_power_mw  -- RE special regime, signed natively
-                        ELSE 0 END) * 0.25                                AS qida_mwh
+               SUM(assigned_power_mw) * 0.25 AS qida_mwh
         FROM '{PIBCIE}'
         WHERE CAST(date AS DATE) >= DATE '2025-03-19'
           AND mtu_minutes = 15
+          AND assigned_power_mw IS NOT NULL
         GROUP BY 1, 2, 3
     """).df()
     ida_qh["date"] = pd.to_datetime(ida_qh["date"])

@@ -85,16 +85,16 @@ def build_panel() -> pd.DataFrame:
     print(f"   DA per-firm-hour: {len(da_hourly):,} rows; firms: {da_hourly.firm.nunique()}")
 
     # Per-firm-period IDA signed cleared (for B9 ΔQ outcome).  Native granularity.
+    # PIBCIE.assigned_power_mw is signed natively per OMIE spec §5.2.2.3; simple
+    # SUM gives the firm's net IDA position change.  Identical to legacy CASE WHEN
+    # for Big-4 (sells-only); correct for retailer firms.
     print("[2/3] Building per-firm-period IDA signed cleared (native granularity)…")
     ida = con.execute(f"""
         SELECT date,
                period,
                COALESCE(grupo_empresarial, 'NA') AS firm,
                mtu_minutes AS ida_mtu,
-               SUM(CASE WHEN offer_type IN (1,3) THEN  assigned_power_mw
-                        WHEN offer_type IN (8,9) THEN -assigned_power_mw
-                        WHEN offer_type = 10     THEN  assigned_power_mw
-                        ELSE 0 END) * mtu_minutes / 60.0 AS dq_ida_mwh
+               SUM(assigned_power_mw * mtu_minutes / 60.0) AS dq_ida_mwh
         FROM '{PIBCIE}'
         WHERE assigned_power_mw IS NOT NULL
         GROUP BY 1, 2, 3, 4

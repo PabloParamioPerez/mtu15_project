@@ -1,11 +1,21 @@
 # STATUS: ALIVE
-# LAST-AUDIT: 2026-04-28
+# LAST-AUDIT: 2026-04-29
 # FEEDS: B9 (Big-4 DA under-commitment, Ito-Reguant 2016 framework)
 # CLAIM: At proper disaggregation (firm × hour), the user's narrative —
 #        progressive monotonic collapse of Big-4 under-commitment across the
 #        reform sequence with fringe firms unchanged — is testable.  The
 #        previous firm-day analysis aggregated 24-96 hourly periods together,
 #        masking the within-day strategic content.
+#
+# 2026-04-29 q₂-formula audit (load-bearing). Per OMIE spec v1.37 §5.2.2.3:
+#   PIBCIE.assigned_power_mw is signed natively (range -99999.9 to 99999.9).
+#   "Resultado incremental" = the change in net production scheduled by the
+#   IDA session.  Simple SUM is the correct q₂.  Empirically, all Big-4 records
+#   in PIBCIE have offer_type=1 only (zero type 8/9/10), so the legacy
+#   CASE WHEN formula and simple SUM give identical Big-4 results — the
+#   substantive Big-4 trajectory is unaffected.  The CASE WHEN formula was
+#   WRONG for retailer/distributor firms (NA group) but their trajectory is
+#   not the load-bearing claim.  See scripts/.../q2_definitions_compare.py.
 """B9 hourly disaggregated re-analysis: Ito-Reguant under-commitment test.
 
 Theoretical framing (Ito and Reguant 2016 / Borenstein-Holland 2005):
@@ -85,19 +95,17 @@ def build_firm_hour_panel() -> pd.DataFrame:
     print("[1/3] Building per-firm-hour IDA cleared volumes (signed)…")
     # Map any 15-min period to its hour: hour = ceil(period/4) for mtu=15, period for mtu=60.
     # Convert MWh: assigned_power_mw × hours = MW × (mtu_minutes/60).  Sum within hour.
+    # PIBCIE.assigned_power_mw is signed natively per OMIE spec §5.2.2.3 (range
+    # -99999.9 to 99999.9).  Simple SUM gives the firm's net IDA position change;
+    # offer_type need NOT be sign-flipped (negative values within a sell offer
+    # represent buy-back of an earlier scheduled sell).
     ida_hourly = con.execute(f"""
-        WITH ida_signed AS (
-            SELECT date,
-                   CASE WHEN mtu_minutes=15 THEN CEIL(period/4.0)::INT ELSE period END AS hour,
-                   COALESCE(grupo_empresarial, 'NA') AS firm,
-                   CASE WHEN offer_type IN (1,3) THEN  assigned_power_mw  -- sell
-                        WHEN offer_type IN (8,9) THEN -assigned_power_mw  -- buy
-                        ELSE 0 END * mtu_minutes / 60.0 AS signed_mwh
-            FROM '{PIBCIE}'
-        )
-        SELECT date, hour, firm,
-               SUM(signed_mwh) AS qida_mwh
-        FROM ida_signed
+        SELECT date,
+               CASE WHEN mtu_minutes=15 THEN CEIL(period/4.0)::INT ELSE period END AS hour,
+               COALESCE(grupo_empresarial, 'NA') AS firm,
+               SUM(assigned_power_mw * mtu_minutes / 60.0) AS qida_mwh
+        FROM '{PIBCIE}'
+        WHERE assigned_power_mw IS NOT NULL
         GROUP BY 1, 2, 3
     """).df()
     print(f"   IDA hourly panel: {len(ida_hourly):,} rows, "
