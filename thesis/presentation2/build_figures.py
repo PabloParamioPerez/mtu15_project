@@ -1109,8 +1109,219 @@ print('    slope-channel test.')
 print(f'  - The cross-regime PATTERN survives: β(DA60-POST) > β(DA60-PRE) > β(DA15) ≈ 0.')
 print(f'  - The Wald-test verdicts are similar to the netted version. The PRE-blackout signal')
 print(f'    is still smaller than the POST-blackout signal — power-limited at n=40.')
-print(f'  - This is the version of the regression the thesis chapter should cite. Previous')
-print(f'    cells use the legacy netted regressor for transparency and replication.')
+print(f'  - This is the corrected daily-level version. Below, a per-ISP-level regression')
+print(f'    (no aggregation) gives the cleanest spec.')
+""")
+
+# ---- B6 regression — per-ISP level (no daily aggregation)
+md(r"""
+## B6 regression — per-ISP level (no daily aggregation)
+
+Daily aggregation throws away ~95 ISPs of within-day variation per day. With 175,628 raw ISP observations available, the right level for the slope-channel test is **per-ISP**, not daily. Aggregation is a last resort, not the default.
+
+### Specification
+
+For each ISP $\tau$ in the 15-min era (post-2022-04, when both wind/solar and imbalance series became quarter-hourly):
+
+$$
+\big|V^{\text{imb}}_{\tau}\big| \;=\; \alpha + \sum_{r \neq \text{pre-IDA}} \mathbf{1}[r] \cdot \delta_r \;+\; \beta_{\text{pre-IDA}}\,|\varepsilon_{\tau}| \;+\; \sum_{r \neq \text{pre-IDA}} \mathbf{1}[r] \cdot |\varepsilon_{\tau}| \cdot \beta_r \;+\; (\text{controls}) \;+\; u_\tau,
+$$
+
+where:
+- $|V^{\text{imb}}_\tau|$ is the absolute imbalance volume in MW (intensity).
+- $|\varepsilon_\tau|$ is the per-ISP absolute wind+solar forecast error in MW.
+- Controls: hour-of-day FE, day-of-week FE, cal-month FE, year FE.
+- Standard errors clustered by **date** (~1,500 clusters in the 15-min era — well-conditioned for cluster-robust inference).
+- Restricted to 15-min mtu throughout (avoids the resolution change).
+
+### Why per-ISP is the right level
+
+- **The slope channel is a per-ISP relationship.** $|V^{\text{imb}}_\tau| = \beta |\varepsilon_\tau|$ at the ISP level is what Section 2's model says happens under quarter-hour absolute settlement.
+- **No aggregation artifacts.** Daily aggregation can introduce within-day netting issues even when summing absolute values, and forces the model to fit averages rather than individual settlement events.
+- **Two orders of magnitude more observations.** Daily ~3,018 → ISP-level ~175,000. SEs much tighter; identification of the regime × forecast-error interactions much sharper.
+- **Hour-of-day FE absorb systematic intra-day patterns** (solar morning/evening ramps, load shape) that daily-level regressions cannot.
+""")
+
+code(r"""
+import duckdb
+import pandas as pd
+import numpy as np
+import statsmodels.api as sm
+
+con = duckdb.connect()
+con.execute("SET memory_limit='6GB'")
+con.execute("SET threads=4")
+
+WIND_F = f'{PROJECT}/data/processed/entsoe/generation/wind_solar_forecast_all.parquet'
+WIND_A = f'{PROJECT}/data/processed/entsoe/generation/wind_solar_actual_all.parquet'
+A86    = f'{PROJECT}/data/processed/entsoe/balancing/imbalance_volumes_all.parquet'
+
+# Build per-ISP merged panel.  Restrict to 15-min era throughout.
+isp_panel = con.execute(f'''
+    WITH wf AS (SELECT isp_start_utc, quantity_mw AS f_mw FROM '{WIND_F}'
+                WHERE psr_type='B19' AND mtu_minutes=15),
+         wa AS (SELECT isp_start_utc, quantity_mw AS a_mw FROM '{WIND_A}'
+                WHERE psr_type='B19' AND mtu_minutes=15),
+         sf AS (SELECT isp_start_utc, quantity_mw AS f_mw FROM '{WIND_F}'
+                WHERE psr_type='B16' AND mtu_minutes=15),
+         sa AS (SELECT isp_start_utc, quantity_mw AS a_mw FROM '{WIND_A}'
+                WHERE psr_type='B16' AND mtu_minutes=15),
+         imb AS (SELECT isp_start_utc, volume_mwh * 4.0 AS imb_mw FROM '{A86}'
+                 WHERE mtu_minutes=15 AND volume_mwh IS NOT NULL),
+         w  AS (SELECT wf.isp_start_utc, ABS(wa.a_mw - wf.f_mw) AS abs_wind_err_mw
+                FROM wf INNER JOIN wa USING (isp_start_utc)),
+         s  AS (SELECT sf.isp_start_utc, ABS(sa.a_mw - sf.f_mw) AS abs_solar_err_mw
+                FROM sf INNER JOIN sa USING (isp_start_utc))
+    SELECT
+        i.isp_start_utc,
+        ABS(i.imb_mw)                                         AS abs_imb_mw,
+        COALESCE(w.abs_wind_err_mw, 0)
+            + COALESCE(s.abs_solar_err_mw, 0)                 AS abs_total_err_mw,
+        EXTRACT(YEAR  FROM i.isp_start_utc)::INT              AS year,
+        EXTRACT(MONTH FROM i.isp_start_utc)::INT              AS month,
+        EXTRACT(DOW   FROM i.isp_start_utc)::INT              AS dow,
+        EXTRACT(HOUR  FROM i.isp_start_utc)::INT              AS hod,
+        CAST(i.isp_start_utc AS DATE)                         AS date
+    FROM imb i
+    LEFT JOIN w USING (isp_start_utc)
+    LEFT JOIN s USING (isp_start_utc)
+    WHERE w.abs_wind_err_mw IS NOT NULL OR s.abs_solar_err_mw IS NOT NULL
+    ORDER BY i.isp_start_utc
+''').df()
+
+isp_panel['date'] = pd.to_datetime(isp_panel['date'])
+
+def assign_regime(d):
+    if d < pd.Timestamp('2024-06-14'): return 'pre-IDA'
+    if d < pd.Timestamp('2024-12-01'): return '3-sess'
+    if d < pd.Timestamp('2025-03-19'): return 'ISP15 window'
+    if d < pd.Timestamp('2025-04-28'): return 'DA60/ID15 PRE'
+    if d < pd.Timestamp('2025-10-01'): return 'DA60/ID15 POST'
+    return 'DA15/ID15'
+isp_panel['regime_bl'] = isp_panel['date'].apply(assign_regime)
+REGIMES_BL = ['pre-IDA', '3-sess', 'ISP15 window', 'DA60/ID15 PRE', 'DA60/ID15 POST', 'DA15/ID15']
+isp_panel['regime_bl'] = pd.Categorical(isp_panel['regime_bl'], categories=REGIMES_BL, ordered=True)
+
+print(f'Per-ISP panel (15-min era only): {len(isp_panel):,} ISP observations')
+print(f'Date range: {isp_panel.date.min().date()} → {isp_panel.date.max().date()}')
+print(f'Unique dates (clusters): {isp_panel.date.nunique():,}')
+print()
+print('ISP observations by regime:')
+for r in REGIMES_BL:
+    n = (isp_panel.regime_bl == r).sum()
+    nd = isp_panel.loc[isp_panel.regime_bl == r, 'date'].nunique()
+    print(f'  {r:<22}  {n:>8,} ISPs  ({nd:>4} unique dates)')
+print()
+
+y = isp_panel['abs_imb_mw'].astype(float).values
+x = isp_panel['abs_total_err_mw'].astype(float).values
+
+def make_X(spec):
+    cols = {'const': 1.0, 'forecast_err': x}
+    for r in REGIMES_BL[1:]:
+        d = (isp_panel['regime_bl'] == r).astype(float).values
+        cols[f'D[{r}]']   = d
+        cols[f'x*D[{r}]'] = d * x
+    if spec == 'augmented':
+        for h in range(1, 24):
+            cols[f'H[{h}]'] = (isp_panel['hod'] == h).astype(float).values
+        for d_ in range(1, 7):
+            cols[f'DOW[{d_}]'] = (isp_panel['dow'] == d_).astype(float).values
+        for m in range(2, 13):
+            cols[f'M[{m}]'] = (isp_panel['month'] == m).astype(float).values
+        years = sorted(isp_panel['year'].unique())
+        for yr in years[1:]:
+            cols[f'Y[{yr}]'] = (isp_panel['year'] == yr).astype(float).values
+    return pd.DataFrame(cols, index=isp_panel.index)
+
+cluster_ids = isp_panel['date'].astype('category').cat.codes.values
+
+def fit_cluster(spec):
+    Xs = make_X(spec)
+    m = sm.OLS(y, Xs.values).fit(cov_type='cluster',
+                                  cov_kwds={'groups': cluster_ids})
+    return m, Xs
+
+def slopes(model, Xs):
+    base = model.params[1]
+    cov  = model.cov_params()
+    out  = {'pre-IDA': (base, np.sqrt(cov[1, 1]))}
+    for r in REGIMES_BL[1:]:
+        j = list(Xs.columns).index(f'x*D[{r}]')
+        b = base + model.params[j]
+        var = cov[1, 1] + cov[j, j] + 2 * cov[1, j]
+        out[r] = (b, np.sqrt(var))
+    return out
+
+print('Fitting sparse spec…')
+m1, X1 = fit_cluster('sparse')
+print('Fitting augmented spec (hour-of-day + DOW + cal-month + year FE)…')
+m2, X2 = fit_cluster('augmented')
+s1, s2 = slopes(m1, X1), slopes(m2, X2)
+
+print()
+print('=== PER-ISP B6 regression (15-min era, cluster-robust SE by date) ===')
+print()
+print('{:<22}  {:>20}  {:>20}'.format('Regime', 'Spec 1 (sparse)', 'Spec 2 (augmented)'))
+print('{:<22}  {:>20}  {:>20}'.format('', 'beta (t-stat)', 'beta (t-stat)'))
+print('-' * 68)
+for r in REGIMES_BL:
+    b1, se1 = s1[r];  b2, se2 = s2[r]
+    cell1 = f'{b1:+.4f} ({b1/se1:+.1f})'
+    cell2 = f'{b2:+.4f} ({b2/se2:+.1f})'
+    print(f'{r:<22}  {cell1:>20}  {cell2:>20}')
+print()
+print(f'  R² Spec 1 = {m1.rsquared:.3f};   R² Spec 2 = {m2.rsquared:.3f};   N = {int(m1.nobs):,}')
+print()
+
+def wald_pair(model, Xs, r_a, r_b):
+    j_a = list(Xs.columns).index(f'x*D[{r_a}]')
+    j_b = list(Xs.columns).index(f'x*D[{r_b}]')
+    R = np.zeros((1, len(model.params)))
+    R[0, j_a] =  1
+    R[0, j_b] = -1
+    return model.wald_test(R, scalar=True)
+
+w1 = wald_pair(m2, X2, 'DA60/ID15 PRE',  'DA60/ID15 POST')
+w2 = wald_pair(m2, X2, 'DA60/ID15 POST', 'DA15/ID15')
+w3 = wald_pair(m2, X2, 'DA60/ID15 PRE',  'DA15/ID15')
+
+print('=== Three Wald tests under augmented spec (per-ISP, cluster-by-date) ===')
+def show(label, w):
+    p = float(w.pvalue);  decision = 'REJECT H0' if p < 0.05 else 'fail to reject'
+    print(f'  {label:<55}  F = {float(w.statistic):.2f},  p = {p:.4f}   →  {decision}')
+print('  Test                                                     Result')
+print('  ' + '-' * 78)
+show('1. β(DA60-PRE) = β(DA60-POST)  [does blackout amplify?]',           w1)
+show('2. β(DA60-POST) = β(DA15)      [closure even with op. reforzada]',  w2)
+show('3. β(DA60-PRE) = β(DA15)       [clean closure, no blackout confound]', w3)
+print()
+
+print('=== Comparison: daily (corrected) vs per-ISP regression ===')
+print('   Daily, per-ISP-aggregated regressor (HAC SEs):')
+print('     β(DA60-PRE)  = +0.040  (+2.00σ)')
+print('     β(DA60-POST) = +0.129  (+2.31σ)')
+print('     β(DA15)      = -0.011  (-2.56σ)')
+print('     Wald  PRE=POST p=0.151;  POST=DA15 p=0.013;  PRE=DA15 p=0.013')
+print()
+b_pre,  se_pre  = s2['DA60/ID15 PRE']
+b_post, se_post = s2['DA60/ID15 POST']
+b_da15, se_da15 = s2['DA15/ID15']
+print(f'   PER-ISP, cluster-robust (cluster by date):')
+print(f'     β(DA60-PRE)  = {b_pre:+.4f}  ({b_pre/se_pre:+.2f}σ)')
+print(f'     β(DA60-POST) = {b_post:+.4f}  ({b_post/se_post:+.2f}σ)')
+print(f'     β(DA15)      = {b_da15:+.4f}  ({b_da15/se_da15:+.2f}σ)')
+print(f'     Wald  PRE=POST p={float(w1.pvalue):.4f};  POST=DA15 p={float(w2.pvalue):.4f};'
+      f'  PRE=DA15 p={float(w3.pvalue):.4f}')
+print()
+print('=== Bottom line ===')
+print('  - The per-ISP regression is the cleanest spec for the slope-channel test:')
+print('    no daily aggregation, two orders of magnitude more observations, hour-of-day FE')
+print('    absorbing intra-day patterns, cluster-robust SEs by date.')
+print('  - The thesis chapter should cite THIS spec as the headline B6 regression.')
+print('    Daily-level cells above show the path of inquiry (and the OVB + aggregation')
+print('    discipline applied at each step) — they document the methodology, but the')
+print('    per-ISP regression is the right answer.')
 """)
 
 # ---- FIGURE 4 — B7 cross-country placebo
