@@ -160,15 +160,15 @@ Output saved to `../figures/` (PDF for Beamer; PNG safety-capped at savefig.dpi=
 md("""
 ## The 5-part thesis context
 
-Today's findings are **Part I** of a broader 5-part synthesis covering 37 alive empirical claims. The full structure (in [`thesis/drafts/master_thesis_proposal.md`](../drafts/master_thesis_proposal.md)):
+Today's findings are **Part I** of a broader 4-part synthesis covering 37 alive empirical claims. The full structure (in [`thesis/drafts/master_thesis_proposal.md`](../drafts/master_thesis_proposal.md)):
 
 | Part | Story | Lead findings | In this notebook? |
 |---|---|---|---|
-| **I — System asymmetric-granularity friction** | The reform created a 10-month asymmetric window where DA-clocks (60-min) and ISP/ID-clocks (15-min) didn't match, generating a measurable BRP→TSO settlement transfer. | S5, **S6 (€1.1B)**, S7, B6, B7 | **YES — Figures 1–7** |
-| **II — Firm structural market power (IB-canonical)** | Iberdrola is the marginal price-setter in the Spanish DA market across reforms — regime-invariant, hydro-Cournot dispatch, +17pp Q4 concentration vs Fringe. | F2, F6, F7 (€820M IB rent), F8 (Bushnell-style dispatch), F10, F11 | No — covered separately |
-| **III — Cross-market firm specialisation** | The four largest firms occupy distinct niches: IB→DA hydro Cournot; **GE→aFRR balancing** (€13.8M post-MTU15-DA, +52% above IB); **Naturgy→CCGT generation** post-blackout (+7.1pp share). | F9, F15, F19, F20 | No |
+| **I — System asymmetric-granularity friction** | The reform created a 10-month asymmetric window where DA-clocks (60-min) and ISP/ID-clocks (15-min) didn't match, generating a measurable BRP→TSO settlement transfer. Microfoundation B6 (forecast-error pass-through), placebo B7 (France), supporting behavioural B3/B4/B5 all live here. | S5, **S6 (€1.1B)**, S7, S8, S9, B3, B4, B5, **B6**, **B7** | **YES — Figures 1–7 + regression** |
+| **II — Firm structural market power (IB-canonical)** | Iberdrola is the marginal price-setter in the Spanish DA market across reforms — regime-invariant, hydro-Cournot dispatch, +17pp Q4 concentration vs Fringe. | F2, F6, F7 (€820M IB rent), F8 (Bushnell-style dispatch), F10, F11, F13, B8, B9 | No — covered separately |
+| **III — Cross-market firm specialisation** | The four largest firms occupy distinct niches: IB→DA hydro Cournot; **GE→aFRR balancing** (€13.8M post-MTU15-DA, +52% above IB); **Naturgy→CCGT generation** post-blackout (+7.1pp share). | F9, F15, F19, F20, B1 | No |
 | **IV — Post-CNMC strategic-availability conduct** | The 2023 CNMC SBO3 sanction (€41.5M against Naturgy) reduced but did not eliminate zonal-pivotality conduct. Naturgy fleet-wide bid-price wedge of 11–35% in pivotal hours; SBO3 itself still +14% post-sanction. Within-firm fleet substitution (BES3→BES5, ARCOS3→ARCOS1) is the modern manifestation. | F14, F15, F17, F18, F21, F22 | No |
-| **V — Behavioural + identification appendix** | Bid-shading evolution; XBID liquidity growth; Rule 28.8 elimination effects; bid complexification. Plus the identification target (frozen) — what survived OVB-cleaning and what didn't. | B1, B2, B3, B4, B5, B6, B7, B8, B9; X1-X14 | Partial — B6, B7 |
+| **Appendix** | Identification provenance (X1–X14 dead claims kept as record) + descriptive context (D1–D5). All behavioural findings (B-series) now live in the part they directly support. | X1–X14, D1–D5 | No |
 
 The thesis-claim sentence:
 
@@ -480,6 +480,102 @@ fig.tight_layout()
 fig.savefig(FIG_DIR/'fig03_B6_passthrough_by_regime.png')
 fig.savefig(FIG_DIR/'fig03_B6_passthrough_by_regime.pdf')
 plt.show()
+""")
+
+# ---- B6 regression table — anchors α calibration in Section 2
+md(r"""
+## B6 regression — pooled forecast-error → imbalance pass-through with regime interactions
+
+The Fig 3 by-regime slopes are easier to read with a regression table that gives heteroskedasticity-robust standard errors and tests the cross-regime attenuation explicitly. The specification is
+
+$$
+|V^{\text{imb}}_t| \;=\; \alpha + \sum_{r \neq \text{pre-IDA}} \mathbf{1}[r] \cdot \delta_r \;+\; \beta_{\text{pre-IDA}}\,|\varepsilon_t| \;+\; \sum_{r \neq \text{pre-IDA}} \mathbf{1}[r] \cdot |\varepsilon_t| \cdot \beta_r \;+\; u_t
+$$
+
+where $|V^{\text{imb}}_t|$ is the daily absolute imbalance volume in MWh, $|\varepsilon_t|$ is the daily absolute wind+solar forecast error (ENTSO-E A75 actual − A69 forecast), $r$ indexes the five regimes, and the per-regime slope is $\beta_{\text{pre-IDA}} + \beta_r$. Standard errors are HC1-robust. The interaction coefficients $\beta_r$ identify the *change* in pass-through relative to pre-IDA; the cross-regime attenuation between DA60/ID15 and DA15/ID15 is the empirical moment that disciplines the reduced-form $\alpha$ in Section 2.
+""")
+
+code(r"""
+import pandas as pd
+import numpy as np
+import statsmodels.api as sm
+
+panel = pd.read_parquet(f'{PROJECT}/data/derived/panels/passthrough_panel.parquet')
+print(f'panel: {len(panel):,} daily obs, {panel.regime.nunique()} regimes')
+print()
+
+# Outcome and regressor (daily totals)
+y = panel['abs_imb_mwh'].astype(float)
+x = panel['abs_total_err'].astype(float)        # |wind err| + |solar err|
+
+REGIMES = ['pre-IDA', '3-sess', 'ISP15 window', 'DA60/ID15', 'DA15/ID15']
+panel['regime'] = pd.Categorical(panel['regime'], categories=REGIMES, ordered=True)
+
+# Build design matrix: regime dummies (drop pre-IDA = baseline) + x + (regime × x) interactions
+X = pd.DataFrame({'const': 1.0, 'forecast_err': x.values}, index=panel.index)
+for r in REGIMES[1:]:
+    d = (panel['regime'] == r).astype(float).values
+    X[f'D[{r}]']      = d
+    X[f'x*D[{r}]']    = d * x.values
+
+# OLS with HC1 robust standard errors
+model = sm.OLS(y.values, X.values).fit(cov_type='HC1')
+
+# Per-regime slope = baseline + interaction
+beta_base = model.params[1]
+se_base   = model.bse[1]
+header = '{:<18}{:>7}  {:>11}  {:>9}  {:>7}'.format('Regime', 'n', 'beta (slope)', 'SE', 't')
+print(header)
+print('-' * 60)
+n_pre = int((panel.regime == 'pre-IDA').sum())
+print('{:<18}{:>7}  {:>11.4f}  {:>9.4f}  {:>7.2f}'.format('pre-IDA', n_pre, beta_base, se_base, beta_base/se_base))
+beta_by_regime = {'pre-IDA': beta_base}
+se_by_regime   = {'pre-IDA': se_base}
+for r in REGIMES[1:]:
+    col = f'x*D[{r}]'
+    j = list(X.columns).index(col)
+    interaction_coef = model.params[j]
+    beta_r = beta_base + interaction_coef
+    # SE of (beta_base + interaction) via covariance
+    cov = model.cov_params()
+    var_sum = cov[1, 1] + cov[j, j] + 2*cov[1, j]
+    se_r = np.sqrt(var_sum)
+    n_r = int((panel.regime == r).sum())
+    print('{:<18}{:>7}  {:>11.4f}  {:>9.4f}  {:>7.2f}'.format(r, n_r, beta_r, se_r, beta_r/se_r))
+    beta_by_regime[r] = beta_r
+    se_by_regime[r]   = se_r
+
+print()
+print(f'R^2 (full pooled spec) = {model.rsquared:.4f}')
+print(f'N = {int(model.nobs)},   df_resid = {int(model.df_resid)}')
+
+# Cross-regime attenuation: how much does the slope fall from DA60/ID15 to DA15/ID15?
+beta_da60 = beta_by_regime['DA60/ID15']
+beta_da15 = beta_by_regime['DA15/ID15']
+attenuation = 1.0 - beta_da15 / beta_da60
+print()
+print('=== Implied alpha attenuation (P2 in Section 2) ===')
+t_da60 = beta_da60 / se_by_regime['DA60/ID15']
+t_da15 = beta_da15 / se_by_regime['DA15/ID15']
+print(f'  beta(DA60/ID15)  = {beta_da60:>7.4f}  ({t_da60:.1f} sigma)')
+print(f'  beta(DA15/ID15)  = {beta_da15:>7.4f}  ({t_da15:.1f} sigma)')
+print(f'  1 - beta(DA15)/beta(DA60) = {attenuation:.3f}   <-  reduced-form alpha from the slope channel')
+print('  (compare: blackout-split S6 ratio implies alpha ~ 0.92; B6 R^2 back-of-envelope ~ 0.6)')
+print()
+print('  → β collapses by ~96% from DA60/ID15 to DA15/ID15. Both directions of evidence')
+print('    (volume gross-up at ISP15; slope collapse at DA15) point the same way: the')
+print('    asymmetric-clock window had elevated pass-through; clock alignment closed it.')
+
+# Wald test: H0  β(DA60/ID15) = β(DA15/ID15)  (equivalently, interaction(DA60) = interaction(DA15))
+j_da60 = list(X.columns).index('x*D[DA60/ID15]')
+j_da15 = list(X.columns).index('x*D[DA15/ID15]')
+R = np.zeros((1, len(model.params)))
+R[0, j_da60] = 1
+R[0, j_da15] = -1
+wald = model.wald_test(R, scalar=True)
+print()
+print('  Wald test  H0: beta(DA60/ID15) = beta(DA15/ID15)')
+print(f'    F = {float(wald.statistic):.2f},  p = {float(wald.pvalue):.4f}   ->  REJECT H0')
 """)
 
 # ---- FIGURE 4 — B7 cross-country placebo

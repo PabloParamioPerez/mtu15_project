@@ -20,15 +20,13 @@ The thesis claim above survives all three rejections.
 
 ---
 
-## Structure: five parts
+## Structure: four parts + appendix
 
 ### Part I — System-layer asymmetric-granularity friction (ISP15 + DA60/ID15)
 
-**Story**: The 10-month asymmetric window (Dec 2024 — Sep 2025) during which DA cleared at 60-min while ID/imbalance settled at 15-min generated a measurable system-cost shift. Four ENTSO-E system metrics jump concordantly at ISP15 (S5) and moderate at MTU15-DA. The shift quantum is ~€90-95M/month gross BRP→TSO settlement transfer.
+**Story**: The 10-month asymmetric window (Dec 2024 — Sep 2025) during which DA cleared at 60-min while ID/imbalance settled at 15-min generated a measurable system-cost shift. Four ENTSO-E system metrics jump concordantly at ISP15 (S5) and moderate at MTU15-DA. The shift quantum is ~€90-95M/month gross BRP→TSO settlement transfer. The microfoundation (B6 forecast-error → imbalance pass-through) and the cross-country placebo (B7 France DA flat across Spanish reform dates) live here, alongside the supporting behavioural evidence (B3 XBID liquidity growth, B4 XBID intra-product σ peaks DA60/ID15, B5 Rule 28.8 elimination), because they all speak to the system-layer mechanism.
 
-**Anchor findings**: S1, S2, S3, S4, **S5** (joint null rejection), **S6** (€1.1B BRP→TSO settlement transfer over 10 mo, blackout-decomposed), S7 (Pigouvian segment heterogeneity), S8 (RZ activations doubled post-IDA), S9 (renewable cannibalisation).
-
-**Cross-country placebo**: B7 (France DA flat across Spanish reform dates).
+**Anchor findings**: S1, S2, S3, S4, **S5** (joint null rejection), **S6** (€1.1B BRP→TSO settlement transfer over 10 mo, blackout-decomposed), S7 (Pigouvian segment heterogeneity), S8 (RZ activations doubled post-IDA — wounded, ISP15-window-only after renewable control), S9 (renewable cannibalisation), **B6** (forecast-error → imbalance pass-through R² 0.171→0.028), **B7** (France placebo), B3, B4, B5.
 
 **Economic relevance**: This is a **regulatory friction** in the Pigouvian sense — segment-heterogeneous marginal-cost contributions to imbalance with a uniform settlement rule (S7). The framing is "asymmetric-granularity friction" not "deadweight loss" because the BRP→TSO transfer is regulatorily redistributed (the TSO recycles surplus to consumers via tariff with a 1-yr lag); the welfare interpretation requires a counterfactual on tariff pass-through that we do NOT estimate. Cite as a settlement-redistribution finding, not a DWL number.
 
@@ -36,9 +34,9 @@ The thesis claim above survives all three rejections.
 
 ### Part II — Firm-level structural market power (regime-invariant, IB-canonical)
 
-**Story**: IB's day-ahead market-power rent (~€820M post-MTU15-IDA, F7) is structural, regime-invariant, and flows through dispatchable hydro Cournot dispatch (Bushnell 2003-style). The mechanism predates the reform and survives the blackout and post-MTU15-DA.
+**Story**: IB's day-ahead market-power rent (~€820M post-MTU15-IDA, F7) is structural, regime-invariant, and flows through dispatchable hydro Cournot dispatch (Bushnell 2003-style). The mechanism predates the reform and survives the blackout and post-MTU15-DA. Behavioural support: B8 (within-unit bid complexification IB-specific) and B9 (Big-4 DA under-commitment with caveats).
 
-**Anchor findings**: **F7** (synthetic-firm Ciarreta–Espinosa method, IB ~98% of Big-4 transfer, hydro 64% / CCGT 36%, blackout-decomposed), **F8** (IB hydro Q4 dispatch +17-21pp gap vs Fringe, regime-invariant 2018-2026), **F10** (IB pivotality structural not scarcity-driven), **F13** (IB price-setting power varies with competitive thinness at margin), F11 (cross-border coupling does NOT discipline), F2 (IB matched-price Lerner +0.135), F6 (Cournot tercile fit), F12 (IB pumped-storage arb wounded but alive descriptively).
+**Anchor findings**: **F7** (synthetic-firm Ciarreta–Espinosa method, IB ~98% of Big-4 transfer, hydro 64% / CCGT 36%, blackout-decomposed), **F8** (IB hydro Q4 dispatch +17-21pp gap vs Fringe, regime-invariant 2018-2026), **F10** (IB pivotality structural not scarcity-driven), **F13** (IB price-setting power varies with competitive thinness at margin), F11 (cross-border coupling does NOT discipline), F2 (IB matched-price Lerner +0.135), F6 (Cournot tercile fit), F12 (IB pumped-storage arb wounded — solar-cannibalisation trend, not reform-attributable), **B8**, B9.
 
 **Why IB and not the others**: F1/F2 ledger comparison, B8 within-unit bid complexification IB-specific, plus modelling-track §0 cross-firm consistency table (F5/F6/B8 all point to IB cleanly).
 
@@ -52,7 +50,7 @@ The thesis claim above survives all three rejections.
 
 **Anchor findings (organised by market layer)**:
 - **DA market**: IB-dominant. F7 IB ~98% of Big-4 transfer; F8 hydro Q4.
-- **aFRR balancing**: GE-dominant post-MTU15-IDA. **F19** (GE 34.28% of post-blackout aFRR up-volume), **F20** (GE €13.8M vs IB €9.1M aFRR up-revenue in DA15/ID15, 7-mo window — GE 52% > IB), F9 (system-level aFRR competition increased at MTU15-IDA).
+- **aFRR balancing**: GE-dominant post-MTU15-IDA. **F19** (GE 34.28% of post-blackout aFRR up-volume), **F20** (GE €13.8M vs IB €9.1M aFRR up-revenue in DA15/ID15, 7-mo window — GE 52% > IB), F9 (system-level aFRR competition increased at MTU15-IDA), **B1** (GE bid-shading evolution).
 - **CCGT generation post-blackout**: Naturgy-dominant. **F15** (Naturgy +7.1pp share gain).
 - **mFRR balancing**: more competitive (system-level), no single-firm dominance.
 
@@ -74,13 +72,15 @@ The thesis claim above survives all three rejections.
 
 **Methodology lineage**: Crampes–Moreaux water-value / capacity allocation; Joskow–Kahn (2002 EJ) on California; CNMC's own three-situation framework as a directly-replicable benchmark; the 13-year recurring-firms record (F22 connection).
 
-### Part V — Behavioural and identification appendix
+### Appendix — Identification provenance and descriptive context
 
-**Compatible behavioural findings**: B1 (GE bid-shading), B3 (XBID liquidity grew), B4 (XBID intra-product σ peaks DA60/ID15), B5 (Rule 28.8 elimination), **B6** (forecast-error → imbalance pass-through, DA60-POST-blackout R²=0.365, collapses at DA15), B7 (France placebo holds), B8 (within-unit bid complexification IB-specific), B9 (Big-4 DA under-commitment with caveats).
+This is genuine appendix-grade material — not a "Part V" that competes with the four economic parts above.
 
-**Identification appendix** (the dead claims are kept as record): X1-X14 in the ledger and the full `_identification_target.md` provenance frozen post-Week-1.
+**Identification appendix.** X1–X14 (dead claims kept as record) and the full `_identification_target.md` provenance frozen post-Week-1. Cited only as "attempted but failed" in the body chapters where relevant; no positive results drawn from this material.
 
-**Descriptive context**: D1 (within-month dispersion), D2 (80-99% identical bids — most plants do NOT exploit MTU15), D3 (HHI shift 2023, pre-reform), D4 (Fringe exit 6.8%), D5 (cross-firm net-seller positions).
+**Descriptive context appendix.** D1 (within-month dispersion), D2 (80–99% identical bids — most plants do NOT exploit MTU15), D3 (HHI shift 2023, pre-reform), D4 (Fringe exit 6.8%), D5 (cross-firm net-seller positions). Establishes baseline market structure; not load-bearing for any of the four parts' main claims.
+
+**Behavioural-finding home assignment.** All B-series findings now live in the part they directly support: B1→Part III, B3/B4/B5/B6/B7→Part I, B8/B9→Part II. No behavioural finding sits in the appendix.
 
 ---
 
@@ -113,7 +113,7 @@ The thesis builds a **layered story** about Spanish electricity markets under re
 - **Weeks 3-4**: Part-II IB-canonical chapter. F7 + F8 + F10 form the core; F11 is the falsification check; F2 and F6 are the supporting Lerner statistics. The Bushnell + Ciarreta–Espinosa methodology gives clean theoretical grounding.
 - **Weeks 4-5**: Part-III cross-market specialisation. F19 + F20 (aFRR/GE) and F15 (CCGT/GN) anchor the cross-market case. F9 system-level aFRR competition is the methodological backbone.
 - **Weeks 6-7**: Part-IV CNMC SBO3 and modern conduct. F14 (rejection of simple moral hazard) + F17/F18 (substitution pattern) + F21/F22 (replication of CNMC framework). The 6-PDF resolution archive in `docs/regulation/cnmc_resolutions/` is the regulatory anchor.
-- **Week 8**: Identification appendix from `_identification_target.md`; behavioural/descriptive sections; figure polish; viva-defensive read of dead claims.
+- **Week 8**: Appendix (identification provenance from `_identification_target.md`, descriptive context); figure polish; viva-defensive read of dead claims.
 
 **Stop-rule check**: this proposal is consistent with `CLAUDE.md` § "Claim-status discipline" — every cited finding traces to an alive ledger row. Wounded F12 cited only with caveat as descriptive. Dead claims (X1-X14) appear only in the identification appendix as "attempted but failed".
 
