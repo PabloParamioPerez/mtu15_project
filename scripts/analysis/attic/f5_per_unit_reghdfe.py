@@ -1,10 +1,14 @@
-# STATUS: ALIVE
-# LAST-AUDIT: 2026-04-28
-# FEEDS: F5 (Allaz-Vila commitment slope) at per-unit native granularity
-# CLAIM: F5 was wounded at firm-hour level. Per-UNIT re-test using Stata
-#        reghdfe with HDFE absorption (unit + date-hour FE) at native
-#        quarter-hour granularity post-MTU15.  Hybrid Python (panel build) +
-#        Stata (regression) workflow.
+# STATUS: DEAD-KEPT-AS-RECORD
+# LAST-AUDIT: 2026-04-29
+# RETRACTION-DATE: 2026-04-29
+# RETRACTION-REASON: F5 (Allaz-Vila slope β=∂ΔQ_IDA/∂q_DA) is a mechanical accounting
+#   identity, not strategic-conduct evidence. Q_actual ≈ q_DA + ΔQ_IDA implies
+#   ∂ΔQ_IDA/∂q_DA = ∂Q_actual/∂q_DA − 1; since q_DA explains nearly all within-unit
+#   variation in Q_actual, β is mechanically near −1 regardless of strategic conduct.
+#   The HDFE absorption that 'restored' F5 was confirming the identity, not testing AV.
+#   AV anchor for the thesis is now B9's firm-ISP cross-regime regression
+#   (b9_replicated_isp_grain.py), which identifies via cross-regime variation, not
+#   within-unit slope.
 """F5 Allaz-Vila at per-unit native granularity using Stata reghdfe.
 
 Python builds the panel from OMIE programmes via duckdb at native

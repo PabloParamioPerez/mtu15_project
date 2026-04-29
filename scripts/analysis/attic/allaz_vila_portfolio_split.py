@@ -1,7 +1,14 @@
-# STATUS: ALIVE
-# LAST-AUDIT: 2026-04-26
-# FEEDS: F5 (refinement); modelling-track §2 Allaz-Vila portfolio decomposition
-# CLAIM: Allaz-Vila slope by peak vs off-peak and by clearing-price quartile (test thermal-margin hypothesis)
+# STATUS: DEAD-KEPT-AS-RECORD
+# LAST-AUDIT: 2026-04-29
+# RETRACTION-DATE: 2026-04-29
+# RETRACTION-REASON: F5 (Allaz-Vila slope β=∂ΔQ_IDA/∂q_DA) is a mechanical accounting
+#   identity, not strategic-conduct evidence. Q_actual ≈ q_DA + ΔQ_IDA implies
+#   ∂ΔQ_IDA/∂q_DA = ∂Q_actual/∂q_DA − 1; since q_DA explains nearly all within-unit
+#   variation in Q_actual, β is mechanically near −1 regardless of strategic conduct.
+#   The HDFE absorption that 'restored' F5 was confirming the identity, not testing AV.
+#   AV anchor for the thesis is now B9's firm-ISP cross-regime regression
+#   (b9_replicated_isp_grain.py), which identifies via cross-regime variation, not
+#   within-unit slope.
 """Allaz-Vila portfolio decomposition (modelling-track §2 refinement).
 
 Hypothesis. The Allaz-Vila commitment-value mechanism applies when

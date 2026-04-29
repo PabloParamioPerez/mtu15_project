@@ -1,7 +1,14 @@
-# STATUS: ALIVE
-# LAST-AUDIT: 2026-04-27
-# FEEDS: F5 OVB-robustness — does the IB peak-hour sign-flip survive richer controls?
-# CLAIM: F5's IB peak-hour Δβ = +0.049 (sign-flip from -0.025 to +0.024 across MTU15-DA) survives OVB controls.
+# STATUS: DEAD-KEPT-AS-RECORD
+# LAST-AUDIT: 2026-04-29
+# RETRACTION-DATE: 2026-04-29
+# RETRACTION-REASON: F5 (Allaz-Vila slope β=∂ΔQ_IDA/∂q_DA) is a mechanical accounting
+#   identity, not strategic-conduct evidence. Q_actual ≈ q_DA + ΔQ_IDA implies
+#   ∂ΔQ_IDA/∂q_DA = ∂Q_actual/∂q_DA − 1; since q_DA explains nearly all within-unit
+#   variation in Q_actual, β is mechanically near −1 regardless of strategic conduct.
+#   The HDFE absorption that 'restored' F5 was confirming the identity, not testing AV.
+#   AV anchor for the thesis is now B9's firm-ISP cross-regime regression
+#   (b9_replicated_isp_grain.py), which identifies via cross-regime variation, not
+#   within-unit slope.
 
 """F5 OVB robustness check — Allaz-Vila peak-hour signal for IB.
 
