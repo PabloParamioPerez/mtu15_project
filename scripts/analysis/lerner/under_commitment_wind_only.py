@@ -21,7 +21,7 @@ Reasoning before running:
   - If wind-only compresses similarly, the aggregate pattern is partly
     operational.
 
-Output: data/derived/results/under_commitment_wind_only.csv
+Output: results/regressions/under_commitment_wind_only.csv
 """
 from __future__ import annotations
 
@@ -127,7 +127,7 @@ def main() -> None:
     print("Reading: if wind-only compression ≈ ALL compression, the strategic interpretation is weakened (operational driver).")
     print("         If wind-only compression < ALL compression, the strategic interpretation is supported.")
 
-    out = PROJECT / "data" / "derived" / "results" / "under_commitment_wind_only.csv"
+    out = PROJECT / "results" / "regressions" / "under_commitment_wind_only.csv"
     pd.concat([
         pivot_all.reset_index().assign(_table="all_units"),
         pivot_wind.reset_index().assign(_table="wind_only"),

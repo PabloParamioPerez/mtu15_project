@@ -45,7 +45,7 @@ import pandas as pd
 import statsmodels.api as sm
 
 PROJECT = Path(__file__).resolve().parents[3]
-F7_ISP = PROJECT / "data" / "derived" / "results" / "synthetic_firm_per_firm_isp.csv"
+F7_ISP = PROJECT / "results" / "regressions" / "synthetic_firm_per_firm_isp.csv"
 PRICE_SP = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "precios" / "marginalpdbc_all.parquet"
 PRICE_FR = PROJECT / "data" / "processed" / "entsoe" / "prices" / "fr_da_all.parquet"
 VRE = PROJECT / "data" / "processed" / "entsoe" / "generation" / "wind_solar_actual_all.parquet"

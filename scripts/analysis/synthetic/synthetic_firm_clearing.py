@@ -34,7 +34,7 @@ PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas"
 DET = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "det_all.parquet"
 CAB = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "cab_all.parquet"
 MATCH = PROJECT / "data" / "derived" / "panels" / "synthetic_plant_match.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "synthetic_firm_clearing.csv"
+OUT = PROJECT / "results" / "regressions" / "synthetic_firm_clearing.csv"
 
 BIG4 = ["GE", "IB", "GN", "HC"]
 

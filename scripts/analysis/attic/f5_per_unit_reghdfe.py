@@ -27,8 +27,8 @@ Native granularity discipline:
    post-MTU15-DA:           15-min observations (both DA and IDA per-15-min)
 
 Output:
-   data/derived/results/f5_per_unit_panel.dta       (panel for Stata)
-   data/derived/results/f5_per_unit_reghdfe.csv    (Stata regression results)
+   results/regressions/f5_per_unit_panel.dta       (panel for Stata)
+   results/regressions/f5_per_unit_reghdfe.csv    (Stata regression results)
 """
 from __future__ import annotations
 
@@ -46,7 +46,7 @@ PIBCI    = PROJECT / "data" / "processed" / "omie" / "mercado_intradiario_subast
 ACTUAL   = PROJECT / "data" / "processed" / "entsoe" / "generation" / "wind_solar_actual_all.parquet"
 REF      = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 
-OUT_DIR  = PROJECT / "data" / "derived" / "results"
+OUT_DIR  = PROJECT / "results" / "regressions"
 DTA_OUT  = OUT_DIR / "f5_per_unit_panel.dta"
 DO_FILE  = PROJECT / "scripts" / "analysis" / "welfare" / "f5_per_unit_reghdfe.do"
 RES_OUT  = OUT_DIR / "f5_per_unit_reghdfe.csv"

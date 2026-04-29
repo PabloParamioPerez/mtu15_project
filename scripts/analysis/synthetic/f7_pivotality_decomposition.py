@@ -32,7 +32,7 @@ User hypotheses tested:
   H3 "wind doldrums"            → low-VRE hours (Q1 of monthly VRE)
 
 Output:
-  data/derived/results/f7_pivotality_decomposition.csv
+  results/regressions/f7_pivotality_decomposition.csv
   (long-format with the joint cross-tabulations stacked)
 """
 from __future__ import annotations
@@ -44,11 +44,11 @@ import numpy as np
 import pandas as pd
 
 PROJECT = Path(__file__).resolve().parents[3]
-F7_ISP = PROJECT / "data" / "derived" / "results" / "synthetic_firm_per_firm_isp.csv"
+F7_ISP = PROJECT / "results" / "regressions" / "synthetic_firm_per_firm_isp.csv"
 PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
 VRE = PROJECT / "data" / "processed" / "entsoe" / "generation" / "wind_solar_actual_all.parquet"
 RES = PROJECT / "data" / "processed" / "entsoe" / "generation" / "reservoir_filling_es_weekly.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "f7_pivotality_decomposition.csv"
+OUT = PROJECT / "results" / "regressions" / "f7_pivotality_decomposition.csv"
 
 
 def main() -> None:

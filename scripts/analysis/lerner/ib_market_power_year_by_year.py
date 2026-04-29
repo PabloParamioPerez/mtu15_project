@@ -25,7 +25,7 @@ Then we look for:
   - Hydrology dependence (Q4 share ~ IB hydro gen)
 
 Output:
-    data/derived/results/ib_market_power_year_by_year.csv
+    results/regressions/ib_market_power_year_by_year.csv
 """
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ PROJECT = Path(__file__).resolve().parents[3]
 PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
 PRICE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "precios" / "marginalpdbc_all.parquet"
 REF = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
-OUT = PROJECT / "data" / "derived" / "results" / "ib_market_power_year_by_year.csv"
+OUT = PROJECT / "results" / "regressions" / "ib_market_power_year_by_year.csv"
 
 
 def main() -> None:

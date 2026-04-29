@@ -212,7 +212,7 @@ def main() -> None:
             verdict = "NO (T1 < T3)"
         print(f"{firm:<5}  {b1:>+9.3f}  {b2:>+9.3f}  {b3:>+9.3f}  {verdict}")
 
-    out = PROJECT / "data" / "derived" / "results" / "cournot_tercile_results.csv"
+    out = PROJECT / "results" / "regressions" / "cournot_tercile_results.csv"
     tab.to_csv(out, index=False)
     print(f"\nwrote {out}")
 
@@ -275,7 +275,7 @@ def main() -> None:
             print(f"{firm:<5} {r:<14}  {len(sub):>8,}  {g:>+10.3f}  {se:>8.3f}  {p:>7.3f}  {r2:>6.3f}")
 
     pd.DataFrame(rows_loglog).to_csv(
-        PROJECT / "data" / "derived" / "results" / "cournot_loglog_results.csv", index=False,
+        PROJECT / "results" / "regressions" / "cournot_loglog_results.csv", index=False,
     )
     print()
     print("Cournot prediction: gamma ≈ -1. Per-firm interpretation:")

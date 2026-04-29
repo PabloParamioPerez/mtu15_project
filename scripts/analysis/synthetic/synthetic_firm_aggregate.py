@@ -22,9 +22,9 @@ import numpy as np
 import pandas as pd
 
 PROJECT = Path(__file__).resolve().parents[3]
-RES = PROJECT / "data" / "derived" / "results" / "synthetic_firm_clearing.csv"
+RES = PROJECT / "results" / "regressions" / "synthetic_firm_clearing.csv"
 PRICE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "precios" / "marginalpdbc_all.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "synthetic_firm_regime.csv"
+OUT = PROJECT / "results" / "regressions" / "synthetic_firm_regime.csv"
 
 
 def assign_regime(d):

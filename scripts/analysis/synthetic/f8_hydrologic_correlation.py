@@ -24,7 +24,7 @@ Hypothesis alt (structural): β ≈ 0 — IB transfer is constant regardless
 of hydrology.
 
 Output:
-    data/derived/results/f8_hydrologic_correlation.csv
+    results/regressions/f8_hydrologic_correlation.csv
 """
 from __future__ import annotations
 
@@ -36,10 +36,10 @@ import pandas as pd
 import statsmodels.api as sm
 
 PROJECT = Path(__file__).resolve().parents[3]
-ISP_FILE = PROJECT / "data" / "derived" / "results" / "synthetic_firm_per_firm_isp.csv"
+ISP_FILE = PROJECT / "results" / "regressions" / "synthetic_firm_per_firm_isp.csv"
 PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
 REF = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
-OUT = PROJECT / "data" / "derived" / "results" / "f8_hydrologic_correlation.csv"
+OUT = PROJECT / "results" / "regressions" / "f8_hydrologic_correlation.csv"
 
 
 def main() -> None:

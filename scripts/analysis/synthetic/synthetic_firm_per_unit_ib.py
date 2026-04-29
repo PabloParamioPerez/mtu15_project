@@ -29,7 +29,7 @@ PROJECT = Path(__file__).resolve().parents[3]
 DET = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "det_all.parquet"
 CAB = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "cab_all.parquet"
 MATCH = PROJECT / "data" / "derived" / "panels" / "synthetic_plant_match.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "synthetic_firm_per_unit_ib.csv"
+OUT = PROJECT / "results" / "regressions" / "synthetic_firm_per_unit_ib.csv"
 
 
 def assign_regime(d):

@@ -22,8 +22,8 @@ import numpy as np
 import pandas as pd
 
 PROJECT = Path(__file__).resolve().parents[3]
-ISP_FILE = PROJECT / "data" / "derived" / "results" / "synthetic_firm_per_firm_isp.csv"
-OUT = PROJECT / "data" / "derived" / "results" / "synthetic_firm_hour_of_day.csv"
+ISP_FILE = PROJECT / "results" / "regressions" / "synthetic_firm_per_firm_isp.csv"
+OUT = PROJECT / "results" / "regressions" / "synthetic_firm_hour_of_day.csv"
 
 
 def main() -> None:

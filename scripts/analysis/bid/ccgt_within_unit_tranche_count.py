@@ -158,9 +158,9 @@ def main() -> None:
             verdict = "complexified"
         print(f"{unit:<10}  {pre:>9.2f}  {post:>10.2f}  {ratio:>18.3f}  {verdict}")
 
-    out = PROJECT / "data" / "derived" / "results" / "ccgt_within_unit_tranche_count.csv"
+    out = PROJECT / "results" / "regressions" / "ccgt_within_unit_tranche_count.csv"
     tab.to_csv(out, index=False)
-    df.to_csv(PROJECT / "data" / "derived" / "results" / "ccgt_tranche_count_monthly.csv", index=False)
+    df.to_csv(PROJECT / "results" / "regressions" / "ccgt_tranche_count_monthly.csv", index=False)
     print(f"\nwrote {out}")
 
 

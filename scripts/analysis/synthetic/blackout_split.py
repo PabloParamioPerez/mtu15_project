@@ -30,11 +30,11 @@ import duckdb
 import pandas as pd
 
 PROJECT = Path(__file__).resolve().parents[3]
-ISP_FILE = PROJECT / "data" / "derived" / "results" / "synthetic_firm_per_firm_isp.csv"
+ISP_FILE = PROJECT / "results" / "regressions" / "synthetic_firm_per_firm_isp.csv"
 PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
 PRICE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "precios" / "marginalpdbc_all.parquet"
 REF = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
-OUT = PROJECT / "data" / "derived" / "results" / "blackout_split.csv"
+OUT = PROJECT / "results" / "regressions" / "blackout_split.csv"
 
 BLACKOUT = pd.Timestamp("2025-04-28")
 MTU15_IDA = pd.Timestamp("2025-03-19")

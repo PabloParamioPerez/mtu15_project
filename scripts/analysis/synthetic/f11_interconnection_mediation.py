@@ -27,7 +27,7 @@ Predictions:
     higher in uncoupled regime.
 
 Output:
-  data/derived/results/f11_interconnection_mediation.csv
+  results/regressions/f11_interconnection_mediation.csv
 """
 from __future__ import annotations
 
@@ -39,10 +39,10 @@ import pandas as pd
 import statsmodels.api as sm
 
 PROJECT = Path(__file__).resolve().parents[3]
-F7_ISP = PROJECT / "data" / "derived" / "results" / "synthetic_firm_per_firm_isp.csv"
+F7_ISP = PROJECT / "results" / "regressions" / "synthetic_firm_per_firm_isp.csv"
 PRICE_SP = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "precios" / "marginalpdbc_all.parquet"
 PRICE_FR = PROJECT / "data" / "processed" / "entsoe" / "prices" / "fr_da_all.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "f11_interconnection_mediation.csv"
+OUT = PROJECT / "results" / "regressions" / "f11_interconnection_mediation.csv"
 
 
 def main() -> None:

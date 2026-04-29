@@ -29,7 +29,7 @@ PROJECT = Path(__file__).resolve().parents[3]
 PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
 PRICE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "precios" / "marginalpdbc_all.parquet"
 REF = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
-OUT = PROJECT / "data" / "derived" / "results" / "hydro_strategic_dispatch.csv"
+OUT = PROJECT / "results" / "regressions" / "hydro_strategic_dispatch.csv"
 
 
 def main() -> None:

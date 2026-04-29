@@ -43,7 +43,7 @@ import pandas as pd
 
 PROJECT = Path(__file__).resolve().parents[3]
 PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "net_seller_position.csv"
+OUT = PROJECT / "results" / "regressions" / "net_seller_position.csv"
 
 BIG4 = ("GE", "IB", "GN", "HC")
 

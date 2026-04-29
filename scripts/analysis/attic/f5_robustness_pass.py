@@ -32,7 +32,7 @@ Same-calendar-month sub-sample (CLAUDE.md mandate for cross-regime claims):
      seasonality-mix effects on regime coefficients are eliminated by
      sample selection, not absorbed by FE.
 
-Output: data/derived/results/f5_robustness_pass.csv
+Output: results/regressions/f5_robustness_pass.csv
 """
 from __future__ import annotations
 import shutil
@@ -41,9 +41,9 @@ import tempfile
 from pathlib import Path
 
 PROJECT  = Path(__file__).resolve().parents[3]
-DTA_OUT  = PROJECT / "data" / "derived" / "results" / "f5_per_unit_panel.dta"
+DTA_OUT  = PROJECT / "results" / "regressions" / "f5_per_unit_panel.dta"
 DO_FILE  = PROJECT / "scripts" / "analysis" / "welfare" / "f5_robustness_pass.do"
-RES_OUT  = PROJECT / "data" / "derived" / "results" / "f5_robustness_pass.csv"
+RES_OUT  = PROJECT / "results" / "regressions" / "f5_robustness_pass.csv"
 
 
 def write_dofile() -> None:

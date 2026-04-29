@@ -27,7 +27,7 @@ PROJECT = Path(__file__).resolve().parents[3]
 DET = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "det_all.parquet"
 CAB = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "cab_all.parquet"
 PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
-EXIT_CSV = PROJECT / "data" / "derived" / "results" / "ccgt_extensive_margin_exit.csv"
+EXIT_CSV = PROJECT / "results" / "regressions" / "ccgt_extensive_margin_exit.csv"
 
 
 def main() -> None:
@@ -174,7 +174,7 @@ def main() -> None:
             diff = "mixed"
         print(f"  {fg:<11}  {fa:>13.3f}  {wu_ratio:>17.3f}    {diff}")
 
-    out = PROJECT / "data" / "derived" / "results" / "bid_complexity_unit_level.csv"
+    out = PROJECT / "results" / "regressions" / "bid_complexity_unit_level.csv"
     df.to_csv(out, index=False)
     print(f"\nwrote {out}")
 

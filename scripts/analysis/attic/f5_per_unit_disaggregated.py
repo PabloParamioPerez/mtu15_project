@@ -19,7 +19,7 @@ Native granularity discipline:
 Unit FE absorbed via within-transformation (demean by unit) to keep design
 matrix tractable.  Most-active dispatchable units only to bound size.
 
-Outputs: data/derived/results/f5_per_unit_disaggregated.csv
+Outputs: results/regressions/f5_per_unit_disaggregated.csv
 """
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ PDBC     = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "program
 PIBCI    = PROJECT / "data" / "processed" / "omie" / "mercado_intradiario_subastas" / "programas" / "pibci_all.parquet"
 ACTUAL   = PROJECT / "data" / "processed" / "entsoe" / "generation" / "wind_solar_actual_all.parquet"
 REF      = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
-OUT      = PROJECT / "data" / "derived" / "results" / "f5_per_unit_disaggregated.csv"
+OUT      = PROJECT / "results" / "regressions" / "f5_per_unit_disaggregated.csv"
 
 REGIMES = ["pre-IDA", "3-sess", "ISP15-win", "DA60/ID15", "DA15/ID15"]
 

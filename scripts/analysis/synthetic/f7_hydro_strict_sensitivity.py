@@ -21,10 +21,10 @@ matching:
   2. Capacity tolerance: K_ratio (capacity_L / capacity_S) must be in
      [1/3, 3]. Plants outside this band are dropped (no match).
   3. Compare per-unit IB-hydro attribution under strict matching to the
-     baseline (data/derived/results/synthetic_firm_per_unit_ib.csv).
+     baseline (results/regressions/synthetic_firm_per_unit_ib.csv).
 
 Output:
-    data/derived/results/f7_hydro_strict_sensitivity.csv
+    results/regressions/f7_hydro_strict_sensitivity.csv
 
 The headline number to track: what fraction of the baseline ~€530M
 IB-hydro attribution survives strict matching? If a substantial fraction
@@ -46,8 +46,8 @@ DET = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "
 CAB = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "cab_all.parquet"
 PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
 REF = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
-BASELINE = PROJECT / "data" / "derived" / "results" / "synthetic_firm_per_unit_ib.csv"
-OUT = PROJECT / "data" / "derived" / "results" / "f7_hydro_strict_sensitivity.csv"
+BASELINE = PROJECT / "results" / "regressions" / "synthetic_firm_per_unit_ib.csv"
+OUT = PROJECT / "results" / "regressions" / "f7_hydro_strict_sensitivity.csv"
 
 K_RATIO_MIN = 1.0 / 3.0
 K_RATIO_MAX = 3.0

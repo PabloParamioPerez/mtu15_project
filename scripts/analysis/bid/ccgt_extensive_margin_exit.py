@@ -146,7 +146,7 @@ def main() -> None:
         print("  (none of the named units found in pdbce — check unit-code spelling)")
 
     # Save
-    out = PROJECT / "data" / "derived" / "results" / "ccgt_extensive_margin_exit.csv"
+    out = PROJECT / "results" / "regressions" / "ccgt_extensive_margin_exit.csv"
     df.to_csv(out, index=False)
     print(f"\nwrote {out}")
 

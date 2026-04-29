@@ -195,8 +195,8 @@ def main() -> None:
         print(line)
 
     # Save tables
-    out1 = PROJECT / "data" / "derived" / "results" / "allaz_vila_peak_offpeak.csv"
-    out2 = PROJECT / "data" / "derived" / "results" / "allaz_vila_price_quartile.csv"
+    out1 = PROJECT / "results" / "regressions" / "allaz_vila_peak_offpeak.csv"
+    out2 = PROJECT / "results" / "regressions" / "allaz_vila_price_quartile.csv"
     tab.to_csv(out1, index=False)
     tab2.to_csv(out2, index=False)
     print(f"\nwrote {out1}")

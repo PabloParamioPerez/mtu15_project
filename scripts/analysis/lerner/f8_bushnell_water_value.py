@@ -27,7 +27,7 @@ If ρ < 0 (negative): Bushnell water-value mechanism confirmed.
 If ρ ≈ 0: IB's Q4 share is regime-invariant in some other dimension.
 If ρ > 0: contrary to Bushnell.
 
-Output: data/derived/results/f8_bushnell_water_value.csv
+Output: results/regressions/f8_bushnell_water_value.csv
 """
 from __future__ import annotations
 
@@ -43,7 +43,7 @@ PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas"
 PRICE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "precios" / "marginalpdbc_all.parquet"
 RES = PROJECT / "data" / "processed" / "entsoe" / "generation" / "reservoir_filling_es_weekly.parquet"
 REF = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
-OUT = PROJECT / "data" / "derived" / "results" / "f8_bushnell_water_value.csv"
+OUT = PROJECT / "results" / "regressions" / "f8_bushnell_water_value.csv"
 
 
 def main() -> None:

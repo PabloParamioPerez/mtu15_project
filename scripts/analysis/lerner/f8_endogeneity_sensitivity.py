@@ -32,7 +32,7 @@ Two outputs:
      "high-European-demand hours" (exogenous to IB).
 
 Output:
-    data/derived/results/f8_endogeneity_sensitivity.csv
+    results/regressions/f8_endogeneity_sensitivity.csv
 """
 from __future__ import annotations
 
@@ -46,7 +46,7 @@ PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas"
 PRICE_ES = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "precios" / "marginalpdbc_all.parquet"
 PRICE_FR = PROJECT / "data" / "processed" / "entsoe" / "prices" / "fr_da_all.parquet"
 REF = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
-OUT = PROJECT / "data" / "derived" / "results" / "f8_endogeneity_sensitivity.csv"
+OUT = PROJECT / "results" / "regressions" / "f8_endogeneity_sensitivity.csv"
 
 
 def main() -> None:

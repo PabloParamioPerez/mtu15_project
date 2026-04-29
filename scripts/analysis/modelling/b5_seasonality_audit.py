@@ -25,7 +25,7 @@ Reasoning before running:
   further post-blackout (operational scarcity); compresses at MTU15-DA
   (granularity asymmetry closes).
 
-Output: data/derived/results/b5_seasonality_audit.csv
+Output: results/regressions/b5_seasonality_audit.csv
 """
 from __future__ import annotations
 
@@ -92,7 +92,7 @@ def main() -> None:
 
     df = pd.DataFrame(rows)
     print(df.to_string(index=False))
-    out = PROJECT / 'data/derived/results/b5_seasonality_audit.csv'
+    out = PROJECT / 'results/regressions/b5_seasonality_audit.csv'
     out.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out, index=False)
     print(f'\nwrote {out}')

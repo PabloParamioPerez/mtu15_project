@@ -35,7 +35,7 @@ PROJECT = Path(__file__).resolve().parents[3]
 DET = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "det_all.parquet"
 CAB = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "cab_all.parquet"
 PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
-EXIT_CSV = PROJECT / "data" / "derived" / "results" / "ccgt_extensive_margin_exit.csv"
+EXIT_CSV = PROJECT / "results" / "regressions" / "ccgt_extensive_margin_exit.csv"
 
 
 def assign_regime(d):
@@ -203,7 +203,7 @@ def main() -> None:
                 cells.append(f"{x['tranches_per_period'].iloc[0]:>11.2f}")
         print(f"{pd.Timestamp(m).strftime('%Y-%m'):<10}  " + "  ".join(cells))
 
-    out = PROJECT / "data" / "derived" / "results" / "bid_complexity_monthly.csv"
+    out = PROJECT / "results" / "regressions" / "bid_complexity_monthly.csv"
     df.to_csv(out, index=False)
     print(f"\nwrote {out}")
 

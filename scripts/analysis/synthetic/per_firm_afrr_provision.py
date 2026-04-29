@@ -42,7 +42,7 @@ Outcomes computed (per regime: pre-IDA / 3-sess / ISP15-win / DA60-ID15
   share_combined   — geometric mean of the three shares
 
 Output:
-    data/derived/results/per_firm_afrr_provision.csv
+    results/regressions/per_firm_afrr_provision.csv
 
 For each (firm, regime, mapping) combination, one row with the share
 metrics. The thesis-relevant headline is the IB share under both
@@ -57,7 +57,7 @@ import pandas as pd
 
 PROJECT = Path(__file__).resolve().parents[3]
 LIQUI_ALL = PROJECT / "data" / "processed" / "esios" / "reservas" / "liquicierre_all.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "per_firm_afrr_provision.csv"
+OUT = PROJECT / "results" / "regressions" / "per_firm_afrr_provision.csv"
 
 IDA_REFORM   = pd.Timestamp("2024-06-14")
 ISP15_REFORM = pd.Timestamp("2024-12-01")

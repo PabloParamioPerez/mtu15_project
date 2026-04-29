@@ -18,7 +18,7 @@ all months/years; 3-sess regime is Jun-Dec 2024; ISP15-win is
 Dec 2024-Mar 2025. Same-calendar test: compare each post-window to
 pre-IDA in the same calendar months.
 
-Output: data/derived/results/b1_seasonality_audit.csv
+Output: results/regressions/b1_seasonality_audit.csv
 """
 from __future__ import annotations
 
@@ -178,7 +178,7 @@ def main() -> None:
     print(f"  Same-calendar:        see (b)")
     print(f"  Cal-month FE:         see (c)")
 
-    OUT = PROJECT / "data" / "derived" / "results" / "b1_seasonality_audit.csv"
+    OUT = PROJECT / "results" / "regressions" / "b1_seasonality_audit.csv"
     OUT.parent.mkdir(parents=True, exist_ok=True)
     same_cal.to_csv(OUT, index=False)
     print(f"\nwrote {OUT}")

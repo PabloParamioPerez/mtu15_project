@@ -25,7 +25,7 @@ If patterns from raw means survive both checks, the firm-tech
 typology is reform-driven. If they collapse, what we attributed to
 the reform is a seasonal mix artefact.
 
-Output: data/derived/results/under_commitment_seasonality.csv
+Output: results/regressions/under_commitment_seasonality.csv
 """
 from __future__ import annotations
 
@@ -202,7 +202,7 @@ def main() -> None:
     print("If raw-mean rankings flip under cal-month FE → seasonal artefact.")
     print("If raw-mean rankings hold → reform-driven.")
 
-    OUT = PROJECT / "data" / "derived" / "results" / "under_commitment_seasonality.csv"
+    OUT = PROJECT / "results" / "regressions" / "under_commitment_seasonality.csv"
     OUT.parent.mkdir(parents=True, exist_ok=True)
     same_cal.to_csv(OUT, index=False)
     print(f"\nwrote {OUT}")

@@ -32,7 +32,7 @@ OVB: outcome is a product of two equilibrium objects; this is
 descriptive, no instrument. Regime means tell us how the captured
 profit pattern moves.
 
-Output: data/derived/results/strategic_arb_profit_audit.csv
+Output: results/regressions/strategic_arb_profit_audit.csv
 """
 from __future__ import annotations
 
@@ -46,7 +46,7 @@ PROJECT = Path(__file__).resolve().parents[3]
 PIBCIE = PROJECT / "data" / "processed" / "omie" / "mercado_intradiario_subastas" / "programas" / "pibcie_all.parquet"
 PRICE_DA = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "precios" / "marginalpdbc_all.parquet"
 PRICE_IDA = PROJECT / "data" / "processed" / "omie" / "mercado_intradiario_subastas" / "precios" / "marginalpibc_all.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "strategic_arb_profit_audit.csv"
+OUT = PROJECT / "results" / "regressions" / "strategic_arb_profit_audit.csv"
 
 
 def assign_regime(d) -> str:

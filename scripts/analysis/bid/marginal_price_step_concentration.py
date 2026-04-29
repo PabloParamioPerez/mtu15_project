@@ -34,7 +34,7 @@ DET = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "
 CAB = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "cab_all.parquet"
 PRICE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "precios" / "marginalpdbc_all.parquet"
 MATCH = PROJECT / "data" / "derived" / "panels" / "synthetic_plant_match.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "marginal_price_step_concentration.csv"
+OUT = PROJECT / "results" / "regressions" / "marginal_price_step_concentration.csv"
 
 
 def main() -> None:

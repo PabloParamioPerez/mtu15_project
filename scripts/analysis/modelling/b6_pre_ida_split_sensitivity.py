@@ -29,7 +29,7 @@ interpretation is robust. If R² rises monotonically, B6 should be
 flagged as time-trend-driven.
 
 Output:
-    data/derived/results/b6_pre_ida_split_sensitivity.csv
+    results/regressions/b6_pre_ida_split_sensitivity.csv
 """
 from __future__ import annotations
 
@@ -40,7 +40,7 @@ import statsmodels.api as sm
 
 PROJECT = Path(__file__).resolve().parents[3]
 PANEL = PROJECT / "data" / "derived" / "panels" / "passthrough_panel.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "b6_pre_ida_split_sensitivity.csv"
+OUT = PROJECT / "results" / "regressions" / "b6_pre_ida_split_sensitivity.csv"
 
 
 def assign_period(d: pd.Timestamp) -> str:

@@ -24,7 +24,7 @@ fact about the two firms' generation portfolios, not a reform
 artifact. D5's vertical-integration ruling-out is robust.
 
 Output:
-    data/derived/results/d5_sell_side_long_run.csv
+    results/regressions/d5_sell_side_long_run.csv
 """
 from __future__ import annotations
 
@@ -35,7 +35,7 @@ import pandas as pd
 
 PROJECT = Path(__file__).resolve().parents[3]
 PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "d5_sell_side_long_run.csv"
+OUT = PROJECT / "results" / "regressions" / "d5_sell_side_long_run.csv"
 
 BIG4 = ("GE", "IB", "GN", "HC")
 

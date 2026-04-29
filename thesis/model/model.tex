@@ -1,0 +1,432 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\onehalfspacing
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+
+\title{A Stylized Model of Granularity-Mismatched Settlement \\ \large (Revised draft)}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{A stylized model of granularity-mismatched settlement}
+\label{sec:model}
+
+This section develops a parsimonious model of a generator-retailer trading sequentially in a day-ahead market (DA), an intraday market (IDA), and a real-time imbalance settlement, in an environment where the three markets may operate on different time clocks. The model has two primitive frictions --- a dual-pricing penalty applied to imbalance volume, and price-impact costs of using DA and IDA to span exposure --- and one structural object, the \emph{clock-gap exposure} $\Phi_{ir}$, which summarizes how those primitives interact with the time-granularity of the markets.
+
+The goal is illustrative, not estimation. A single object $\Phi_{ir}$, derived endogenously from a spanning problem, organizes the comparative statics for the three empirical layers documented in Section~\ref{sec:empirics}: the system-level transfer (Layer A), the pass-through of forecast errors into imbalance (Layer B), and the compression in dominant firms' net IDA volumes (Layer C). The three layers are not separate stories. They are reduced forms of a single mechanism: \emph{asymmetric clocks create endogenous unspanned settlement exposure; dual pricing makes that exposure costly; and dominant firms internalize the cost by retaining flexibility and reducing IDA net sales.}
+
+\subsection{Institutional clocks and schedule spaces}
+\label{sec:model-clocks}
+
+\paragraph{Time and clocks.} A delivery hour is divided into $K^{S}$ settlement intervals (ISPs), indexed $\tau = 1, \ldots, K^{S}$. Two markets clear sequentially before delivery: the day-ahead market on a clock of $K^{DA}$ periods per hour, and the intraday market on a clock of $K^{ID}$ periods per hour. Bids on each market are piecewise-constant on that market's own clock. Settlement is computed at ISP granularity. The clock triple $(K^{DA}, K^{ID}, K^{S})$ characterizes the institutional environment and takes four distinct values across Spain's 2024--2026 regimes, summarized in Table~\ref{tab:regimes}.
+
+\begin{table}[h]
+\centering
+\caption{Clock triples by regime.}
+\label{tab:regimes}
+\begin{tabular}{lccc}
+\toprule
+Regime & $K^{DA}$ & $K^{ID}$ & $K^{S}$ \\
+\midrule
+pre-IDA, 3-sess  & 1 & 1 & 1 \\
+ISP15            & 1 & 1 & 4 \\
+DA60/ID15        & 1 & 4 & 4 \\
+DA15/ID15        & 4 & 4 & 4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The pre-IDA and 3-sess regimes share the same clock triple $(1,1,1)$ but differ in IDA \emph{session architecture} (six regional sessions vs.\ three European-coupled sessions after the SIDC reform of June 2024). The model treats this difference through a separate primitive, $\ell_r$, introduced below.
+
+\paragraph{Schedule spaces.} I work directly with the settlement-clock representation as the common space in which scheduled positions, realized positions, and imbalances all live. For an hour with $K^{S}=4$ ISPs (the empirically relevant case for the asymmetric and post-MTU15 regimes), let $A^{DA}_r \in \mathbb{R}^{4 \times K^{DA}_r}$ and $A^{ID}_r \in \mathbb{R}^{4 \times K^{ID}_r}$ be the matrices that map each market's bid vector into the settlement-clock space. When a market's clock is coarser than $K^{S}$, the corresponding matrix replicates a single bid across the ISPs it covers; when the market's clock matches $K^{S}$, the matrix is the identity.
+
+\begin{definition}[Technical and economic spanning]
+A clock structure provides \emph{technical spanning} of the settlement space if
+\[
+\operatorname{Im}(A^{DA}_r) + \operatorname{Im}(A^{ID}_r) \;=\; \mathbb{R}^{K^{S}_r}.
+\]
+A clock structure provides \emph{economic spanning} if technical spanning holds and the strategic cost of using DA and IDA to fully span any forecastable settlement-clock exposure is small. Otherwise the structure provides only partial economic spanning.
+\end{definition}
+
+The distinction matters because the empirical findings cannot be rationalized by technical spanning alone. The DA60/ID15 regime provides technical spanning ($A^{ID}_r$ is the $4\times 4$ identity), yet exhibits a positive system transfer and a positive pass-through coefficient. The model therefore needs a notion of economic spanning, which I formalize through the strategic-cost matrices in Section~\ref{sec:model-spanning}.
+
+\subsection{Forecastable exposure and stochastic innovations}
+\label{sec:model-exposure}
+
+The firm's settlement-clock net position (own generation minus retail obligation) at ISP $\tau$ is
+\begin{equation}
+X_{i,\tau} \;=\; \bar{X}_{i} \;+\; \rho_{i}\, r_{i,\tau} \;+\; \omega_{i,\tau} \;+\; \xi_{i,\tau},
+\label{eq:position}
+\end{equation}
+where the four components have distinct timing and economic content.
+
+The hourly mean $\bar{X}_{i}$ is known at the time of DA clearing. The deterministic intra-hour shape $r_{i,\tau}$, normalized to $\sum_{\tau} r_{i,\tau} = 0$ and $(K^{S})^{-1}\sum_{\tau} r_{i,\tau}^{2} > 0$, is also known at DA. The scalar $\rho_{i} \ge 0$ scales the firm's exposure to that shape. The forecast revision $\omega_{i,\tau}$, with $\mathbb{E}[\omega_{i,\tau}] = 0$, is known by IDA clearing but not at DA clearing; this is the term whose sub-hourly variance share $\theta$ generates Layer B's pass-through. The stochastic innovation $\xi_{i,\tau}$, with $\mathbb{E}[\xi_{i,\tau}] = 0$ and variance $\sigma^{2}_{\xi}$, is realized only after IDA closes, at delivery, and enters the imbalance at settlement.
+
+It will be useful to collect the components forecastable by the time of IDA clearing into
+\begin{equation}
+z_{i,\tau} \;=\; \bar{X}_{i} \;+\; \rho_{i}\, r_{i,\tau} \;+\; \omega_{i,\tau}.
+\end{equation}
+
+Equation~\eqref{eq:position} does work below: $\rho_{i} r_{i,\tau}$ is forecastable already at DA but tradable in DA only if $K^{DA} = K^{S}$; $\omega_{i,\tau}$ is forecastable only at IDA, and tradable there only if $K^{ID} = K^{S}$; and $\xi_{i,\tau}$ is the irreducible stochastic floor of imbalance, present in every regime and not tradable in any market.
+
+\subsection{Endogenous spanning and clock-gap exposure}
+\label{sec:model-spanning}
+
+The firm chooses bid vectors $d_{i} \in \mathbb{R}^{K^{DA}_r}$ in DA and $q_{i} \in \mathbb{R}^{K^{ID}_r}$ in IDA. The scheduled position at the settlement clock is
+\begin{equation}
+s_{i,r} \;=\; A^{DA}_r d_{i} \;+\; A^{ID}_r q_{i},
+\end{equation}
+and the residual exposure forecastable at IDA but not yet hedged is
+\begin{equation}
+u_{i,r} \;=\; z_{i} \;-\; A^{DA}_r d_{i} \;-\; A^{ID}_r q_{i}.
+\end{equation}
+
+\paragraph{Strategic-cost matrices.} Spanning $z_{i}$ is not free. Each unit of bid in market $M \in \{DA, ID\}$ incurs a strategic cost reflecting the firm's residual-demand price impact in that market. Following the standard market-power microfoundation,
+\begin{equation}
+B^{M}_r \;\simeq\; -\,\frac{\partial P^{M}_r(Q)}{\partial Q},
+\end{equation}
+with $B^{M}_r$ a positive-definite matrix whose magnitude is larger when products are thin. The economically relevant ranking is
+\begin{equation}
+B^{ID}_{r} \;>\; B^{DA}_{r},
+\label{eq:bdamuch}
+\end{equation}
+because DA is the deeper and less price-impactful market. Three institutional features of the Iberian market support this ranking. First, the day-ahead market is a single uniform-price auction that pools the full set of generation and retail participants in one clearing event, while the intraday market fragments liquidity across a sequence of separate sessions, each with a smaller participant pool and shorter bidding window. Second, demand-side elasticity is heaviest in the day-ahead market, where most retail and large-consumer programmes are formed; the intraday residual demand consists predominantly of forecast-revision trades and reserves repositioning, which are less price-elastic at any given quantity. Third, the move from MTU60 to MTU15 in the intraday market quadruples the number of products to clear per hour without commensurately expanding the participant pool, so per-product liquidity is mechanically thinner under finer clocks. The three features compound: IDA's deeper price impact relative to DA reflects a smaller pool, less elastic demand, and finer products simultaneously. The ranking is the substantive theoretical assumption of the model and the reason a firm that wants to encode a deterministic intra-hour shape into its schedule prefers to do it in DA, where it is cheap, rather than in IDA, where each gross repositioning trade carries larger price impact.
+
+\paragraph{The spanning problem.} The firm chooses $(d_{i}, q_{i})$ to balance the expected dual-pricing settlement cost against the strategic costs of bidding:
+\begin{equation}
+(d^{*}_{i,r}, q^{*}_{i,r}) \;\in\; \arg\min_{d_{i}, q_{i}}
+\;\;
+\lambda \kappa_{i,r}
+\sum_{\tau=1}^{K^{S}_r}
+\mathbb{E}\!\left|\,z_{i,\tau} \,-\, (A^{DA}_r d_{i})_{\tau} \,-\, (A^{ID}_r q_{i})_{\tau} \,+\, \xi_{i,\tau}\,\right|
+\;+\; \tfrac{1}{2} d_{i}' B^{DA}_r d_{i}
+\;+\; \tfrac{1}{2} q_{i}' B^{ID}_r q_{i},
+\label{eq:spanning}
+\end{equation}
+where $\lambda > 0$ is the dual-pricing wedge and $\kappa_{i,r} \in (0,1]$ is the firm's same-sign probability with the system imbalance, derived in Section~\ref{sec:model-dualpricing}.
+
+The endogenous unspanned residual is
+\begin{equation}
+u^{*}_{i,r} \;=\; z_{i} \;-\; A^{DA}_r d^{*}_{i,r} \;-\; A^{ID}_r q^{*}_{i,r}.
+\label{eq:residual}
+\end{equation}
+
+\paragraph{The clock-gap exposure.} Define the firm's \emph{clock-gap exposure} as the expected per-ISP imbalance volume in excess of the irreducible stochastic floor:
+\begin{equation}
+\boxed{\;\;
+\Phi_{i,r} \;\equiv\; \sum_{\tau=1}^{K^{S}_r} \big[\, \mathbb{E}\!\left|\,u^{*}_{i,\tau,r} + \xi_{i,\tau}\,\right| \,-\, \mathbb{E}\!\left|\,\xi_{i,\tau}\,\right| \,\big].
+\;\;}
+\label{eq:phi}
+\end{equation}
+By Jensen's inequality applied to the convex function $|\cdot|$, $\Phi_{i,r} \ge 0$, with equality if and only if $u^{*}_{i,\tau,r} = 0$ for all $\tau$. The object $\Phi_{i,r}$ measures the imbalance volume that is \emph{forecastable but not spanned} at the firm's optimum, given the clock structure and the strategic costs of spanning.
+
+\begin{remark}[Local Gaussian approximation]
+\label{rem:gaussian}
+For small $u^{*}_{i,\tau,r}$ relative to $\sigma_{\xi}$, a second-order expansion gives
+\[
+\mathbb{E}|\,u + \xi\,| \;-\; \mathbb{E}|\,\xi\,| \;\approx\; \frac{u^{2}}{\sqrt{2\pi}\,\sigma_{\xi}},
+\]
+so that $\Phi_{i,r} \approx (\sqrt{2\pi}\,\sigma_{\xi})^{-1} \sum_{\tau} (u^{*}_{i,\tau,r})^{2}$. This local quadratic form is useful for intuition --- the heterogeneity result in Proposition~\ref{prop:heterogeneity} below relies on it --- but the global definition in \eqref{eq:phi} does not require it. For large unspanned residuals the scaling is linear in $|u|$ rather than quadratic.
+\end{remark}
+
+\paragraph{The regime ranking.} The clock structure of the four regimes maps into $\Phi_{i,r}$ as follows.
+
+\begin{proposition}[Clock structure of $\Phi$]
+\label{prop:phi}
+Under \eqref{eq:bdamuch} and the spanning problem \eqref{eq:spanning},
+\begin{enumerate}[label=(\roman*)]
+\item In pre-IDA and 3-sess (clock triple $(1,1,1)$, with $K^{S} = 1$), the settlement clock is the same as both market clocks, $z_{i}$ has only an hourly-mean component within each settlement period, and the firm sets $A^{DA}_r d^{*}_{i} + A^{ID}_r q^{*}_{i} = z_{i}$ at low strategic cost. Hence $\Phi_{i,r} \approx 0$.
+\item In ISP15, $K^{ID} = K^{DA} = 1$ but $K^{S} = 4$. Neither $A^{DA}_r$ nor $A^{ID}_r$ technically spans the four-dimensional settlement space; both replicate a single hourly bid across four ISPs. The deterministic intra-hour shape $\rho_{i} r_{i,\tau}$ remains in $u^{*}_{i,r}$ at any cost, so $\Phi^{\text{ISP15}}_{i,r} > 0$ and is bounded below by the unspannable component.
+\item In DA60/ID15, $K^{ID} = K^{S} = 4$, so $A^{ID}_r$ technically spans the settlement space. However, $A^{DA}_r$ still replicates a single hourly bid, so the deterministic shape can be encoded only in IDA. The strategic cost of doing so is $\tfrac{1}{2} q_{i}' B^{ID}_r q_{i}$ with $B^{ID}_r$ large. The optimum involves \emph{partial} spanning, with $0 < \Phi^{\text{DA60/ID15}}_{i,r} < \Phi^{\text{ISP15}}_{i,r}$.
+\item In DA15/ID15, $K^{DA} = K^{ID} = K^{S} = 4$, so both matrices span the settlement space. The deterministic shape can be encoded in DA at the lower strategic cost $\tfrac{1}{2} d_{i}' B^{DA}_r d_{i}$, so spanning is essentially complete. Hence $\Phi^{\text{DA15/ID15}}_{i,r} \approx 0$.
+\end{enumerate}
+The regime ranking is therefore
+\[
+\Phi^{\text{ISP15}}_{i,r} \;>\; \Phi^{\text{DA60/ID15}}_{i,r} \;>\; \Phi^{\text{pre}}_{i,r} \;\approx\; \Phi^{\text{DA15/ID15}}_{i,r} \;\approx\; 0.
+\]
+\end{proposition}
+
+The economic content is that $\Phi$ vanishes in two distinct ways. In symmetric regimes with $K^{DA} = K^{S}$, the deterministic shape is bid out cheaply in DA. In asymmetric regimes with $K^{DA} < K^{S}$, the shape can be bid out only in IDA, which is costly. ISP15 is the worst case because neither market technically spans the settlement clock; DA60/ID15 is intermediate because IDA technically spans but at high strategic cost; DA15/ID15 is good because DA technically spans at low strategic cost.
+
+This is the formal version of the technical-vs-economic spanning distinction. The endogenous residual $u^{*}_{i,r}$ inherits both forces: the dimensional constraint that makes ISP15 unspanned, and the strategic-cost asymmetry that makes DA60/ID15 only partially spanned.
+
+\subsection{Dual-pricing settlement}
+\label{sec:model-dualpricing}
+
+The Spanish imbalance settlement applies a dual-pricing rule: a BRP whose imbalance has the \emph{same sign} as the system imbalance pays a penalty $\lambda$ per MWh of imbalance, while one whose imbalance has the \emph{opposite sign} faces no penalty (it is paid the day-ahead price). The expected per-ISP penalty cost for firm $i$ is
+\begin{equation}
+\mathbb{E}\!\left[\,(p^{DA}_{\tau} - p^{\text{imb}}_{i,\tau})\,\varepsilon_{i,\tau}\,\right]
+\;=\; \lambda\,\mathbb{E}\!\left[\,|\varepsilon_{i,\tau}|\,\mathbf{1}\{\varepsilon_{i,\tau}\,\varepsilon_{\text{sys},\tau} > 0\}\,\right],
+\label{eq:dualcost}
+\end{equation}
+where $\varepsilon_{i,\tau}$ is the firm's per-ISP imbalance and $\varepsilon_{\text{sys},\tau}$ is the system imbalance.
+
+For tractability, define the firm-regime same-sign probability
+\begin{equation}
+\kappa_{i,r} \;\equiv\; \Pr\!\left(\varepsilon_{i,r}\,\varepsilon_{\text{sys},r} > 0 \,\big|\, |\varepsilon_{i,r}|\right),
+\label{eq:kappa}
+\end{equation}
+and approximate \eqref{eq:dualcost} by
+\begin{equation}
+\lambda\,\kappa_{i,r}\,\mathbb{E}|\varepsilon_{i,\tau}|.
+\label{eq:linearpenalty}
+\end{equation}
+This is the form used in the spanning problem \eqref{eq:spanning} and in everything that follows.
+
+\begin{remark}[Why $\kappa_{i,r}$ matters]
+For a small price-taking BRP whose imbalance is approximately independent of the system aggregate, $\kappa_{i,r} \approx 1/2$. For a dominant firm that contributes a substantial share of the system imbalance --- as the Big-4 do in Spain --- $\kappa_{i,r}$ is strictly larger than $1/2$. Carrying $\kappa_{i,r}$ explicitly is what allows the model to speak to the Big-4's disproportionate contribution to Layer A's aggregate transfer, and to the firm-level heterogeneity in Layer C.
+\end{remark}
+
+The dual-pricing rule is the only friction in the model that converts imbalance volume into a cost. Without it, $\Phi_{i,r}$ would still be a well-defined object but would carry no economic weight. Without $\Phi_{i,r}$, the dual-pricing rule would still impose a baseline cost on the irreducible stochastic floor $\sum_{\tau}\mathbb{E}|\xi_{i,\tau}|$ but no regime-varying transfer.
+
+\subsection{Strategic IDA flexibility supply}
+\label{sec:model-strategic}
+
+I now turn to the IDA bidding decision of dominant firms. The model is one of a fixed set $\mathcal{B} = \{1,\ldots,N\}$ of strategic Big-4 firms plus a competitive fringe with price-taking IDA volume $Y^{F}$. The fringe enters only through the residual demand curve faced by the strategic firms; it carries no causal weight in the propositions below.
+
+\paragraph{Decomposition of IDA volume.} The empirical object $q_{2}$ is the firm's signed net IDA volume, which combines two economically distinct trades:
+\begin{equation}
+q^{ID}_{i} \;=\; h_{i} \;+\; y_{i},
+\end{equation}
+where $h_{i}$ is the \emph{hedging} component used to absorb the forecastable exposure $z_{i}$ in the spanning problem of Section~\ref{sec:model-spanning}, and $y_{i}$ is \emph{discretionary strategic supply} of IDA flexibility --- selling MWh into IDA in exchange for the price spread $P^{ID} - P^{DA}$ at the cost of giving up flexibility for real-time imbalance management.
+
+This decomposition matters because the dominant firm's strategic FOC is for $y_{i}$, not for $h_{i}$. The hedging trade $h_{i}$ minimizes expected imbalance cost taking prices as given; the strategic trade $y_{i}$ exploits the firm's residual-demand price impact and trades off current revenue against retained flexibility.
+
+\paragraph{Retained flexibility.} Let $F_{i}$ denote the firm's flexible capacity --- the MWh of physical adjustment available for real-time imbalance management. Selling $y_{i}$ into IDA reduces this by one for one. Gross repositioning $|h_{i}|$ also consumes flexibility, at rate $\chi_{i} \ge 0$. Retained flexibility for real-time use is therefore
+\begin{equation}
+R_{i} \;=\; F_{i} \;-\; y_{i} \;-\; \chi_{i}\,|h_{i}|.
+\end{equation}
+
+\paragraph{Real-time value function.} After IDA closes, the stochastic shock $\xi_{i,\tau}$ realizes and the firm chooses real-time adjustments $a_{i,\tau}$ subject to the retained-flexibility constraint $\sum_{\tau}|a_{i,\tau}| \le R_{i}$. Its expected residual cost is
+\begin{equation}
+V_{i,r}(R_{i}; \Phi_{i,r}, \lambda, \kappa_{i,r})
+\;\equiv\; \mathbb{E}\!\left[\, \min_{\{a_{i,\tau}\}\,:\,\sum|a_{i,\tau}| \le R_{i}}
+\;\;\sum_{\tau}\!\left( C^{RT}_{i}(a_{i,\tau}) \,+\, \lambda\,\kappa_{i,r}\,\big|\,u^{*}_{i,\tau,r} + \xi_{i,\tau} - a_{i,\tau}\big| \right) \,\right],
+\label{eq:vfunction}
+\end{equation}
+where $C^{RT}_{i}$ is the real-time generation/balancing cost. The marginal value of retained flexibility is
+\begin{equation}
+\nu_{i,r} \;\equiv\; -\,\frac{\partial V_{i,r}(R_{i};\,\Phi_{i,r},\lambda,\kappa_{i,r})}{\partial R_{i}} \;\ge\; 0.
+\label{eq:nu}
+\end{equation}
+Higher clock-gap exposure raises the expected real-time imbalance to be managed, which raises the marginal value of retained flexibility.
+
+\paragraph{The IDA flexibility-supply problem.} The dominant firm chooses $y_{i}$ to maximize
+\begin{equation}
+P^{ID}(Y;\, Z_{r})\,y_{i} \;-\; C^{ID}_{i}(y_{i}) \;-\; V_{i,r}\!\big(F_{i} - y_{i} - \chi_{i}|h_{i}|;\, \Phi_{i,r}, \lambda, \kappa_{i,r}\big) \;-\; \ell_{r}\,y_{i},
+\end{equation}
+where $Y = \sum_{j \in \mathcal{B}} y_{j} + Y^{F}$ is total IDA volume, $C^{ID}_{i}$ is the firm's direct IDA cost function, and $\ell_{r}$ is a regime-specific session-architecture wedge introduced below. The first-order condition is
+\begin{equation}
+\boxed{\;\;
+P^{ID}(Y;Z_{r}) \;+\; y_{i}\,P^{ID\prime}(Y;Z_{r}) \;-\; C^{ID\prime}_{i}(y_{i}) \;-\; \nu_{i,r} \;-\; \ell_{r} \;=\; 0.
+\;\;}
+\label{eq:foc}
+\end{equation}
+
+This is the IO core of the model. The firm equates strategic marginal revenue (the first two terms) to direct marginal cost plus two wedges: $\nu_{i,r}$, the shadow value of retained flexibility, and $\ell_{r}$, the session-architecture wedge.
+
+The session wedge $\ell_{r}$ captures effects of changes in IDA market microstructure that are independent of the clock-gap mechanism. The compression in $q_{2}$ between pre-IDA and 3-sess regimes, both of which have $\Phi = 0$, must come from this channel rather than from $\Phi$. I therefore impose
+\[
+\ell^{\text{pre}}_{r} \;=\; 0, \qquad \ell^{\text{3sess}}_{r} \;>\; 0, \qquad \ell^{\text{ISP15}}_{r}, \ell^{\text{DA60/ID15}}_{r}, \ell^{\text{DA15/ID15}}_{r} \;\approx\; \ell^{\text{3sess}}_{r}.
+\]
+The empirical mapping is that $\ell_{r}$ identifies off the pre-IDA $\to$ 3-sess change in $q_{2}$, while $\Phi_{r}$ identifies off the within-3-sessions movement and the boundary-symmetry comparison.
+
+\paragraph{Local linearization of $\nu_{i,r}$.} The shadow value $\nu_{i,r}$ is in general a nonlinear function of $\Phi_{i,r}$, but a local linearization around the symmetric benchmark is sufficient for the comparative statics. Write
+\begin{equation}
+\nu_{i,r} \;=\; \psi_{i}(\Phi_{i,r},\,\lambda,\,\kappa_{i,r},\,R_{i}),
+\end{equation}
+with $\psi_{i,\Phi} > 0$, $\psi_{i,\lambda} > 0$, $\psi_{i,\kappa} > 0$. Around the symmetric benchmark $\Phi = 0$, the normalization $\psi_{i}(0,\lambda,\kappa_{i},R_{i}) = 0$ holds (a clock-complete environment imposes no additional clock-gap shadow cost). A first-order expansion gives
+\begin{equation}
+\nu_{i,r} \;\approx\; \psi_{i,\Phi}(0,\lambda,\kappa_{i},R_{i})\,\Phi_{i,r} \;+\; o(\Phi_{i,r}).
+\end{equation}
+Defining
+\begin{equation}
+\psi_{i,\Phi}(0,\lambda,\kappa_{i},R_{i}) \;\equiv\; \lambda\,\kappa_{i}\,m_{i},
+\label{eq:msens}
+\end{equation}
+where $m_{i}$ is the local sensitivity of firm $i$'s retained-flexibility shadow value to clock-gap exposure, the linearized FOC becomes
+\begin{equation}
+\boxed{\;\;
+\nu_{i,r} \;\approx\; \lambda\,\kappa_{i}\,m_{i}\,\Phi_{r}.
+\;\;}
+\label{eq:nulinear}
+\end{equation}
+
+The structural meaning of $m_{i}$ is unambiguous: it is the local sensitivity of the firm's retained-flexibility shadow value to clock-gap exposure, evaluated at the symmetric benchmark. It absorbs everything about the curvature of $V_{i,r}$ at $\Phi = 0$ that the linearization does not need to resolve explicitly. Heterogeneity in $m_{i}$ across firms then drives heterogeneity in Layer C (Section~\ref{sec:model-comparative}).
+
+\paragraph{Structural separability of the linearized predictions.} Two observations about the way the model's primitives enter the comparative statics are worth stating explicitly. First, in the linearized FOC \eqref{eq:nulinear}, the four objects $(\lambda, \kappa_{i}, m_{i}, \mathcal{H}_{i})$ enter every Layer C prediction only through the single ratio $\lambda\kappa_{i} m_{i}/\mathcal{H}_{i}$ multiplying $\Phi_{r}$. The model therefore makes statements about this ratio as a composite structural object; individual primitives cannot be read off any single comparative-static expression. Second, the same composite $\lambda\kappa_{i} m_{i}/\mathcal{H}_{i}$ multiplies $\Phi_{r}$ at every regime, so any cross-regime ratio of $q_{2,i,r}$ movements depends only on the cross-regime ratio of $\Phi_{r}$ values; the firm-specific composite cancels. This is what makes the regime ranking in Proposition~\ref{prop:q2} a clean qualitative prediction without requiring resolution of the firm-level structural primitives. The ranking is a property of $\Phi$ alone; the magnitudes of $q_{2,i,r}$ within a firm are properties of the composite times $\Phi$.
+
+Substituting \eqref{eq:nulinear} into \eqref{eq:foc} and inverting the FOC gives the linearized equilibrium IDA volume:
+\begin{equation}
+y^{*}_{i,r} \;=\; y^{0}_{i} \;-\; \frac{\lambda\,\kappa_{i}\,m_{i}\,\Phi_{r} \;+\; \ell_{r}}{\mathcal{H}_{i}},
+\label{eq:ylinear}
+\end{equation}
+where $y^{0}_{i}$ is the firm's frictionless ($\Phi = \ell = 0$) strategic IDA supply and
+\begin{equation}
+\mathcal{H}_{i} \;\equiv\; C^{ID\prime\prime}_{i}(y_{i}) \;-\; 2\,P^{ID\prime}(Y) \;-\; y_{i}\,P^{ID\prime\prime}(Y)
+\end{equation}
+is the second-order curvature of the strategic problem (positive at the optimum).
+
+I treat the empirical object $q_{2,i,r}$ as a reduced-form measure of the firm's net IDA repositioning, dominated by the strategic component $y^{*}_{i,r}$. The linear form \eqref{eq:ylinear} therefore predicts $q_{2,i,r} = q^{0}_{2,i} - (\lambda\kappa_{i} m_{i}\Phi_{r} + \ell_{r})/\mathcal{H}_{i}$.
+
+\subsection{Comparative statics for the three layers}
+\label{sec:model-comparative}
+
+The three central equations \eqref{eq:phi}, \eqref{eq:foc}, and \eqref{eq:nulinear} now deliver the comparative statics for the three empirical layers. Each layer is a different reduced form of the same primitives.
+
+\subsubsection*{Layer A: system-level transfer}
+
+Aggregating the dual-pricing penalty across firms and time, the total settlement transfer from BRPs to the system operator over a regime of duration $T$ ISPs is
+\begin{equation}
+\mathcal{T}_{r} \;=\; \lambda \sum_{i,\tau}
+\mathbb{E}\!\left[\,|\varepsilon_{i,\tau}|\,\mathbf{1}\{\varepsilon_{i,\tau}\,\varepsilon_{\text{sys},\tau} > 0\}\,\right]
+\;\approx\; \lambda \sum_{i} \kappa_{i,r}\!\left[\,T \cdot \mathbb{E}|\xi_{i}| \,+\, \Phi_{i,r}\,\right].
+\label{eq:transfer}
+\end{equation}
+The first term is a baseline transfer due to the irreducible stochastic floor $|\xi_{i}|$, which is present in every regime. The second term, $\lambda \sum_{i} \kappa_{i,r}\,\Phi_{i,r}$, is the regime-specific clock-gap component.
+
+\begin{proposition}[System transfer]
+\label{prop:transfer}
+The regime-specific component $\lambda \sum_{i} \kappa_{i,r}\,\Phi_{i,r}$ of the system transfer satisfies:
+\begin{enumerate}[label=(\roman*)]
+\item it is approximately zero in the symmetric regimes (pre-IDA, 3-sess, DA15/ID15);
+\item it is strictly positive in the asymmetric regimes (ISP15, DA60/ID15);
+\item it is largest in ISP15.
+\end{enumerate}
+\end{proposition}
+
+The economic content is not that BRPs become worse forecasters --- forecast quality $\sigma_{\omega}^{2}$ and shape $r$ are exogenous and unchanged across regimes. It is that a larger fraction of forecastable position variation cannot be cheaply spanned in DA and IDA when clocks misalign, so it leaks into settlement. The system operator collects this volume at rate $\lambda$ per MWh, weighted by the same-sign probability $\kappa_{i,r}$.
+
+\subsubsection*{Layer B: pass-through of forecast errors}
+
+Decompose the forecast revision $\omega_{i,\tau}$ into an hourly-mean component $\omega_{i,h}$ and a sub-hourly component $\omega_{i,\tau\mid h}$, with $\sum_{\tau} \omega_{i,\tau\mid h} = 0$ within the hour. The unspanned forecast-error share is
+\begin{equation}
+\theta_{r} \;\equiv\; \frac{\operatorname{Var}\!\big(\,(I - \Pi_{r})\,\omega_{i,\tau}\,\big)}{\operatorname{Var}(\omega_{i,\tau})},
+\end{equation}
+where $\Pi_{r}$ is the orthogonal projection onto the column space of $A^{ID}_r$ (the IDA-spannable subspace at IDA clearing). In symmetric regimes, $\Pi_{r}$ is the identity on the settlement space (or $\omega$ is one-dimensional), so $\theta_{r} \approx 0$. In asymmetric regimes, $\theta_{r} > 0$ is bounded below by the share of forecast-error variance below the coarsest tradable clock.
+
+\begin{proposition}[Pass-through]
+\label{prop:passthrough}
+The pass-through coefficient $\beta_{r} \equiv \partial \mathbb{E}|\varepsilon_{\tau}|/\partial |\omega_{\tau}|$ is increasing in the unspanned forecast-error component embedded in $\Phi_{r}$. In particular,
+\[
+\beta_{r}^{\text{ISP15}} \;>\; \beta_{r}^{\text{DA60/ID15}} \;>\; \beta_{r}^{\text{DA15/ID15}} \;\approx\; \beta_{r}^{\text{pre}} \;\approx\; 0.
+\]
+\end{proposition}
+
+The model does not claim equality between $\beta_{r}$ and any specific variance share. The exact mapping depends on aggregation across firms, netting across BRPs, the same-sign correlation $\kappa$, and the absolute-value transformation in the regression specification. Monotonicity in $\theta_{r}$ is the testable content.
+
+The model also accommodates the post-April-2025 jump in $\beta_{r}$ within the DA60/ID15 regime as a shift in $\lambda$ (regulatory tightening of dual-pricing application following the system event), holding the clock structure fixed. This is exogenous to the comparative statics and not endogenized here.
+
+\subsubsection*{Layer C: dominant firms' IDA repositioning}
+
+The strategic FOC \eqref{eq:foc} with the linearization \eqref{eq:nulinear} gives
+\begin{equation}
+\boxed{\;\;
+q_{2,i,r} \;=\; q^{0}_{2,i} \;-\; \frac{\lambda\,\kappa_{i}\,m_{i}\,\Phi_{r} \;+\; \ell_{r}}{\mathcal{H}_{i}}.
+\;\;}
+\label{eq:layerC}
+\end{equation}
+
+\begin{proposition}[Strategic IDA volume]
+\label{prop:q2}
+Under the linearized FOC \eqref{eq:layerC}, dominant firms' net IDA volume is decreasing in both $\Phi_{r}$ and $\ell_{r}$. Specifically:
+\begin{enumerate}[label=(\roman*)]
+\item $q_{2}$ is strictly larger in pre-IDA than in 3-sess (because $\ell_{r}$ jumps from zero to a positive value, while $\Phi_{r}$ remains zero);
+\item $q_{2}$ is strictly smaller in ISP15 than in 3-sess (because $\Phi_{r}$ jumps from zero to its maximum, while $\ell_{r}$ is unchanged);
+\item $q_{2}$ in DA60/ID15 is intermediate between ISP15 and DA15/ID15 (because $\Phi_{r}$ falls but does not vanish);
+\item $q_{2}$ recovers in DA15/ID15 to approximately its 3-sess level, $q_{2}^{\text{3sess}} \approx q_{2}^{\text{DA15/ID15}}$, because $\Phi_{r} \to 0$ but $\ell_{r}$ remains positive.
+\end{enumerate}
+\end{proposition}
+
+The empirically observed U-shape in $q_{2}$ is the joint image of $\Phi_{r}$ (which generates the deep trough at ISP15 and the recovery at DA15/ID15) and $\ell_{r}$ (which generates the level shift between pre-IDA and the post-SIDC regimes). The model does not predict that the U-shape returns exactly to the pre-IDA level; it predicts that it returns to the 3-sess level.
+
+\paragraph{Heterogeneity.}
+The clock-gap exposure carries a firm-specific subscript through both $\rho_{i}$ (entering $\Phi_{i,r}$ via the deterministic shape) and the structural primitives $\kappa_{i}, m_{i}, \mathcal{H}_{i}$ (entering the linearized FOC).
+
+\begin{proposition}[Heterogeneity]
+\label{prop:heterogeneity}
+Under the model and the local Gaussian approximation of Remark~\ref{rem:gaussian}:
+\begin{enumerate}[label=(\roman*)]
+\item firms with larger intra-hour shape exposure $\rho_{i}$ have larger $\Phi_{i,r}$ in asymmetric regimes;
+\item firms with larger same-sign exposure $\kappa_{i}$ contribute disproportionately to the aggregate transfer in Layer A;
+\item firms with larger flexibility-shadow sensitivity $m_{i}$ exhibit deeper compression in $q_{2}$ in asymmetric regimes.
+\end{enumerate}
+\end{proposition}
+
+The empirical mapping is direct: $\rho_{i}$ has a portfolio-shape proxy (standard deviation of hourly load shape divided by hourly mean) and $\kappa_{i}$ has a system-share proxy (the firm's contribution to system imbalance volume). $m_{i}$ is harder to proxy directly without estimation but is identified by the depth of $q_{2}$ compression conditional on $\rho_{i}$.
+
+\subsection{Boundary symmetry and France placebo}
+\label{sec:model-symmetry}
+
+\begin{proposition}[Boundary symmetry]
+\label{prop:boundary}
+The clock-gap object $\Phi_{i,r}$ is approximately zero in any regime with $K^{S} \le \min\{K^{DA}, K^{ID}\}$, regardless of which symmetric triple. Therefore Layers A and B are observationally equivalent across symmetric regimes. Layer C, however, additionally depends on the session wedge $\ell_{r}$: $q_{2}^{\text{pre}} = q_{2}^{\text{DA15/ID15}}$ holds only if $\ell^{\text{pre}}_{r} = \ell^{\text{DA15/ID15}}_{r}$. When session architecture differs, boundary symmetry holds for Layers A and B but not for Layer C.
+\end{proposition}
+
+The qualified statement is empirically credible: pre-IDA and DA15/ID15 differ in IDA session architecture (six regional sessions vs.\ three European-coupled sessions, post-SIDC), so $q_{2}^{\text{pre}} > q_{2}^{\text{DA15/ID15}}$ if $\ell^{\text{post-SIDC}} > 0$. The transfer and pass-through, however, are predicted to coincide between the two boundaries.
+
+\begin{proposition}[France placebo]
+\label{prop:france}
+A jurisdiction with $K^{S} \equiv 1$ throughout the sample period satisfies $\Phi^{FR}_{i,r} \approx 0$ in every regime, regardless of changes in $K^{ID}$. Therefore the model predicts:
+\begin{enumerate}[label=(\roman*)]
+\item no $\Phi$-driven component of system transfer or pass-through in France;
+\item a possible $\ell_{r}$-driven movement in $q_{2}^{FR}$, since France experienced the same SIDC reform as Spain.
+\end{enumerate}
+\end{proposition}
+
+The placebo identifies the $\Phi$-component of the Spanish patterns cleanly. It does not predict zero $q_{2}$ movement in France, because France experienced the same SIDC reform; the model accommodates this via $\ell^{FR}_{r}$.
+
+\subsection{Within-regime predictions}
+\label{sec:model-within}
+
+The model also generates two within-regime predictions that go beyond regime means and provide additional discipline.
+
+First, within an asymmetric regime, the system transfer and the pass-through coefficient should be larger at hours of the day with peakier intra-hour shape, because $\Phi_{i,r}$ scales with $\rho_{i}^{2}\,\overline{r_{i}^{2}}$ in the local Gaussian approximation. In an Iberian setting, this means morning and evening ramp hours, not smooth midday or overnight hours. An interaction of regime indicators with hour-of-day fixed effects in the Layer-B regression provides a sharp test.
+
+Second, the firm-by-firm pass-through coefficient and $q_{2}$ compression in asymmetric regimes should scale with a measurable proxy for $\rho_{i}$ (the firm's portfolio-shape statistic, computed from scheduling data). Regressing firm-specific empirical objects on a portfolio-shape statistic computed independently from scheduling data is a falsifiable cross-firm prediction with no free parameters.
+
+\subsection{From empirical objects to structural combinations}
+\label{sec:model-mapping}
+
+The model is used for comparative statics rather than structural estimation. The empirical chapter is responsible for evaluating whether the signs, rankings, and magnitudes implied by the model match the data. The mapping from empirical objects to structural combinations is direct.
+
+Layer A disciplines the aggregate object $\lambda \sum_{i} \kappa_{i,r}\,\Phi_{i,r}$, identified off the regime-by-regime time path of cumulative system transfers. Layer B disciplines the unspanned forecast-error component embedded in $\Phi_{r}$, identified off the regime-by-regime pass-through coefficient $\beta_{r}$. Layer C disciplines the ratio $(\lambda \kappa_{i} m_{i} \Phi_{r} + \ell_{r})/\mathcal{H}_{i}$, identified off the regime-by-regime path of $q_{2}$ at the firm level.
+
+The session wedge $\ell_{r}$ is identified separately by changes in $q_{2}$ that occur when $\Phi_{r} = 0$, especially the pre-IDA $\to$ 3-sess transition. The clock-gap object $\Phi_{r}$ is identified by movements that are joint across all three layers within the asymmetric window. The boundary-symmetry comparison between pre-IDA and DA15/ID15 disciplines the model's prediction that Layers A and B return to their baseline while Layer C returns only to its post-SIDC baseline.
+
+\subsection{What the model does not deliver}
+\label{sec:model-limits}
+
+Three limitations are worth flagging before turning to the empirics.
+
+The model is static. The persistent depression of $q_{2,i}$ for individual firms after $\Phi_{r}$ returns to zero in DA15/ID15 --- which the empirical chapter documents for some Big-4 firms --- is inconsistent with full recovery to a frictionless level and would require a dynamic extension with adjustment costs in trading-strategy capital. I treat such persistence as outside the parsimonious core and report it descriptively.
+
+The April 2025 jump in $\beta$ within the DA60/ID15 regime is a shift in $\lambda$ (regulatory tightening following a system event), not a shift in clocks. The model accommodates it as a level effect on the cost coefficient, but it is exogenous to the clock structure and not endogenized here.
+
+The decomposition $q^{ID}_{i} = h_{i} + y_{i}$ between hedging and discretionary supply is conceptual. The empirical $q_{2}$ does not separately observe these components. The model's prediction is for the strategic component $y^{*}_{i,r}$; the empirical mapping is to the reduced-form net IDA volume $q_{2,i,r}$, dominated by but not equal to $y^{*}_{i,r}$. A structural extension that separates the two components empirically is beyond the scope of this chapter and belongs to the optional structural-estimation extension.
+
+\subsection*{Summary}
+
+A dual-pricing imbalance penalty applied at a finer settlement clock than the finest cheaply-tradable market clock taxes the deterministic and stochastic intra-clock variation in firms' net positions. The friction is summarized by a single structural object, the clock-gap exposure $\Phi_{i,r}$, defined endogenously as the residual unspanned exposure at the firm's spanning optimum. This object is approximately zero in symmetric regimes (pre-IDA, 3-sess, DA15/ID15) and positive in asymmetric ones (ISP15, DA60/ID15), with the ranking $\Phi^{\text{ISP15}} > \Phi^{\text{DA60/ID15}} > 0$ following from the technical-vs-economic spanning distinction. Layer A (system transfer) and Layer B (pass-through) follow directly from $\Phi_{i,r}$ via the dual-pricing rule. Layer C (compression in $q_{2}$) follows from the strategic IDA flexibility-supply FOC, in which the clock-gap exposure raises the marginal value of retained flexibility through the shadow value $\nu_{i,r} \approx \lambda \kappa_{i} m_{i} \Phi_{r}$. The 3-sess SIDC effect is captured by a separate session-architecture wedge $\ell_{r}$. France, with $K^{S} \equiv 1$ throughout, has $\Phi^{FR}_{i,r} \approx 0$ and exhibits no $\Phi$-driven response, while accommodating an $\ell_{r}$-driven SIDC effect. The empirical chapter that follows tests these comparative statics.
+
+\end{document}

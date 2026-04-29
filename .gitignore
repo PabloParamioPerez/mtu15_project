@@ -84,3 +84,4 @@ renv/python/
 *.synctex.gz
 *.out
 *.toc
+.claude/

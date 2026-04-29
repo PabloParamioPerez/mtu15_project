@@ -174,7 +174,7 @@ def main() -> None:
             mis = row["beta"] * row["volume_share"]  # beta-weighted-share index
             print(f"  {SEG_NAMES[row['segment']]:<26}  {row['beta']:>+11.2f}    {row['volume_share']*100:>12.1f}%  {mis:>+14.2f}")
 
-    out = PROJECT / "data" / "derived" / "results" / "pigouvian_clean_results.csv"
+    out = PROJECT / "results" / "regressions" / "pigouvian_clean_results.csv"
     tab.to_csv(out, index=False)
     print(f"\nwrote {out}")
 

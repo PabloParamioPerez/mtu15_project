@@ -25,7 +25,7 @@ Findings (run 2026-04-27):
     - Operación reforzada raised Spanish balancing costs to French parity;
       post-MTU15-DA the structural ES<FR gap re-opens
 
-Output: data/derived/results/cross_country_prices.csv
+Output: results/regressions/cross_country_prices.csv
 """
 from __future__ import annotations
 
@@ -127,7 +127,7 @@ def main() -> None:
     imb_summary = imb_m.groupby("reg")[["ES_imb", "FR_imb", "gap_ES_FR"]].mean().round(0)
     print(imb_summary.to_string())
 
-    out_dir = PROJECT / "data/derived/results"
+    out_dir = PROJECT / "results/regressions"
     out_dir.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(rows).to_csv(out_dir / "cross_country_da_prices.csv", index=False)
     imb_summary.to_csv(out_dir / "cross_country_imbalance_prices.csv")

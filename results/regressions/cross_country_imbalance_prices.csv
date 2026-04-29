@@ -1,0 +1,7 @@
+reg,ES_imb,FR_imb,gap_ES_FR
+3-sess,48.0,51.0,-3.0
+DA15/ID15,35.0,59.0,-24.0
+DA60/ID15 POST-blackout,34.0,35.0,-1.0
+DA60/ID15 PRE-blackout,26.0,57.0,-31.0
+ISP15-win,74.0,95.0,-21.0
+pre-IDA,67.0,92.0,-25.0

@@ -1,0 +1,8 @@
+gap_bucket,n,mean_p_sp,mean_p_fr,mean_gap,mean_mp_IB,median_mp_IB,rel_markup_pct,share_strong_pivotal,_table,coupled
+1.export-cong (SP<<FR),2690,51.1,86.73,-35.63,9.95,6.48,19.47,53.72,by_gap_bucket,
+2.export-cpld,1121,60.86,66.93,-6.07,12.04,10.9,19.78,72.08,by_gap_bucket,
+3.coupled (≈0),1500,61.51,61.31,0.2,11.7,10.72,19.02,70.33,by_gap_bucket,
+4.import-cpld,1729,65.73,59.53,6.2,11.15,10.06,16.96,71.89,by_gap_bucket,
+5.import-cong (SP>>FR),5929,91.38,50.03,41.36,8.93,7.03,9.77,61.11,by_gap_bucket,
+,11469,75.08,,,9.81,,13.06,62.07,coupled_vs_uncoupled,0.0
+,1500,61.51,,,11.7,,19.02,70.33,coupled_vs_uncoupled,1.0

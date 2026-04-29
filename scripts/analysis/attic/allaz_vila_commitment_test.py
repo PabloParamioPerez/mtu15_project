@@ -241,7 +241,7 @@ def main() -> None:
     tab = regression_table(df)
     pretty_print(tab)
 
-    out = PROJECT / "data" / "derived" / "results" / "allaz_vila_results.csv"
+    out = PROJECT / "results" / "regressions" / "allaz_vila_results.csv"
     tab.to_csv(out, index=False)
     print(f"\nwrote {out}")
 

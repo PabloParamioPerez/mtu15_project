@@ -28,7 +28,7 @@ Reasoning before running:
   shifts mp_IB by -10 EUR/MWh, plausible.
 
 Output:
-  data/derived/results/marginal_density_vs_mp_ib.csv
+  results/regressions/marginal_density_vs_mp_ib.csv
 """
 from __future__ import annotations
 
@@ -44,9 +44,9 @@ PRICE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "precios" /
 DET = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "det_all.parquet"
 CAB = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "cab_all.parquet"
 PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
-F7_ISP = PROJECT / "data" / "derived" / "results" / "synthetic_firm_per_firm_isp.csv"
+F7_ISP = PROJECT / "results" / "regressions" / "synthetic_firm_per_firm_isp.csv"
 VRE = PROJECT / "data" / "processed" / "entsoe" / "generation" / "wind_solar_actual_all.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "marginal_density_vs_mp_ib.csv"
+OUT = PROJECT / "results" / "regressions" / "marginal_density_vs_mp_ib.csv"
 
 BAND_EUR = 5.0
 

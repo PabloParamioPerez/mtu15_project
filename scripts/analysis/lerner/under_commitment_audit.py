@@ -40,7 +40,7 @@ OVB candidates and predicted bias direction:
 Sign of compression direction: predicted to remain post all OVB checks if the
 strategic-conduct interpretation holds.
 
-Output: data/derived/results/under_commitment_audit.csv
+Output: results/regressions/under_commitment_audit.csv
 """
 from __future__ import annotations
 
@@ -56,7 +56,7 @@ PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas"
 PIBCIE = PROJECT / "data" / "processed" / "omie" / "mercado_intradiario_subastas" / "programas" / "pibcie_all.parquet"
 REF = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 VRE = PROJECT / "data" / "processed" / "entsoe" / "generation" / "wind_solar_actual_all.parquet"
-OUT = PROJECT / "data" / "derived" / "results" / "under_commitment_audit.csv"
+OUT = PROJECT / "results" / "regressions" / "under_commitment_audit.csv"
 
 BIG4 = ["GE", "IB", "GN", "HC"]
 BLACKOUT = "2025-04-28"

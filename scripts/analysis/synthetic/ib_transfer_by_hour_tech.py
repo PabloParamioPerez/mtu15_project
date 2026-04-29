@@ -11,7 +11,7 @@ at that ISP. This is an approximate decomposition (joint substitution
 ≠ sum of unit substitutions), but informative for timing.
 
 Output:
-  data/derived/results/ib_transfer_by_hour_tech.csv
+  results/regressions/ib_transfer_by_hour_tech.csv
 """
 from __future__ import annotations
 
@@ -22,10 +22,10 @@ import numpy as np
 import pandas as pd
 
 PROJECT = Path(__file__).resolve().parents[3]
-F7_ISP = PROJECT / "data" / "derived" / "results" / "synthetic_firm_per_firm_isp.csv"
+F7_ISP = PROJECT / "results" / "regressions" / "synthetic_firm_per_firm_isp.csv"
 PDBCE = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
 REF = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
-OUT = PROJECT / "data" / "derived" / "results" / "ib_transfer_by_hour_tech.csv"
+OUT = PROJECT / "results" / "regressions" / "ib_transfer_by_hour_tech.csv"
 
 
 def main() -> None:

@@ -5,11 +5,11 @@
 """Overnight robustness block — tables + data files, NO auto-generated figures.
 
 Outputs:
-  data/derived/robustness/bootstrap_lerner.parquet
-  data/derived/robustness/slope_sensitivity_lerner.parquet
-  data/derived/robustness/placebo_lerner.parquet
-  data/derived/robustness/placebo_lerner_summary.parquet
-  data/derived/robustness/hour_of_day_lerner.parquet
+  results/robustness/bootstrap_lerner.parquet
+  results/robustness/slope_sensitivity_lerner.parquet
+  results/robustness/placebo_lerner.parquet
+  results/robustness/placebo_lerner_summary.parquet
+  results/robustness/hour_of_day_lerner.parquet
   logs/robustness_<ts>.log
 
 Runtime: ~5-15 min. No new downloads; uses existing parquet.
@@ -105,7 +105,7 @@ def bootstrap_lerner():
                 'bootstrap_sd': float(meds.std(ddof=1)),
             })
     out = pd.DataFrame(results)
-    out_path = REPO / 'data/derived/robustness/bootstrap_lerner.parquet'
+    out_path = REPO / 'results/robustness/bootstrap_lerner.parquet'
     out.to_parquet(out_path, index=False)
     log.info(f'  wrote {out_path.name} in {time.time()-t0:.1f}s')
     log.info(f'  sample row:\n{out.head(5).to_string()}')
@@ -191,7 +191,7 @@ def slope_sensitivity():
         results.append(tbl)
         log.info(f'  ±{delta:.0f} EUR done (rows={len(lerner)})')
     out = pd.concat(results, ignore_index=True)
-    out_path = REPO / 'data/derived/robustness/slope_sensitivity_lerner.parquet'
+    out_path = REPO / 'results/robustness/slope_sensitivity_lerner.parquet'
     out.to_parquet(out_path, index=False)
     log.info(f'  wrote {out_path.name} in {time.time()-t0:.1f}s')
     # Show GE pivoted
@@ -241,7 +241,7 @@ def placebo_dates():
                 'delta': float(post - pre) if np.isfinite(post - pre) else np.nan,
             })
     placebo = pd.DataFrame(placebo_rows)
-    placebo.to_parquet(REPO / 'data/derived/robustness/placebo_lerner.parquet', index=False)
+    placebo.to_parquet(REPO / 'results/robustness/placebo_lerner.parquet', index=False)
 
     summary = []
     for firm in ['GE', 'IB', 'GN', 'HC']:
@@ -257,7 +257,7 @@ def placebo_dates():
             'empirical_p': emp_p,
         })
     summary_df = pd.DataFrame(summary)
-    summary_df.to_parquet(REPO / 'data/derived/robustness/placebo_lerner_summary.parquet', index=False)
+    summary_df.to_parquet(REPO / 'results/robustness/placebo_lerner_summary.parquet', index=False)
     log.info(f'  wrote placebo files in {time.time()-t0:.1f}s')
     log.info(f'  placebo summary:\n{summary_df.to_string()}')
 
@@ -273,7 +273,7 @@ def hour_of_day_profile():
     df['date'] = pd.to_datetime(df['date'])
     df['regime'] = df['date'].apply(assign_regime)
     out = df.groupby(['firm', 'hour', 'regime'])['lerner_index'].median().reset_index()
-    out.to_parquet(REPO / 'data/derived/robustness/hour_of_day_lerner.parquet', index=False)
+    out.to_parquet(REPO / 'results/robustness/hour_of_day_lerner.parquet', index=False)
     log.info(f'  wrote hour_of_day_lerner.parquet in {time.time()-t0:.1f}s')
     ge = out[out['firm'] == 'GE'].pivot(index='regime', columns='hour',
                                           values='lerner_index').reindex(REGIME_ORDER)

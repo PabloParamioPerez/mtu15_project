@@ -25,7 +25,7 @@ OVB / measurement notes:
   - pibcie attribution: SUM over (firm, tech, day) of signed
     assigned_power_mw × mtu/60
 
-Output: data/derived/results/under_commitment_by_tech.csv
+Output: results/regressions/under_commitment_by_tech.csv
 """
 from __future__ import annotations
 
@@ -40,7 +40,7 @@ PIBCIE = PROJECT / "data" / "processed" / "omie" / "mercado_intradiario_subastas
 PRICE_DA = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "precios" / "marginalpdbc_all.parquet"
 PRICE_IDA = PROJECT / "data" / "processed" / "omie" / "mercado_intradiario_subastas" / "precios" / "marginalpibc_all.parquet"
 REF = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
-OUT = PROJECT / "data" / "derived" / "results" / "under_commitment_by_tech.csv"
+OUT = PROJECT / "results" / "regressions" / "under_commitment_by_tech.csv"
 
 BIG4 = ["GE", "IB", "GN", "HC"]
 
