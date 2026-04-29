@@ -172,10 +172,10 @@ mtu15_project/
 │   ├── memos/                           # research diary, modelling track, audits
 │   └── archive/                         # superseded exploratory work
 │
-├── thesis/                    # WRITING ONLY
+├── thesis/                    # WRITING ONLY (output = single paper, not multi-chapter)
 │   ├── proposal.md                      # master thesis proposal
-│   ├── chapters/                        # under construction
-│   ├── model/model.tex                  # structural model derivation
+│   ├── paper.tex                        # the paper (when drafting begins; single .tex with \section{} blocks)
+│   ├── model/model.tex                  # structural model derivation (compiled to model.pdf)
 │   ├── narratives/                      # presentation narratives, planning docs
 │   └── presentations/
 │       ├── workshop_february_2026/      # first thesis-progress presentation

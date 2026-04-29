@@ -47,9 +47,10 @@ The project is organised by purpose at the top level. Each top-level directory h
 - `figures/attic/`
 
 **Writing:**
+The thesis output is a single academic paper (`thesis/paper.tex`, sections not chapters). Drafting hasn't started yet.
 - `thesis/proposal.md` — master thesis proposal
-- `thesis/chapters/` — thesis chapters (under construction)
-- `thesis/model/model.tex` — structural model derivation (compiled to `model.pdf`)
+- `thesis/paper.tex` (and `paper.pdf`) — the paper itself, when drafting begins. Single LaTeX file with `\section{}` blocks (intro, data, model, results, conclusion). If sections grow large, split via `\input{}` into a `thesis/sections/` subfolder.
+- `thesis/model/model.tex` — structural model derivation (compiled to `model.pdf`); will be `\input{}`'d into the paper or referenced.
 - `thesis/narratives/` — presentation narratives, planning documents
 - `thesis/presentations/workshop_february_2026/` — first thesis-progress presentation
 - `thesis/presentations/workshop_may_2026/` — second thesis-progress presentation (active)
