@@ -56,7 +56,7 @@ def main() -> None:
     ida_qh = con.execute(f"""
         SELECT date, period,                                              -- period 1..96 = quarter-hours
                COALESCE(grupo_empresarial, 'NA') AS firm,
-               SUM(assigned_power_mw) * 0.25 AS qida_mwh
+               SUM(assigned_power_mw) * 0.25 AS q2_mwh
         FROM '{PIBCIE}'
         WHERE CAST(date AS DATE) >= DATE '2025-03-19'
           AND mtu_minutes = 15
@@ -92,7 +92,7 @@ def main() -> None:
 
     REGIMES = ["DA60/ID15 PRE", "DA60/ID15 POST", "DA15/ID15"]
     by_regime = (ida_qh.assign(group=lambda d: np.where(d["is_big4"], "Big4", "Fringe"))
-                       .groupby(["group", "regime"])["qida_mwh"]
+                       .groupby(["group", "regime"])["q2_mwh"]
                        .agg(["mean", "median", "count"])
                        .reset_index())
     by_regime["regime"] = pd.Categorical(by_regime["regime"], categories=REGIMES, ordered=True)
@@ -125,11 +125,11 @@ def main() -> None:
     print("(e.g. last 15 min when imbalance exposure peaks), one quarter would dominate.")
     print()
     big4 = ida_qh[ida_qh.is_big4]
-    qh_pattern = (big4.groupby(["regime", "qh_within_hour"])["qida_mwh"]
+    qh_pattern = (big4.groupby(["regime", "qh_within_hour"])["q2_mwh"]
                        .mean()
                        .reset_index())
     qh_pattern["regime"] = pd.Categorical(qh_pattern["regime"], categories=REGIMES, ordered=True)
-    qh_pivot = qh_pattern.pivot(index="regime", columns="qh_within_hour", values="qida_mwh").reindex(REGIMES)
+    qh_pivot = qh_pattern.pivot(index="regime", columns="qh_within_hour", values="q2_mwh").reindex(REGIMES)
     qh_pivot.columns = [f"qh{c}" for c in qh_pivot.columns]
     qh_pivot["max/mean"] = qh_pivot.max(axis=1) / qh_pivot.mean(axis=1)
     print(qh_pivot.round(3).to_string())
@@ -164,7 +164,7 @@ def main() -> None:
         cols[f"M[{m}]"] = (df["month"] == m).astype(float).values
 
     X = pd.DataFrame(cols, index=df.index)
-    y = df["qida_mwh"].astype(float).values
+    y = df["q2_mwh"].astype(float).values
     cluster_ids = df["date"].astype("category").cat.codes.values
 
     print(f"   N = {len(df):,} firm-15min obs;   clusters (dates) = {pd.Series(cluster_ids).nunique()}")

@@ -103,7 +103,7 @@ def build_firm_hour_panel() -> pd.DataFrame:
         SELECT date,
                CASE WHEN mtu_minutes=15 THEN CEIL(period/4.0)::INT ELSE period END AS hour,
                COALESCE(grupo_empresarial, 'NA') AS firm,
-               SUM(assigned_power_mw * mtu_minutes / 60.0) AS qida_mwh
+               SUM(assigned_power_mw * mtu_minutes / 60.0) AS q2_mwh
         FROM '{PIBCIE}'
         WHERE assigned_power_mw IS NOT NULL
         GROUP BY 1, 2, 3
@@ -118,9 +118,9 @@ def build_firm_hour_panel() -> pd.DataFrame:
                CASE WHEN mtu_minutes=15 THEN CEIL(period/4.0)::INT ELSE period END AS hour,
                COALESCE(grupo_empresarial, 'NA') AS firm,
                SUM(CASE WHEN offer_type = 1 THEN assigned_power_mw ELSE 0 END
-                   * mtu_minutes / 60.0)                                    AS qda_sell_mwh,
+                   * mtu_minutes / 60.0)                                    AS q1_mwh,
                SUM(CASE WHEN offer_type = 8 THEN assigned_power_mw ELSE 0 END
-                   * mtu_minutes / 60.0)                                    AS qda_buy_mwh
+                   * mtu_minutes / 60.0)                                    AS q1_buy_mwh
         FROM '{PDBCE}'
         GROUP BY 1, 2, 3
     """).df()
@@ -135,11 +135,11 @@ def build_firm_hour_panel() -> pd.DataFrame:
     df["month"] = df["date"].dt.month
     df["dow"] = df["date"].dt.dayofweek
     df["is_big4"] = df["firm"].isin(BIG4)
-    df["qda_sell_mwh"] = df["qda_sell_mwh"].fillna(0)
-    df["qda_buy_mwh"] = df["qda_buy_mwh"].fillna(0)
+    df["q1_mwh"] = df["q1_mwh"].fillna(0)
+    df["q1_buy_mwh"] = df["q1_buy_mwh"].fillna(0)
     # Normalised under-commitment: ΔQ / DA_sell_volume (firms with no DA sell get NaN).
-    df["dq_share"] = df["qida_mwh"] / df["qda_sell_mwh"]
-    df.loc[df["qda_sell_mwh"] <= 0, "dq_share"] = np.nan
+    df["dq_share"] = df["q2_mwh"] / df["q1_mwh"]
+    df.loc[df["q1_mwh"] <= 0, "dq_share"] = np.nan
 
     print(f"   joined panel: {len(df):,} firm-hour rows; "
           f"Big-4 share: {df.is_big4.mean()*100:.1f}%")
@@ -221,7 +221,7 @@ def main() -> None:
     print()
 
     # Restrict to firms with positive sell-side activity (relevant for the IR test)
-    df_sell = df[df["qda_sell_mwh"] > 0].copy()
+    df_sell = df[df["q1_mwh"] > 0].copy()
     print(f"Restricted to firm-hours with DA sell volume > 0: {len(df_sell):,} rows  "
           f"({len(df_sell)/len(df)*100:.0f}% of all firm-hours)")
     print()
@@ -238,9 +238,9 @@ def main() -> None:
 
     df_sell["group"] = np.where(df_sell["is_big4"], "Big4", "Fringe")
     raw = (df_sell.groupby(["group", "regime_cat"], observed=True)
-                  .agg(qida_mean_mwh=("qida_mwh", "mean"),
-                       qida_median_mwh=("qida_mwh", "median"),
-                       n_firmhours=("qida_mwh", "count"))
+                  .agg(qida_mean_mwh=("q2_mwh", "mean"),
+                       qida_median_mwh=("q2_mwh", "median"),
+                       n_firmhours=("q2_mwh", "count"))
                   .reset_index())
     raw["regime_cat"] = pd.Categorical(raw["regime_cat"], categories=REGIMES, ordered=True)
     raw = raw.sort_values(["group", "regime_cat"])
@@ -277,7 +277,7 @@ def main() -> None:
     print("   SEs:  cluster-robust by date")
     print()
 
-    rstats, model = fit_regression(df_sell, "Augmented (signed ΔQ)", "qida_mwh")
+    rstats, model = fit_regression(df_sell, "Augmented (signed ΔQ)", "q2_mwh")
     print(f"   N = {rstats['n']:,} firm-hour obs;  clusters = {rstats['n_clusters']:,};  R² = {rstats['r2']:.3f}")
     print()
     print("   Big-4 effect by regime (point estimate ± SE):")
@@ -298,7 +298,7 @@ def main() -> None:
     # Use t-test on the interaction
     print("   Hypothesis tests on Big-4 regime trajectory:")
     # Re-fit to get interaction coefficients directly
-    df_test = df_sell.dropna(subset=["qida_mwh"]).copy()
+    df_test = df_sell.dropna(subset=["q2_mwh"]).copy()
     cols2 = {"const": 1.0}
     for r in REGIMES[1:]:
         cols2[f"D[{r}]"]     = (df_test["regime"] == r).astype(float).values
@@ -315,7 +315,7 @@ def main() -> None:
         cols2[f"Y[{yr}]"] = (df_test["year"] == yr).astype(float).values
     cols2["vre_gwh"] = df_test["vre_gwh"].fillna(df_test["vre_gwh"].mean()).values
     Xt = pd.DataFrame(cols2, index=df_test.index)
-    yt = df_test["qida_mwh"].astype(float).values
+    yt = df_test["q2_mwh"].astype(float).values
     cluster_t = df_test["date"].astype("category").cat.codes.values
     m2 = sm.OLS(yt, Xt.values).fit(cov_type="cluster", cov_kwds={"groups": cluster_t})
 
@@ -348,7 +348,7 @@ def main() -> None:
     print("=" * 95)
     print()
     fringe_means = (df_sell[~df_sell.is_big4]
-                     .groupby("regime_cat", observed=True)["qida_mwh"]
+                     .groupby("regime_cat", observed=True)["q2_mwh"]
                      .agg(["mean", "count"])
                      .reindex(REGIMES))
     print(fringe_means.round(2).to_string())

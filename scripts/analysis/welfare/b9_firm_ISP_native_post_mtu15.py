@@ -65,7 +65,7 @@ def main() -> None:
     ida = con.execute(f"""
         SELECT date, period,
                COALESCE(grupo_empresarial, 'NA') AS firm,
-               SUM(assigned_power_mw) * 0.25 AS qida_mwh
+               SUM(assigned_power_mw) * 0.25 AS q2_mwh
         FROM '{PIBCIE}'
         WHERE assigned_power_mw IS NOT NULL
           AND mtu_minutes = 15
@@ -89,7 +89,7 @@ def main() -> None:
                period AS hour,
                COALESCE(grupo_empresarial, 'NA') AS firm,
                SUM(CASE WHEN offer_type = 1 THEN assigned_power_mw ELSE 0 END
-                   * mtu_minutes / 60.0) AS qda_sell_mwh
+                   * mtu_minutes / 60.0) AS q1_mwh
         FROM '{PDBCE}'
         WHERE CAST(date AS DATE) >= DATE '2025-03-19'
           AND CAST(date AS DATE) < DATE '2025-10-01'
@@ -99,20 +99,20 @@ def main() -> None:
     da_pre["date"] = pd.to_datetime(da_pre["date"])
     # Vectorized expansion: each MTU60 hour h → ISPs 4(h-1)+1 .. 4h, q split equally
     if len(da_pre) > 0:
-        da_pre["qda_sell_mwh"] = da_pre["qda_sell_mwh"] / 4.0
+        da_pre["q1_mwh"] = da_pre["q1_mwh"] / 4.0
         # Replicate 4×, add an offset 0..3
         rep = da_pre.loc[da_pre.index.repeat(4)].reset_index(drop=True).copy()
         rep["k"] = np.tile(np.arange(4), len(da_pre))
         rep["period"] = (rep["hour"].astype(int) - 1) * 4 + rep["k"] + 1
-        da_pre_isp = rep[["date", "period", "firm", "qda_sell_mwh"]].copy()
+        da_pre_isp = rep[["date", "period", "firm", "q1_mwh"]].copy()
     else:
-        da_pre_isp = pd.DataFrame(columns=["date", "period", "firm", "qda_sell_mwh"])
+        da_pre_isp = pd.DataFrame(columns=["date", "period", "firm", "q1_mwh"])
     print(f"   DA pre-MTU15-DA expanded to ISP: {len(da_pre_isp):,} rows", flush=True)
 
     da_post = con.execute(f"""
         SELECT date, period,
                COALESCE(grupo_empresarial, 'NA') AS firm,
-               SUM(CASE WHEN offer_type = 1 THEN assigned_power_mw ELSE 0 END) * 0.25 AS qda_sell_mwh
+               SUM(CASE WHEN offer_type = 1 THEN assigned_power_mw ELSE 0 END) * 0.25 AS q1_mwh
         FROM '{PDBCE}'
         WHERE CAST(date AS DATE) >= DATE '2025-10-01'
           AND mtu_minutes = 15
@@ -133,7 +133,7 @@ def main() -> None:
     df["month"] = df["date"].dt.month
     df["dow"]   = df["date"].dt.dayofweek
     df["is_big4"] = df["firm"].isin(BIG4)
-    df["qda_sell_mwh"] = df["qda_sell_mwh"].fillna(0)
+    df["q1_mwh"] = df["q1_mwh"].fillna(0)
 
     vre = con.execute(f"""
         SELECT CAST(isp_start_utc AS DATE) AS date,
@@ -147,7 +147,7 @@ def main() -> None:
     df = df.merge(vre, on="date", how="left")
 
     # Restrict to firm-ISPs with positive DA sell
-    df = df[df["qda_sell_mwh"] > 0].copy()
+    df = df[df["q1_mwh"] > 0].copy()
     df = df[df["regime"].isin(REGIMES)].copy()
     print(f"   Final panel: {len(df):,} firm-ISP rows", flush=True)
     print(f"   firms: {df.firm.nunique()}, dates: {df.date.nunique()}, periods: {df.period.nunique()}", flush=True)
@@ -159,9 +159,9 @@ def main() -> None:
     # ============================================================
     print("=== Big-4 vs Fringe firm-ISP means by regime (signed q₂, MWh per firm-ISP) ===", flush=True)
     means = (df.groupby(["regime", "is_big4"])
-              .agg(mean=("qida_mwh", "mean"),
-                   abs_mean=("qida_mwh", lambda s: s.abs().mean()),
-                   count=("qida_mwh", "count"))
+              .agg(mean=("q2_mwh", "mean"),
+                   abs_mean=("q2_mwh", lambda s: s.abs().mean()),
+                   count=("q2_mwh", "count"))
               .reset_index())
     means["regime"] = pd.Categorical(means["regime"], categories=REGIMES, ordered=True)
     print(means.sort_values(["regime", "is_big4"]).to_string(index=False), flush=True)
@@ -170,7 +170,7 @@ def main() -> None:
     # Per Big-4 firm × regime
     pf = (df[df.is_big4]
             .groupby(["firm", "regime"])
-            .agg(mean=("qida_mwh", "mean"), count=("qida_mwh", "count"))
+            .agg(mean=("q2_mwh", "mean"), count=("q2_mwh", "count"))
             .reset_index())
     pf["regime"] = pd.Categorical(pf["regime"], categories=REGIMES, ordered=True)
     pf_pv = pf.pivot(index="firm", columns="regime", values="mean").reindex(BIG4).reindex(REGIMES, axis=1)
@@ -184,7 +184,7 @@ def main() -> None:
     print("=== Regression: q2_isp ~ regime × Big4 + Big4 + period FE + DOW + month + year + VRE ===", flush=True)
     print("    Cluster SE by date", flush=True)
 
-    df_test = df.dropna(subset=["qida_mwh"]).copy()
+    df_test = df.dropna(subset=["q2_mwh"]).copy()
     cols = {"const": 1.0}
     for r in REGIMES[1:]:
         cols[f"D[{r}]"]      = (df_test["regime"] == r).astype(float).values
@@ -205,7 +205,7 @@ def main() -> None:
     cols["vre_gwh"] = df_test["vre_gwh"].fillna(df_test["vre_gwh"].mean()).values
 
     X = pd.DataFrame(cols, index=df_test.index)
-    y = df_test["qida_mwh"].astype(float).values
+    y = df_test["q2_mwh"].astype(float).values
     cluster = df_test["date"].astype("category").cat.codes.values
 
     print(f"   Design: y={y.shape[0]:,} obs, X={X.shape[1]} columns, {len(np.unique(cluster)):,} clusters", flush=True)

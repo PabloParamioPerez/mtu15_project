@@ -156,7 +156,7 @@ def main():
     udat = con.execute(f"""
         SELECT date,
                unit_code,
-               SUM(assigned_power_mw * mtu_minutes / 60.0) AS dq_disp_mwh
+               SUM(assigned_power_mw * mtu_minutes / 60.0) AS q2_disp_mwh
         FROM '{PIBCI}'
         WHERE assigned_power_mw IS NOT NULL
           AND unit_code IN (SELECT unit_code FROM disp)
@@ -171,10 +171,10 @@ def main():
 
     # Big-4 dispatchable-only daily aggregate
     big4_disp = (udat[udat.is_big4]
-                 .groupby(["regime_cat", "date"], observed=True)["dq_disp_mwh"]
+                 .groupby(["regime_cat", "date"], observed=True)["q2_disp_mwh"]
                  .sum()
                  .reset_index())
-    big4_disp_summary = big4_disp.groupby("regime_cat", observed=True)["dq_disp_mwh"].agg(["mean", "median", "count"]).reindex(REGIMES)
+    big4_disp_summary = big4_disp.groupby("regime_cat", observed=True)["q2_disp_mwh"].agg(["mean", "median", "count"]).reindex(REGIMES)
     print("Big-4 DISPATCHABLE-ONLY ΔQ_IDA (offer_type 1+3-8-9), MWh/firm-day average × Big-4 firms:")
     print(big4_disp_summary.round(1).to_string())
     print()
@@ -207,10 +207,10 @@ def main():
 
     # Per-firm decomposition
     by_firm = (udat[udat.is_big4]
-               .groupby(["firm", "regime_cat"], observed=True)["dq_disp_mwh"]
+               .groupby(["firm", "regime_cat"], observed=True)["q2_disp_mwh"]
                .sum().reset_index())
     by_firm["regime_cat"] = pd.Categorical(by_firm["regime_cat"], categories=REGIMES, ordered=True)
-    pv2 = by_firm.pivot(index="regime_cat", columns="firm", values="dq_disp_mwh").reindex(REGIMES)
+    pv2 = by_firm.pivot(index="regime_cat", columns="firm", values="q2_disp_mwh").reindex(REGIMES)
     print("Per-firm Big-4 dispatchable-only cumulative ΔQ_IDA by regime (MWh):")
     print(pv2.round(0).to_string())
 

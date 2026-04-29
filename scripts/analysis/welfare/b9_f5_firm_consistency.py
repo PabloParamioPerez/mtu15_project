@@ -94,7 +94,7 @@ def build_panel() -> pd.DataFrame:
                period,
                COALESCE(grupo_empresarial, 'NA') AS firm,
                mtu_minutes AS ida_mtu,
-               SUM(assigned_power_mw * mtu_minutes / 60.0) AS dq_ida_mwh
+               SUM(assigned_power_mw * mtu_minutes / 60.0) AS q2_mwh
         FROM '{PIBCIE}'
         WHERE assigned_power_mw IS NOT NULL
         GROUP BY 1, 2, 3, 4
@@ -137,7 +137,7 @@ def build_panel() -> pd.DataFrame:
     panel["vre_gwh"] = panel["vre_gwh"].fillna(panel["vre_gwh"].mean())
 
     print(f"   build time {time.time()-t0:.1f}s")
-    return panel[["dq_ida_mwh", "q_da_mw_hour", "firm_id", "regime",
+    return panel[["q2_mwh", "q_da_mw_hour", "firm_id", "regime",
                   "year_month", "year", "month", "ida_hour", "dow",
                   "vre_gwh", "date_num"]].rename(columns={"ida_hour": "hour"})
 
@@ -167,16 +167,16 @@ di as txt    "============================================================"
 
 * Raw means (Stata 17+ syntax)
 di as txt _newline "Raw mean ΔQ_IDA per firm-period (MWh) by firm × regime:"
-tabstat dq_ida_mwh, by(firm_id) statistics(mean) format(%8.1f)
+tabstat q2_mwh, by(firm_id) statistics(mean) format(%8.1f)
 di as txt _newline "Same broken out by regime:"
 forvalues r = 1/5 {
     di as txt "  Regime `r':"
-    tabstat dq_ida_mwh if regime == `r', by(firm_id) statistics(mean) format(%8.1f)
+    tabstat q2_mwh if regime == `r', by(firm_id) statistics(mean) format(%8.1f)
 }
 
 * reghdfe: ΔQ_IDA ~ firm × regime, augmented FE
 di as txt _newline "--- B9 augmented (firm×regime, abs year-month + hour + DOW + VRE) ---"
-reghdfe dq_ida_mwh i.firm_id##i.regime vre_gwh, ///
+reghdfe q2_mwh i.firm_id##i.regime vre_gwh, ///
     absorb(year_month hour dow) ///
     cluster(firm_month)
 
@@ -235,7 +235,7 @@ di as txt    "============================================================"
 
 * Triple interaction: q_DA × firm × regime
 di as txt _newline "--- F5 augmented (q_DA × firm_id × regime, abs year-month + hour + DOW + VRE) ---"
-reghdfe dq_ida_mwh c.q_da_mw_hour##i.firm_id##i.regime vre_gwh, ///
+reghdfe q2_mwh c.q_da_mw_hour##i.firm_id##i.regime vre_gwh, ///
     absorb(year_month hour dow) ///
     cluster(firm_month)
 

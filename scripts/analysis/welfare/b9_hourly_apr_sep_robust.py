@@ -62,7 +62,7 @@ def main() -> None:
         SELECT date,
                CASE WHEN mtu_minutes=15 THEN CEIL(period/4.0)::INT ELSE period END AS hour,
                COALESCE(grupo_empresarial, 'NA') AS firm,
-               SUM(assigned_power_mw * mtu_minutes / 60.0) AS qida_mwh
+               SUM(assigned_power_mw * mtu_minutes / 60.0) AS q2_mwh
         FROM '{PIBCIE}'
         WHERE assigned_power_mw IS NOT NULL
           AND EXTRACT('month' FROM CAST(date AS DATE)) BETWEEN 4 AND 9
@@ -77,7 +77,7 @@ def main() -> None:
                CASE WHEN mtu_minutes=15 THEN CEIL(period/4.0)::INT ELSE period END AS hour,
                COALESCE(grupo_empresarial, 'NA') AS firm,
                SUM(CASE WHEN offer_type = 1 THEN assigned_power_mw ELSE 0 END
-                   * mtu_minutes / 60.0) AS qda_sell_mwh
+                   * mtu_minutes / 60.0) AS q1_mwh
         FROM '{PDBCE}'
         WHERE EXTRACT('month' FROM CAST(date AS DATE)) BETWEEN 4 AND 9
         GROUP BY 1, 2, 3
@@ -92,7 +92,7 @@ def main() -> None:
     df["month"] = df["date"].dt.month
     df["dow"]   = df["date"].dt.dayofweek
     df["is_big4"] = df["firm"].isin(BIG4)
-    df["qda_sell_mwh"] = df["qda_sell_mwh"].fillna(0)
+    df["q1_mwh"] = df["q1_mwh"].fillna(0)
 
     vre = con.execute(f"""
         SELECT CAST(isp_start_utc AS DATE) AS date,
@@ -105,7 +105,7 @@ def main() -> None:
     vre["date"] = pd.to_datetime(vre["date"])
     df = df.merge(vre, on="date", how="left")
 
-    df = df[df["qda_sell_mwh"] > 0].copy()
+    df = df[df["q1_mwh"] > 0].copy()
     # Restrict to regimes that actually span Apr-Sep
     df = df[df["regime"].isin(REGIMES)].copy()
     print(f"   restricted panel: {len(df):,} firm-hour rows, "
@@ -113,7 +113,7 @@ def main() -> None:
 
     print(f"\n=== Raw means by regime × Big4 (Apr-Sep, mean MWh/firm-hour) ===", flush=True)
     means = (df.groupby(["regime", "is_big4"])
-              .agg(mean=("qida_mwh", "mean"), count=("qida_mwh", "count"))
+              .agg(mean=("q2_mwh", "mean"), count=("q2_mwh", "count"))
               .reset_index())
     means["regime"] = pd.Categorical(means["regime"], categories=REGIMES, ordered=True)
     means = means.sort_values(["regime", "is_big4"])
@@ -130,7 +130,7 @@ def main() -> None:
     # Compute per-firm trajectories
     pf = (df[df.is_big4]
             .groupby(["firm", "regime"])
-            .agg(mean=("qida_mwh", "mean"), count=("qida_mwh", "count"))
+            .agg(mean=("q2_mwh", "mean"), count=("q2_mwh", "count"))
             .reset_index())
     pf["regime"] = pd.Categorical(pf["regime"], categories=REGIMES, ordered=True)
     print("Per Big-4 firm × regime (Apr-Sep, MWh/firm-hour):", flush=True)
@@ -142,7 +142,7 @@ def main() -> None:
     print("=== Regression: q2 ~ regime × Big4 + hour FE + DOW + month FE + year FE + VRE ===", flush=True)
     print("    Cluster SE by date", flush=True)
 
-    df_test = df.dropna(subset=["qida_mwh"]).copy()
+    df_test = df.dropna(subset=["q2_mwh"]).copy()
     cols = {"const": 1.0}
     for r in REGIMES[1:]:
         cols[f"D[{r}]"]      = (df_test["regime"] == r).astype(float).values
@@ -160,7 +160,7 @@ def main() -> None:
     cols["vre_gwh"] = df_test["vre_gwh"].fillna(df_test["vre_gwh"].mean()).values
 
     X = pd.DataFrame(cols, index=df_test.index)
-    y = df_test["qida_mwh"].astype(float).values
+    y = df_test["q2_mwh"].astype(float).values
     cluster = df_test["date"].astype("category").cat.codes.values
 
     print(f"   Design: y={y.shape[0]:,} obs, X={X.shape[1]} columns, {len(np.unique(cluster)):,} clusters", flush=True)
