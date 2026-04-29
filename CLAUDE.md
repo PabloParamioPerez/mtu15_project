@@ -13,11 +13,64 @@ Master thesis data-engineering project for OMIE electricity-market data, focused
 - Symlink targets may be slow or absent; do not traverse them speculatively
 
 ## Repo layout
+
+The project is organised by purpose at the top level. Each top-level directory has a single responsibility.
+
+**Code:**
 - `src/mtu/parsing/` — one module per data family (e.g. `pibca.py`, `pibci.py`, `marginalpdbc.py`)
 - `src/mtu/transform/` — period normalization and shared transforms
 - `src/mtu/validation/` — post-parse checks (`checks.py`)
-- `scripts/pipelines/omie/` — numbered pipeline steps: `00_` download, `10_` parse, `20_` build
+- `src/mtu/ingestion/` — shared HTTP/auth/retry helpers (e.g. `entsoe_common.py`, `esios_common.py`)
+- `scripts/pipelines/{omie,esios,entsoe}/` — numbered pipeline steps: `00_` download, `10_` parse, `20_` build
+- `scripts/analysis/{system,firm,regulatory,balancing,bid,lerner,modelling,panels,synthetic,attic}/` — empirical analyses, organised by topic (system = Acts I friction; firm = Acts II Big-4 strategic; regulatory = RT2 + CNMC; balancing = aFRR/mFRR/nuclear-availability)
 - `scripts/admin/` — one-off audit, inspect, and forensic scripts; not part of the pipeline
+- `scripts/stata/` — Stata `.do` files
+
+**Data (DATA ONLY, never analytical outputs):**
+- `data/raw/{omie,esios,entsoe}/` — symlinks to external SSD; verbatim source files
+- `data/processed/{omie,esios,entsoe}/` — canonical Parquet (one per family)
+- `data/derived/panels/` — analysis-ready panels built from processed data
+- `data/derived/attic/` — retired derived datasets
+- `data/interim/`, `data/metadata/`, `data/external/` — intermediate parsing, manifests, reference tables
+
+**Analytical outputs (code-dependent products):**
+- `results/regressions/` — regression CSVs (one file or sub-directory per analysis script)
+- `results/robustness/` — robustness-check tables
+- `results/summaries/` — human-readable run summaries (e.g. `HEAVY_RUN_SUMMARY.md`)
+- `results/tables/` — tables for thesis/presentation
+- `results/attic/` — retired analytical outputs
+
+**Figures:**
+- `figures/thesis/` — final figures referenced by the thesis text
+- `figures/presentation/` — presentation-specific figures
+- `figures/working/` — work-in-progress figures from analysis
+- `figures/attic/`
+
+**Writing:**
+- `thesis/proposal.md` — master thesis proposal
+- `thesis/chapters/` — thesis chapters (under construction)
+- `thesis/model/model.tex` — structural model derivation (compiled to `model.pdf`)
+- `thesis/narratives/` — presentation narratives, planning documents
+- `thesis/presentations/workshop_february_2026/` — first thesis-progress presentation
+- `thesis/presentations/workshop_may_2026/` — second thesis-progress presentation (active)
+
+**Notebooks (exploration, not thesis output):**
+- `notebooks/eda/` — numbered exploratory data-analysis notebooks
+- `notebooks/memos/` — research diaries, modelling track, audits (markdown only)
+- `notebooks/archive/` — superseded exploratory work
+
+**External references:**
+- `docs/{omie,esios,entsoe}/` — operator file specs and protocol docs
+- `docs/regulation/` — BOE/CNMC/EU regulatory documents
+- `docs/references/` — academic papers
+- `docs/general_references/` — original research proposal, etc.
+- `docs/notes/`, `docs/misc/` — codebooks, cheatsheets
+
+**Logs and other:**
+- `logs/` — runtime logs from heavy runs
+- `tests/` — pytest suite
+- `attic/` — project-level retired material (theory drafts, parser backups)
+- `renv/` + `.Rprofile` — R environment (not currently used, kept for future phases)
 
 ## Data families
 Active families (each has a parser in `src/mtu/parsing/` and a full `00/10/20` pipeline):
@@ -63,9 +116,11 @@ Before adding or changing a parser, read at least one neighbouring family's pars
 These dates appear as constants (`IDA_REFORM`, `INTRADAY_REFORM`, `DAY_AHEAD_REFORM`) in all notebooks and scripts.
 
 ## Exploratory notebooks
-All notebooks live in `explore/` and are for exploration only — not thesis output. Run with the `mtu15-project` kernel. See `explore/README.md` for the current notebook map and `CLAIMS_LEDGER.md` for the claim each notebook produces.
+All notebooks live in `notebooks/eda/` and are for exploration only — not thesis output. Run with the `mtu15-project` kernel. Research-memo markdown (modelling track, audits, identification target, research diary) lives in `notebooks/memos/`. See `notebooks/memos/README.md` for the current notebook map and `CLAIMS_LEDGER.md` for the claim each notebook produces.
 
 Each active notebook has a cell-1 markdown STATUS block (mirrors the script header convention). Do not duplicate analysis across notebooks; check what is already covered before adding a new section.
+
+Presentation notebooks (e.g. `figures.ipynb` for a workshop deck) live under `thesis/presentations/<workshop>/` and are not in `notebooks/eda/`.
 
 ## External data sources
 
@@ -102,9 +157,10 @@ duplicates. ENTSO-E A75 (actual generation per type) covers
 ESIOS `REE_ActualGen_` / `REE_AggGenOutput`; we use ENTSO-E.
 
 ## Data layers
-- **Raw** — verbatim OMIE files. Never modify.
-- **Processed** — canonical Parquet tables, one per family. Preserve all raw rows and snapshot identity (`source_file`).
-- **Derived** — reconciliation, collapsed views. Live separately and are clearly marked as derived. Not substitutes for canonical tables.
+- **Raw** (`data/raw/`) — verbatim OMIE/ESIOS/ENTSO-E files. Never modify.
+- **Processed** (`data/processed/`) — canonical Parquet tables, one per family. Preserve all raw rows and snapshot identity (`source_file`).
+- **Derived** (`data/derived/panels/`) — analysis-ready panels (reconciliation, collapsed views, cross-source merges). Live in `data/derived/`, clearly marked as derived. Not substitutes for canonical tables.
+- **Analytical outputs** (`results/`) are NOT data — they're code-dependent products of analysis scripts (regression coefficients, summary tables, run reports). Never put them under `data/`.
 
 ## Coding expectations
 - **Conservative changes** — touch only what is needed; minimal diffs
@@ -127,18 +183,18 @@ ESIOS `REE_ActualGen_` / `REE_AggGenOutput`; we use ENTSO-E.
 
 ## Claim-status discipline
 
-The project tracks empirical claim status in `CLAIMS_LEDGER.md` at the repo root. Open economic-modelling questions live in `explore/_modelling_track.md`. Identification provenance and history is frozen in `explore/_identification_target.md` (no rewrites; appendix-grade).
+The project tracks empirical claim status in `CLAIMS_LEDGER.md` at the repo root. Open economic-modelling questions live in `notebooks/memos/_modelling_track.md`. Identification provenance and history is frozen in `notebooks/memos/_identification_target.md` (no rewrites; appendix-grade).
 
 **Before running any new analysis, the assistant must answer in writing:**
 
-1. Which claim in `CLAIMS_LEDGER.md` does this strengthen (alive) or potentially kill (wounded)? **OR** which entry in `explore/_modelling_track.md` does this advance?
+1. Which claim in `CLAIMS_LEDGER.md` does this strengthen (alive) or potentially kill (wounded)? **OR** which entry in `notebooks/memos/_modelling_track.md` does this advance?
 2. If neither: stop. Do not run.
 3. If yes: estimate runtime + writing-day impact. If total > 0.5 days, stop and ask the user.
 4. Any result that changes a claim's status triggers the discipline cycle:
    1. Update the row in `CLAIMS_LEDGER.md` (status, `Date_changed`, reason). Do not delete rows.
    2. Update the producing script's STATUS header (the 4-line block at top).
    3. Update the consuming notebook's synthesis cell — strikethrough dead claims, do not delete cells.
-   4. Append one dated line to `explore/RESEARCH_LOG.md`.
+   4. Append one dated line to `notebooks/memos/RESEARCH_DIARY.md` (or `notebooks/memos/RESEARCH_LOG.md` for hypothesis-register changes).
 5. Move a script to `scripts/analysis/attic/` only if (a) status is DEAD AND (b) no live notebook imports it. Otherwise leave in place with the `DEAD-KEPT-AS-RECORD` header. Labels are reversible; moves are not in practice.
 
 **Header convention** (one block at top of every script in `scripts/analysis/`):
@@ -150,7 +206,7 @@ The project tracks empirical claim status in `CLAIMS_LEDGER.md` at the repo root
 # CLAIM: <one-line summary>
 ```
 
-For active notebooks in `explore/`, the same four fields appear as a markdown cell-1.
+For active notebooks in `notebooks/eda/`, the same four fields appear as a markdown cell-1.
 
 **Status meanings.** *Alive* — passed all documented robustness checks; safe to cite. *Wounded* — survives in narrowed form; cite only with caveat. *Dead* — retracted or contradicted; do not cite as positive result, may appear in identification appendix as "attempted but failed".
 

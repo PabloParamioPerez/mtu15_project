@@ -124,17 +124,68 @@ All stages are idempotent — safe to rerun.
 
 ## Repository layout
 
+The project is organised by *purpose* at the top level. Each directory has a single responsibility.
+
 ```
-src/mtu/parsing/          # One parser module per family
-src/mtu/transform/        # Period normalisation and shared transforms
-src/mtu/validation/       # Post-parse checks
-scripts/pipelines/omie/   # Numbered OMIE pipeline steps
-scripts/pipelines/esios/  # ESIOS pipeline steps
-scripts/admin/            # Audit and inspection scripts
-explore/                  # Exploratory notebooks (not thesis output)
-data/raw/                 # Verbatim source files (symlink to external SSD)
-data/processed/           # Canonical parquet outputs (symlink to external SSD)
-data/metadata/            # Download manifests and ingestion logs
+mtu15_project/
+├── data/                      # DATA ONLY (never analytical outputs)
+│   ├── raw/{omie,esios,entsoe}/         # verbatim source files (symlink to SSD)
+│   ├── processed/{omie,esios,entsoe}/   # canonical Parquet, one per family (symlink)
+│   ├── derived/panels/                  # analysis-ready panels
+│   ├── derived/attic/                   # retired derived datasets
+│   ├── interim/                         # parsing intermediates
+│   ├── metadata/                        # download manifests, ingestion logs
+│   └── external/                        # reference tables (unit codes, BSP lists)
+│
+├── results/                   # ALL ANALYTICAL OUTPUTS (code-dependent products)
+│   ├── regressions/                     # CSVs from regression scripts
+│   ├── robustness/                      # robustness-check tables
+│   ├── summaries/                       # human-readable run summaries
+│   ├── tables/                          # tables for thesis/presentation
+│   └── attic/
+│
+├── figures/                   # ALL FIGURES
+│   ├── thesis/                          # final figures referenced by the thesis text
+│   ├── presentation/                    # presentation-specific figures
+│   ├── working/                         # WIP figures from analysis
+│   └── attic/
+│
+├── scripts/
+│   ├── pipelines/{omie,esios,entsoe}/   # 00_download → 10_parse → 20_build
+│   ├── analysis/
+│   │   ├── system/                      # Acts I — system-level friction (S5/S6/B6/B7/S7/S8)
+│   │   ├── firm/                        # Acts II — Big-4 strategic conduct (B9 family + F12/F15/F16)
+│   │   ├── regulatory/                  # Acts III — RT2 + CNMC enforcement
+│   │   ├── balancing/                   # aFRR/mFRR/nuclear-availability
+│   │   ├── lerner/, modelling/, panels/, synthetic/, bid/, attic/
+│   ├── admin/                           # audit, inspection, forensic scripts
+│   └── stata/                           # Stata .do files
+│
+├── src/mtu/
+│   ├── parsing/                         # one module per data family
+│   ├── transform/                       # period normalisation, shared transforms
+│   ├── validation/                      # post-parse checks
+│   └── ingestion/                       # shared HTTP/auth/retry helpers
+│
+├── notebooks/                 # exploratory notebooks (not thesis output)
+│   ├── eda/                             # numbered EDA notebooks
+│   ├── memos/                           # research diary, modelling track, audits
+│   └── archive/                         # superseded exploratory work
+│
+├── thesis/                    # WRITING ONLY
+│   ├── proposal.md                      # master thesis proposal
+│   ├── chapters/                        # under construction
+│   ├── model/model.tex                  # structural model derivation
+│   ├── narratives/                      # presentation narratives, planning docs
+│   └── presentations/
+│       ├── workshop_february_2026/      # first thesis-progress presentation
+│       └── workshop_may_2026/           # second thesis-progress presentation (active)
+│
+├── docs/                      # external reference materials (operator specs, regulation, papers)
+├── tests/                     # pytest suite
+├── logs/                      # runtime logs
+├── attic/                     # project-level retired material
+└── renv/, .Rprofile, renv.lock          # R environment (kept for future phases; not currently used)
 ```
 
 ---
@@ -143,4 +194,5 @@ data/metadata/            # Download manifests and ingestion logs
 
 - **Raw layer**: verbatim source files, never modified
 - **Processed layer**: canonical parquet, one per family, preserving all raw rows and snapshot identity (`source_file`)
-- **Derived layer**: reconciliation and collapsed views, clearly marked, never substitutes for canonical tables
+- **Derived layer**: reconciliation and collapsed views (`data/derived/panels/`), clearly marked, never substitutes for canonical tables
+- **Analytical outputs are NOT data**: regression CSVs, summary tables, run reports go in `results/`, not in `data/`. Code-dependent products are kept separate from canonical datasets
