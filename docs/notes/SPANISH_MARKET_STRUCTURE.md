@@ -455,6 +455,24 @@ These four reform dates appear as constants in `src/mtu/notebook_utils.py` and d
 | Post-IDA RT process | After each IDA session and after continuous rounds | PHF, PHFC |
 | Real-time RT process | Continuous during day D, post-PDVD | P48 |
 
+### ENTSO-E data crosswalk — what each market layer looks like in ENTSO-E
+
+OMIE and ESIOS are the primary Spanish-side sources, but most of the operational layers in this doc also have a parallel ENTSO-E document under the EBGL / CACM transparency obligations. ENTSO-E is essential for actuals (per-unit physical generation) and for cross-country comparisons (FR / DE prices, imbalance, reserves). The project ingests these via `src/mtu/ingestion/entsoe_common.py` into `data/processed/entsoe/`.
+
+| ENTSO-E code | What it contains | Market layer it observes | Project usage |
+|---|---|---|---|
+| **A44** | Day-ahead prices, every coupled bidding zone | DA market clearing (§2) | Cross-country price benchmarks; F8 endogeneity test uses FR A44 to define exogenous price-quartiles for IB hydro dispatch |
+| **A75** | Actual generation per fuel type (B01–B20), system-aggregate | Real-time delivery on D | VRE control in regressions: B16 solar + B18 offshore + B19 onshore wind generation as exogenous regressor (S8, B6/B7, F-series) |
+| **A73** | Actual generation per *unit* (per EIC), Spain | Real-time delivery on D, per generator | Per-firm dispatch attribution: CCGT (B04), reservoir hydro (B12), pumped hydro (B10), nuclear (B14). Anchors F15/F16/F17/F19/F20 firm-windfall maps and the dual-pricing test |
+| **A72** | Weekly reservoir filling indicator, Spain (TWh stored hydro energy) | Inputs to hydro dispatch | F8 Bushnell water-value mechanism test |
+| **A80** | Generation unit unavailability events (planned B53 + forced B54) | Outages/maintenance | F14 nuclear unaccounted-reduction analysis |
+| **A86** | Imbalance prices (up / down direction) | Settlement (§8) | Dual-pricing analysis; cross-validation of ESIOS imbalance prices |
+| **A87** | Imbalance volumes (up / down direction); business type A19 = system net | Settlement (§8) | System imbalance signal for dual-pricing opposite-share test; S6/B6 system-cost decomposition |
+
+**Source separation rule** (per `CLAUDE.md`). ENTSO-E and ESIOS overlap in scope but should never be mixed within a single processed parquet without an explicit `source` column. ENTSO-E A75 covers the same conceptual ground as ESIOS `REE_ActualGen_*`; we use ENTSO-E. ESIOS `liquicierre` / `liquicierresrs` (per-BSP aFRR settlement) has no ENTSO-E equivalent we can access; we use ESIOS. OMIE programmes (`pdbc`, `pdbce`, `pibci`, `phf`, …) cover the same ground as ESIOS `p48cierre` / `totalp48*`; we use OMIE for finer granularity and longer history.
+
+**Authentication.** ENTSO-E requires `ENTSOE_TOKEN` (in project `.env`); Spain bidding-zone EIC = `10YES-REE------0`. ESIOS public archive endpoints serve without authentication; per-BRP archives are gated to market-participant role we don't have.
+
 ### REE numbered codes — quick reference
 
 The doc and the project code base use a few REE-specific numeric codes that aren't self-explanatory. Brief descriptions:
