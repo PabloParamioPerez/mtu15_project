@@ -163,6 +163,8 @@ The DA simple-bid count is wider than IDA (DA bids may have more tranches per pe
 
 **Important:** PIBCA `assigned_power_mw` is signed natively (range −99,999.9 to +99,999.9) per Spec §5.2.2.1 — no offer_type-based sign-flipping needed. Simple SUM gives net IDA position change. (See `notebooks/memos/_modelling_track.md` for why this matters in our q₂ definition.)
 
+**How many PHFs per delivery day.** One PHF per IDA session: **3 PHFs in the SIDC era** (post-2024-06-14), **6 PHFs in the MIBEL era** (pre-2024-06-14). Each session's PHF covers exactly the periods its IDA covered: SIDC PHF(s=1) and PHF(s=2) cover periods 1–96 (full day); PHF(s=3) covers only periods 49–96 (afternoon). For any given `(unit, period)`, the **latest PHF (max `session_number`) is the post-IDA dispatch target** — i.e. the firm program after all auction clearings and REE post-IDA RT have been applied to that period. It is still revised downstream by the continuous market (→ PHFC) and by real-time RT (→ P48), so the operating reality at delivery is P48; but for studying IDA-level conduct, max-session PHF is the right object.
+
 ### Post-IDA REE intervention
 
 After each IDA session, REE applies further security/rebalance modifications and integrates everything into **PHF** (Programa Horario Final). This is what we informally call "RT2" in the project — it's the post-IDA leg of REE's continuous restriction-resolution.
