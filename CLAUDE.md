@@ -66,6 +66,7 @@ The thesis output is a single academic paper (`thesis/paper.tex`, sections not c
 - `docs/references/` — academic papers
 - `docs/general_references/` — original research proposal, etc.
 - `docs/notes/`, `docs/misc/` — codebooks, cheatsheets
+- **`docs/notes/SPANISH_MARKET_STRUCTURE.md`** — full sequential-market reference (DA → IDA auctions → continuous → balancing → P48), reform timeline, file-name glossary, and project regime definitions. Read this if any market-mechanics question is unclear.
 
 **Logs and other:**
 - `logs/` — runtime logs from heavy runs
