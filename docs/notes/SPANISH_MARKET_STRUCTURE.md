@@ -165,9 +165,21 @@ The DA simple-bid count is wider than IDA (DA bids may have more tranches per pe
 
 ### Post-IDA REE intervention
 
-After each IDA session, REE applies further security/rebalance modifications and integrates everything into **PHF** (Programa Horario Final). This is what we informally call "RT2" in the project — it's the post-IDA leg of REE's continuous restriction-resolution. PHF can therefore differ from PIBCA at unit-period level; the difference (PHF − PIBCA) is the post-IDA REE intervention measure.
+After each IDA session, REE applies further security/rebalance modifications and integrates everything into **PHF** (Programa Horario Final). This is what we informally call "RT2" in the project — it's the post-IDA leg of REE's continuous restriction-resolution.
 
-**Project operational measure.** In our scripts, **post-IDA REE intervention magnitude per unit-period = PHF.assigned_power_mw − PIBCA.assigned_power_mw** at the last-session level (both files indexed by `session_number`; we take the maximum-session row per unit-period). Since PIBCA is RT-free by spec and PHF includes RT2 + rebalance, this difference is the cleanest available proxy for REE's post-IDA intervention without needing per-unit ESIOS subscription data. See `scripts/analysis/regulatory/rt2_post_blackout_channel.py` and the verification result in `results/summaries/HEAVY_RUN_SUMMARY.md` showing this measure has a publishing-convention discontinuity at MTU15-DA that ESIOS aggregate data does not show.
+**The chain at session k.** Per OMIE Spec §5.2.2:
+
+```
+   PDVD  ──[IDA-k incremental = PIBCI(s=k)]──►  PIBCA(s=k)  (LEVEL, RT-free)
+                                                     │
+                                              [REE post-IDA RT]
+                                                     ▼
+                                                  PHF(s=k)   (LEVEL, with RT)
+```
+
+So PIBCA is the **post-IDA accumulated LEVEL program**, RT-free by spec (`flag_redespacho ≡ 0`); PIBCI is the per-session **INCREMENTAL change** in cleared MW; PHF is PIBCA after REE's post-IDA RT is applied. PIBCA and PHF are both levels — PIBCI is incremental and would NOT be apples-to-apples with PHF.
+
+**Project operational measure.** In our scripts, **post-IDA REE intervention magnitude per unit-period = PHF.assigned_power_mw − PIBCA.assigned_power_mw** at the same session, taking the maximum-session row per `(unit, period)` (both files are indexed by `session_number`). Because the subtraction is LEVEL minus LEVEL at the same checkpoint, it isolates the post-IDA RT for the periods covered by that session. PIBCI (incremental) is **not** used in this difference — substituting it would mix incremental MW into a level subtraction. This is the cleanest available proxy for REE's post-IDA intervention without per-unit ESIOS subscription data. See `scripts/analysis/regulatory/rt2_post_blackout_channel.py` and the verification result in `results/summaries/HEAVY_RUN_SUMMARY.md` showing this measure has a publishing-convention discontinuity at MTU15-DA that ESIOS aggregate data does not show.
 
 ---
 
