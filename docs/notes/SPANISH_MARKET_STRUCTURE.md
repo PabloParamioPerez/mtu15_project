@@ -21,34 +21,34 @@ The Spanish wholesale electricity market for any given delivery hour has multipl
 DAY  D-1  (the day before delivery)
 ══════════════════════════════════════════════════════════════════════════════
 
-  [OMIE]  Day-ahead auction                                ──►  PDBC
-                                                                  │
-          + bilateral contracts                            ──►  PDBF
-                                                                  │
-  [REE]   Pre-IDA technical-restriction process                   │
-          (Fase 1 security  +  Fase 2 rebalance)           ──►  PDVD  (firm)
-                                                                  │
-  [OMIE]  Intraday auctions  IDA-1 ,  IDA-2                       │
-                            ──►  PIBCA  ─[REE post-IDA RT]──►  PHF
-                                                                  │
-  [OMIE]  Continuous market (XBID/SIDC) opens ════════════════════╪══════►
-                                                                  │
-══════════════════════════════════════════════════════════════════╪══════════
-DAY  D  (delivery day)                                            │
-══════════════════════════════════════════════════════════════════╪══════════
-                                                                  │
-  [OMIE]  Intraday auction  IDA-3                                 │
-                            ──►  PIBCA  ─[REE post-IDA RT]──►  PHF
-                                                                  │
-  [OMIE]  Continuous market keeps trading  ════════►  closes ~1h before
+  [OMIE]  Day-ahead auction                              ──►  PDBC
+
+          + bilateral contracts                          ──►  PDBF
+
+  [REE]   Pre-IDA technical restrictions
+          (Fase 1 security + Fase 2 rebalance)           ──►  PDVD  (firm)
+
+  [OMIE]  Intraday auctions  IDA-1, IDA-2                ──►  PIBCA
+          + REE post-IDA RT                              ──►  PHF
+
+  [OMIE]  Continuous market (XBID/SIDC) opens   ════════════════════════►
+
+══════════════════════════════════════════════════════════════════════════════
+DAY  D  (delivery day)
+══════════════════════════════════════════════════════════════════════════════
+
+  [OMIE]  Intraday auction   IDA-3                       ──►  PIBCA
+          + REE post-IDA RT                              ──►  PHF
+
+  [OMIE]  Continuous market keeps trading       ════►  closes ~1h before
                                                        each delivery period
-                                                                  │
-  [REE]   Real-time technical-restriction process            ──►  P48  (live)
-                                                                  │
-  [REE]   Real-time balancing services                            │
-          (FCR / aFRR / mFRR / RR / SRAD)                         │
-                                                                  │
-  [post]  Per-ISP imbalance settlement                            ▼
+
+  [REE]   Real-time technical restrictions               ──►  P48  (live)
+
+  [REE]   Real-time balancing
+          (FCR / aFRR / mFRR / RR / SRAD)
+
+  [post]  Per-ISP imbalance settlement
 ══════════════════════════════════════════════════════════════════════════════
 ```
 
