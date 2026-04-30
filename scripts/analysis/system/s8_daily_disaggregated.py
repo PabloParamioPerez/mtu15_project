@@ -1,11 +1,15 @@
 # STATUS: ALIVE
-# LAST-AUDIT: 2026-04-28
+# LAST-AUDIT: 2026-04-30
 # FEEDS: S8 robustness (aggregation-discipline check on the wounded claim)
 # CLAIM: S8's wounding under monthly aggregation may be an aggregation artefact
 #        — the renewable control is collinear with regime dummies at monthly
 #        resolution because both are essentially time trends. Daily-level
 #        re-analysis with within-regime renewable variation provides separate
 #        identification of the regime and renewable channels.
+# 2026-04-30 caveat: same-cal-month restriction (`s8_same_cal_month.py`) shows
+# DA60/ID15 specifically does NOT survive Apr-Sep restriction (β=+1.6 GWh/d,
+# p=0.21) — the other three post-IDA regimes hold strongly (all p<0.0001).
+# The DA60/ID15 daily-spec coefficient is partly seasonal/blackout-confounded.
 """S8 daily disaggregated re-analysis: aggregation-artefact check.
 
 The original `s8_renewable_control.py` regression aggregated RZ-61 activations
