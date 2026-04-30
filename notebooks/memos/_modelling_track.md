@@ -700,3 +700,19 @@ Sections may be added or removed as exploration proceeds. The criterion is: **do
 - *Allcott (2012) imperfect competition with carbon costs* — analogous to §3 but with carbon as the externality. Useful if the thesis wants a comparison case.
 
 These are noted for completeness and not pursued unless the four primary sections above mature.
+
+## §6 Dual-pricing imbalance-settlement option value (NEW, 2026-04-30, exploratory)
+
+**Mechanism (user-proposed 2026-04-30).** Under EBGL Article 52, BRPs whose ISP imbalance has the OPPOSITE sign to the system imbalance are settled at a more favourable price (often DA price), while same-sign BRPs face a penalty. This creates an ex-ante incentive to take positions opposite to the predicted system sign — independent of market power. Distinct from Ito-Reguant (which exploits the DA-IDA *price* spread via supply-curve manipulation): this exploits the DA-imbalance *settlement* spread via positional bet. Both can coexist; predictability of system sign is the key driver for this channel.
+
+**Predictability-channel test (2026-04-30, `dual_pricing_opposite_share.py`).** CCGT panel, 50 plants, 299k firm-hours 2018-2026. Lift = observed opposite-share / independence-baseline (independence corrects for firm and system marginal sign distributions). **Predicted pattern**: lift HIGH pre-IDA (MTU60 system sign predictable from MTU60 DA position) → DROP at ISP15-win (MTU60 DA cannot align with MTU15 system sign) → PARTIAL recovery at DA15/ID15. **Result: not supported.** All Big-4 show small statistically-detectable lift (1.01-1.12, z 0.5-7.5) but cross-regime trajectory is wrong-direction for every firm — IB peaks at DA60/ID15 not pre-IDA; GE peaks at ISP15-win (opposite of prediction); GN monotonically increases; HC flat. **Implication**: predictability-channel version of dual-pricing option value is NOT load-bearing for explaining B9 progressive collapse. Original Ito-Reguant market-power reading of B9 stands as the leading interpretation.
+
+**F5 status note (2026-04-29 RE-RETRACTION).** F5 was RESTORED to alive 2026-04-28 at per-unit native granularity, then RE-RETRACTED 2026-04-29: the per-unit reghdfe negative β across all regimes is a MECHANICAL ACCOUNTING IDENTITY (Q_actual ≈ q_DA + ΔQ_IDA ⇒ ∂ΔQ_IDA/∂q_DA mechanically near −1 within unit), not Allaz-Vila evidence. F5 is DEAD as Allaz-Vila evidence at every granularity. Allaz-Vila §2 status now requires a non-mechanical IR test (e.g. per-firm B9 q₂ trajectory in cross-section) to claim any modelling-track support; the mechanical-identity argument is calendar-window-invariant by construction.
+
+**Caveats on the dual-pricing test that keep the spread-channel version live**:
+1. CCGT-only (IB hydro-dominant per F7; hydro positioning untested).
+2. Hourly aggregation (dual pricing operates per ISP — 15-min post-ISP15).
+3. `A73 actual − PHF max-session` is not strict BRP-settlement imbalance.
+4. **Spread-channel version**: option value scales with k_hurt − p_DA, which S6 found widened 8-14× post-IDA. Even if predictability collapsed, the per-favourable-ISP rent grew. GE's lift peak at ISP15-win is consistent with this. The spread-channel version of dual pricing is NOT rejected by this test.
+
+**Open question**: a hydro-fuel + 15-min replication of the test would be the natural follow-up to either kill the mechanism cleanly or surface it via the spread channel.

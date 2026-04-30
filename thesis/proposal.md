@@ -38,7 +38,7 @@ The thesis claim above survives all three rejections.
 
 **Anchor findings**: **F7** (synthetic-firm Ciarreta–Espinosa method, IB ~98% of Big-4 transfer, hydro 64% / CCGT 36%, blackout-decomposed), **F8** (IB hydro Q4 dispatch +17-21pp gap vs Fringe, regime-invariant 2018-2026), **F10** (IB pivotality structural not scarcity-driven), **F13** (IB price-setting power varies with competitive thinness at margin), F11 (cross-border coupling does NOT discipline), F2 (IB matched-price Lerner +0.135), F6 (Cournot tercile fit), F12 (IB pumped-storage arb wounded — solar-cannibalisation trend, not reform-attributable), **B8**, B9.
 
-**Why IB and not the others**: F1/F2 ledger comparison, B8 within-unit bid complexification IB-specific, plus modelling-track §0 cross-firm consistency table (F5/F6/B8 all point to IB cleanly).
+**Why IB and not the others**: F1/F2 ledger comparison, B8 within-unit bid complexification IB-specific, plus modelling-track §0 cross-firm consistency table (F6/B8 point to IB cleanly; F5 was RE-RETRACTED 2026-04-29 as a mechanical accounting identity and is no longer load-bearing for this argument).
 
 **Economic relevance**: Bushnell (2003 AER) hydro-thermal Cournot mechanism. The Ciarreta–Espinosa (2010 J Regul Econ) synthetic-firm method we apply was originally developed for the 2002–2005 Spanish pool — we extend it to the 2018–2026 panel and find the same firm-cross-section asymmetry persisting across very different regulatory regimes. The thesis novelty is the **regime-invariance robustness**: the same mechanism that the literature documented for the early-2000s Spanish pool is still present after MTU15-IDA, MTU15-DA, the blackout, and operación reforzada.
 
