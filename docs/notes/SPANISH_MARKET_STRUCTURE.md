@@ -208,7 +208,9 @@ So PIBCA is the **post-IDA accumulated LEVEL program**, RT-free by spec (`flag_r
 
 **Price limits (per OMIE):** max **+1,500 EUR/MWh**, min **−150 EUR/MWh**. Tightest of the three markets — reflects continuous-trading volatility containment and the fact that SIDC sits within the European order-book caps.
 
-**Negotiation rounds:** OMIE structures negotiation by "rondas" (rounds) corresponding to specific time-blocks of the delivery day; cleared incremental and accumulated results are published per round.
+**Negotiation rounds:** OMIE structures negotiation by "rondas" (rounds) corresponding to specific time-blocks of the delivery day; cleared incremental and accumulated results are published per round. Empirically (any post-MTU15-IDA day, e.g. 2025-09-15) **24 rounds publish per delivery day**, so **24 PHFCs per day** — one after each round. Coverage shrinks monotonically across the early rounds as gate-closures eat hours from the front (round 1: periods 1–96 / full day; round 17: periods 65–96 / evening only); rounds 18–24 jump back to full coverage because they are the rounds where D+1 trading is being published.
+
+For any given `(unit, period)` the **latest round's PHFC (max `round_number`) is the post-continuous dispatch target** — the firm program after all continuous trading and REE post-continuous RT for that period. Same logic as PHF (max session): take the latest available row per `(unit, period)`. The relationship between PHF and PHFC is sequential: the last PHFC supersedes the last PHF for periods where continuous trading has further updated the program; if continuous trading didn't touch a period, the latest PHF still stands. Real-time RT then absorbs everything into P48.
 
 **Output files (OMIE, Spec §5.3):**
 - `pibcic` — incremental cleared volumes per unit per round (Spec §5.3.2.2)
