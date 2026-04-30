@@ -428,6 +428,37 @@ These four reform dates appear as constants in `src/mtu/notebook_utils.py` and d
 | RR | Reservas de Sustitución | Manual | 30 min | **TERRE** (since 2020-03) |
 | SRAD | Respuesta Activa de la Demanda | Manual | 15 min FAT | (Spain-only annual auction) |
 
+### Big-4 firm short codes
+
+The four largest Spanish electricity firms are referred to throughout this project (and in the OMIE PIBCICE / `grupo_short` column) by two-letter codes:
+
+| Short code | `grupo_empresarial` (long) | Firm |
+|---|---|---|
+| **IB** | IBGEG | Iberdrola |
+| **GE** | ENDEG | Endesa (parent: Enel "Generación Endesa") |
+| **GN** | GNCOG | Naturgy (formerly Gas Natural) |
+| **HC** | HCANG | EDP España (legacy "Hidroeléctrica del Cantábrico") |
+
+OMIE files use both conventions: PIBCIE / pdbce expose the long `grupo_empresarial` form (ENDEG / IBGEG / GNCOG / HCANG); PIBCICE uses the two-letter `grupo_short`. Most analysis code maps them via `data/external/omie_reference/lista_agentes.csv`. **Fringe** = everything else (small generators, traders, retailers).
+
+### BRP segments — imbalance-settlement categories
+
+Imbalance settlement (LIQUICOMUN / S7 Pigouvian regression) decomposes total system imbalance into nine BRP-side segments. Marginal imbalance cost (€/MWh per segment-MWh) is order-of-magnitude heterogeneous across segments — the basis for S7's "non-Pigouvian misalignment" finding.
+
+| Segment | Meaning | Side |
+|---|---|---|
+| **conv-RZ** | Conventional dispatchable units (CCGT / nuclear / large hydro) registered as participants in a REE Regulation Zone (`Zona de Regulación`) — the units REE activates for technical-restriction resolution. S7: €210–300/MWh marginal cost. | Generation |
+| **conv-NRZ** | Conventional units **not** in a regulation zone (smaller / non-strategic). | Generation |
+| **wind** | Renewable wind (B16/B19 in ENTSO-E A75). | Generation (RE) |
+| **hydro** | Renewable hydro (run-of-river + reservoir). | Generation (RE) |
+| **thermal_re** | RE-thermal (biomass / biogas / CHP under the special-regime tariff). | Generation (RE) |
+| **COR** | `Comercializadoras de Referencia` — regulated-tariff retailers serving PVPC customers. | Demand |
+| **LIB** | `Comercializadoras de Mercado Libre` — free-market commercial retailers (Iberdrola Mercado Libre, Endesa Energía, Naturgy Comercializadora, etc.). S7: ≤€37/MWh marginal cost. | Demand |
+| **export_u** | Export-direction interconnection units. | Cross-border |
+| **import_u** | Import-direction interconnection units. | Cross-border |
+
+The S7 punchline: **all segments pay roughly the same imbalance price** under the dual-pricing rule, but their *marginal cost contributions* differ by an order of magnitude (conv-RZ €210–300 vs LIB ≤€37). That gap is the **non-Pigouvian misalignment** — the rule does not internalise the externality each segment imposes.
+
 ### Other terms
 
 | Term | Meaning |
@@ -442,6 +473,15 @@ These four reform dates appear as constants in `src/mtu/notebook_utils.py` and d
 | GRD / DSO | Gestor de la Red de Distribución / Distribution System Operator |
 | UF | Unidad Física (physical unit, e.g. one CCGT plant) |
 | UP | Unidad de Programación (programming unit; can aggregate multiple UFs) |
+| CCGT | Combined Cycle Gas Turbine — the most common dispatchable thermal asset in Spain |
+| RZ | `Zona de Regulación` — REE-defined operational zone where reserves and security restrictions are managed; the "RZ" in `tipo_redespacho 61`, in `conv-RZ` BRP segment, and in S8's outcome variable all refer to this concept |
+| NRZ | Non-Regulation-Zone — units / segments outside any RZ |
+| RES | Renewable Energy Sources (solar, wind, hydro, etc.) |
+| VRE | Variable Renewable Energy — wind + solar specifically. ENTSO-E A75 codes B16 (solar) + B18 (offshore wind) + B19 (onshore wind); standard exogenous control across the project |
+| RT2 | Project-internal shorthand for **post-IDA REE intervention** (Fase 1+2 are pre-IDA; "RT2" is what REE applies after each IDA session, captured by `PHF − PIBCA` per §4) |
+| PVPC | `Precio Voluntario al Pequeño Consumidor` — Spain's regulated retail tariff (served by COR retailers); distinct from free-market LIB retail |
+| EBGL | EU Electricity Balance Guideline (Regulation 2017/2195) — defines balancing-market design, dual-pricing rule (Article 52), and platform obligations |
+| CACM | EU Capacity Allocation and Congestion Management Regulation (2015/1222) — defines DA and SIDC market coupling |
 | CCGD | Centro de Control de Generación y Demanda |
 | OS | Operador del Sistema = REE |
 | OM | Operador del Mercado = OMIE |
