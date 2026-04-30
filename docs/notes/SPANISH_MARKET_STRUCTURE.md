@@ -147,7 +147,8 @@ Three European-coupled sessions. Schedule per CNMC Resolution 23-May-2024:
 
 IDA market clock switched from **MTU60 → MTU15**. Bids and clearing now at 15-min resolution.
 
-**Bid types (Spec §5.2.4):** simple (1–5 tranches per period per unit) + complex conditions (load gradient, minimum income / maximum payments, full first-tranche acceptance, minimum consecutive hours, maximum energy, block bids).
+**Bid types (Spec §5.2.4 + OMIE intraday operations doc §2.1):** simple (1–5 tranches per period per unit, OMIE intraday doc §2.1 verbatim) + complex conditions (load gradient, minimum income / maximum payments, full first-tranche acceptance per period or per hour, minimum consecutive hours, maximum energy, block bids).
+The DA simple-bid count is wider than IDA (DA bids may have more tranches per period — verify against the OMIE files spec §5.1.4 before citing the exact maximum). The asymmetry — IDA is bid-fragmentation-restricted relative to DA — is one mechanism behind why strategic spot conduct can be costly under our Block 3 friction interpretation.
 
 **Bid presentation:** ofertas can be updated continuously after PDBF publication and during the aFRR-reserve assignment process; default offers apply if none submitted.
 
@@ -165,6 +166,8 @@ IDA market clock switched from **MTU60 → MTU15**. Bids and clearing now at 15-
 ### Post-IDA REE intervention
 
 After each IDA session, REE applies further security/rebalance modifications and integrates everything into **PHF** (Programa Horario Final). This is what we informally call "RT2" in the project — it's the post-IDA leg of REE's continuous restriction-resolution. PHF can therefore differ from PIBCA at unit-period level; the difference (PHF − PIBCA) is the post-IDA REE intervention measure.
+
+**Project operational measure.** In our scripts, **post-IDA REE intervention magnitude per unit-period = PHF.assigned_power_mw − PIBCA.assigned_power_mw** at the last-session level (both files indexed by `session_number`; we take the maximum-session row per unit-period). Since PIBCA is RT-free by spec and PHF includes RT2 + rebalance, this difference is the cleanest available proxy for REE's post-IDA intervention without needing per-unit ESIOS subscription data. See `scripts/analysis/regulatory/rt2_post_blackout_channel.py` and the verification result in `results/summaries/HEAVY_RUN_SUMMARY.md` showing this measure has a publishing-convention discontinuity at MTU15-DA that ESIOS aggregate data does not show.
 
 ---
 
@@ -237,7 +240,7 @@ Balance services
 
 - **Type:** automatic, mandatory, **unpaid** complementary service
 - **Provided by:** all coupled generators, automatically via turbine governors responding to frequency deviations
-- **Spec:** governor stable in 1.5% of nominal power; response in 15 s for deviations < 100 mHz, linear ramp 15–30 s for 100–200 mHz
+- **Spec:** governor must support a *droop* (estatismo) such that unit output can vary by ±1.5% of nominal power; full power response within 15 s for frequency deviations <100 mHz, linear ramp between 15 and 30 s for deviations of 100–200 mHz (per Operating Procedure 7.1)
 - **No European exchange platform** (EB Regulation does not require one for FCR)
 - **Data:** not directly published per provider (mandatory unpaid service)
 
@@ -245,10 +248,14 @@ Balance services
 
 - **Type:** automatic, optional (BSP must be habilitated), 5-min European standard activation product
 - **Time horizon of action:** 20 s to 15 min
-- **European platform:** **PICASSO** (since October 2020 via IGCC) — handles real-time energy activation
+- **European platforms (two distinct):**
+  - **IGCC** — *imbalance netting*. Spain connected **October 2020**. Compensates aFRR-energy needs of opposite-signed control blocks before any actual aFRR activation, reducing total activation needs across the European interconnected system.
+  - **PICASSO** — *aFRR-energy activation*. First-country go-live June 2022; Spain connected **later** (date not specified in the REE 2024-12 guide; verify against current PO 7.2 if needed). Handles cross-border anonymised optimization of aFRR offers.
 - **Local market structure:** TWO-stage market:
-  - **Capacity (reservation) market:** Each day, REE communicates aFRR up/down reserve needs per quarter-hour. Providers submit offers before 16h00 D-1; allocation independently for up and down per quarter-hour to minimize total system cost subject to PDBF security limits. Marginal-price clearing.
+  - **Capacity (reservation) market:** Each day, REE communicates aFRR up/down reserve needs per quarter-hour. Providers submit offers before **16:00 D-1** (per REE §6.2; **footnote: in any case up to 75 min after PDVP publication** — the binding cutoff depends on PDVP timing). Allocation independently for up and down per quarter-hour to minimize total system cost subject to PDBF security limits. Marginal-price clearing.
   - **Energy market:** Allocated providers must submit valid energy offers for activation in their assigned quarter-hours; voluntary offers exceeding allocated reserve also accepted. Offers updateable up to 25 min before delivery period start.
+
+  **Caveat for thesis-grade citation:** the 16:00 D-1 capacity-offer cutoff was set by PO 7.2 prior to the SIDC IDA reorganisation of June 2024; verify against current PO 7.2 before citing the exact time.
 - **AGC (Automatic Generation Control):** local master regulator continuously incorporates correction signals from IGCC (imbalance netting) and PICASSO (energy activation), then assigns offer blocks from cheapest to most-expensive until aFRR-energy need is met
 - **Settlement:** marginal price computed in each control cycle
 - **BSP requirements:** ≥ 100 MW habilitated for aFRR (combined up + down)
@@ -281,7 +288,7 @@ Balance services
 ### 7.5 SRAD — Servicio de Respuesta Activa de la Demanda (REE guide §6.5)
 
 - **Type:** Spain-specific local balancing product, 15-min FAT (similar to mFRR but longer minimum delivery)
-- **Resource:** demand-side units only (≥ 1 MW per unit per delivery period)
+- **Resource:** demand-side units only. Each habilitating physical demand unit (uniquely identified by CUPS, integrated into a programming unit) must individually accredit ≥1 MW offer capacity in the service-delivery periods (REE §6.5)
 - **Procurement:** **annual auction** with rotating-shift scheduled activation; max one activation per day
 - **Settlement:**
   - capacity (MW): valued at auction's resulting marginal price
@@ -328,16 +335,23 @@ These four reform dates appear as constants in `src/mtu/notebook_utils.py` and d
 
 ## 10. Project regime nomenclature
 
-| Regime | Window | DA clock | IDA clock | Settlement clock | Sessions |
-|---|---|---|---|---|---|
-| **pre-IDA** | before 2024-06-14 | MTU60 | MTU60 | MTU60 | 6 |
-| **3-sess** | 2024-06-14 → 2024-11-30 | MTU60 | MTU60 | MTU60 | 3 |
-| **ISP15-win** | 2024-12-01 → 2025-03-18 | MTU60 | MTU60 | **MTU15** | 3 |
-| **DA60/ID15** | 2025-03-19 → 2025-09-30 | MTU60 | **MTU15** | **MTU15** | 3 |
-| **DA15/ID15** | 2025-10-01 → onward | **MTU15** | **MTU15** | **MTU15** | 3 |
+| Regime | Window | DA clock | IDA clock | Settlement clock | Sessions | Empirical objects available |
+|---|---|---|---|---|---|---|
+| **pre-IDA** | before 2024-06-14 | MTU60 | MTU60 | MTU60 | 6 | DA/IDA at MTU60; settlement at MTU60. Symmetric clocks → no Φ-driven friction object available. Long sample (~6 yrs); seasonality + capacity-growth controls essential for any pre-vs-post comparison. |
+| **3-sess** | 2024-06-14 → 2024-11-30 | MTU60 | MTU60 | MTU60 | 3 | First post-SIDC window. Identifies the session-architecture wedge ℓ_r in the model (ΔΦ = 0 between pre-IDA and 3-sess; any change in q₂ here is attributable to ℓ, not Φ). 6 months. |
+| **ISP15-win** | 2024-12-01 → 2025-03-18 | MTU60 | MTU60 | **MTU15** | 3 | First *asymmetric-clock* regime: settlement clock finer than market clocks. Φ object first activated. ~3.5 months — short sample, careful pooling. |
+| **DA60/ID15** | 2025-03-19 → 2025-09-30 | MTU60 | **MTU15** | **MTU15** | 3 | Mixed-asymmetric regime: IDA technically spans settlement clock but DA does not, so Φ is intermediate between ISP15-win and DA15/ID15. Contains the April-2025 blackout — split into PRE/POST for blackout-confound robustness. ~6 months. |
+| **DA15/ID15** | 2025-10-01 → onward | **MTU15** | **MTU15** | **MTU15** | 3 | Second symmetric-clock regime, post-reform. Φ collapses back to zero. The clean "recovery" boundary — comparison with pre-IDA disciplines the model's boundary-symmetry prediction. Contains post-blackout *operación reforzada*. ~4+ months as of 2026-04. |
 
-**Symmetric clocks:** pre-IDA, 3-sess, DA15/ID15.
-**Asymmetric clocks (the friction window):** ISP15-win, DA60/ID15.
+**Symmetric clocks:** pre-IDA, 3-sess, DA15/ID15. **Asymmetric clocks (the friction window):** ISP15-win, DA60/ID15.
+
+**Identification design notes (caveats inline; not a closed claim of which test "needs" which window).**
+
+- Tests that *identify* the friction parameter Φ require contrast across asymmetric vs symmetric regimes. Both layers A (system transfer) and B (pass-through) draw their main signal from the asymmetric regimes ISP15-win and DA60/ID15.
+- Tests that *identify* the post-SIDC session-architecture effect ℓ_r require the pre-IDA → 3-sess transition specifically (ΔΦ = 0, only ℓ moves). The 3-sess regime's short window is a power constraint here.
+- The boundary-symmetry comparison (Layer A and B should match between pre-IDA and DA15/ID15; Layer C should match between 3-sess and DA15/ID15) requires both symmetric regimes to have enough power individually. Pre-IDA is long; DA15/ID15 is short.
+- Bid-revision and bid-shape tests can be run within any regime (intra-regime) or across regimes (inter-regime). The economically interesting hypothesis is whether bid behaviour responds to the *clock structure*, which is an inter-regime test; intra-regime descriptive tests baseline that.
+- Ito-Reguant-style strategic-conduct tests (Big-4 q₂ on regime × Big-4 interaction) need cross-regime variation; they are **not** regime-agnostic — they rely on regime contrast as the source of identifying variation.
 
 ---
 
