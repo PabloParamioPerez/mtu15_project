@@ -26,7 +26,7 @@ DAY  D-1  (the day before delivery)
 ~early afternoon  REE pre-IDA RT process:
                     Fase 1: security-criteria modifications
                     Fase 2: generation-demand rebalance
-              → PDVP (firm)
+              → PDVD (firm)
 
 Intraday auctions (3 SIDC sessions, post-2024-06-14):
 
@@ -56,7 +56,7 @@ DAY  D  (delivery day)
 Throughout D:
   Late IDA sessions clear (IDAs 4–6 pre-SIDC; IDA-3 post-SIDC)
   Continuous intraday market keeps trading until 1h-before-delivery for each period
-  REE real-time RT process (continuous from PDVP onward) → P48 (live)
+  REE real-time RT process (continuous from PDVD onward) → P48 (live)
 
   Real-time balancing services activate during operation:
     FCR  — automatic primary frequency response (mandatory, unpaid)
@@ -73,7 +73,9 @@ Per-ISP imbalance settlement (post-delivery):
 
 **Two important distinctions:**
 
-1. **OMIE vs REE.** OMIE (market operator) runs the market clearings (DA, IDA, continuous). REE (system operator) runs the technical-restriction processes and the balancing services. The PDBC → PDBF → PDVP chain is the handoff: OMIE delivers the DA result + bilaterals to REE, REE returns the firm pre-IDA program. Subsequent IDA / continuous outputs feed into REE's PHF / PHFC / P48.
+1. **OMIE vs REE.** OMIE (market operator) runs the market clearings (DA, IDA, continuous). REE (system operator) runs the technical-restriction processes and the balancing services. The PDBC → PDBF → PDVD chain is the handoff: OMIE delivers the DA result + bilaterals to REE, REE returns the firm pre-IDA program. Subsequent IDA / continuous outputs feed into REE's PHF / PHFC / P48.
+
+   **Terminology bridge.** OMIE's public materials (and the OMIE-published `pdvd_*.v` file, codebook §5.4) call the firm pre-IDA program **PDVD** — *Programa Diario Viable Definitivo*. REE's *Guía del Proveedor de Servicios de Ajuste* (p.236 verbatim) calls the same operational stage **PDVP** — *Programa Diario Viable Provisional*. We use **PDVD throughout** because that is the OMIE file we would ingest if we ever download it. PDVP appears below only when quoting REE.
 
 2. **D-1 vs D boundary is fuzzy in the middle.** The DA market and the pre-IDA RT process are firmly D-1. The first IDA session(s) and PHF publication(s) are D-1. But IDA sessions can clear on D (sessions 4–6 pre-SIDC; IDA-3 post-SIDC), and the continuous market straddles both days. Real-time balancing and per-ISP imbalance settlement are firmly D (delivery day) and post-delivery.
 
@@ -89,6 +91,8 @@ Per-ISP imbalance settlement (post-delivery):
 - Complex: load-gradient + minimum-income conditions.
 
 **Time grid:** 60-min until **2025-09-30**, 15-min from **2025-10-01** onward.
+
+**Price limits (MIBEL zone, per OMIE):** max **+4,000 EUR/MWh**, min **−500 EUR/MWh**. Notification thresholds at +200 / −20 EUR/MWh.
 
 **Output file (OMIE):**
 - `pdbc` — per-unit cleared volumes (Spec §5.1.2.1)
@@ -125,7 +129,7 @@ After Phase 1, REE adjusts to maintain the generation-demand balance, **respecti
 
 Phase-2 increments and reductions carry no security-derived limits, so they CAN be modified in subsequent markets (intraday auctions or balancing services).
 
-**Output:** **PDVP** (Programa Diario Viable Provisional). **Firm**.
+**Output:** **PDVD** (Programa Diario Viable Definitivo, OMIE convention; called *PDVP — Provisional* in REE's *Guía del Proveedor de Servicios de Ajuste*, p.236). **Firm.**
 
 **Data file (ESIOS):** `totalrp48preccierre` — Phase-1 + Phase-2 redispatch quantities by `tipo_redespacho` code, `qty_up_mwh` / `qty_down_mwh` / `price_up_eur` / `price_down_eur`. Indexed by `period_start_utc`. Aggregate (not per-unit at this layer, though per-unit detail is in subscription-only ESIOS files).
 
@@ -134,6 +138,8 @@ Phase-2 increments and reductions carry no security-derived limits, so they CAN 
 ## 4. Intraday auctions (IDA)
 
 OMIE-operated, uniform-price-clearing implicit-allocation auctions. Coupled at European level (SIDC — Single Intraday Coupling) since **2024-06-14**.
+
+**Price limits (per OMIE):** max **+9,999 EUR/MWh**, min **−9,999 EUR/MWh**. Notification thresholds at +200 / −20 EUR/MWh. Wider than DA (±9,999 vs +4,000/−500) because IDA is closer to delivery and used to absorb tighter, larger-magnitude residual imbalances.
 
 ### Pre-2024-06-14: 6 MIBEL sessions
 
@@ -197,7 +203,13 @@ After each IDA session, REE applies further security/rebalance modifications and
 - 60-min until 2025-03-18
 - **15-min from 2025-03-19** (MTU15-IDA reform)
 
+**Opening trigger (per OMIE):** Trading on D+1 contracts opens once **two conditions are met jointly** — (i) the first IDA of the current day D has cleared, and (ii) REE has published the **PDVD for D+1**. Verbatim: *"La apertura de la negociación de todos los contratos del mercado intradiario continuo para el día siguiente (D+1)... se hará a partir de la finalización de la primera subasta del día en curso (D), siempre que el operador del sistema haya publicado el Programa Diario Viable Definitivo para el día siguiente (D+1)."*
+
 **Open period:** Trading per delivery period closes ~1h before delivery hour begins.
+
+**Auction-handover rule (per OMIE).** Twenty minutes before each IDA closure, cross-border continuous trading **halts** for contracts entering that auction's horizon, then resumes locally (Iberian zone only) until auction bids close. This prevents round-tripping liquidity between the order book and the auction during the lead-in.
+
+**Price limits (per OMIE):** max **+1,500 EUR/MWh**, min **−150 EUR/MWh**. Tightest of the three markets — reflects continuous-trading volatility containment and the fact that SIDC sits within the European order-book caps.
 
 **Negotiation rounds:** OMIE structures negotiation by "rondas" (rounds) corresponding to specific time-blocks of the delivery day; cleared incremental and accumulated results are published per round.
 
@@ -217,7 +229,7 @@ After each IDA session, REE applies further security/rebalance modifications and
 
 ## 6. Real-time technical restrictions (REE)
 
-After PDVP publication and continuously through real-time operation, REE analyzes system security state and detects technical restrictions that may emerge from contingencies, forecast updates, or generation/demand changes.
+After PDVD publication and continuously through real-time operation, REE analyzes system security state and detects technical restrictions that may emerge from contingencies, forecast updates, or generation/demand changes.
 
 For periods that can still be addressed via the intraday market, modifications are made through IDA participation. For periods past the intraday close, REE applies real-time redispatches directly.
 
@@ -263,7 +275,7 @@ Balance services
   - **IGCC** — *imbalance netting*. Spain connected **October 2020**. Compensates aFRR-energy needs of opposite-signed control blocks before any actual aFRR activation, reducing total activation needs across the European interconnected system.
   - **PICASSO** — *aFRR-energy activation*. First-country go-live June 2022; Spain connected **later** (date not specified in the REE 2024-12 guide; verify against current PO 7.2 if needed). Handles cross-border anonymised optimization of aFRR offers.
 - **Local market structure:** TWO-stage market:
-  - **Capacity (reservation) market:** Each day, REE communicates aFRR up/down reserve needs per quarter-hour. Providers submit offers before **16:00 D-1** (per REE §6.2; **footnote: in any case up to 75 min after PDVP publication** — the binding cutoff depends on PDVP timing). Allocation independently for up and down per quarter-hour to minimize total system cost subject to PDBF security limits. Marginal-price clearing.
+  - **Capacity (reservation) market:** Each day, REE communicates aFRR up/down reserve needs per quarter-hour. Providers submit offers before **16:00 D-1** (per REE §6.2; **footnote: in any case up to 75 min after PDVD publication** — the binding cutoff depends on PDVD timing; REE's guide uses the synonym PDVP here). Allocation independently for up and down per quarter-hour to minimize total system cost subject to PDBF security limits. Marginal-price clearing.
   - **Energy market:** Allocated providers must submit valid energy offers for activation in their assigned quarter-hours; voluntary offers exceeding allocated reserve also accepted. Offers updateable up to 25 min before delivery period start.
 
   **Caveat for thesis-grade citation:** the 16:00 D-1 capacity-offer cutoff was set by PO 7.2 prior to the SIDC IDA reorganisation of June 2024; verify against current PO 7.2 before citing the exact time.
@@ -375,7 +387,7 @@ These four reform dates appear as constants in `src/mtu/notebook_utils.py` and d
 | PDBC | Programa Diario Base de Casación | DA cleared | No |
 | PDBCE | …por Empresa | DA cleared per firm | No |
 | PDBF | Programa Diario Base de Funcionamiento | DA cleared + bilaterals | No |
-| PDVP | Programa Diario Viable Provisional | After Phase 1 + Phase 2 RT | Yes (pre-IDA RT) |
+| PDVD | Programa Diario Viable Definitivo (OMIE term; REE *Guía* calls the same stage PDVP — Provisional) | After Phase 1 + Phase 2 RT | Yes (pre-IDA RT) |
 | PIBCA | Programa Intradiario Base Acumulativo | After IDA-k clearing | No (RT-free per spec) |
 | PIBCI | Programa Intradiario Base de Casación Incremental | IDA-k incremental | No |
 | PIBCIE | …por Empresa | per firm | No |
@@ -440,9 +452,9 @@ These four reform dates appear as constants in `src/mtu/notebook_utils.py` and d
 
 | Stage | When | Output |
 |---|---|---|
-| Pre-IDA RT process | After PDBF, two phases (Fase 1 security + Fase 2 rebalance) | PDVP |
+| Pre-IDA RT process | After PDBF, two phases (Fase 1 security + Fase 2 rebalance) | PDVD |
 | Post-IDA RT process | After each IDA session and after continuous rounds | PHF, PHFC |
-| Real-time RT process | Continuous during day D, post-PDVP | P48 |
+| Real-time RT process | Continuous during day D, post-PDVD | P48 |
 
 ---
 
