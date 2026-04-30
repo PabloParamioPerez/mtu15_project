@@ -28,27 +28,20 @@ DAY  D-1  (the day before delivery)
                     Fase 2: generation-demand rebalance
               → PDVP (firm)
 
-Intraday auctions (IDA) and continuous-market sessions interleave from
-mid-afternoon D-1 through morning D. Exact session times depend on regime:
+Intraday auctions (3 SIDC sessions, post-2024-06-14):
 
-  pre-2024-06-14 (6 MIBEL sessions):
-    IDA-1: clears 15:00 D-1   PHF(1) published 16:20 D-1
-    IDA-2: clears 17:50 D-1   PHF(2) published 18:20 D-1
-    IDA-3: clears 21:50 D-1   PHF(3) published 22:20 D-1
-    IDA-4: clears  1:50  D    PHF(4) published  2:20  D
-    IDA-5: clears  4:50  D    PHF(5) published  5:20  D
-    IDA-6: clears  9:50  D    PHF(6) published 10:20  D
-
-  2024-06-14 onward (3 SIDC sessions):
-    IDA-1: clears around 15:00 D-1
-    IDA-2: clears around 22:00 D-1
-    IDA-3: clears around 10:00  D
-    (Verify exact times against CNMC Resolución 23-May-2024 before citing.)
+  IDA-1: clears around 15:00 D-1   → PIBCA(s=1), PHF(s=1)
+  IDA-2: clears around 22:00 D-1   → PIBCA(s=2), PHF(s=2)
+  IDA-3: clears around 10:00  D    → PIBCA(s=3), PHF(s=3)
+  (Verify exact times against CNMC Resolución 23-May-2024 before citing.)
 
 After each IDA session:
   PIBCA (post-IDA accumulated program, RT-free)
   REE post-IDA RT + rebalance
   PHF (final hourly program for the periods covered by that session)
+
+(Pre-2024-06-14 used a 6-session MIBEL structure; full schedule preserved
+in §4 below for historical reference.)
 
 Continuous intraday market (XBID/SIDC):
   Opens after IDA-1 clears (≈15:00 D-1) and runs continuously, with closes
