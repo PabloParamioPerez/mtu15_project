@@ -439,6 +439,42 @@ These four reform dates appear as constants in `src/mtu/notebook_utils.py` and d
 | Post-IDA RT process | After each IDA session and after continuous rounds | PHF, PHFC |
 | Real-time RT process | Continuous during day D, post-PDVD | P48 |
 
+### REE numbered codes — quick reference
+
+The doc and the project code base use a few REE-specific numeric codes that aren't self-explanatory. Brief descriptions:
+
+**P48 — *Programa Operativo*.** The live, continuously-updated operational program REE maintains during the delivery day. Conceptually, P48 starts as the post-IDA PHF and absorbs every real-time redispatch (REE Fase 1 / Fase 2 / post-IDA RT / real-time RT) into a single rolling schedule. Public ESIOS files (`totalrp48preccierre`) are aggregate by redispatch type; per-unit P48 detail is subscription-only and we don't have it.
+
+**P.O. — *Procedimientos de Operación*.** REE's "Operating Procedures": a numbered series of binding rule documents, each one defining how a specific piece of system operation is run. The ones that show up most in this project:
+
+| Code | Topic |
+|---|---|
+| P.O. 1.1 | Continuity-of-operation criteria, contingency analysis, security limits. |
+| P.O. 3.1 | Pre-IDA technical-restriction process (the source of Fase 1 + Fase 2 → PDVD). |
+| P.O. 3.2 | Real-time technical-restriction process. The post-blackout "operación reforzada" voltage-support recommitment is rooted here. |
+| P.O. 7.1 | FCR (primary regulation). |
+| P.O. 7.2 | aFRR (secondary regulation): capacity-reservation auction + energy-activation rules. |
+| P.O. 7.3 | mFRR (tertiary regulation). |
+| P.O. 7.4 | RR (replacement reserves). |
+| P.O. 7.5 | SRAD (demand-side response). |
+| P.O. 14 | Settlement: imbalance pricing, BRP charges, balancing-service liquidations. |
+
+**`tipo_redespacho` — REE redispatch type code.** A 2-digit per-row classifier inside `totalrp48preccierre` that says which kind of redispatch a quantity belongs to. The parser docstring (`src/mtu/parsing/esios/totalrp48preccierre.py`) is the project's authoritative reference; the codes that actually appear in our data:
+
+| Code | Meaning |
+|---|---|
+| 33 | Real-time technical restrictions (general). |
+| 34 | Inter-zonal / network technical restrictions resolution. |
+| **61** | **System-security technical restrictions ("RZ"), under P.O. 3.2** — the post-IDA / real-time security activations that are the outcome variable in S8 (`rz_activation_escalation`, `s8_*`). |
+| 68 | Reserve management. |
+| 69 | Voltage control / black-start. |
+| 81 | Catch-all "other" bucket. |
+| 92 | mFRR activation. |
+| 94 | System balancing (residual imbalance redispatch). |
+| 19 / 22 / 23 / 24 / 32 / 38 / 65 / 66 / 80 / 82 / 85 / 89 / 95 / 96 | Less common; some are reform-superseded. Filter at the row level using the parser docstring before relying on any of these. |
+
+When filtering at the row level, rely on the parser docstring rather than this table — REE adds and supersedes codes around each reform.
+
 ---
 
 ## 12. References (full document set in repo)
