@@ -17,59 +17,42 @@ Reference for the project. Covers the wholesale-market sequence (DA → IDA auct
 The Spanish wholesale electricity market for any given delivery hour has multiple sequential clearings spanning **both D-1 (the day before delivery) and D (the delivery day itself)**. Each clearing produces a *firm program* that can be adjusted by the next. The IDA sessions and the continuous market both straddle the D-1 / D boundary; only the DA market and the pre-IDA REE restriction process are entirely D-1.
 
 ```
+══════════════════════════════════════════════════════════════════════════════
 DAY  D-1  (the day before delivery)
-─────────────────────────────────────────────────────────────────────────────
-12:00       DA market clears (OMIE, EUPHEMIA / SDAC)
-              → PDBC
-13:30       + bilaterals
-              → PDBF
-~early afternoon  REE pre-IDA RT process:
-                    Fase 1: security-criteria modifications
-                    Fase 2: generation-demand rebalance
-              → PDVD (firm)
+══════════════════════════════════════════════════════════════════════════════
 
-Intraday auctions (3 SIDC sessions, post-2024-06-14):
-
-  IDA-1: clears around 15:00 D-1   → PIBCA(s=1), PHF(s=1)
-  IDA-2: clears around 22:00 D-1   → PIBCA(s=2), PHF(s=2)
-  IDA-3: clears around 10:00  D    → PIBCA(s=3), PHF(s=3)
-  (Verify exact times against CNMC Resolución 23-May-2024 before citing.)
-
-After each IDA session:
-  PIBCA (post-IDA accumulated program, RT-free)
-  REE post-IDA RT + rebalance
-  PHF (final hourly program for the periods covered by that session)
-
-(Pre-2024-06-14 used a 6-session MIBEL structure; full schedule preserved
-in §4 below for historical reference.)
-
-Continuous intraday market (XBID/SIDC):
-  Opens after IDA-1 clears (≈15:00 D-1) and runs continuously, with closes
-  per delivery period at gate-closure-time = ~1h before delivery period.
-  Trading therefore spans D-1 afternoon through D up to one hour before
-  each delivery period.
-    → PIBCAC, PIBCIC(E), PHFC per round
-─────────────────────────────────────────────────────────────────────────────
-
-DAY  D  (delivery day)
-─────────────────────────────────────────────────────────────────────────────
-Throughout D:
-  Late IDA sessions clear (IDAs 4–6 pre-SIDC; IDA-3 post-SIDC)
-  Continuous intraday market keeps trading until 1h-before-delivery for each period
-  REE real-time RT process (continuous from PDVD onward) → P48 (live)
-
-  Real-time balancing services activate during operation:
-    FCR  — automatic primary frequency response (mandatory, unpaid)
-    aFRR — automatic secondary regulation, PICASSO platform
-    mFRR — manual tertiary regulation, MARI platform
-    RR   — manual replacement reserves, TERRE platform
-    SRAD — manual demand-response, Spain-only annual auction
-
-Per-ISP imbalance settlement (post-delivery):
-  ISP = 15 min since 2024-12-01.
-  BRPs settled on residual imbalance under dual-pricing rule.
-─────────────────────────────────────────────────────────────────────────────
+  [OMIE]  Day-ahead auction                                ──►  PDBC
+                                                                  │
+          + bilateral contracts                            ──►  PDBF
+                                                                  │
+  [REE]   Pre-IDA technical-restriction process                   │
+          (Fase 1 security  +  Fase 2 rebalance)           ──►  PDVD  (firm)
+                                                                  │
+  [OMIE]  Intraday auctions  IDA-1 ,  IDA-2                       │
+                            ──►  PIBCA  ─[REE post-IDA RT]──►  PHF
+                                                                  │
+  [OMIE]  Continuous market (XBID/SIDC) opens ════════════════════╪══════►
+                                                                  │
+══════════════════════════════════════════════════════════════════╪══════════
+DAY  D  (delivery day)                                            │
+══════════════════════════════════════════════════════════════════╪══════════
+                                                                  │
+  [OMIE]  Intraday auction  IDA-3                                 │
+                            ──►  PIBCA  ─[REE post-IDA RT]──►  PHF
+                                                                  │
+  [OMIE]  Continuous market keeps trading  ════════►  closes ~1h before
+                                                       each delivery period
+                                                                  │
+  [REE]   Real-time technical-restriction process            ──►  P48  (live)
+                                                                  │
+  [REE]   Real-time balancing services                            │
+          (FCR / aFRR / mFRR / RR / SRAD)                         │
+                                                                  │
+  [post]  Per-ISP imbalance settlement                            ▼
+══════════════════════════════════════════════════════════════════════════════
 ```
+
+The arrows trace **firm programs**, the checkpoints that each market produces and the next market starts from: PDBC → PDBF → PDVD → PHF (per IDA session) → P48. Times and exact session schedules are deliberately omitted here; see §4 for IDA timing and §5 for SIDC opening rules.
 
 **Two important distinctions:**
 
