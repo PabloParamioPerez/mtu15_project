@@ -27,6 +27,77 @@ Single source of truth for empirical claims in this project. One row per claim. 
 
 ---
 
+## TL;DR — one-line index of every claim
+
+Quick-scan view. Status reflects current section placement; the detailed rows below are the source of truth. **Section drift to fix**: F7 reads as a headline-alive finding (€820M IB transfer) but currently sits in the Wounded section because of caveats; F14–F22 read as alive findings but currently sit in the Dead section likely from a copy-paste structural mistake during ledger construction. Verify and re-section before citing.
+
+| ID | Status | Layer | One-line summary |
+|---|---|---|---|
+| **S1** | **ALIVE** | system | A87 net income jumps €38 → €160 → €72M/mo across regimes (ISP15 spike + MTU15-DA moderation) |
+| **S2** | **ALIVE** | system | A86 absolute imbalance volume rises +5.1 GWh/d at ISP15 (regime dummies, p<0.001, n=873) |
+| **S3** | **ALIVE** | system | A85 imbalance-price volatility (σ) increases +40% at ISP15 |
+| **S4** | **ALIVE** | system | A84 aFRR reserve spread rises +35% at ISP15 |
+| **S5** | **ALIVE** | system | Four ENTSO-E outcomes show concordant jump at ISP15 + moderation at MTU15-DA (joint null rejection) |
+| **S6** | **ALIVE** | system | A87 NET BRP→TSO settlement transfer +€1,094.9M cumulative excess across the 10-month asymmetric-granularity window vs same-cal pre-IDA baseline (bootstrap null CI [-90,+73]M) |
+| **S7** | **ALIVE** | system | Per-segment marginal imbalance cost is order-of-magnitude heterogeneous: conv-RZ €210–300/MWh vs LIB free retailers ≤€37/MWh (non-Pigouvian misalignment) |
+| **S9** | **ALIVE** | system | Renewable capture-price cannibalization in post-reform Spain is severe and asymmetric across technologies; reform did not meaningfully alleviate it |
+| **F1** | **ALIVE** | structural-firm | GE implied Hortaçsu–Puller-style Lerner +0.318 above pre-IDA at DA60/ID15, conditional on clearing-price level (Spec 3, price-bin FE) |
+| **F2** | **ALIVE** | structural-firm | IB implied Hortaçsu–Puller-style Lerner +0.135 above pre-IDA at DA60/ID15, conditional on clearing-price level (Spec 3) |
+| **F3** | **ALIVE** | structural-firm | GE/IB matched-price Lerner partially reverse at MTU15-DA (GE +0.080, IB −0.028 vs pre-IDA) |
+| **F4** | **ALIVE** | structural-firm | GN/HC Lerner shifts dominated by Rule 28.8 bilateral-contract reallocation at 2025-03-19, not strategic |
+| **F9** | **ALIVE** | structural-firm | aFRR settlement: combined share of the five named IB-mapped BSPs is structurally elevated post-blackout (mapping-independent ESIOS panel) |
+| **F10** | **ALIVE** | structural-firm | IB pivotality is structural, not scarcity-driven: time-of-day-dominated, evening-peak across all weather/water conditions |
+| **F11** | **ALIVE** | structural-firm | Cross-border interconnection coupling does NOT discipline IB's per-MWh markup; \|gap\| effect on IB price impact ≈ −0.04 to −0.05 |
+| **F12** | **ALIVE** | structural-firm | MUEL+MUEB pumped-storage arb wounded — solar-cannibalisation trend, regime dummies non-significant after VRE control + reghdfe FE |
+| **F13** | **ALIVE** | structural-firm | IB price-setting power varies with competitive thinness at the margin (mp_IB falls as more non-IB tranches sit within ±€5 of clearing price) |
+| **B1** | **ALIVE** | behavioural | GE IDA bid-shading peaks at 3-sess and ISP15-win above pre-IDA seasonal baseline; partially compresses below baseline at MTU15-DA |
+| **B2** | **ALIVE** | behavioural | GE/IB IDA sell-side offer prices in 2025 are at post-gas-crisis lows (NOT 8-year-low) |
+| **B3** | **ALIVE** | behavioural | XBID liquidity grew across the reform sequence |
+| **B4** | **ALIVE** | behavioural | XBID intra-product price σ peaks at DA60/ID15 (~€9–11/MWh), moderates at MTU15-DA |
+| **B5** | **ALIVE** | behavioural | Rule 28.8 elimination concentrates DA revenue at 2025-03-19: GE +93%, GN −65%, HC −75% |
+| **B6** | **ALIVE** | behavioural | Forecast-error → imbalance pass-through R² jumps to 0.305 in DA60/ID15 vs 0.023 in pre-IDA-late (most-comparable post-crisis baseline) |
+| **B7** | **ALIVE** | behavioural | France DA prices flat across Spanish reform dates — Spain-specific cross-country placebo |
+| **B8** | **ALIVE** | behavioural | Within-unit bid complexity response to MTU15-IDA is IB-specific, not generic Big-4 |
+| **B9** | **ALIVE** | behavioural | Big-4 progressive q₂_IDA under-commitment collapse across the five reform regimes; replicated-ISP-grain regression at native 15-min grain (1.93M obs, F=477) |
+| **D1** | **ALIVE** | descriptive | Within-month price dispersion rises post-MTU15-DA in Spain (and not in France) |
+| **D2** | **ALIVE** | descriptive | 80–99% of Big-4 offer-hours post-MTU15-DA do not strategically exploit 15-min granularity (identical bids across 4 ISPs) |
+| **D3** | **ALIVE** | descriptive | Market concentration (HHI) is elevated 2023-onwards vs 2018-2022, sustained through reform period |
+| **D4** | **ALIVE** | descriptive | Extensive-margin Fringe exit at MTU15-IDA: 23 small Fringe units + 3 HC units exit DA, ~6.8% of pre-reform DA volume |
+| **D5** | **ALIVE** | descriptive | Cross-firm net-seller positions in DA, post-Rule-28.8: GE +2,316 GWh/mo > IB +958 — vertical integration cannot explain IB > GE in market power |
+| **W1** | _wounded_ | structural-firm | GE raw (unconditional) Lerner peaks at 35% in DA60/ID15 — composition-confounded by nuclear inframarginal share + non-localised placebo |
+| **F5** | _wounded_ | structural-firm | Allaz–Vila commitment slope — RE-RETRACTED 2026-04-29 as a mechanical accounting identity (Q_actual ≈ q_DA + ΔQ_IDA); DEAD as IR evidence at every granularity |
+| **F6** | _wounded_ | structural-firm | Cournot inverse-slope: IB cleanly fits, GE partial, GN/HC opposite (small magnitude) |
+| **F7** | _wounded_ | structural-firm | Ciarreta–Espinosa synthetic-firm: ~€820M IB DA-clearing transfer (98% of joint Big-4) post-MTU15-IDA, hydro 64% / CCGT 36%; **section-drift: probably alive with caveats** |
+| **F8** | _wounded_ | structural-firm | IB hydro Q4 dispatch concentration +17pp vs Fringe, structurally regime-invariant 2018–2025; Bushnell water-value mechanism FAILS |
+| **S8** | _wounded_ | system | Daily RZ-61 activations rose post-IDA; same-cal-month robustness 2026-04-30: 3/4 regimes hold but DA60/ID15 collapses (β=+1.59 GWh/d, p=0.21) |
+| **F14** | _section-drift_ | structural-firm | Spanish nuclear units 22–38% unaccounted reduction system-wide 2024–25 (A73 vs A80) — **probably alive, in Dead section** |
+| **F15** | _section-drift_ | structural-firm | Operación reforzada CCGT windfall went to GN (+7.1pp share), NOT IB (−2.0pp) — **probably alive, in Dead section** |
+| **F16** | _section-drift_ | structural-firm | Per-firm CCGT supply-curve slope: IB 4.8× more price-responsive post-blackout — **probably alive, in Dead section** |
+| **F17** | _section-drift_ | structural-firm | Within-firm CCGT plant substitution 2024–25 vs 2018–21 baseline (BES3→BES5, ARCOS3→ARCOS1, etc.) — **probably alive, in Dead section** |
+| **F18** | _section-drift_ | structural-firm | CNMC-sanctioned CCGT plants (BES3, BES5, SBO3) ALL LOST share post-blackout — **probably alive, in Dead section** |
+| **F19** | _section-drift_ | structural-firm | Per-firm aFRR 2025: GE captured 34.28% of post-blackout up-activation; IB grew slowest (1.84×) — **probably alive, in Dead section** |
+| **F20** | _section-drift_ | structural-firm | Per-firm aFRR REVENUE: GE became dominant aFRR provider post-MTU15-IDA, surpassing IB by ~52% in DA15/ID15 — **probably alive, in Dead section** |
+| **F21** | _section-drift_ | structural-firm | CNMC SBO3 three-situation pivotality test: pattern widespread across Big-4 CCGT in 2024–26 — **probably alive, in Dead section** |
+| **F22** | _section-drift_ | structural-firm | Direct CNMC SBO3 bid-price-wedge replication: 7 of 9 Naturgy CCGT show 11–35% wedge in pivotal hours — **probably alive, in Dead section** |
+| **X1** | ~~dead~~ | identification | Big-4 × Post-MTU15-IDA TWFE-DiD identifies a causal ATT (parallel trends fail; placebo fail; randomization p=0.43) |
+| **X2** | ~~dead~~ | identification | Big-4 aggregate wind-IV slope contraction (nuclear-variance-weighted; ex-nuclear robustness collapses) |
+| **X3** | ~~dead~~ | identification | GE × CCGT wind-IV signed flip uniquely localised to ISP15 (placebo sweep: 6/22 fake boundaries match) |
+| **X4** | ~~dead~~ | behavioural | +238% IDA-reform sell-side offer-price jump is reform-driven (same-cal-weeks comparison kills it) |
+| **X5** | ~~dead~~ | identification | Profile-matching explains ΔQ compression (rejected in nb05) |
+| **X6** | ~~dead~~ | identification | Ramp/start-up lumpiness drives compression (rejected in nb05) |
+| **X7** | ~~dead~~ | identification | Reserve-procurement substitution explains compression (rejected in nb05) |
+| **X8** | ~~dead~~ | identification | Storage internalisation drives compression (rejected in nb05) |
+| **X9** | ~~dead~~ | behavioural | DA-tranche simplification mirrors IDA complexification (composition shift, not within-unit) |
+| **X10** | ~~dead~~ | behavioural | Big-4 CCGT XBID iceberg rates surge to 98% at MTU15-DA (already at 98% pre-reform) |
+| **X11** | ~~dead~~ | behavioural | La Muela uses iceberg specifically at MTU15-DA (already at 99% iceberg since 2021) |
+| **X12** | ~~dead~~ | identification | DA capacity withholding declines significantly post-reform (insignificant after seasonal correction) |
+| **X13** | ~~dead~~ | system | A87 reserve-cost redistribution ≈ €840M/yr at ISP15 (residual was the wrong measurement; direct imresecqh shows €71→30M/mo decline) |
+| **X14** | ~~dead~~ | behavioural | Big-4 CCGT DA bid granularity drops 5–7 → 1–2 tranches at MTU15-IDA (MAV-format-change parser artefact) |
+
+**Counts (this index):** 31 alive · 6 wounded · 9 in section-drift (probably alive) · 14 dead · total 60 claims.
+
+---
+
 ## Alive claims (30)
 
 | ID | Layer | Claim | Evidence script | Evidence notebook | Date_changed |
