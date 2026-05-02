@@ -465,15 +465,19 @@ These are **NOT collinear** in any data window that includes the 2025-03-19 → 
 
 | Date | BOE | Substance |
 |---|---|---|
-| **2025-04-28** | — | Blackout. Operación reforzada begins administratively the next day. |
+| **2025-04-28 12:33 CEST** | — | Blackout. ICS Scale 3 (highest severity). Spain transmission system fully restored 04:00 on 29 April; Portugal restoration complete 00:22 on 29 April. Operación reforzada begins administratively the next day. |
+| **2025-05-12** | — | ENTSO-E ICS Investigation Expert Panel formed (49 experts: 30 from ACER+NRAs, 19 from TSOs/RCCs/ENTSO-E bodies; chaired by APG Austria + Mavir Hungary). |
 | **2025-06-12** | BOE-A-2025-13076 | CNMC Resolución modifies PO-3.1, 3.6, **7.4**, 9.1, 14.4 to develop the two-tier voltage control service. |
+| **2025-06-18** | — | REE PO-9 report (Spanish-regulation-required) — `docs/regulation/eu/20250618_entsoe_blackout_iberia_28apr.pdf` (18 pages). Initial technical analysis. |
 | **2025-06-24** | BOE-A-2025-12857 | RDL 7/2025 — emergency measures for system reinforcement. **REPEALED** by Congress 2025-07-22. |
 | **2025-07-22** | BOE-A-2025-15313 | Congressional repeal of RDL 7/2025. |
 | **2025-09** | — | Voltage oscillations across the system trigger urgent additional measures. |
+| **2025-10-03** | — | ENTSO-E **factual** report (interim, ICS Methodology). |
 | **2025-10-20** | BOE-A-2025-21198 | CNMC temporary modifications to PO-3.1, 3.2, 7.2 for voltage stabilisation (initial 30+15 days, max 3 months). |
 | **2025-11-05** | BOE-A-2025-22434 | Real Decreto 997/2025 — replacement for the repealed RDL 7/2025. Voltage-control penalties, BESS public utility status, hybrid/storage fast-track, demand-side flexibility. |
 | **2026-01-19** | BOE-A-2026-1377 | CNMC makes the Oct-2025 temporary modifications to PO-3.1, 3.2, 7.2 PERMANENT. Provisional voltage-stabilisation measures extended **until January 2027**. |
-| **2026-03-19** | — | CNMC informe **PRO/CNMC/001/26** — recommendations and proposed measures (74-page report). No blame assigned but "tools existed to prevent the blackout". |
+| **2026-03-19** | — | CNMC informe **PRO/CNMC/001/26** — `docs/regulation/spain/20260319_cnmc_informe_apagon.pdf` (74 pages). No blame assigned but "tools existed to prevent the blackout". |
+| **2026-03-20** | — | **ENTSO-E Expert Panel Final Report** — `docs/regulation/eu/20260320_entsoe_blackout_iberia_final.pdf` (470+ pages, 50 MB). **The authoritative European technical reference.** Causes (per §1.1): uncontrolled rapid voltage rise, loss of voltage control, oscillations, gaps in reactive-power control, differences in voltage regulation practices, rapid generation output reductions and disconnections, uneven stabilisation capabilities — all interacting. Chapter 9 contains 22 recommendations (§9.3 root-cause-linked + §9.4 other). Report explicitly does **not** assign liability. |
 | **2026-04-17 → 2026-04-28** | — | CNMC opens **~100 sanctioning expedientes** against generators (IB, GE, GN, REP, Naturgy CCGT) and REE itself (one "muy grave"). Outcome pending. |
 
 ---
@@ -666,6 +670,16 @@ For the formal regulatory texts:
 - `docs/regulation/eu/20171123_eu_ebgl_2017-2195.pdf` (EU Electricity Balance GL)
 - `docs/regulation/eu/20150724_eu_cacm_2015-1222.pdf` (EU CACM Regulation)
 - `docs/regulation/eu/20190124_acer_dec_01-2019_id_pricing.pdf` (ACER intraday pricing)
+
+For the post-blackout regulatory cascade (see §11):
+- `docs/regulation/spain/20250612_cnmc_voltage_service.pdf` (BOE-A-2025-13076; PO-7.4 voltage-control reform)
+- `docs/regulation/spain/20250624_rdl_7-2025_refuerzo_sistema.pdf` (RDL 7/2025; **REPEALED 2025-07-22**)
+- `docs/regulation/spain/20251020_cnmc_voltage_initial.pdf` (BOE-A-2025-21198; Oct 2025 temporary PO modifications)
+- `docs/regulation/spain/20251105_rd_997-2025_refuerzo_sistema.pdf` (RD 997/2025; replacement for repealed RDL)
+- `docs/regulation/spain/20260119_cnmc_voltage_final.pdf` (BOE-A-2026-1377; permanent PO modifications, extended to Jan 2027)
+- `docs/regulation/spain/20260319_cnmc_informe_apagon.pdf` (CNMC PRO/CNMC/001/26; 74-page recommendations)
+- `docs/regulation/eu/20250618_entsoe_blackout_iberia_28apr.pdf` (ENTSO-E initial 18-page report; superseded)
+- **`docs/regulation/eu/20260320_entsoe_blackout_iberia_final.pdf`** (ENTSO-E Expert Panel Final Report; 470+ pages; **the authoritative European technical reference for the blackout**)
 
 For the OMIE file specifications:
 - `docs/omie/ficherosomie137.pdf` (OMIE files spec v1.37, 2025-09-30)
