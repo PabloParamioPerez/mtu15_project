@@ -1,6 +1,6 @@
-# Master thesis proposal — economic structure for 37 alive findings
+# Master thesis proposal — economic structure for 36 alive findings
 
-**Date:** 2026-04-28. Working draft. To be discussed and refined.
+**Date:** 2026-04-28; revised 2026-05-02 after the F1/F2/F3 / F5 kill pass and F7 + F14–F22 re-sectioning to alive. Working draft. To be discussed and refined.
 
 **One-sentence thesis claim.** Spain's 2024–2025 reform sequence (6→3 IDA sessions; MTU15-IDA; MTU15-DA) created a 10-month asymmetric-granularity window during which a measurable system-cost transfer flowed from market participants to the TSO, but the reform did not eliminate firm-level market power — instead, the four largest firms specialised across markets (IB in day-ahead hydro, GE in aFRR balancing, Naturgy in CCGT redispatch) and adapted to post-2023 CNMC enforcement by relocating their pivotality conduct from explicit RTT bids to implicit DA blocking. The post-2025-04-28 blackout sharpened the firm-specialisation map without reordering it.
 
@@ -26,7 +26,7 @@ The thesis claim above survives all three rejections.
 
 **Story**: The 10-month asymmetric window (Dec 2024 — Sep 2025) during which DA cleared at 60-min while ID/imbalance settled at 15-min generated a measurable system-cost shift. Four ENTSO-E system metrics jump concordantly at ISP15 (S5) and moderate at MTU15-DA. The shift quantum is ~€90-95M/month gross BRP→TSO settlement transfer. The microfoundation (B6 forecast-error → imbalance pass-through) and the cross-country placebo (B7 France DA flat across Spanish reform dates) live here, alongside the supporting behavioural evidence (B3 XBID liquidity growth, B4 XBID intra-product σ peaks DA60/ID15, B5 Rule 28.8 elimination), because they all speak to the system-layer mechanism.
 
-**Anchor findings**: S1, S2, S3, S4, **S5** (joint null rejection), **S6** (€1.1B BRP→TSO settlement transfer over 10 mo, blackout-decomposed), S7 (Pigouvian segment heterogeneity), S8 (RZ activations doubled post-IDA — wounded, ISP15-window-only after renewable control), S9 (renewable cannibalisation), **B6** (forecast-error → imbalance pass-through R² 0.171→0.028), **B7** (France placebo), B3, B4, B5.
+**Anchor findings**: S1, S2, S3, S4, **S5** (joint null rejection), **S6** (€1.1B BRP→TSO settlement transfer over 10 mo, blackout-decomposed), S7 (Pigouvian segment heterogeneity), **S8** (RZ activations rose post-IDA at daily disaggregation; same-cal-month robustness 2026-04-30 — 3/4 post-IDA regimes hold positive significant; DA60/ID15 specifically does not survive the same-Apr-Sep restriction. Cite with the caveat that DA60/ID15 is partly Apr-Sep seasonal/blackout-confounded), S9 (renewable cannibalisation — capacity-growth-driven, cite descriptively only), **B6** (forecast-error → imbalance pass-through R² 0.171→0.028), **B7** (France placebo), B3, B4, B5.
 
 **Economic relevance**: This is a **regulatory friction** in the Pigouvian sense — segment-heterogeneous marginal-cost contributions to imbalance with a uniform settlement rule (S7). The framing is "asymmetric-granularity friction" not "deadweight loss" because the BRP→TSO transfer is regulatorily redistributed (the TSO recycles surplus to consumers via tariff with a 1-yr lag); the welfare interpretation requires a counterfactual on tariff pass-through that we do NOT estimate. Cite as a settlement-redistribution finding, not a DWL number.
 
@@ -36,13 +36,13 @@ The thesis claim above survives all three rejections.
 
 **Story**: IB's day-ahead market-power rent (~€820M post-MTU15-IDA, F7) is structural, regime-invariant, and flows through dispatchable hydro Cournot dispatch (Bushnell 2003-style). The mechanism predates the reform and survives the blackout and post-MTU15-DA. Behavioural support: B8 (within-unit bid complexification IB-specific) and B9 (Big-4 DA under-commitment with caveats).
 
-**Anchor findings**: **F7** (synthetic-firm Ciarreta–Espinosa method, IB ~98% of Big-4 transfer, hydro 64% / CCGT 36%, blackout-decomposed), **F8** (IB hydro Q4 dispatch +17-21pp gap vs Fringe, regime-invariant 2018-2026), **F10** (IB pivotality structural not scarcity-driven), **F13** (IB price-setting power varies with competitive thinness at margin), F11 (cross-border coupling does NOT discipline), F2 (IB matched-price Lerner +0.135), F6 (Cournot tercile fit), F12 (IB pumped-storage arb wounded — solar-cannibalisation trend, not reform-attributable), **B8**, B9.
+**Anchor findings (post 2026-05-02 kill pass)**: **F7** (synthetic-firm Ciarreta–Espinosa method, IB ~98% of Big-4 transfer, hydro 64% / CCGT 36%, blackout-decomposed; re-sectioned to ALIVE 2026-05-02), **F10** (IB pivotality structural not scarcity-driven), **F13** (IB price-setting power varies with competitive thinness at margin), **F11** (cross-border coupling does NOT discipline), **B8** (IB-specific bid complexification), **B9** (Big-4 progressive q₂ collapse). Wounded supplements: **F8** (IB hydro Q4 dispatch +17pp regime-invariant — descriptive only; Bushnell water-value mechanism rejected), **F6** (Cournot tercile fit — IB cleanly, GE partial, GN/HC opposite), **F12** (pumped-storage arb — reform attribution wounded, solar-trend driven). Killed and excluded: **F1/F2/F3** (HP-sophistication test 2026-05-02 rejects the strategic-conduct interpretation of the implied Cournot Lerner — formula is mechanical, not realized markup); **F5** (Allaz–Vila slope is a mechanical accounting identity).
 
-**Why IB and not the others**: F1/F2 ledger comparison, B8 within-unit bid complexification IB-specific, plus modelling-track §0 cross-firm consistency table (F6/B8 point to IB cleanly; F5 was RE-RETRACTED 2026-04-29 as a mechanical accounting identity and is no longer load-bearing for this argument).
+**Why IB and not the others**: F7 per-firm decomposition (IB ~98% of joint Big-4 DA-clearing transfer, GE/GN/HC ~zero) is the headline. D5 (cross-firm net-seller positions, GE > IB by 1.9–2.5×) rules out vertical-integration explanations. B8 within-unit bid complexification is IB-specific. The modelling-track §0 cross-firm consistency table now rests on **F7/F10/F13/B8** as the surviving alive evidence (F6 wounded; F1/F2/F3 killed by HP-sophistication 2026-05-02; F5 killed 2026-04-29 as mechanical identity).
 
 **Economic relevance**: Bushnell (2003 AER) hydro-thermal Cournot mechanism. The Ciarreta–Espinosa (2010 J Regul Econ) synthetic-firm method we apply was originally developed for the 2002–2005 Spanish pool — we extend it to the 2018–2026 panel and find the same firm-cross-section asymmetry persisting across very different regulatory regimes. The thesis novelty is the **regime-invariance robustness**: the same mechanism that the literature documented for the early-2000s Spanish pool is still present after MTU15-IDA, MTU15-DA, the blackout, and operación reforzada.
 
-**Methodology lineage**: Cournot; Hortaçsu–Puller (2008 RAND); Bushnell (2003 AER); Ciarreta–Espinosa (2010 J Regul Econ); Crampes–Moreaux on water-value reasoning.
+**Methodology lineage**: Cournot; Bushnell (2003 AER); Ciarreta–Espinosa (2010 J Regul Econ); Crampes–Moreaux on water-value reasoning. **Hortaçsu–Puller (2008 RAND)** is cited as a methodological influence (the implied-Lerner-from-bid-structure method) but the project's HP-sophistication test (2026-05-02, `f1_f2_f3_hp_sophistication.py`) showed the implied Cournot Lerner does NOT match realized marginal-bid markup at firm-hour grain — the cross-firm ranking matches HP qualitatively, but the levels are formula-mechanical rather than realized-conduct. Cite HP as methodological influence, not as direct evidence of "sophisticated bidding" by Big-4.
 
 ### Part III — Cross-market firm specialisation (DA vs aFRR vs CCGT vs mFRR)
 
@@ -110,7 +110,7 @@ The thesis builds a **layered story** about Spanish electricity markets under re
 **Eight-week timeline (deadline ~2026-06-20)**:
 
 - **Weeks 1-2**: Finalise the Part-I system-layer chapter using S5/S6/S7. The €1.1B headline number is the strongest single empirical statement — lead with it. Cross-country placebo (B7) goes here.
-- **Weeks 3-4**: Part-II IB-canonical chapter. F7 + F8 + F10 form the core; F11 is the falsification check; F2 and F6 are the supporting Lerner statistics. The Bushnell + Ciarreta–Espinosa methodology gives clean theoretical grounding.
+- **Weeks 3-4**: Part-II IB-canonical chapter. **F7 + F10 + F13 form the core** post-kill-pass; F11 is the falsification check (cross-border coupling does NOT discipline); F8 wounded but provides hydro-Q4 descriptive evidence; F6 wounded as supplementary Cournot-tercile fit; B8 + B9 behavioural support. **F1/F2/F3 retired** (HP-sophistication 2026-05-02 rejected the conduct interpretation of the implied Cournot Lerner). The Bushnell + Ciarreta–Espinosa methodology gives clean theoretical grounding.
 - **Weeks 4-5**: Part-III cross-market specialisation. F19 + F20 (aFRR/GE) and F15 (CCGT/GN) anchor the cross-market case. F9 system-level aFRR competition is the methodological backbone.
 - **Weeks 6-7**: Part-IV CNMC SBO3 and modern conduct. F14 (rejection of simple moral hazard) + F17/F18 (substitution pattern) + F21/F22 (replication of CNMC framework). The 6-PDF resolution archive in `docs/regulation/cnmc_resolutions/` is the regulatory anchor.
 - **Week 8**: Appendix (identification provenance from `_identification_target.md`, descriptive context); figure polish; viva-defensive read of dead claims.
@@ -121,7 +121,7 @@ The thesis builds a **layered story** about Spanish electricity markets under re
 
 ## What this proposal is NOT
 
-- **Not a definitive plan.** It is a synthesis of what 37 alive findings naturally support; many alternative organisations are possible.
+- **Not a definitive plan.** It is a synthesis of what 36 alive findings naturally support (post 2026-05-02 kill pass); many alternative organisations are possible.
 - **Not new analysis.** Every claim above maps to existing ledger entries; this document organises and integrates rather than producing new evidence.
 - **Not a welfare estimate.** The €1-2B/yr figure is an order-of-magnitude sum of separate findings; rigorous welfare requires a counterfactual general-equilibrium analysis that is out of scope.
 - **Not committing to specific modelling.** The modelling-track sections in `_modelling_track.md` (Cournot, Allaz–Vila, Pigouvian, asymmetric-granularity) remain active candidates; the thesis can pick the subset that matches the four-part structure above.

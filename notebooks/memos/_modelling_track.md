@@ -6,19 +6,28 @@ Goal: organise alive empirical claims around economic models. Each section is a 
 
 References: `CLAIMS_LEDGER.md` (claim status, evidence pointers) | `_identification_target.md` (identification provenance, frozen post-Week 1) | `RESEARCH_LOG.md` (chronological diary) | `thesis/proposal.md` (5-part synthesis written 2026-04-28).
 
+## ⚠ Status note — 2026-05-02 kill pass
+
+**This file is historical / append-only**; sections below were written between 2026-04-25 and 2026-04-30 and reflect claim statuses at those dates. Two fundamental status changes since are not yet propagated through every paragraph:
+
+1. **F1/F2/F3 KILLED 2026-05-02** by the HP-sophistication test (`f1_f2_f3_hp_sophistication.py`). Rationale: implied Cournot-FOC Lerner does NOT match realized marginal-bid markup (GE ratio 0.36, IB 0.42; realized markup uniform €13–26/MWh while implied is wildly heterogeneous 0.008–0.93). The +0.318/+0.135 regime-difference coefficients survive as **shifts in a formula-mechanical index**, not as evidence of strategic conduct. Sections below that cite F1/F2/F3 as alive Cournot evidence (most of §0 and §1) should be re-read with this caveat. The mechanism story for IB market power now rests on **F7 + F10 + F13 + B8**, not F1/F2.
+2. **F5 KILLED 2026-04-29** as a mechanical accounting identity (Q_actual ≈ q_DA + ΔQ_IDA). Already noted in §6 status block.
+
+Authoritative current status is in `CLAIMS_LEDGER.md` TL;DR table.
+
 ## Map to thesis-proposal Parts
 
-The thesis proposal organises 37 alive findings into 5 Parts. This file's §-numbering is historical (sections were added in run-order). The mapping:
+The thesis proposal organises 36 alive findings into 4 Parts + appendix (post 2026-05-02 kill pass). This file's §-numbering is historical. The mapping:
 
-| Thesis Part | Modelling-track sections | Lead alive claims | Status |
+| Thesis Part | Modelling-track sections | Lead alive claims (current) | Status |
 |---|---|---|---|
-| **I — System asymmetric-granularity friction** | §3 Pigouvian + §4 asymmetric-granularity welfare | S5, **S6 (€1.1B)**, S7, B7 | alive — Part I theory anchor is §4 |
-| **II — Firm structural market power (IB-canonical)** | §0 cross-firm synthesis + §1 Cournot-pivotality | F7, F8, F10, F11, F2, F6 | alive — surviving mechanism is Cournot-structural-pivotality (§1) |
+| **I — System asymmetric-granularity friction** | §3 Pigouvian + §4 asymmetric-granularity welfare | S5, **S6 (€1.1B)**, S7, B6, B7 | alive — Part I theory anchor is §4 |
+| **II — Firm structural market power (IB-canonical)** | §0 cross-firm synthesis + §1 Cournot-pivotality | **F7, F10, F11, F13, B8** alive; F8, F6, F12 wounded; F1/F2/F3 killed 2026-05-02; F5 killed 2026-04-29 | alive — surviving mechanism is Cournot-structural-pivotality (§1); §0/§1 paragraphs below pre-date the F1/F2/F3 kill and should be read with that caveat |
 | **III — Cross-market firm specialisation** | §III below (cross-market reading folded into §0; no standalone section) | F9 (aFRR), F15 (CCGT), F19, F20 | alive — §III paragraph below summarises |
 | **IV — Post-blackout enforcement and modern firm conduct** | §6 strategic availability under within-firm fleet substitution | F14, F15, F17, F18, F21, F22 | alive — §6 added 2026-04-28 |
-| **V — Behavioural + identification appendix** | §5 bid complexification + §2 Allaz–Vila (rejected, appendix-grade) | B1, B3, B4, B5, **B6**, B7, B8, B9 | §5 alive; §2 rejected 2026-04-27 |
+| **Appendix — Behavioural + identification** | §5 bid complexification + §2 Allaz–Vila (rejected, appendix-grade) | B1, B3, B4, B5, **B6**, B7, B8, B9 | §5 alive; §2 rejected 2026-04-27 + 2026-04-29 (mechanical-identity argument) |
 
-**Mechanism-side surviving theory after the 2026-04-27 OVB sweep**: §1 (Cournot-pivotality) and §4 (asymmetric-granularity friction) at the firm and system layers respectively; §3 (Pigouvian) as a static welfare framing for S7; §5 (bid complexification) as the behavioural mirror; §6 (strategic availability) as the Part IV anchor. **§2 (Allaz–Vila) is rejected** at both DA-spot aggregate and IDA-repositioning levels and should not be cited as a surviving mechanism.
+**Mechanism-side surviving theory after the 2026-05-02 kill pass**: §1 (Cournot-pivotality) at the firm layer (anchored by F7 + F10, not F1/F2); §4 (asymmetric-granularity friction) at the system layer; §3 (Pigouvian) as a static welfare framing for S7; §5 (bid complexification) as the behavioural mirror; §6 (strategic availability) as the Part IV anchor. **§2 (Allaz–Vila) is rejected** (mechanical accounting identity at every granularity). **The HP-sophistication mechanism is also rejected**: F1/F2/F3 implied Cournot Lerner ≠ realized markup. Cite §1 anchored in F7's price-setting decomposition, not F1/F2's matched-price Lerner numbers.
 
 ---
 
