@@ -95,6 +95,9 @@ A: We rejected three alternatives during OVB-cleaning (F5 Allaz–Vila firm-leve
 **Q10. "What's the relationship between the €1.1B (system) and the €820M (IB DA rent)?"**
 A: Different markets. €1.1B is BRP→TSO imbalance settlement transfer (an A87 NET measure, ENTSO-E aggregate). €820M is IB's clearing-price-difference rent in the DA market (a synthetic-firm Ciarreta–Espinosa replication). The two channels involve the same generators in different roles (BRP-side imbalance + generator-side DA cleared-price markup), so they are NON-ADDITIVE — we cite each channel separately and do NOT sum to "€2B reform impact". The audit doc explicitly flags this as triple-counting risk.
 
+**Q11. "Why is q₂ defined as IDA-only, not IDA + continuous market?"**
+A: Three reasons. (1) IR's two-period model has a forward auction at p₁ and a spot auction at p₂ with **single clearing prices** — IDA auctions map cleanly (`marginalpibc` per session), the continuous market does NOT (pay-as-bid order book, heterogeneous trade prices, no single p₂). (2) PIBCIE gives clean per-firm signed quantity changes per ISP; aggregating PIBCIC trades to a single q₂ object requires more pricing decisions. (3) Empirically, Big-4 continuous-market activity captures only 6–19% of the IDA q₂ compression (`b9_continuous_market_substitution.py`). **Conservative caveat**: we did test q^total = q₂_IDA + q^CI and got a **sharper** friction signal (Wald F = 1,497 vs 477 for IDA-only, p = 0.83 for DA15/ID15 boundary recovery). The IDA-only headline is therefore conservative; q^total strengthens the case. We lead with IDA-only because the IR mapping is cleaner and easier to defend.
+
 ---
 
 ## What's off-arc (transparently flagged in slide 12)
