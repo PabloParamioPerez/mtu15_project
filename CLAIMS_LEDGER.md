@@ -66,6 +66,9 @@ Quick-scan view. The TL;DR statuses below are the **authoritative status** as of
 | **D3** | **ALIVE** | descriptive | Market concentration (HHI) is elevated 2023-onwards vs 2018-2022, sustained through reform period |
 | **D4** | **ALIVE** | descriptive | Extensive-margin Fringe exit at MTU15-IDA: 23 small Fringe units + 3 HC units exit DA, ~6.8% of pre-reform DA volume |
 | **D5** | **ALIVE** | descriptive | Cross-firm net-seller positions in DA, post-Rule-28.8: GE +2,316 GWh/mo > IB +958 — vertical integration cannot explain IB > GE in market power |
+| **B10** | **ALIVE** | behavioural | Big-4 sell-side commitments are 50–85% bilateral (PDBF offer_type=4); PDBC-only view of the project missed most of total commitment volume. IB shifted from 71% bilateral pre-IDA to 51% at DA15/ID15 — composition reform, not volume change (q₁_total flat ~235–280 GWh/day) |
+| **B11** | **ALIVE** | behavioural | Rule 28.8 elimination (2025-03-19) reduced Big-4 bilateral volumes 25–40% in the 6 months following: IB −26%, GN −26%, GE −40%, HC −37%. Direct empirical confirmation of the regulatory shock |
+| **F23** | **ALIVE** | structural-firm | Operación reforzada bilateral signature for nuclear: post-2025-04-28 blackout, IB and GN nuclear bilateral share jumped (IB 27.3%→59.0%, GN 27.4%→69.6%, GE 0%→5.9%). First direct empirical evidence that operación reforzada operates partly through bilateral nuclear commitments. Hydro shows opposite pattern (IB hydro 78.5%→63.5%) |
 | **W1** | _wounded_ | structural-firm | GE raw (unconditional) Lerner peaks at 35% in DA60/ID15 — composition-confounded by nuclear inframarginal share + non-localised placebo |
 | **F5** | ~~dead~~ | structural-firm | KILLED 2026-04-29: Allaz–Vila commitment slope is a mechanical accounting identity (Q_actual ≈ q_DA + ΔQ_IDA) at every granularity. Do not cite |
 | **F6** | _wounded_ | structural-firm | Cournot inverse-slope: IB cleanly fits, GE partial, GN/HC opposite (small magnitude) |
@@ -96,7 +99,7 @@ Quick-scan view. The TL;DR statuses below are the **authoritative status** as of
 | **X13** | ~~dead~~ | system | A87 reserve-cost redistribution ≈ €840M/yr at ISP15 (residual was the wrong measurement; direct imresecqh shows €71→30M/mo decline) |
 | **X14** | ~~dead~~ | behavioural | Big-4 CCGT DA bid granularity drops 5–7 → 1–2 tranches at MTU15-IDA (MAV-format-change parser artefact) |
 
-**Counts (post-2026-05-02 kill pass):** 36 alive (S1–S7, S9, B1–B9, D1–D5, F4, F7, F9–F11, F13, F14–F22 re-sectioned) · 5 wounded (W1, F6, F8, F12, S8) · 18 dead (X1–X14 + F1, F2, F3, F5 killed by HP-sophistication / mechanical-identity) · total 59 active rows. **For workshop selection: cite from the alive pool only; cite wounded with caveat; do not cite dead.**
+**Counts (post-2026-05-02 PDBF analysis):** 39 alive (S1–S7, S9, B1–B11, D1–D5, F4, F7, F9–F11, F13, F14–F23) · 5 wounded (W1, F6, F8, F12, S8) · 18 dead (X1–X14 + F1, F2, F3, F5) · total 62 active rows. **New 2026-05-02 PDBF alive claims**: B10 (Big-4 sell-side 50–85% bilateral), B11 (Rule 28.8 elimination cut bilateral volumes 25–40%), F23 (reforzada bilateral signature for nuclear). **For workshop selection: cite from the alive pool only; cite wounded with caveat; do not cite dead.**
 
 ---
 
