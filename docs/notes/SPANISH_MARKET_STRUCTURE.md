@@ -386,7 +386,7 @@ REE has operated in **operación reforzada** (reinforced operation mode) since t
 
 Operación reforzada is a **regime overlay**, not a separate clock-structure regime. It is active continuously from May 2025 onward and therefore **co-exists with both DA60/ID15 and DA15/ID15** in our regime taxonomy. It is **NOT confined to DA60/ID15** — earlier project notes on this point are stale. REE has stated (Nov 2025 press release) that the reinforced programming will continue **until utilities meet the new voltage-control compliance requirements**.
 
-**Blackout origin (per CNMC PRO/CNMC/001/26, 2026-03-19)**: a voltage-overload (sobretensión) cascade that originated in the **southwest peninsula** (Extremadura + SW Andalucía) — a high-renewable-penetration area — and propagated through cascading generator trips. CNMC's verdict: *"había herramientas y mecanismos suficientes para haberlo evitado"* (sufficient tools and mechanisms existed to have prevented it). The CNMC report does not assign blame but its sanctioning division has subsequently opened **~100 expedientes** against generators and REE itself (status as of 2026-04).
+For our project, the blackout itself is **just the trigger**. What matters operationally is the post-blackout **regime overlay** that has shaped every observation in our data from 2025-05-01 onward. (Authoritative blackout-causes references — ENTSO-E Final Report, CNMC PRO/CNMC/001/26 — are catalogued under §13 and cited only when needed.)
 
 ### How it cascades through the scheduling chain
 
@@ -465,20 +465,13 @@ These are **NOT collinear** in any data window that includes the 2025-03-19 → 
 
 | Date | BOE | Substance |
 |---|---|---|
-| **2025-04-28 12:33 CEST** | — | Blackout. ICS Scale 3 (highest severity). Spain transmission system fully restored 04:00 on 29 April; Portugal restoration complete 00:22 on 29 April. Operación reforzada begins administratively the next day. |
-| **2025-05-12** | — | ENTSO-E ICS Investigation Expert Panel formed (49 experts: 30 from ACER+NRAs, 19 from TSOs/RCCs/ENTSO-E bodies; chaired by APG Austria + Mavir Hungary). |
+| **2025-04-28** | — | Blackout (the trigger; technical detail in §13 references). Operación reforzada begins administratively the next day and has remained active continuously since. |
 | **2025-06-12** | BOE-A-2025-13076 | CNMC Resolución modifies PO-3.1, 3.6, **7.4**, 9.1, 14.4 to develop the two-tier voltage control service. |
-| **2025-06-18** | — | REE PO-9 report (Spanish-regulation-required) — `docs/regulation/eu/20250618_entsoe_blackout_iberia_28apr.pdf` (18 pages). Initial technical analysis. |
-| **2025-06-24** | BOE-A-2025-12857 | RDL 7/2025 — emergency measures for system reinforcement. **REPEALED** by Congress 2025-07-22. |
-| **2025-07-22** | BOE-A-2025-15313 | Congressional repeal of RDL 7/2025. |
-| **2025-09** | — | Voltage oscillations across the system trigger urgent additional measures. |
-| **2025-10-03** | — | ENTSO-E **factual** report (interim, ICS Methodology). |
-| **2025-10-20** | BOE-A-2025-21198 | CNMC temporary modifications to PO-3.1, 3.2, 7.2 for voltage stabilisation (initial 30+15 days, max 3 months). |
-| **2025-11-05** | BOE-A-2025-22434 | Real Decreto 997/2025 — replacement for the repealed RDL 7/2025. Voltage-control penalties, BESS public utility status, hybrid/storage fast-track, demand-side flexibility. |
-| **2026-01-19** | BOE-A-2026-1377 | CNMC makes the Oct-2025 temporary modifications to PO-3.1, 3.2, 7.2 PERMANENT. Provisional voltage-stabilisation measures extended **until January 2027**. |
-| **2026-03-19** | — | CNMC informe **PRO/CNMC/001/26** — `docs/regulation/spain/20260319_cnmc_informe_apagon.pdf` (74 pages). No blame assigned but "tools existed to prevent the blackout". |
-| **2026-03-20** | — | **ENTSO-E Expert Panel Final Report** — `docs/regulation/eu/20260320_entsoe_blackout_iberia_final.pdf` (470+ pages, 50 MB). **The authoritative European technical reference.** Causes (per §1.1): uncontrolled rapid voltage rise, loss of voltage control, oscillations, gaps in reactive-power control, differences in voltage regulation practices, rapid generation output reductions and disconnections, uneven stabilisation capabilities — all interacting. Chapter 9 contains 22 recommendations (§9.3 root-cause-linked + §9.4 other). Report explicitly does **not** assign liability. |
-| **2026-04-17 → 2026-04-28** | — | CNMC opens **~100 sanctioning expedientes** against generators (IB, GE, GN, REP, Naturgy CCGT) and REE itself (one "muy grave"). Outcome pending. |
+| **2025-06-24 → 2025-07-22** | BOE-A-2025-12857 → BOE-A-2025-15313 | RDL 7/2025 (system-reinforcement emergency measures) approved 24 June, **REPEALED by Congress 22 July**. Substance later re-enacted via RD 997/2025. |
+| **2025-10-20** | BOE-A-2025-21198 | CNMC **temporary** modifications to PO-3.1, 3.2, 7.2 for voltage stabilisation (initial 30+15 days, max 3 months) following Sept-2025 voltage oscillations. |
+| **2025-11-05** | BOE-A-2025-22434 | RD 997/2025 — replacement for the repealed RDL. Voltage-control penalties, BESS public-utility status, hybrid/storage fast-track, demand-side flexibility. |
+| **2026-01-19** | BOE-A-2026-1377 | CNMC makes the Oct-2025 temporary PO modifications **PERMANENT**. Provisional voltage-stabilisation measures extended **until January 2027**. |
+| **2026-04** | — | CNMC opens ~100 sanctioning expedientes against generators (IB, GE, GN, Repsol, Naturgy CCGT) and REE (one "muy grave"). Outcome pending. |
 
 ---
 
