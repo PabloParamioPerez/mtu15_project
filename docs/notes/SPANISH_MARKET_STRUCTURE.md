@@ -308,6 +308,7 @@ Balance services
 - **Bid horizon:** offers up to 60 min before delivery period
 - **Offer types:** simple (divisible / indivisible) or complex (exclusivity, multipart, time-linked)
 - **Settlement:** marginal price set on TERRE platform
+- **PO mapping (corrected 2026-05-02):** RR is **NOT** under PO-7.4 (PO-7.4 is voltage control; see §11 / §12). The exact PO number for RR/TERRE in REE's current numbering scheme requires verification; cite as "REE guide §6.4 / TERRE platform" rather than a specific PO until confirmed.
 
 ### 7.5 SRAD — Servicio de Respuesta Activa de la Demanda (REE guide §6.5)
 
@@ -379,7 +380,81 @@ These four reform dates appear as constants in `src/mtu/notebook_utils.py` and d
 
 ---
 
-## 11. Glossary
+## 11. Operación reforzada — post-2025-04-28 blackout cascade
+
+REE has operated in **operación reforzada** (reinforced operation mode) since the Iberian blackout of **2025-04-28**. This is **NOT a new market** — it is a tightening of existing programming and security criteria that propagates through the entire scheduling chain. Implemented administratively (no separate BOE document) through the existing P.O. 3.x mechanisms.
+
+Operación reforzada is a **regime overlay**, not a separate clock-structure regime. It is active continuously from May 2025 onward and therefore **co-exists with both DA60/ID15 and DA15/ID15** in our regime taxonomy. It is **NOT confined to DA60/ID15** — earlier project notes on this point are stale.
+
+### How it cascades through the scheduling chain
+
+```
+1.  OMIE runs day-ahead auction       →  PDBC (hourly or 15-min casación)
+2.  REE constructs PDBF                →  + bilaterals + interconnection nominations
+3.  REE runs load flow under REINFORCED security criteria:
+       - Higher minimum synchronous generation (GMS) thresholds per zone
+       - Tighter voltage control margins (RoCoV, reactive power bands)
+       - Mandatory daily availability of ~20–30 CCGTs + nuclear (Almaraz, Trillo)
+4.  If PDBF violates these thresholds  →  PO-3.2 redispatches:
+       CCGTs forced UP (out of merit), renewables forced DOWN
+       →  PDVD (firm pre-IDA program, divergent from PDBC)
+5.  Secondary reserve band (PO-1.5, PO-7.2) enlarged because the
+    "expected probable failure" is recalibrated upward (only synchronous
+    units qualify for the new larger band)
+6.  PO-7.4 (June 2025 revision)  →  zonal reactive power market
+       Mandatory minimum provision + retributed dynamic consigna-following.
+       Zonal reactive capacity assignment runs AFTER PO-3.2 RRTT resolution,
+       delaying secondary reserve assignment by ~1 hour.
+7.  Real-time deviations (PO-3.3, mFRR/RR) increase because more units are
+    stuck at Pmin, making real-time dispatch more rigid.
+```
+
+### Data signatures expected
+
+In our parquet stack, operación reforzada produces:
+- **Large systematic divergence between PDBC (OMIE) and PDVD (post-RRTT)** — visible as `(PHF − PIBCA)` and as elevated values of ESIOS `totalrp48preccierre` `tipo_redespacho` 6x codes.
+- **High volumes of RRTT energy-up for CCGTs, energy-down for solar/wind** — visible in A73 per-unit generation deltas vs PDBC cleared.
+- **Many CCGT units with non-zero programs but near Pmin** — operating as synchronous condensers / at minimum technical output.
+- **Elevated secondary band costs** — visible in liquidation/`liquicierresrs` data.
+- **Curtailment (vertidos técnicos) materially higher than 2024 baseline** — implied by reduced renewable scheduled output vs forecast.
+- **`q₂_RT2` measure** (`PHF − PIBCA` at max session) jumps to **+13,639 MWh per firm-day** in DA15/ID15 (q₂ definition audit, 2026-04-29) — the cleanest empirical fingerprint we have.
+
+### Cost context (sanity check for liquidation data)
+
+| Metric | Value | Source |
+|---|---|---|
+| RRTT resolution cost 2024 | ~€2,523M/year | REE |
+| RRTT resolution cost 2025 | ~€3,770M/year (+49% YoY) | REE |
+| Operación reforzada direct cost (May 2025 – Mar 2026) | ~€666M | REE estimate |
+| Daily RRTT cost in early 2026 | regularly **exceeds OMIE wholesale price itself** | REE |
+
+### Empirical regime indicator — methodological note
+
+**Operación reforzada is a SEPARATE regime shift from the MTU15 reform sequence.** Cross-regime regressions spanning pre/post MTU15 should include BOTH indicators jointly:
+
+- **D_MTU15** — 15-min granularity reform (post-2025-03-19 for MTU15-IDA; post-2025-10-01 for MTU15-DA)
+- **D_reforzada** — post-blackout reinforced operation (from 2025-05-01)
+
+These are **NOT collinear** in any data window that includes the 2025-03-19 → 2025-04-27 sub-window — the ~6-week clean post-MTU15-IDA pre-reforzada window. Dropping one of the two indicators in a regression that spans this window biases the surviving coefficient because the omitted regime overlay is non-zero in part of the post-MTU15-IDA panel.
+
+**Most project claims that touch this period (B6, F7, F8, F15, F16, F17, F18, F19, F20, F22) already use blackout-split decompositions** (DA60/ID15 PRE-blackout vs POST-blackout). This section formalises that practice as a general principle: any cross-regime claim that includes data from 2025-03-19 onward should split DA60/ID15 into PRE and POST sub-windows or include D_reforzada explicitly.
+
+### Relevant P.O. references
+
+| Code | Topic |
+|---|---|
+| **P.O. 1.5** | Frequency-power reserve. Secondary band sizing now done quarterly; band enlarged under reforzada. |
+| **P.O. 3.1** | Scheduling process — where the GMS thresholds enter. |
+| **P.O. 3.2** | Real-time technical-restriction process (RRTT). The lever that forces CCGT/nuclear up under reforzada. |
+| **P.O. 3.3** | Balance energy activation (RR / mFRR; formerly "gestión de desvíos"). Activations rise under reforzada. |
+| **P.O. 7.2** | Secondary regulation (aFRR). Capacity-reservation auction enlarged under reforzada. |
+| **P.O. 7.3** | Tertiary regulation (mFRR). |
+| **P.O. 7.4** | Voltage control of the transmission grid. **Modified by BOE-A-2025-13076 (CNMC Resolución 2025-06-12, `docs/regulation/spain/20250612_cnmc_voltage_service.pdf`) to introduce a two-tier service** under operación reforzada: **basic (mandatory, penalty €1/MVArh non-compliance)** + **dynamic (retributed, consigna-following)**. The dynamic tier is the new zonal reactive power market. Earlier versions of this glossary mis-labelled PO-7.4 as RR (replacement reserves) — that mapping was wrong. RR / TERRE is under a different REE procedure; verify before citing. |
+| **P.O. 14.4** | Settlement rights and payment obligations for adjustment services — where reforzada costs materialise in liquidation. |
+
+---
+
+## 12. Glossary
 
 ### Programs (sequential outputs)
 
@@ -533,7 +608,7 @@ The doc and the project code base use a few REE-specific numeric codes that aren
 | P.O. 7.1 | FCR (primary regulation). |
 | P.O. 7.2 | aFRR (secondary regulation): capacity-reservation auction + energy-activation rules. |
 | P.O. 7.3 | mFRR (tertiary regulation). |
-| P.O. 7.4 | RR (replacement reserves). |
+| P.O. 7.4 | **Voltage control of the transmission grid** (corrected 2026-05-02). The earlier "RR (replacement reserves)" mapping was wrong — RR is under a different procedure number; verify before citing RR. PO-7.4 was modified June 2025 by BOE-A-2025-13076 to introduce a two-tier voltage control service (basic mandatory + dynamic paid). See §11 for the operational-cascade context. |
 | P.O. 7.5 | SRAD (demand-side response). |
 | P.O. 14 | Settlement: imbalance pricing, BRP charges, balancing-service liquidations. |
 
@@ -555,7 +630,7 @@ When filtering at the row level, rely on the parser docstring rather than this t
 
 ---
 
-## 12. References (full document set in repo)
+## 13. References (full document set in repo)
 
 For the formal regulatory texts:
 - `docs/regulation/spain/ree_guia_proveedor_ajuste.pdf` (REE, 2024-12)
