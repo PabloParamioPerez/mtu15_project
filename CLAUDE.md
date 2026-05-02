@@ -81,8 +81,9 @@ Active families (each has a parser in `src/mtu/parsing/` and a full `00/10/20` p
 |---|---|---|---|
 | `marginalpdbc` | Day-ahead | Clearing prices | §5.1.1.1 |
 | `marginalpibc` | Intraday auctions | Clearing prices by session | §5.2.1.1 |
-| `pdbc` | Day-ahead | Final programs by unit | §5.1.2.1 |
+| `pdbc` | Day-ahead | Final programs by unit (auction-cleared only) | §5.1.2.1 |
 | `pdbce` | Day-ahead | Final programs by firm | §5.1.2.2 |
+| `pdbf` | Day-ahead | PDBC + bilateral-contract executions (offer_type=4 with `bilateral_contract_id`) | §5.1.2.3 |
 | `pibca` | Intraday auctions | Accumulated programs | §5.2.2.1 |
 | `pibci` | Intraday auctions | Programs by unit and session | §5.2.2.2 |
 | `pibcie` | Intraday auctions | Programs by firm and session | §5.2.2.3 |
