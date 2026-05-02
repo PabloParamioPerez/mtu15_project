@@ -382,9 +382,11 @@ These four reform dates appear as constants in `src/mtu/notebook_utils.py` and d
 
 ## 11. Operación reforzada — post-2025-04-28 blackout cascade
 
-REE has operated in **operación reforzada** (reinforced operation mode) since the Iberian blackout of **2025-04-28**. This is **NOT a new market** — it is a tightening of existing programming and security criteria that propagates through the entire scheduling chain. Implemented administratively (no separate BOE document) through the existing P.O. 3.x mechanisms.
+REE has operated in **operación reforzada** (reinforced operation mode) since the Iberian blackout of **2025-04-28**. This is **NOT a new market** — it is a tightening of existing programming and security criteria that propagates through the entire scheduling chain. Implemented administratively through the existing P.O. 3.x mechanisms; the regulatory base was retrospectively reinforced via BOE-A-2025-13076 (PO-7.4 reform), Real Decreto-ley 7/2025 (subsequently **repealed by Congress 2025-07-22** via BOE-A-2025-15313), and its replacement Real Decreto 997/2025 (2025-11-05).
 
-Operación reforzada is a **regime overlay**, not a separate clock-structure regime. It is active continuously from May 2025 onward and therefore **co-exists with both DA60/ID15 and DA15/ID15** in our regime taxonomy. It is **NOT confined to DA60/ID15** — earlier project notes on this point are stale.
+Operación reforzada is a **regime overlay**, not a separate clock-structure regime. It is active continuously from May 2025 onward and therefore **co-exists with both DA60/ID15 and DA15/ID15** in our regime taxonomy. It is **NOT confined to DA60/ID15** — earlier project notes on this point are stale. REE has stated (Nov 2025 press release) that the reinforced programming will continue **until utilities meet the new voltage-control compliance requirements**.
+
+**Blackout origin (per CNMC PRO/CNMC/001/26, 2026-03-19)**: a voltage-overload (sobretensión) cascade that originated in the **southwest peninsula** (Extremadura + SW Andalucía) — a high-renewable-penetration area — and propagated through cascading generator trips. CNMC's verdict: *"había herramientas y mecanismos suficientes para haberlo evitado"* (sufficient tools and mechanisms existed to have prevented it). The CNMC report does not assign blame but its sanctioning division has subsequently opened **~100 expedientes** against generators and REE itself (status as of 2026-04).
 
 ### How it cascades through the scheduling chain
 
@@ -426,7 +428,14 @@ In our parquet stack, operación reforzada produces:
 | RRTT resolution cost 2024 | ~€2,523M/year | REE |
 | RRTT resolution cost 2025 | ~€3,770M/year (+49% YoY) | REE |
 | Operación reforzada direct cost (May 2025 – Mar 2026) | ~€666M | REE estimate |
+| Reforzada share of total system costs (Nov 2025) | **2.34%** | REE press release 2025-11 |
+| Per-household surcharge | ~€20/month extra; ~€0.04/day on PVPC | press estimates |
 | Daily RRTT cost in early 2026 | regularly **exceeds OMIE wholesale price itself** | REE |
+
+**Additional operational requirements (REE instruction post-blackout)**:
+- Minimum 15-min ramp rates for entry/exit of all technologies (smooths abrupt voltage oscillations).
+- Restricted instantaneous participation of intermittent renewables in voltage-critical periods.
+- Renewable installations are now **enabled to participate in dynamic voltage control** post the BOE-A-2025-13076 reform — this is the demand-side adaptation pathway out of pure curtailment.
 
 ### Empirical regime indicator — methodological note
 
@@ -449,8 +458,23 @@ These are **NOT collinear** in any data window that includes the 2025-03-19 → 
 | **P.O. 3.3** | Balance energy activation (RR / mFRR; formerly "gestión de desvíos"). Activations rise under reforzada. |
 | **P.O. 7.2** | Secondary regulation (aFRR). Capacity-reservation auction enlarged under reforzada. |
 | **P.O. 7.3** | Tertiary regulation (mFRR). |
-| **P.O. 7.4** | Voltage control of the transmission grid. **Modified by BOE-A-2025-13076 (CNMC Resolución 2025-06-12, `docs/regulation/spain/20250612_cnmc_voltage_service.pdf`) to introduce a two-tier service** under operación reforzada: **basic (mandatory, penalty €1/MVArh non-compliance)** + **dynamic (retributed, consigna-following)**. The dynamic tier is the new zonal reactive power market. Earlier versions of this glossary mis-labelled PO-7.4 as RR (replacement reserves) — that mapping was wrong. RR / TERRE is under a different REE procedure; verify before citing. |
+| **P.O. 7.4** | **Voltage control of the transmission grid.** Originally established by BOE-A-2000-5204 (10 March 2000) as the *Servicio complementario de control de tensión de la red de transporte*. **Modified by BOE-A-2025-13076 (CNMC Resolución 2025-06-12, `docs/regulation/spain/20250612_cnmc_voltage_service.pdf`) to introduce a two-tier service** under operación reforzada: **basic (mandatory, penalty €1/MVArh non-compliance)** + **dynamic (retributed, consigna-following)**. The dynamic tier is the new zonal reactive power market and now allows renewable installations to participate. Earlier versions of this glossary mis-labelled PO-7.4 as RR (replacement reserves); that was wrong. RR / TERRE is under a different REE procedure (see §7.4 description). |
 | **P.O. 14.4** | Settlement rights and payment obligations for adjustment services — where reforzada costs materialise in liquidation. |
+
+### Subsequent regulatory cascade (timeline)
+
+| Date | BOE | Substance |
+|---|---|---|
+| **2025-04-28** | — | Blackout. Operación reforzada begins administratively the next day. |
+| **2025-06-12** | BOE-A-2025-13076 | CNMC Resolución modifies PO-3.1, 3.6, **7.4**, 9.1, 14.4 to develop the two-tier voltage control service. |
+| **2025-06-24** | BOE-A-2025-12857 | RDL 7/2025 — emergency measures for system reinforcement. **REPEALED** by Congress 2025-07-22. |
+| **2025-07-22** | BOE-A-2025-15313 | Congressional repeal of RDL 7/2025. |
+| **2025-09** | — | Voltage oscillations across the system trigger urgent additional measures. |
+| **2025-10-20** | BOE-A-2025-21198 | CNMC temporary modifications to PO-3.1, 3.2, 7.2 for voltage stabilisation (initial 30+15 days, max 3 months). |
+| **2025-11-05** | BOE-A-2025-22434 | Real Decreto 997/2025 — replacement for the repealed RDL 7/2025. Voltage-control penalties, BESS public utility status, hybrid/storage fast-track, demand-side flexibility. |
+| **2026-01-19** | BOE-A-2026-1377 | CNMC makes the Oct-2025 temporary modifications to PO-3.1, 3.2, 7.2 PERMANENT. Provisional voltage-stabilisation measures extended **until January 2027**. |
+| **2026-03-19** | — | CNMC informe **PRO/CNMC/001/26** — recommendations and proposed measures (74-page report). No blame assigned but "tools existed to prevent the blackout". |
+| **2026-04-17 → 2026-04-28** | — | CNMC opens **~100 sanctioning expedientes** against generators (IB, GE, GN, REP, Naturgy CCGT) and REE itself (one "muy grave"). Outcome pending. |
 
 ---
 
