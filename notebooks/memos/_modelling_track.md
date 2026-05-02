@@ -8,10 +8,11 @@ References: `CLAIMS_LEDGER.md` (claim status, evidence pointers) | `_identificat
 
 ## ⚠ Status note — 2026-05-02 kill pass
 
-**This file is historical / append-only**; sections below were written between 2026-04-25 and 2026-04-30 and reflect claim statuses at those dates. Two fundamental status changes since are not yet propagated through every paragraph:
+**This file is historical / append-only**; sections below were written between 2026-04-25 and 2026-04-30 and reflect claim statuses at those dates. Three fundamental updates since are not yet propagated through every paragraph:
 
 1. **F1/F2/F3 KILLED 2026-05-02** by the HP-sophistication test (`f1_f2_f3_hp_sophistication.py`). Rationale: implied Cournot-FOC Lerner does NOT match realized marginal-bid markup (GE ratio 0.36, IB 0.42; realized markup uniform €13–26/MWh while implied is wildly heterogeneous 0.008–0.93). The +0.318/+0.135 regime-difference coefficients survive as **shifts in a formula-mechanical index**, not as evidence of strategic conduct. Sections below that cite F1/F2/F3 as alive Cournot evidence (most of §0 and §1) should be re-read with this caveat. The mechanism story for IB market power now rests on **F7 + F10 + F13 + B8**, not F1/F2.
 2. **F5 KILLED 2026-04-29** as a mechanical accounting identity (Q_actual ≈ q_DA + ΔQ_IDA). Already noted in §6 status block.
+3. **Operación reforzada framing** (2026-05-02): post-2025-04-28 reinforced-operation regime is now treated as a **continuous regime overlay** that co-exists with both DA60/ID15 and DA15/ID15, NOT as a confound confined to DA60/ID15. Sections below that frame the blackout as "contained within DA60/ID15" or "subsides by Oct 2025" are stale. The operational cascade (PO-3.2 RRTT + PO-1.5 enlarged band + PO-7.4 reactive market June 2025) and the **D_MTU15 ⊥ D_reforzada non-collinearity discipline** for cross-regime regressions live in `docs/notes/SPANISH_MARKET_STRUCTURE.md` §11. Empirical signatures of reforzada are alive in B9 q₂_RT2 surge, F15 CCGT mix shift, F16 IB CCGT slope break, F19/F20 GE aFRR capture, S9 solar capture-price collapse, S7 conv-RZ cost dominance.
 
 Authoritative current status is in `CLAIMS_LEDGER.md` TL;DR table.
 

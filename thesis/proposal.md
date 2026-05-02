@@ -16,6 +16,8 @@ Three simpler narratives I considered and rejected:
 
 3. **"The blackout created the post-2025 anomalies"** — REJECTED. F8 blackout-split shows IB hydro Q4 share is regime-invariant pre/post-blackout. F7 blackout-split shows IB rent persists at DA15/ID15 (post-blackout) at +12.3% relative markup. S6 blackout-split shows the system-cost shift collapses at MTU15-DA EVEN THOUGH operación reforzada is still in effect. The blackout amplified some absolute-€ readings; the underlying mechanisms are reform-driven, not blackout-driven.
 
+   **Operación reforzada as a regime overlay.** The post-2025-04-28 reinforced-operation regime is the dominant *operational* fact in the post-blackout panel — it forces ~20–30 CCGTs + nuclear daily via PO-3.2 RRTT, enlarges the secondary band (PO-1.5 / PO-7.2), introduces a new zonal reactive market (PO-7.4, BOE-A-2025-13076) and adds €666M direct cost (~€3.77B in RRTT total in 2025, +49% YoY). It is **active continuously from May 2025 onward** and therefore co-exists with both DA60/ID15 and DA15/ID15 — it is **not** a transient that fades away. Methodologically, **D_MTU15 and D_reforzada are non-collinear** in the 2025-03-19 → 2025-04-27 sub-window (clean post-MTU15-IDA / pre-reforzada); cross-regime claims in this thesis already use blackout-split decompositions and the principle is formalised in `docs/notes/SPANISH_MARKET_STRUCTURE.md` §11. Empirical signatures of reforzada are visible in our data (B9 q₂_RT2 surge +13.6 GWh/firm-day in DA15/ID15; F15 CCGT windfall to GN; F16 IB CCGT supply-curve break; F19/F20 GE aFRR capture; S9 solar capture-price collapse; S7 conv-RZ €210–300/MWh) — the regime overlay is real and identifiable.
+
 The thesis claim above survives all three rejections.
 
 ---
