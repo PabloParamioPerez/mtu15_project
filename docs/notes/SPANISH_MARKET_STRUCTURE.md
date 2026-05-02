@@ -506,7 +506,9 @@ OMIE and ESIOS are the primary Spanish-side sources, but most of the operational
 | **A73** | Actual generation per *unit* (per EIC), Spain | Real-time delivery on D, per generator | Per-firm dispatch attribution: CCGT (B04), reservoir hydro (B12), pumped hydro (B10), nuclear (B14). Anchors F15/F16/F17/F19/F20 firm-windfall maps and the dual-pricing test |
 | **A72** | Weekly reservoir filling indicator, Spain (TWh stored hydro energy) | Inputs to hydro dispatch | F8 Bushnell water-value mechanism test |
 | **A80** | Generation unit unavailability events (planned B53 + forced B54) | Outages/maintenance | F14 nuclear unaccounted-reduction analysis |
-| **A86** | Imbalance prices (up / down direction) | Settlement (§8) | Dual-pricing analysis; cross-validation of ESIOS imbalance prices |
+| **A84** | Activated balancing-energy prices (TR 17.1.f) — €/MWh paid per direction-tagged activation of FCR/aFRR/mFRR/RR | Balancing services (§7) | S4 — aFRR reserve spread rises +35% at ISP15 |
+| **A85** | Imbalance prices (TR 17.1.g) — €/MWh settled to BRPs for their per-ISP imbalance, by direction | Settlement (§8) | S3 — imbalance-price volatility (σ) +40% at ISP15. Note: project also uses A86 here for cross-validation |
+| **A86** | Imbalance prices (alternative publication code in older ENTSO-E versions) | Settlement (§8) | Dual-pricing analysis; cross-validation of ESIOS imbalance prices |
 | **A87** | Imbalance volumes (up / down direction); business type A19 = system net | Settlement (§8) | System imbalance signal for dual-pricing opposite-share test; S6/B6 system-cost decomposition |
 
 **Source separation rule** (per `CLAUDE.md`). ENTSO-E and ESIOS overlap in scope but should never be mixed within a single processed parquet without an explicit `source` column. ENTSO-E A75 covers the same conceptual ground as ESIOS `REE_ActualGen_*`; we use ENTSO-E. ESIOS `liquicierre` / `liquicierresrs` (per-BSP aFRR settlement) has no ENTSO-E equivalent we can access; we use ESIOS. OMIE programmes (`pdbc`, `pdbce`, `pibci`, `phf`, …) cover the same ground as ESIOS `p48cierre` / `totalp48*`; we use OMIE for finer granularity and longer history.
