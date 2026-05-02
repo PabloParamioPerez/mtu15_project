@@ -22,6 +22,55 @@ The thesis claim above survives all three rejections.
 
 ---
 
+## Methodology and identification
+
+### Modelling scope (decision 2026-05-02)
+
+The thesis combines three modelling layers, deliberately stopping short of a full structural model:
+
+1. **Reduced-form empirics as the primary evidence.** All headline numbers (S6 €1.1B; B6 R² trajectory; F7 €820M; F10 pivotality shares) are reduced-form estimates with cluster-robust SE, regime FE, cal-month FE, day FE, VRE controls, blackout-splits, and same-cal-month robustness. The X1–X14 dead-DiD record documents the project's attempts at causal identification and why they didn't survive — this is an asset, not a gap.
+
+2. **A simplified IO theory model to illustrate the asymmetric-granularity friction mechanism.** Analytical, not calibrated; closed-form comparative statics under stylised assumptions (representative BRP, symmetric clearing, dual-pricing imbalance settlement). Generates the predictions tested by S6/B6/B9. The friction primitive φ(M) = K σ √(M/J) is the core; Block 3 calibration shows it predicts the correct order of magnitude across regimes.
+
+3. **Light structural exercises using firm first-order conditions** to test specific mechanism predictions. Examples already run: the Allaz–Vila §2 commitment-slope test (rejected as mechanical identity), the HP-sophistication implied-Cournot-vs-realized-markup test (rejected as conduct evidence). These are FOC-based mechanism tests, not full estimation.
+
+**No heavy multi-firm dynamic structural model is built.** The thesis explicitly stops at the partial-equilibrium / reduced-form level. The IO contribution is the regime-invariance-of-market-power result + the three-mechanism-design observations of the reform sequence + the methodological identification design under reforzada.
+
+### Identification under operación reforzada — primary strategy
+
+Operación reforzada (post-2025-04-28, continuous to date) is the dominant confound for any cross-regime claim that touches data after May 2025. The thesis exploits **two structural features of reforzada** to identify reform effects cleanly:
+
+**1. PDBC vs PDVD chain placement (the most important identification feature).**
+Operación reforzada operates via PO-3.2 RRTT *after* OMIE clears PDBC. Therefore:
+
+| Outcome family | Reforzada channel | Confound severity |
+|---|---|---|
+| PDBC-based: cleared volumes, marginalpdbc clearing prices, **F7 synthetic-firm transfer (computed at PDBC clearing prices)**, F1/F2/F3 implied Lerner (legacy), B9 q₁ DA-cleared, F13 marginal-density measure | Indirect — only via bidder expectations (firms anticipate post-clearing RRTT and bid accordingly) | **Lighter** |
+| PDVD / PHF / P48-based: B9 q₂_RT2 (= PHF − PIBCA), RZ-61 activations (S8), F15 CCGT mix (A73-based), F16 IB CCGT slope (A73-based), F17/F18 plant-level dispatch | Direct mechanical (RRTT redispatch literally constructs these objects) | Heavy |
+
+This split changes the calculus for several alive claims. **F7's €820M IB DA-clearing transfer is computed at PDBC clearing prices**, so reforzada hits it only through expectations — a much lighter confound than would apply if F7 were computed downstream. The blackout-split decompositions of F7/F8/F10/F11 may *over-state* the reforzada confound on these PDBC-side outcomes.
+
+**2. Reforzada-held-constant pairings.**
+The 6-week DA60/ID15-PRE-blackout window (2025-03-19 → 2025-04-27) is the only post-MTU15-IDA panel that is also pre-reforzada. This gives two natural-experiment comparisons that hold reforzada at a fixed level:
+
+| Reform to identify | Comparison (reforzada held constant) | Window length |
+|---|---|---|
+| **MTU15-IDA effect** (intraday clock to 15-min) | ISP15-win → DA60/ID15-PRE-blackout (both pre-reforzada) | ~4 mo + ~6 wks |
+| **MTU15-DA effect** (DA clock to 15-min, restoring symmetry) | DA60/ID15-POST-blackout → DA15/ID15 (both under reforzada) | ~5 mo + ~7 mo |
+
+The S6 collapse at MTU15-DA (€91M/mo → €7.4M/mo) is the canonical demonstration: the granularity friction collapses *while reforzada is still active*, separating lever 1 (clock-symmetry, resolved) from lever 3 (operational missing-market, open).
+
+**Caveats**: (a) the MTU15-IDA-effect window is short (40 days) — power-limited but informative. (b) reforzada itself evolves within DA60/ID15-POST → DA15/ID15 (PO-7.4 went live June 2025; emergency PO modifications layered Oct 2025; permanent extension Jan 2026); "reforzada held constant" is approximate.
+
+### Other identification-discipline practices (already in use)
+
+- **OVB protocol**: every claim's coefficient compared across sparse-FE and exogenous-augmented specs.
+- **Same-calendar-month robustness**: every cross-regime claim restricted to matching cal-months as a minimum acceptable test.
+- **Cross-country placebo**: B7 (France DA flat across Spanish reform dates) anchors the Spain-specificity of effects.
+- **Bad-control discipline**: F11 (and others) flag where p_actual / IB-share / similar are jointly determined with the outcome and excluded.
+
+---
+
 ## Structure: four parts + appendix
 
 ### Part I — System-layer reform impact: three mechanism-design observations
