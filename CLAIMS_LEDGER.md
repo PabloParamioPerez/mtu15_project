@@ -29,7 +29,7 @@ Single source of truth for empirical claims in this project. One row per claim. 
 
 ## TL;DR — one-line index of every claim
 
-Quick-scan view. Status reflects current section placement; the detailed rows below are the source of truth. **Section drift to fix**: F7 reads as a headline-alive finding (€820M IB transfer) but currently sits in the Wounded section because of caveats; F14–F22 read as alive findings but currently sit in the Dead section likely from a copy-paste structural mistake during ledger construction. Verify and re-section before citing.
+Quick-scan view. The TL;DR statuses below are the **authoritative status** as of the kill pass on 2026-05-02. The detailed rows in the sections below are kept as audit trail; section placement may not yet match the post-kill statuses, but cite from this index. **Kill pass 2026-05-02**: F1, F2, F3 killed by HP-sophistication test (`f1_f2_f3_hp_sophistication.py`) — implied Cournot Lerner does not match realized marginal-bid markup; F5 killed 2026-04-29 (mechanical accounting identity); F7 and F14–F22 re-sectioned to alive (they read as headline findings; their previous section placement was a misclassification).
 
 | ID | Status | Layer | One-line summary |
 |---|---|---|---|
@@ -41,9 +41,9 @@ Quick-scan view. Status reflects current section placement; the detailed rows be
 | **S6** | **ALIVE** | system | A87 NET BRP→TSO settlement transfer +€1,094.9M cumulative excess across the 10-month asymmetric-granularity window vs same-cal pre-IDA baseline (bootstrap null CI [-90,+73]M) |
 | **S7** | **ALIVE** | system | Per-segment marginal imbalance cost is order-of-magnitude heterogeneous: conv-RZ €210–300/MWh vs LIB free retailers ≤€37/MWh (non-Pigouvian misalignment) |
 | **S9** | **ALIVE** | system | Renewable capture-price cannibalization in post-reform Spain is severe and asymmetric across technologies; reform did not meaningfully alleviate it |
-| **F1** | _wounded_ | structural-firm | GE implied Cournot-FOC Lerner +0.318 above pre-IDA at DA60/ID15 (Spec 3, price-bin FE). HP-sophistication test 2026-05-02 wounds the conduct interpretation: realized marginal-bid markup is only ~36% of the Cournot-implied value |
-| **F2** | _wounded_ | structural-firm | IB implied Cournot-FOC Lerner +0.135 above pre-IDA at DA60/ID15. HP-sophistication test 2026-05-02 wounds conduct interpretation: realized markup ~42% of implied |
-| **F3** | _wounded_ | structural-firm | GE/IB matched-price Lerner partially reverse at MTU15-DA. Same HP-sophistication wounding: implied is formula-mechanical, realized is uniform ~€20/MWh across Big-4 |
+| **F1** | ~~dead~~ | structural-firm | KILLED 2026-05-02 (HP-sophistication): GE implied Cournot Lerner +0.318 fails the realized-marginal-bid validation (ratio 0.36, weak corr). The regime-difference coefficient is formula-mechanical, not conduct. Do not cite as strategic markup |
+| **F2** | ~~dead~~ | structural-firm | KILLED 2026-05-02 (HP-sophistication): IB implied Cournot Lerner +0.135; realized only 42% of implied. Same kill rationale as F1 |
+| **F3** | ~~dead~~ | structural-firm | KILLED 2026-05-02 (HP-sophistication): GE/IB MTU15-DA partial reversal is formula effect, not realized-conduct reversal. Do not cite |
 | **F2** | **ALIVE** | structural-firm | IB implied Hortaçsu–Puller-style Lerner +0.135 above pre-IDA at DA60/ID15, conditional on clearing-price level (Spec 3) |
 | **F3** | **ALIVE** | structural-firm | GE/IB matched-price Lerner partially reverse at MTU15-DA (GE +0.080, IB −0.028 vs pre-IDA) |
 | **F4** | **ALIVE** | structural-firm | GN/HC Lerner shifts dominated by Rule 28.8 bilateral-contract reallocation at 2025-03-19, not strategic |
@@ -67,20 +67,20 @@ Quick-scan view. Status reflects current section placement; the detailed rows be
 | **D4** | **ALIVE** | descriptive | Extensive-margin Fringe exit at MTU15-IDA: 23 small Fringe units + 3 HC units exit DA, ~6.8% of pre-reform DA volume |
 | **D5** | **ALIVE** | descriptive | Cross-firm net-seller positions in DA, post-Rule-28.8: GE +2,316 GWh/mo > IB +958 — vertical integration cannot explain IB > GE in market power |
 | **W1** | _wounded_ | structural-firm | GE raw (unconditional) Lerner peaks at 35% in DA60/ID15 — composition-confounded by nuclear inframarginal share + non-localised placebo |
-| **F5** | _wounded_ | structural-firm | Allaz–Vila commitment slope — RE-RETRACTED 2026-04-29 as a mechanical accounting identity (Q_actual ≈ q_DA + ΔQ_IDA); DEAD as IR evidence at every granularity |
+| **F5** | ~~dead~~ | structural-firm | KILLED 2026-04-29: Allaz–Vila commitment slope is a mechanical accounting identity (Q_actual ≈ q_DA + ΔQ_IDA) at every granularity. Do not cite |
 | **F6** | _wounded_ | structural-firm | Cournot inverse-slope: IB cleanly fits, GE partial, GN/HC opposite (small magnitude) |
-| **F7** | _wounded_ | structural-firm | Ciarreta–Espinosa synthetic-firm: ~€820M IB DA-clearing transfer (98% of joint Big-4) post-MTU15-IDA, hydro 64% / CCGT 36%; **section-drift: probably alive with caveats** |
+| **F7** | **ALIVE** | structural-firm | Ciarreta–Espinosa synthetic-firm: ~€820M IB DA-clearing transfer (98% of joint Big-4) post-MTU15-IDA, hydro 64% / CCGT 36%. Survives 5 caveat tests (BRP-migration, hydro-strict matching, blackout-split, complex-offer exclusion, pre-reform 0-padded). Re-sectioned to alive 2026-05-02 |
 | **F8** | _wounded_ | structural-firm | IB hydro Q4 dispatch concentration +17pp vs Fringe, structurally regime-invariant 2018–2025; Bushnell water-value mechanism FAILS |
 | **S8** | _wounded_ | system | Daily RZ-61 activations rose post-IDA; same-cal-month robustness 2026-04-30: 3/4 regimes hold but DA60/ID15 collapses (β=+1.59 GWh/d, p=0.21) |
-| **F14** | _section-drift_ | structural-firm | Spanish nuclear units 22–38% unaccounted reduction system-wide 2024–25 (A73 vs A80) — **probably alive, in Dead section** |
-| **F15** | _section-drift_ | structural-firm | Operación reforzada CCGT windfall went to GN (+7.1pp share), NOT IB (−2.0pp) — **probably alive, in Dead section** |
-| **F16** | _section-drift_ | structural-firm | Per-firm CCGT supply-curve slope: IB 4.8× more price-responsive post-blackout — **probably alive, in Dead section** |
-| **F17** | _section-drift_ | structural-firm | Within-firm CCGT plant substitution 2024–25 vs 2018–21 baseline (BES3→BES5, ARCOS3→ARCOS1, etc.) — **probably alive, in Dead section** |
-| **F18** | _section-drift_ | structural-firm | CNMC-sanctioned CCGT plants (BES3, BES5, SBO3) ALL LOST share post-blackout — **probably alive, in Dead section** |
-| **F19** | _section-drift_ | structural-firm | Per-firm aFRR 2025: GE captured 34.28% of post-blackout up-activation; IB grew slowest (1.84×) — **probably alive, in Dead section** |
-| **F20** | _section-drift_ | structural-firm | Per-firm aFRR REVENUE: GE became dominant aFRR provider post-MTU15-IDA, surpassing IB by ~52% in DA15/ID15 — **probably alive, in Dead section** |
-| **F21** | _section-drift_ | structural-firm | CNMC SBO3 three-situation pivotality test: pattern widespread across Big-4 CCGT in 2024–26 — **probably alive, in Dead section** |
-| **F22** | _section-drift_ | structural-firm | Direct CNMC SBO3 bid-price-wedge replication: 7 of 9 Naturgy CCGT show 11–35% wedge in pivotal hours — **probably alive, in Dead section** |
+| **F14** | **ALIVE** | structural-firm | Spanish nuclear units 22–38% unaccounted reduction system-wide 2024–25 (A73 vs A80) (re-sectioned to alive 2026-05-02) |
+| **F15** | **ALIVE** | structural-firm | Operación reforzada CCGT windfall went to GN (+7.1pp share), NOT IB (−2.0pp) (re-sectioned to alive 2026-05-02) |
+| **F16** | **ALIVE** | structural-firm | Per-firm CCGT supply-curve slope: IB 4.8× more price-responsive post-blackout (re-sectioned to alive 2026-05-02) |
+| **F17** | **ALIVE** | structural-firm | Within-firm CCGT plant substitution 2024–25 vs 2018–21 baseline (BES3→BES5, ARCOS3→ARCOS1, etc.) (re-sectioned to alive 2026-05-02) |
+| **F18** | **ALIVE** | structural-firm | CNMC-sanctioned CCGT plants (BES3, BES5, SBO3) ALL LOST share post-blackout (re-sectioned to alive 2026-05-02) |
+| **F19** | **ALIVE** | structural-firm | Per-firm aFRR 2025: GE captured 34.28% of post-blackout up-activation; IB grew slowest (1.84×) (re-sectioned to alive 2026-05-02) |
+| **F20** | **ALIVE** | structural-firm | Per-firm aFRR REVENUE: GE became dominant aFRR provider post-MTU15-IDA, surpassing IB by ~52% in DA15/ID15 (re-sectioned to alive 2026-05-02) |
+| **F21** | **ALIVE** | structural-firm | CNMC SBO3 three-situation pivotality test: pattern widespread across Big-4 CCGT in 2024–26 (re-sectioned to alive 2026-05-02) |
+| **F22** | **ALIVE** | structural-firm | Direct CNMC SBO3 bid-price-wedge replication: 7 of 9 Naturgy CCGT show 11–35% wedge in pivotal hours (re-sectioned to alive 2026-05-02) |
 | **X1** | ~~dead~~ | identification | Big-4 × Post-MTU15-IDA TWFE-DiD identifies a causal ATT (parallel trends fail; placebo fail; randomization p=0.43) |
 | **X2** | ~~dead~~ | identification | Big-4 aggregate wind-IV slope contraction (nuclear-variance-weighted; ex-nuclear robustness collapses) |
 | **X3** | ~~dead~~ | identification | GE × CCGT wind-IV signed flip uniquely localised to ISP15 (placebo sweep: 6/22 fake boundaries match) |
@@ -96,7 +96,7 @@ Quick-scan view. Status reflects current section placement; the detailed rows be
 | **X13** | ~~dead~~ | system | A87 reserve-cost redistribution ≈ €840M/yr at ISP15 (residual was the wrong measurement; direct imresecqh shows €71→30M/mo decline) |
 | **X14** | ~~dead~~ | behavioural | Big-4 CCGT DA bid granularity drops 5–7 → 1–2 tranches at MTU15-IDA (MAV-format-change parser artefact) |
 
-**Counts (this index):** 31 alive · 6 wounded · 9 in section-drift (probably alive) · 14 dead · total 60 claims.
+**Counts (post-2026-05-02 kill pass):** 36 alive (S1–S7, S9, B1–B9, D1–D5, F4, F7, F9–F11, F13, F14–F22 re-sectioned) · 5 wounded (W1, F6, F8, F12, S8) · 18 dead (X1–X14 + F1, F2, F3, F5 killed by HP-sophistication / mechanical-identity) · total 59 active rows. **For workshop selection: cite from the alive pool only; cite wounded with caveat; do not cite dead.**
 
 ---
 

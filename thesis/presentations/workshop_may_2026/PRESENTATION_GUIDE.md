@@ -4,7 +4,15 @@
 
 **Title (suggested)**: *Asymmetric-granularity friction: empirical evidence on Spain's MTU15 reform sequence*. Continuation of the Feb-2026 deck *"Rewiring the market clock in Spanish electricity markets"*.
 
-**Continuity statement (slide 1 or 2)**: The Feb-deck Ito–Reguant (2016) extension predicted (i) DA15 is the key reform that smooths imbalances, (ii) dispersion risk concentrates in DA60/ID15, (iii) finer granularity creates winners and losers across heterogeneous portfolios. **All three are now empirically confirmed** at €1.1B order of magnitude — with a sharper microfoundation than the original Allaz–Vila scaffold, which the OVB-cleaning rejected (F5 demoted 2026-04-27).
+**Continuity statement (slide 1 or 2)**: The Feb-deck Ito–Reguant (2016) extension predicted (i) DA15 is the key reform that smooths imbalances, (ii) dispersion risk concentrates in DA60/ID15, (iii) finer granularity creates winners and losers across heterogeneous portfolios. **All three are now empirically confirmed** at €1.1B order of magnitude — with a sharper microfoundation than the original Allaz–Vila scaffold, which is now rejected at every granularity (**F5 killed 2026-04-29 as a mechanical accounting identity**).
+
+**Updates after the 2026-05-02 kill pass** (relevant to slide 12 framing only — slides 1–11 unaffected):
+- F1, F2, F3 (Cournot-FOC implied Lerner) **killed**: HP-sophistication test rejects the strategic-conduct interpretation. The +0.318 / +0.135 regime-difference coefficients are formula-mechanical, not realized-conduct. Do not cite as strategic markup.
+- F5 (Allaz–Vila commitment slope) **killed**: mechanical accounting identity at every granularity.
+- F7 (€820M IB DA-clearing transfer) **alive (re-sectioned)** — the surviving headline IB-market-power claim.
+- F14–F22 **alive (re-sectioned)** — IB nuclear unaccounted reduction, post-blackout Naturgy CCGT windfall, within-firm plant substitution, CNMC SBO3 replication, per-firm aFRR maps. All were previously misclassified as Dead.
+- S8 (RZ activation) **wounded further (2026-04-30)**: DA60/ID15 specifically does not survive same-cal-month restriction; the other 3 post-IDA regimes hold.
+- Dual-pricing predictability channel (`dual_pricing_opposite_share.py`, 2026-04-30) **rejected**: the user-proposed dual-pricing imbalance-settlement option-value mechanism does not explain B9 progressive collapse. Original Ito-Reguant market-power reading of B9 stands.
 
 ---
 
@@ -127,12 +135,12 @@ The May talk is **Part I only**. Full thesis structure (in [`thesis/proposal.md`
 | Part | Theory anchor | Lead findings | Status |
 |---|---|---|---|
 | **I — System asymmetric-granularity friction** | §4 asymmetric-granularity + §3 Pigouvian | S5, **S6**, S7, B6, B7 | **THIS TALK** |
-| **II — Firm structural market power (IB-canonical)** | §1 Cournot-pivotality (alive); §2 Allaz–Vila (rejected) | F2, F6, **F7**, F8, F10, F11 | thesis Part II |
+| **II — Firm structural market power (IB-canonical)** | §1 Cournot-pivotality (alive); §2 Allaz–Vila (rejected); F1/F2/F3 implied-Cournot killed by HP-sophistication 2026-05-02 | **F7** (alive headline), F10, F11, F13 alive; F6, F8, F12 wounded; F1/F2/F3/F5 dead | thesis Part II |
 | **III — Cross-market firm specialisation** | Part III addendum in modelling track | F9, F15, F19, F20 | thesis Part III |
 | **IV — Post-CNMC strategic-availability conduct** | §6 strategic availability under within-firm fleet substitution | F14, F15, F17, F18, F21, F22 | thesis Part IV |
 | **V — Behavioural + identification appendix** | §5 bid complexification; identification target | B1, B2, B3, B4, B5, B6, B7, B8, B9; X1-X14 | thesis Part V |
 
-**Mechanism story (post-2026-04-27 OVB-cleaning):** the only direct-test-surviving firm-layer mechanism is **Cournot-pivotality** (F6 + F10). Allaz–Vila (F5) and Bushnell water-value (F8 mechanism reading) are both rejected. The thesis modelling chapter can lead with Cournot + three direct rejections of alternatives.
+**Mechanism story (post-2026-05-02 kill pass):** the only direct-test-surviving firm-layer mechanism is **Cournot-pivotality** (F10) + the synthetic-firm decomposition (F7) anchoring it. Allaz–Vila (F5) is killed as a mechanical identity. Bushnell water-value (F8 mechanism reading) is rejected. F1/F2/F3 implied-Cournot Lerner are killed as conduct evidence by the HP-sophistication test (formula ≠ realized markup). The thesis modelling chapter leads with **F7 + F10** + four direct rejections of alternatives (Allaz-Vila, Bushnell, dual-pricing predictability, HP-Cournot-formula-as-conduct).
 
 **Two-decade pattern persistence:** Ciarreta–Espinosa (2010) documented IB > Endesa cross-firm asymmetry for 2002-2005 (under different mechanism — CTC stranded-cost regulation). We document the same direction under a different mechanism (hydro Cournot-pivotality + asymmetric-granularity) for 2024-2026. Method-replication across periods, NOT independent confirmation.
 
