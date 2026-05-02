@@ -12,7 +12,27 @@ References: `CLAIMS_LEDGER.md` (claim status, evidence pointers) | `_identificat
 
 1. **F1/F2/F3 KILLED 2026-05-02** by the HP-sophistication test (`f1_f2_f3_hp_sophistication.py`). Rationale: implied Cournot-FOC Lerner does NOT match realized marginal-bid markup (GE ratio 0.36, IB 0.42; realized markup uniform €13–26/MWh while implied is wildly heterogeneous 0.008–0.93). The +0.318/+0.135 regime-difference coefficients survive as **shifts in a formula-mechanical index**, not as evidence of strategic conduct. Sections below that cite F1/F2/F3 as alive Cournot evidence (most of §0 and §1) should be re-read with this caveat. The mechanism story for IB market power now rests on **F7 + F10 + F13 + B8**, not F1/F2.
 2. **F5 KILLED 2026-04-29** as a mechanical accounting identity (Q_actual ≈ q_DA + ΔQ_IDA). Already noted in §6 status block.
-3. **Operación reforzada framing** (2026-05-02): post-2025-04-28 reinforced-operation regime is now treated as a **continuous regime overlay** that co-exists with both DA60/ID15 and DA15/ID15, NOT as a confound confined to DA60/ID15. Sections below that frame the blackout as "contained within DA60/ID15" or "subsides by Oct 2025" are stale. The operational cascade (PO-3.2 RRTT + PO-1.5 enlarged band + PO-7.4 reactive market June 2025) and the **D_MTU15 ⊥ D_reforzada non-collinearity discipline** for cross-regime regressions live in `docs/notes/SPANISH_MARKET_STRUCTURE.md` §11. Empirical signatures of reforzada are alive in B9 q₂_RT2 surge, F15 CCGT mix shift, F16 IB CCGT slope break, F19/F20 GE aFRR capture, S9 solar capture-price collapse, S7 conv-RZ cost dominance.
+3. **Operación reforzada framing** (2026-05-02): post-2025-04-28 reinforced-operation regime is now treated as a **continuous regime overlay** that co-exists with both DA60/ID15 and DA15/ID15, NOT as a confound confined to DA60/ID15. Sections below that frame the blackout as "contained within DA60/ID15" or "subsides by Oct 2025" are stale. Operational cascade + cost context + regulatory timeline are in `docs/notes/SPANISH_MARKET_STRUCTURE.md` §11. Empirical signatures of reforzada are alive in B9 q₂_RT2 surge, F15 CCGT mix shift, F16 IB CCGT slope break, F19/F20 GE aFRR capture, S9 solar capture-price collapse, S7 conv-RZ cost dominance.
+
+   **Project identification design under reforzada (formalised 2026-05-02)**:
+
+   *Where reforzada acts in the chain*: operación reforzada operates via PO-3.2 RRTT *after* OMIE clears PDBC. Therefore reforzada has **no direct mechanical effect on PDBC**; it touches PDBC only through bidder expectations (firms anticipate post-clearing RRTT). PDVD/PHF/P48 (and any RT-based outcome) are directly mechanically affected. This split has implications for confound severity:
+
+   | Outcome family | Reforzada channel | Confound severity |
+   |---|---|---|
+   | PDBC-based: marginalpdbc clearing price, F7 synthetic-firm transfer, F1/F2 implied Lerner, B9 DA cleared volume | indirect (expectations) | lighter |
+   | PDVD/PHF-based: B9 q₂_RT2, F15 CCGT mix, F16 IB CCGT slope, RZ-61 activations | direct mechanical | heavy |
+
+   *Reforzada-held-constant pairings (the natural experiments)*:
+
+   | Reform to identify | Cleanest comparison (reforzada held constant) | Window length |
+   |---|---|---|
+   | **MTU15-IDA** (intraday clock to 15-min) | ISP15-win (IDA=MTU60) → DA60/ID15 PRE-blackout (IDA=MTU15); both pre-reforzada | ~4 mo + ~6 wks |
+   | **MTU15-DA** (DA clock to 15-min, restoring symmetry) | DA60/ID15 POST-blackout (DA=MTU60) → DA15/ID15 (DA=MTU15); both under reforzada | ~5 mo + ~7 mo |
+
+   *Caveats*: the MTU15-IDA-effect window is short (40 days of DA60/ID15-PRE-blackout). Reforzada itself evolves within DA60/ID15-POST → DA15/ID15 (PO-7.4 went live June 2025; emergency PO modifications layered Oct 2025 → permanent Jan 2026). Cite "reforzada-held-constant" as approximate.
+
+   *Recommendation*: for each S/B/F claim that touches the post-2025-03-19 panel, report the result as two separate pieces — "MTU15-IDA effect, pre-reforzada" and "MTU15-DA effect, reforzada-constant" — rather than as a single 5-regime contrast. Most existing claims with blackout-splits (B6, F7, F8, F15-F22) already do this implicitly; relabelling clarifies the identification.
 
 Authoritative current status is in `CLAIMS_LEDGER.md` TL;DR table.
 

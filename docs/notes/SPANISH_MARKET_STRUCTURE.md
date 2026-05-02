@@ -384,9 +384,9 @@ These four reform dates appear as constants in `src/mtu/notebook_utils.py` and d
 
 REE has operated in **operación reforzada** (reinforced operation mode) since the Iberian blackout of **2025-04-28**. This is **NOT a new market** — it is a tightening of existing programming and security criteria that propagates through the entire scheduling chain. Implemented administratively through the existing P.O. 3.x mechanisms; the regulatory base was retrospectively reinforced via BOE-A-2025-13076 (PO-7.4 reform), Real Decreto-ley 7/2025 (subsequently **repealed by Congress 2025-07-22** via BOE-A-2025-15313), and its replacement Real Decreto 997/2025 (2025-11-05).
 
-Operación reforzada is a **regime overlay**, not a separate clock-structure regime. It is active continuously from May 2025 onward and therefore **co-exists with both DA60/ID15 and DA15/ID15** in our regime taxonomy. It is **NOT confined to DA60/ID15** — earlier project notes on this point are stale. REE has stated (Nov 2025 press release) that the reinforced programming will continue **until utilities meet the new voltage-control compliance requirements**.
+Operación reforzada is a **regime overlay**, not a separate clock-structure regime. It is active continuously from May 2025 onward and therefore co-exists with both the MTU15-IDA and MTU15-DA market regimes. REE has stated (Nov 2025 press release) that the reinforced programming will continue until utilities meet the new voltage-control compliance requirements.
 
-For our project, the blackout itself is **just the trigger**. What matters operationally is the post-blackout **regime overlay** that has shaped every observation in our data from 2025-05-01 onward. (Authoritative blackout-causes references — ENTSO-E Final Report, CNMC PRO/CNMC/001/26 — are catalogued under §13 and cited only when needed.)
+(Authoritative blackout-causes references — ENTSO-E Final Report, CNMC PRO/CNMC/001/26 — are catalogued under §13.)
 
 ### How it cascades through the scheduling chain
 
@@ -401,8 +401,7 @@ For our project, the blackout itself is **just the trigger**. What matters opera
        CCGTs forced UP (out of merit), renewables forced DOWN
        →  PDVD (firm pre-IDA program, divergent from PDBC)
 5.  Secondary reserve band (PO-1.5, PO-7.2) enlarged because the
-    "expected probable failure" is recalibrated upward (only synchronous
-    units qualify for the new larger band)
+    "expected probable failure" is recalibrated upward (only synchronous units qualify for the new larger band)
 6.  PO-7.4 (June 2025 revision)  →  zonal reactive power market
        Mandatory minimum provision + retributed dynamic consigna-following.
        Zonal reactive capacity assignment runs AFTER PO-3.2 RRTT resolution,
@@ -411,15 +410,16 @@ For our project, the blackout itself is **just the trigger**. What matters opera
     stuck at Pmin, making real-time dispatch more rigid.
 ```
 
-### Data signatures expected
+### Data signatures
 
-In our parquet stack, operación reforzada produces:
-- **Large systematic divergence between PDBC (OMIE) and PDVD (post-RRTT)** — visible as `(PHF − PIBCA)` and as elevated values of ESIOS `totalrp48preccierre` `tipo_redespacho` 6x codes.
-- **High volumes of RRTT energy-up for CCGTs, energy-down for solar/wind** — visible in A73 per-unit generation deltas vs PDBC cleared.
-- **Many CCGT units with non-zero programs but near Pmin** — operating as synchronous condensers / at minimum technical output.
-- **Elevated secondary band costs** — visible in liquidation/`liquicierresrs` data.
-- **Curtailment (vertidos técnicos) materially higher than 2024 baseline** — implied by reduced renewable scheduled output vs forecast.
-- **`q₂_RT2` measure** (`PHF − PIBCA` at max session) jumps to **+13,639 MWh per firm-day** in DA15/ID15 (q₂ definition audit, 2026-04-29) — the cleanest empirical fingerprint we have.
+The operational fingerprint of reforzada in any Spanish electricity dataset:
+- Systematic divergence between PDBC (OMIE-cleared) and PDVD/PHF (post-RRTT firm program).
+- High volumes of RRTT energy-up for CCGTs and energy-down for solar/wind, classified under ESIOS `tipo_redespacho` 6x codes.
+- CCGT units with non-zero programs operating near Pmin (synchronous condensers / minimum technical output).
+- Elevated secondary band costs in liquidation data.
+- Curtailment (vertidos técnicos) materially higher than the 2024 baseline.
+
+**Important — where reforzada acts in the chain.** Operación reforzada operates via PO-3.2 RRTT *after* OMIE clears PDBC. So reforzada has **no direct mechanical effect on PDBC** itself — only on PDBF/PDVD/PHF/P48 and on liquidation. Any analysis whose outcome variable is taken from PDBC (cleared volumes, marginalpdbc clearing prices) sees reforzada **only through bidder expectations** (firms anticipate post-clearing RRTT and adjust DA bids accordingly). Analyses whose outcome variable is taken from PDVD/PHF/P48 see reforzada as a direct mechanical effect (RRTT redispatch literally constructs those programs).
 
 ### Cost context (sanity check for liquidation data)
 
@@ -437,16 +437,9 @@ In our parquet stack, operación reforzada produces:
 - Restricted instantaneous participation of intermittent renewables in voltage-critical periods.
 - Renewable installations are now **enabled to participate in dynamic voltage control** post the BOE-A-2025-13076 reform — this is the demand-side adaptation pathway out of pure curtailment.
 
-### Empirical regime indicator — methodological note
+### Reforzada as an independent regime variable
 
-**Operación reforzada is a SEPARATE regime shift from the MTU15 reform sequence.** Cross-regime regressions spanning pre/post MTU15 should include BOTH indicators jointly:
-
-- **D_MTU15** — 15-min granularity reform (post-2025-03-19 for MTU15-IDA; post-2025-10-01 for MTU15-DA)
-- **D_reforzada** — post-blackout reinforced operation (from 2025-05-01)
-
-These are **NOT collinear** in any data window that includes the 2025-03-19 → 2025-04-27 sub-window — the ~6-week clean post-MTU15-IDA pre-reforzada window. Dropping one of the two indicators in a regression that spans this window biases the surviving coefficient because the omitted regime overlay is non-zero in part of the post-MTU15-IDA panel.
-
-**Most project claims that touch this period (B6, F7, F8, F15, F16, F17, F18, F19, F20, F22) already use blackout-split decompositions** (DA60/ID15 PRE-blackout vs POST-blackout). This section formalises that practice as a general principle: any cross-regime claim that includes data from 2025-03-19 onward should split DA60/ID15 into PRE and POST sub-windows or include D_reforzada explicitly.
+Operación reforzada is a regime shift orthogonal to the MTU15 reform sequence. The 2025-03-19 → 2025-04-27 sub-window (~6 weeks post-MTU15-IDA but pre-blackout) is the only period where the post-MTU15-IDA market clock co-exists with reforzada-free operation; from 2025-05-01 onward the two regimes overlap. Empirical work that confounds the MTU15 clock-symmetry reform with reforzada in this period will mis-attribute effects across the two — the appropriate treatment is a separate `D_reforzada` indicator or a blackout-split of DA60/ID15. (Project-side identification design lives in `notebooks/memos/_modelling_track.md` and `thesis/proposal.md`; this section documents the regulatory and operational facts only.)
 
 ### Relevant P.O. references
 
