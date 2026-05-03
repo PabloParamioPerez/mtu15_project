@@ -1,0 +1,408 @@
+\documentclass[10pt,aspectratio=169]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{xcolor}
+
+% --- colour palette matching the February deck ---
+\definecolor{cemfiblue}{RGB}{32,72,144}
+\definecolor{cemfiorange}{RGB}{230,120,40}
+\definecolor{cemfigrey}{RGB}{120,120,120}
+
+% --- minimal "metropolis-ish" look without dependency ---
+\usetheme{default}
+\setbeamercolor{structure}{fg=cemfiblue}
+\setbeamercolor{frametitle}{fg=cemfiblue}
+\setbeamercolor{title}{fg=cemfiblue}
+\setbeamercolor{section in toc}{fg=cemfiblue}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+\setbeamerfont{title}{series=\bfseries,size=\Large}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\textbullet}
+\setbeamertemplate{itemize subitem}{\textendash}
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1ex,leftskip=1em,rightskip=1em]{section in head/foot}%
+      \tiny\textcolor{cemfigrey}{\insertsection \hfill \insertframenumber/\inserttotalframenumber}%
+    \end{beamercolorbox}}%
+}
+\setbeamertemplate{section in head/foot}{}
+
+% --- title metadata ---
+\title{\textbf{Master Thesis — Progress Report}\\[2pt]\large Spain's MTU15 reform: empirical assessment in progress}
+\author{Pablo Paramio Pérez \\ \small Advisor: Pedro Mira}
+\institute{CEMFI}
+\date{May 2026}
+
+% ============================================================
+\begin{document}
+
+% --- 1. Title ---
+{\setbeamertemplate{footline}{}
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+}
+
+% --- 2. Outline ---
+\begin{frame}{Outline of the talk}
+  \begin{itemize}
+    \item \textbf{1. Reminder.} Objective, research question, context.
+    \item \textbf{2. What I have done.} Data, methods, headline findings.
+    \item \textbf{3. State of the work.} Claim portfolio, theoretical model.
+    \item \textbf{4. Difficulties encountered.} Identification, confounds, surprises.
+    \item \textbf{5. What is left.} Empirical, theoretical, writing.
+  \end{itemize}
+  \vfill
+  \begin{block}{Format}
+    18--20 min, following advisor's guidance: a progress report rather than a results talk.
+  \end{block}
+\end{frame}
+
+% ============================================================
+\section{1. Reminder}
+% ============================================================
+
+\begin{frame}{Objective and research question}
+  \begin{block}{One-sentence aim}
+    Empirically assess the impact of Spain's 2024--2025 \textbf{electricity-market clock reform} (the \emph{MTU15 reform sequence}) and extend the theoretical framework to better understand firms' strategic behaviour under different market-time-unit (MTU) configurations.
+  \end{block}
+  \vfill
+  \begin{block}{Research question}
+    \begin{itemize}
+      \item How did the reform affect \textbf{prices}, \textbf{quantities}, \textbf{liquidity}, \textbf{imbalances}, and \textbf{firm strategic behaviour}?
+      \item Are the welfare and competition implications consistent with the theory?
+      \item Which transitional configurations are most distortionary, and why?
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Big picture: the Spanish electricity market}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.55\textwidth}
+    \footnotesize
+    For each delivery hour, the wholesale market clears \textbf{sequentially} across D--1 and D:
+    \begin{itemize}
+      \item \textbf{[OMIE]} Day-ahead auction (DA) $\Rightarrow$ \texttt{PDBC}
+      \item + bilateral contracts $\Rightarrow$ \texttt{PDBF}
+      \item \textbf{[REE]} pre-IDA technical restrictions $\Rightarrow$ \texttt{PDVD}
+      \item \textbf{[OMIE]} Intraday auctions IDA-1, IDA-2 (D--1) and IDA-3 (D)
+      \item \textbf{[OMIE]} Continuous market (XBID/SIDC), opens after IDA-2
+      \item \textbf{[REE]} Real-time technical restrictions and balancing
+      \item \textbf{Imbalance settlement}: ex-post, dual-pricing rule (EBGL Art.~52)
+    \end{itemize}
+    Each clearing produces a \emph{firm program} that the next can adjust.
+
+    \column{0.45\textwidth}
+    \scriptsize
+    \begin{tikzpicture}[node distance=2mm and 0mm, every node/.style={font=\tiny}]
+      \tikzstyle{omie}=[draw=cemfiblue,fill=cemfiblue!8,rounded corners,minimum width=2.5cm,minimum height=0.42cm,align=center]
+      \tikzstyle{ree}=[draw=cemfiorange,fill=cemfiorange!10,rounded corners,minimum width=2.5cm,minimum height=0.42cm,align=center]
+      \tikzstyle{arr}=[->,thick,>=stealth,shorten <=1pt,shorten >=1pt]
+      \node[omie] (da) {DA auction (D--1) $\Rightarrow$ PDBC};
+      \node[omie, below=of da] (pdbf) {+ bilaterals $\Rightarrow$ PDBF};
+      \node[ree, below=of pdbf] (pdvd) {Pre-IDA RT $\Rightarrow$ PDVD};
+      \node[omie, below=of pdvd] (ida) {IDA 1--3 $\Rightarrow$ PIBCA, PHF};
+      \node[omie, below=of ida] (cid) {Continuous (XBID)};
+      \node[ree, below=of cid] (rt) {Real-time RT + balancing};
+      \node[ree, below=of rt] (set) {Imbalance settlement};
+      \draw[arr] (da)--(pdbf); \draw[arr] (pdbf)--(pdvd); \draw[arr] (pdvd)--(ida);
+      \draw[arr] (ida)--(cid); \draw[arr] (cid)--(rt); \draw[arr] (rt)--(set);
+    \end{tikzpicture}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{The 2024--2025 reform sequence}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.55\textwidth}
+    \begin{itemize}
+      \item Traditionally the market time unit (MTU) was \textbf{60 min} everywhere.
+      \item The clock rewiring happened in \textbf{three stages}:
+        \begin{itemize}
+          \item \textbf{Dec 2024 --- ISP15}: imbalance settlement becomes 15-min.
+          \item \textbf{Mar 2025 --- ID15}: intraday auctions and continuous become 15-min.
+          \item \textbf{Oct 2025 --- DA15}: day-ahead becomes 15-min.
+        \end{itemize}
+      \item Two \emph{transitional regimes} where settlement and trading granularities differ:
+        \begin{itemize}
+          \item \textbf{ISP15-win} (Dec 2024 -- Mar 2025): DA60/ID60 + ISP15
+          \item \textbf{DA60/ID15} (Mar 2025 -- Oct 2025): DA60 + ID15 + ISP15
+        \end{itemize}
+    \end{itemize}
+
+    \column{0.45\textwidth}
+    \begin{center}
+    \footnotesize
+    \begin{tabular}{lccc}
+      \toprule
+      Period & ISP & DA & ID \\
+      \midrule
+      Pre-Dec 2024 & 60 & 60 & 60 \\
+      Dec24--Mar25 & \textbf{15} & 60 & 60 \\
+      Mar25--Sep25 & 15 & 60 & \textbf{15} \\
+      Oct25 onward & 15 & \textbf{15} & 15 \\
+      \bottomrule
+    \end{tabular}
+    \\[6pt]
+    \scriptsize Minutes; 60 = hourly, 15 = quarter-hourly.
+    \end{center}
+    \vspace{6pt}
+    \footnotesize Plus an \emph{operational regime overlay}: the \textbf{post-blackout \emph{operación reforzada}} (Apr 28, 2025 onward) keeps tightening REE security criteria via PO-3.2 RRTT.
+  \end{columns}
+\end{frame}
+
+% ============================================================
+\section{2. What I have done}
+% ============================================================
+
+\begin{frame}{Data pipeline}
+  \begin{itemize}
+    \item \textbf{OMIE} (Iberian market operator): full short-term data, 2018-01 $\to$ 2026-02.
+      \begin{itemize}
+        \item Day-ahead, intraday auctions, continuous, prices, programs, bid curves.
+        \item All families parsed; 1 parser per family, idempotent pipelines.
+        \item \textbf{Recently closed gap}: PDBF (PDBC + bilateral contracts) ingested $\to$ \textbf{166M rows}, opens a new strategic-channel dimension.
+      \end{itemize}
+    \item \textbf{ESIOS / REE}: settlement detail, RT prices, aFRR offers, unit outages.
+    \item \textbf{ENTSO-E}: pan-European balancing, generation by type, A75 / A73 / A86 / A87.
+    \item \textbf{AEMET / weather}: temperature, wind, solar (controls).
+  \end{itemize}
+  \vfill
+  \begin{block}{Discipline}
+    Repo-relative paths; raw $\to$ processed $\to$ derived layers separated; analytical outputs (regressions, figures) under \texttt{results/} and \texttt{figures/} (never under \texttt{data/}).
+  \end{block}
+\end{frame}
+
+\begin{frame}{Empirical strategy}
+  \begin{itemize}
+    \item \textbf{No clean external counterfactual}: most comparable European markets adopted MTU15 already and differ structurally.
+    \item Reduced-form before/after with rich controls:
+      \begin{itemize}
+        \item Fundamentals: load, wind, solar (actual + forecast errors), temperature, fuel/CO$_2$.
+        \item Calendar structure: cal-month FE, day-of-week, hour-of-day, year FE (where appropriate).
+        \item Reform-date indicators (Dec 2024 / Mar 2025 / Oct 2025) and \emph{reforzada} indicator.
+      \end{itemize}
+    \item \textbf{Same-calendar-month robustness}: mandatory for any cross-regime claim (Spanish electricity is highly seasonal).
+    \item \textbf{Cluster-robust SE}: by date or week-of-sample; Cameron--Miller G $\geq 30$ rule respected.
+    \item \textbf{Cross-country placebo}: France DA prices flat across Spanish reform dates.
+    \item \textbf{Structural-time-series counterfactual} (Brodersen et al.~2015) on key outcomes \emph{ongoing}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Headline finding 1 --- system-layer settlement transfer}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.45\textwidth}
+    \footnotesize
+    \begin{itemize}
+      \item During the \textbf{10-month asymmetric-granularity window} (Dec~2024--Sep~2025), DA cleared at 60-min while ID and imbalance settled at 15-min.
+      \item Net BRP$\to$TSO settlement transfer (A87): \textbf{+€1{,}094.9M} cumulative, vs same-calendar pre-IDA baseline.
+      \item Bootstrap null CI [-90, +73] M$\Rightarrow \approx 15\times$ the upper bound.
+      \item \textbf{Collapses to €7.4M/mo at MTU15-DA} ($12\times$ drop) once the clock asymmetry is closed.
+      \item This is a \emph{regulatory redistribution}, not a deadweight loss.
+    \end{itemize}
+    \column{0.55\textwidth}
+    \includegraphics[width=\linewidth]{../../../figures/thesis/fig02_S6_settlement_transfer_headline.pdf}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Headline finding 2 --- the mechanism (forecast-error pass-through)}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.5\textwidth}
+    \footnotesize
+    \begin{itemize}
+      \item \textbf{B6}: pooled regression $|V_{imb,t}| \sim |fe_t| + R\times|fe_t| + FE$, daily grain, cluster SE by year-month.
+      \item Net per-regime slope $\beta$:
+        \begin{itemize}
+          \item pre-IDA $\sim 0$
+          \item 3-sess $\sim 0$
+          \item ISP15-win $\approx -0.03$
+          \item \textbf{DA60/ID15} $\approx \mathbf{+0.09}$ \textemdash{} uniquely elevated
+          \item DA15/ID15 $\sim 0$
+        \end{itemize}
+      \item \textbf{Robust to year FE.} The DA60/ID15 elevation is the structural break.
+      \item Reframed (recently): the cleaner statement is the slope, not the R$^2$ jump.
+    \end{itemize}
+    \column{0.5\textwidth}
+    \includegraphics[width=\linewidth]{../../../figures/thesis/fig03_B6_passthrough_by_regime.pdf}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Headline finding 3 --- firm-level market power}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.5\textwidth}
+    \footnotesize
+    \begin{itemize}
+      \item \textbf{F7} --- Ciarreta--Espinosa synthetic-firm replication.
+      \item Substitute each Big-4 plant's offer with a same-tech, same-capacity Fringe plant; re-clear the auction.
+      \item \textbf{Iberdrola alone} accounts for $\sim$\textbf{€820M} DA cleared-price-difference rent post-MTU15-IDA, $\sim$98\% of joint Big-4 transfer.
+      \item Hydro 64\% / CCGT 36\%; survives 5 caveat tests (BRP migration, hydro-strict matching, blackout split, complex-offer exclusion, pre-reform 0-padded).
+      \item \textbf{Regime-invariant}: the rent does not arise from MTU15 reform; it is a persistent structural feature of the Spanish DA market.
+    \end{itemize}
+    \column{0.5\textwidth}
+    \footnotesize
+    \textbf{Behavioural complement (B9, just re-validated):}
+    \begin{itemize}
+      \item Big-4 voluntary IDA repositioning ($q_2$) shows progressive collapse across regimes; recovers partially at DA15/ID15.
+      \item Robust to (i) PDBF $q_1$ controls, (ii) year FE, (iii) canonical Fabra-Imelda spec with forecast-error controls + week-of-sample cluster: regime coefficients vary $<0.1\%$.
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+% ============================================================
+\section{3. State of the work}
+% ============================================================
+
+\begin{frame}{Claim portfolio (\texttt{CLAIMS\_LEDGER.md})}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.55\textwidth}
+    \footnotesize
+    \begin{itemize}
+      \item \textbf{68 active rows} tracked formally. Status (post 2026-05-02 attack pass):
+        \begin{itemize}
+          \item \textbf{41 alive} — passed all documented robustness checks.
+          \item 7 wounded — survive in narrowed form; cited with caveat.
+          \item 20 dead — retracted or contradicted; kept as audit trail.
+        \end{itemize}
+      \item Each cited number is regression-backed at proper grain (firm-day or finer), date- or week-clustered SE, and survives multi-spec robustness.
+    \end{itemize}
+    \column{0.45\textwidth}
+    \footnotesize
+    \textbf{Three policy levers identified}:
+    \begin{enumerate}
+      \item \textbf{Clock-symmetry} (lever 1): \emph{implemented} at MTU15-DA, closes the asymmetric-window transfer.
+      \item \textbf{Pigouvian incidence} (lever 2): \emph{open}. Wind + retailers consistently bear 60--65\% of imbalance € regardless of clock symmetry.
+      \item \textbf{Operational regime overlay} (lever 3): \emph{operación reforzada} — the post-blackout missing-market patch. New PO-7.4 zonal reactive market (Jun 2025) is the first market-design response.
+    \end{enumerate}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Theoretical model --- where it stands}
+  \begin{itemize}
+    \item Started from my Energy Economics research proposal: an extension of \textbf{Ito--Reguant (2016)} sequential-market model with an explicit role for the MTU mismatch.
+    \item Predicted (i) DA15 is the key reform that smooths imbalances; (ii) dispersion risk concentrates in DA60/ID15; (iii) finer granularity creates winners and losers.
+    \item Empirically, all three predictions are \textbf{borne out qualitatively}; the magnitudes are larger than the theory suggested.
+    \item \textbf{Pivot}: the project focuses on \emph{very solid empirics} + a \emph{simplified IO theory model} to illustrate the mechanism + a light structural exercise (FOC-based, in the spirit of HP-sophistication or Allaz--Vila).
+    \item \textbf{Not} a fully estimated structural auction model (Hortaçsu--Puller / Wolak): out of scope for the time available.
+  \end{itemize}
+\end{frame}
+
+% ============================================================
+\section{4. Difficulties encountered}
+% ============================================================
+
+\begin{frame}{Difficulty 1 --- identification under multiple confounds}
+  \begin{itemize}
+    \item Each reform date has a competing event:
+      \begin{itemize}
+        \item \textbf{Dec 2024} (ISP15) — concurrent with European gas-price normalisation.
+        \item \textbf{Mar 2025} (ID15) — concurrent with \textbf{CNMC Rule 28.8 elimination} (changed bilateral-contract rules).
+        \item \textbf{Apr 28, 2025} blackout $\Rightarrow$ \emph{operación reforzada} (regulatory regime overlay continuing through the talk).
+        \item \textbf{Oct 2025} (DA15) — partial overlap with reforzada.
+      \end{itemize}
+    \item \textbf{Identification spine adopted}:
+      \begin{itemize}
+        \item \emph{PDBC vs PDVD chain placement} — reforzada acts \emph{after} OMIE clears PDBC, so PDBC-side outcomes face it only through expectations.
+        \item \emph{Reforzada-held-constant pairings}: ISP15-win $\to$ DA60/ID15-PRE-blackout (both pre-reforzada); DA60/ID15-POST $\to$ DA15/ID15 (both under reforzada).
+        \item Same-calendar-month robustness, cross-country placebo (B7), bootstrap CIs.
+      \end{itemize}
+    \item Honest record of \textbf{14 dead identification attempts} (X1--X14): TWFE-DiD, wind-IV, profile-matching, etc. — each rejected after placebo / parallel-trends / randomization tests.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Difficulty 2 --- a structural break we cannot yet explain}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.5\textwidth}
+    \footnotesize
+    \begin{itemize}
+      \item Big-4 \textbf{nuclear bilateral share} (PDBF) was stable at 80--95\% throughout 2018--2023.
+      \item Drops sharply in \textbf{Feb--Mar 2024}, three months \emph{before} any MTU15 reform.
+      \item Hydro shows the same Q1-2024 break (auction-side growth); CCGT is unaffected (always 0\% bilateral).
+      \item Concurrent with the \textbf{end of the Iberian gas-cap (TPP) on 2023-12-31} and Spain's first major renewable-saturation event (negative-price share emerges in April 2024).
+      \item Regression: $\beta$(neg-price-share, exogenous proxy) $= -3.05$ on nuclear bilat\_share (p $\approx 10^{-179}$, R$^2$=0.13) — the magnitude matches the observed drop. Hydro: $\beta \approx 0$.
+    \end{itemize}
+    \column{0.5\textwidth}
+    \includegraphics[width=\linewidth]{../../../figures/working/pdbf_monthly_bilat_share.png}
+  \end{columns}
+  \vfill
+  \footnotesize \textbf{Mechanism unidentified} — likely renewable-saturation onset interacting with PPA structures, but causal identification still open. Surfaced this week and reframes how I read 2024 pre-reform data.
+\end{frame}
+
+\begin{frame}{Difficulty 3 --- \emph{operación reforzada} as missing-market patch}
+  \begin{itemize}
+    \item Post 2025-04-28 blackout, REE imposes a continuous \textbf{reinforced-operation regime}:
+      \begin{itemize}
+        \item PO-3.2 RRTT redispatch (forces $\sim$20--30 CCGTs + nuclear daily).
+        \item PO-1.5 enlarged secondary band; new PO-7.4 zonal reactive market (Jun 2025).
+        \item Direct cost $\sim$€666M (May 2025 -- Mar 2026); RRTT cost €3.77B in 2025 (+49\% YoY).
+      \end{itemize}
+    \item Affects \textbf{all post-blackout regressions}, but in a structurally identifiable way:
+      \begin{itemize}
+        \item Where the outcome is computed at PDBC (e.g., F7), reforzada enters only via expectations.
+        \item Where it is computed at PDVD or PHF, reforzada enters mechanically.
+      \end{itemize}
+    \item \textbf{Cleanest empirical separator}: the S6 transfer collapses at MTU15-DA \emph{while reforzada is still active} $\Rightarrow$ separates lever-1 (granularity) from lever-3 (operational overlay).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Other surprises (briefly)}
+  \begin{itemize}
+    \item \textbf{F1/F2/F3 killed}: implied Cournot-FOC Lerner does not match realised marginal-bid markup (Hortaçsu--Puller-style sophistication test). The +0.318 / +0.135 regime coefficients are formula-mechanical, \emph{not} realised conduct.
+    \item \textbf{F5 killed}: the Allaz--Vila commitment slope is a mechanical accounting identity ($Q \approx q_{DA} + \Delta Q_{IDA}$) at every granularity I tried.
+    \item \textbf{B11 wounded}: the original Rule-28.8 estimate ($-41.7\%$) was a 12-month-window artefact; under wider-window robustness with placebo tests, the cleaner figure is $\sim -12\%$.
+    \item \textbf{F23/F25/F26 wounded or killed}: bilateral nuclear-channel attribution to \emph{operación reforzada} was wrong by 3 months — the structural break is at Q1 2024, not at the IDA reform.
+  \end{itemize}
+  \vfill
+  \footnotesize Each item triggered a discipline cycle: ledger update + script header update + research-diary entry + (where relevant) wider-claim reinterpretation.
+\end{frame}
+
+% ============================================================
+\section{5. What is left}
+% ============================================================
+
+\begin{frame}{What is left --- empirical}
+  \begin{itemize}
+    \item \textbf{Q1 2024 mechanism}: pin down what specifically about the gas-cap expiry / renewable-saturation onset / PPA renegotiations drove the bilateral-channel collapse. Likely a separate chapter discussion.
+    \item \textbf{Continued attack pass} on the remaining alive claims (F4, F14--F22, B5, B8) using canonical conventions.
+    \item \textbf{Structural time-series counterfactual} (Brodersen et al.~2015) on the headline outcomes: wedge, dispersion, liquidity, balancing.
+    \item \textbf{Per-segment imbalance €} verification using the \texttt{liqsegme} ESIOS file (parsed but not yet used).
+    \item \textbf{Workshop figures}: a couple of figures still in \texttt{figures/working/}; need polishing for the thesis.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{What is left --- theoretical and writing}
+  \begin{itemize}
+    \item \textbf{Theoretical model}:
+      \begin{itemize}
+        \item Refine the IR extension to better motivate the \emph{three-lever} framing (asymmetric clock / Pigouvian incidence / operational overlay).
+        \item Possibly add a small heterogeneous-firm extension to motivate D7 (cross-tech bilateral-channel heterogeneity).
+        \item Light \textbf{structural exercise}: HP-sophistication-style FOC test on Big-4 bid functions post-MTU15-IDA, no full estimation.
+      \end{itemize}
+    \item \textbf{Thesis writing}:
+      \begin{itemize}
+        \item Part I (system-layer reform impact) — drafting starts week of May 5.
+        \item Parts II--V (firm market power, cross-market specialisation, post-CNMC conduct, behavioural appendix) — covered by the existing alive findings; framing already drafted in the proposal.
+        \item Deadline mid-June 2026.
+      \end{itemize}
+    \item \textbf{Risk}: 8-week timeline tight; Part-II depth (F7 + F10 + F13) is the bottleneck.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[plain]
+  \begin{center}
+    \vspace{2cm}
+    {\Large \textbf{Thank you.}}\\[1.5em]
+    {\large Questions and feedback welcome.}\\[2em]
+    \footnotesize
+    \texttt{Pablo Paramio --- CEMFI --- May 2026}
+  \end{center}
+\end{frame}
+
+\end{document}

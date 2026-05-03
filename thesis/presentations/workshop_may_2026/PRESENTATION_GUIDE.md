@@ -1,8 +1,12 @@
 # May 2026 CEMFI presentation — final prep guide
 
-**Date**: ~2026-05-05 (one week from 2026-04-28). 30-min talk + Q&A. IO faculty audience.
+**Date**: ~2026-05-05. **18–20-min talk** (advisor format guidance: state-of-work, not results-led). IO faculty audience.
 
-**Title (suggested)**: *Asymmetric-granularity friction: empirical evidence on Spain's MTU15 reform sequence*. Continuation of the Feb-2026 deck *"Rewiring the market clock in Spanish electricity markets"*.
+**Advisor format guidance (2026-05-03)**: brief reminder of thesis objective + research question + minimum context, then **what I have done · state of the work · difficulties encountered · what is left to do**. NOT a results-leading talk. The detailed results-arc below (slides 5–11) is preserved as audit-trail but the actual May deck follows the advisor's progress-report frame.
+
+**Title (suggested)**: *Spain's MTU15 reform: progress on an empirical assessment*. Continuation of the Feb-2026 deck *"Rewiring the market clock in Spanish electricity markets"*.
+
+**Counts as of 2026-05-02 attack pass**: 41 alive · 7 wounded · 20 dead · 68 active rows.
 
 **Continuity statement (slide 1 or 2)**: The Feb-deck Ito–Reguant (2016) extension predicted (i) DA15 is the key reform that smooths imbalances, (ii) dispersion risk concentrates in DA60/ID15, (iii) finer granularity creates winners and losers across heterogeneous portfolios. **All three are now empirically confirmed** at €1.1B order of magnitude — with a sharper microfoundation than the original Allaz–Vila scaffold, which is now rejected at every granularity (**F5 killed 2026-04-29 as a mechanical accounting identity**).
 
@@ -139,7 +143,7 @@ Honest one-line for the audience: *"The thesis maps three additional IO channels
 
 ## Behind the talk: the 5-part thesis context
 
-The May talk is **Part I only**. Full thesis structure (in [`thesis/proposal.md`](../drafts/master_thesis_proposal.md)) covers 37 alive findings across:
+The May talk is **Part I only**. Full thesis structure (in [`thesis/proposal.md`](../../proposal.md)) covers 41 alive findings across:
 
 | Part | Theory anchor | Lead findings | Status |
 |---|---|---|---|
