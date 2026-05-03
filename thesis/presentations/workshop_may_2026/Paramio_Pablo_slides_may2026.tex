@@ -142,12 +142,12 @@
     \centering
     \begin{tabular}{lccc}
       \toprule
-      Period & ISP & DA & ID \\
+      Period & ISP & ID & DA \\
       \midrule
       Pre-Dec 2024 & 60 & 60 & 60 \\
       Dec24--Mar25 & \textbf{15} & 60 & 60 \\
-      Mar25--Sep25 & 15 & 60 & \textbf{15} \\
-      Oct25 onward & 15 & \textbf{15} & 15 \\
+      Mar25--Sep25 & 15 & \textbf{15} & 60 \\
+      Oct25 onward & 15 & 15 & \textbf{15} \\
       \bottomrule
     \end{tabular}\\[10pt]
     \begin{tikzpicture}[node distance=2mm,every node/.style={font=\scriptsize}]
@@ -165,24 +165,42 @@
 \section{2. What I have done}
 % ============================================================
 
-\begin{frame}{Data pipeline}
+\begin{frame}{Data pipeline (1/2) --- what each layer lets us see}
   \footnotesize
-  Three sources, $\sim$8 years (2018-01 $\to$ 2026-02), all idempotent and version-controlled.
-  \begin{block}{OMIE (Iberian market operator) --- the primary source}
-    25+ data families at native MTU60/MTU15 granularity:
+  Answering the five research questions requires reconstructing the \emph{entire trace} of an electricity transaction --- from a firm's first bid in the day-ahead auction to the final cash flow at imbalance settlement. So I built the data infrastructure end-to-end.
+  \vspace{4pt}
+  \begin{block}{To see prices and the reform itself --- OMIE (Iberian market operator)}
+    Day-ahead clearing prices, intraday auction prices (per session), and the entire continuous-market price record at native granularity (MTU60 pre-2025-03-19, MTU15 after). This is what tells me \emph{whether} the reform moved equilibrium prices, when, and by how much.
+  \end{block}
+  \begin{block}{To see strategic conduct --- OMIE bid-level data}
+    Every tranche of every offer ever submitted to the day-ahead and IDA auctions, plus the full XBID order-book and matched-trade record. This is what lets me test Allaz--Vila / Ito--Reguant / Hortaçsu--Puller predictions at the level the theory speaks --- the individual bid function.
+  \end{block}
+  \begin{block}{To see imbalance and the system response --- ENTSO-E + REE/ESIOS}
+    \emph{ENTSO-E TP}: imbalance volumes and prices, FRR settlement (A87), generation by type and unit, load and renewable forecasts. All fundamentals controls and forecast errors come from here. \\
+    \emph{REE/ESIOS}: per-firm and per-segment settlement, real-time RT prices, balancing offers. \\
+    \textbf{Caveat:} ESIOS \emph{API} access still pending --- 3-week wait. Public archive endpoints work; per-BRP feeds blocked until the token clears.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Data pipeline (2/2) --- the dimension of what we have}
+  \footnotesize
+  Putting it together, the panel is unusually rich for a Master's thesis. The whole point is that strategic mechanisms operate at sub-hourly granularity --- aggregating ex ante would erase exactly what we are trying to identify.
+  \begin{block}{Scale}
     \begin{itemize}
-      \item \emph{Prices}: day-ahead, intraday auctions, continuous market.
-      \item \emph{Programs}: PDBC (DA cleared), PDBF (+ bilaterals, 166M rows), per-firm/per-unit, intraday, final hourly.
-      \item \emph{Bid curves}: DA + IDA offer headers + tranches; XBID limit orders + matched trades.
-      \item Plus interconnection capacities and annulments.
+      \item \textbf{$\sim$8 years} of coverage (2018-01 $\to$ 2026-02), at native MTU60/MTU15 granularity throughout.
+      \item \textbf{$\sim$413 GB raw} + \textbf{$\sim$198 GB processed} on dedicated external SSD; 25+ data families with their own parsers.
+      \item \textbf{$\sim$5.7 billion rows} on the OMIE side alone, headlined by:
+      \begin{itemize}
+        \item Continuous-market final hourly programs (PHFC): \textbf{3.3 billion rows}.
+        \item IDA bid tranches (IDET): 314M rows. DA bid tranches (DET): 172M rows.
+        \item Day-ahead bilateral programs (PDBF): 166M rows --- recently added; opens the bilateral-channel mechanism.
+        \item Aggregate DA supply--demand curves: 341M rows.
+        \item XBID order book: 163M orders, 32M matched trades.
+      \end{itemize}
     \end{itemize}
   \end{block}
-  \begin{block}{ENTSO-E Transparency Platform (pan-European)}
-    Spanish control area, API-pull. DA/imbalance prices, FRR settlement (A87), generation by type and unit, load actual + forecast, wind+solar actual + forecasts, reservoir filling. \emph{All fundamentals controls and forecast errors come from here.}
-  \end{block}
-  \begin{block}{REE / ESIOS}
-    Settlement detail (per-firm, per-segment), real-time RT prices, balancing offers. \\
-    \textbf{Caveat:} ESIOS API access still pending --- 3-week wait. Public archive endpoints work; per-BRP feeds blocked until the API token clears.
+  \begin{block}{Why it matters for identification}
+    Most papers that study Spanish wholesale markets rely on \emph{published} hourly price series ($\sim$70k rows). Working at the bid-tranche / firm-ISP level lets me cluster at the right grain (week-of-sample, day, or unit), control for forecast errors at native frequency (Fabra--Imelda style), and run robustness checks on samples in the millions of observations rather than hundreds. This is where the project's empirical credibility lives.
   \end{block}
 \end{frame}
 
