@@ -7,8 +7,8 @@ Master thesis data-engineering project for OMIE electricity-market data, focused
 - Do not add dependencies without asking
 
 ## Repo path conventions
-- `data/raw/{omie,esios}` and `data/processed/{omie,esios}` are symlinks to an external SSD
-  (`/Volumes/OWC Envoy Pro FX/mtu15_data/{raw,processed}/{omie,esios}`)
+- `data/raw/{omie,esios,entsoe}` and `data/processed/{omie,esios,entsoe}` are symlinks to an external SSD
+  (`/Volumes/OWC Envoy Pro FX/mtu15_data/{raw,processed}/{omie,esios,entsoe}`)
 - Always use repo-relative paths; never hardcode machine-specific paths
 - Symlink targets may be slow or absent; do not traverse them speculatively
 
