@@ -71,18 +71,20 @@
 \section{1. Reminder}
 % ============================================================
 
-\begin{frame}{Objective and research question}
-  \begin{block}{One-sentence aim}
-    Empirically assess the impact of Spain's 2024--2025 \textbf{electricity-market clock reform} (the \emph{MTU15 reform sequence}) and extend the theoretical framework to better understand firms' strategic behaviour under different market-time-unit (MTU) configurations.
+\begin{frame}{Objective and research questions}
+  \begin{block}{Aim}
+    Empirically assess the impact of Spain's 2024--2025 \textbf{MTU15 reform sequence} on market outcomes and firm strategic behaviour, and extend the theoretical framework to capture the mechanism.
   \end{block}
   \vfill
-  \begin{block}{Research question}
-    \begin{itemize}
-      \item How did the reform affect \textbf{prices}, \textbf{quantities}, \textbf{liquidity}, \textbf{imbalances}, and \textbf{firm strategic behaviour}?
-      \item Are the welfare and competition implications consistent with the theory?
-      \item Which transitional configurations are most distortionary, and why?
-    \end{itemize}
-  \end{block}
+  Five concrete sub-questions:
+  \footnotesize
+  \begin{enumerate}
+    \item Does the \textbf{asymmetric-clock window} (DA60 + ID15 + ISP15) generate a measurable \emph{dual-pricing redistribution} from BRPs to the TSO? Does it close at MTU15-DA?
+    \item Does finer market-time-unit granularity \textbf{reduce strategic forward-quantity withholding} by dominant firms, in line with the Allaz--Vila / Ito--Reguant prediction?
+    \item Does the reform create \textbf{heterogeneous winners and losers} across firms (Big-4 vs Fringe) and technologies (CCGT vs hydro vs nuclear)?
+    \item Does the per-segment incidence of imbalance settlement match a \textbf{Pigouvian benchmark}, or does the uniform dual-pricing rule misallocate the burden?
+    \item Has the \textbf{post-blackout operational regime} (\emph{operación reforzada}) broken the separability of the reform sequence, and how do we identify each effect?
+  \end{enumerate}
 \end{frame}
 
 \begin{frame}{Big picture: the Spanish electricity market}
@@ -163,20 +165,38 @@
 \section{2. What I have done}
 % ============================================================
 
-\begin{frame}{Data pipeline}
-  \begin{itemize}
-    \item \textbf{OMIE} (Iberian market operator): full short-term wholesale data, 2018-01 $\to$ 2026-02.
-      \begin{itemize}
-        \item Day-ahead, intraday auctions, continuous market, prices, programs, bid curves.
-        \item Includes day-ahead bilateral-contract executions (the file with bilateral commitments, recently added: $\sim$166M rows, opens a new strategic-channel dimension).
-      \end{itemize}
-    \item \textbf{REE / ESIOS}: settlement detail, real-time prices, balancing offers, unit outages.
-    \item \textbf{ENTSO-E}: pan-European balancing, generation by type, imbalance volumes/prices, day-ahead load and renewable forecasts.
-    \item \textbf{AEMET}: weather (temperature, wind, solar) for fundamentals controls.
-  \end{itemize}
-  \vfill
+\begin{frame}{Data pipeline --- scope}
+  Four sources, strictly separated, all version-controlled and idempotent.
+  \footnotesize
+  \begin{block}{1. OMIE (Iberian market operator) --- the primary source}
+    25+ data families, 2018-01 $\to$ 2026-02 (8 years, 2 months) at native granularity (MTU60 pre-2025-03-19, MTU15 after):
+    \begin{itemize}
+      \item \emph{Prices}: day-ahead (\texttt{marginalpdbc}), intraday auctions (\texttt{marginalpibc}), continuous market (\texttt{precios\_pibcic}, \texttt{\ldots\_ronda}).
+      \item \emph{Programs}: \texttt{pdbc} (DA cleared), \texttt{pdbf} (+ bilaterals, 166M rows), \texttt{pdbce} (per firm), \texttt{pibca/pibci/pibcie} (intraday auctions), \texttt{pibcic/pibcac/pibcice} (continuous), \texttt{phf/phfc} (final hourly programs).
+      \item \emph{Bid curves and offer detail}: \texttt{cab/det} (DA offer headers + tranches), \texttt{icab/idet} (intraday), \texttt{orders/trades} (XBID limit orders + matched transactions), \texttt{curva\_pbc/pibc} (aggregate supply--demand).
+      \item \emph{Capacities and annulments}: interconnection capacity (\texttt{capacidad\_inter\_*}), annulled offers/sessions.
+    \end{itemize}
+  \end{block}
+  \begin{block}{2. REE / ESIOS (Spanish system operator)}
+    Settlement detail (per-firm, per-segment), real-time RT prices (TipoRedespacho 61), balancing offers, unit outages, secondary-band offers, per-BSP aFRR (\texttt{liquicierre}, \texttt{liquicierresrs}).
+  \end{block}
+\end{frame}
+
+\begin{frame}{Data pipeline --- the rest}
+  \footnotesize
+  \begin{block}{3. ENTSO-E Transparency Platform (pan-European)}
+    Spanish control area (\texttt{10YES-REE------0}), API-based pull:
+    \begin{itemize}
+      \item \emph{Prices and balancing}: A44 (DA prices, FR + ES), A85 (imbalance prices), A86 (imbalance volumes), A87 (FRR settlement, A01 TSO-paid, A02 BRP-paid).
+      \item \emph{Generation and load}: A75 (generation per type, hourly Spain), A73 (generation per unit), A65 (load actual), A69 (load forecast), A80 (wind+solar forecast), A72 (reservoir filling, weekly).
+      \item Day-ahead forecasts of load and wind+solar, and intraday updates --- canonical \emph{forecast-error} controls.
+    \end{itemize}
+  \end{block}
+  \begin{block}{4. AEMET (weather)}
+    Temperature, wind, solar irradiance --- fundamentals controls and instruments for residual-demand-slope identification.
+  \end{block}
   \begin{block}{Discipline}
-    All pipelines idempotent (one parser per data family); raw / processed / derived layers strictly separated; analytical outputs separated from data.
+    Raw $\to$ processed $\to$ derived layers strictly separated (raw never modified). One parser per family, all post-parse validation checks. Analytical outputs (regressions, figures) live outside \texttt{data/}. Symlinks to external SSD for the heavy raw layer.
   \end{block}
 \end{frame}
 
@@ -253,6 +273,34 @@
       \item Robust to (i) day-ahead bilateral-channel controls, (ii) year FE, (iii) Fabra--Imelda-style spec with demand and wind/solar forecast-error controls + week-of-sample cluster: regime coefficients vary $<0.1\%$ across specifications.
     \end{itemize}
   \end{columns}
+\end{frame}
+
+\begin{frame}{Tests of theoretical predictions --- what worked}
+  \footnotesize
+  \begin{block}{Ito \& Reguant (2016, AER): sequential markets, market power, and arbitrage}
+    Their two-period framework predicts that if firms have market power they over-supply forward ($q_1 > q_2$) and a finer spot grid attenuates the strategic value of forward commitment. \\
+    \textbf{Confirmed.} At the firm-day grain, Big-4 voluntary intraday repositioning ($q_2$) collapses progressively through the reform sequence; partial recovery once DA15 restores symmetric clocks. Robust to bilateral-channel controls, year FE, and Fabra--Imelda forecast-error controls (regime coefficients vary $<0.1\%$). \emph{Anchor for the behavioural side of the thesis.}
+  \end{block}
+  \begin{block}{Ciarreta \& Espinosa (2010, J Regul Econ): synthetic-firm method for Spanish market power}
+    Substitute each Big-4 plant's offer with a same-tech, same-capacity competitive-fringe plant; re-clear the auction. \\
+    \textbf{Replicated and extended.} Iberdrola alone $\sim$\textbf{€820M} day-ahead cleared-price-difference rent post-MTU15-IDA (98\% of joint Big-4 transfer); hydro 64\% / CCGT 36\%. Survives BRP-migration, strict-hydro matching, blackout-split, and complex-offer caveats. Two-decade pattern persistence: Ciarreta--Espinosa documented Big-4 above synthetic-Big-4 in 2002--2005 at $\sim$21\%; we measure $\sim$13\% post-MTU15-IDA (consistent with tighter regulation).
+  \end{block}
+\end{frame}
+
+\begin{frame}{Tests of theoretical predictions --- what did not work}
+  \footnotesize
+  \begin{block}{Allaz \& Vila (1993, JET): forward markets dispel oligopoly rents}
+    Test: estimate $\beta = \partial \Delta Q_{IDA}/\partial q_{DA}$ at firm-period level; AV predicts $\beta < 0$ if firms commit forward to dispel future rents. \\
+    \textbf{Rejected as a test.} Within-unit, $Q_{actual} \approx q_{DA} + \Delta Q_{IDA}$ is a \emph{mechanical accounting identity} $\Rightarrow \beta$ is mechanically near $-1$ minus the real-time-deviation share, regardless of strategic conduct. Not a structural slope. The thesis modelling chapter cannot lead with this; the surviving Allaz--Vila evidence comes from the Ito--Reguant $q_2$ trajectory above.
+  \end{block}
+  \begin{block}{Hortaçsu \& Puller (2008, RAND): sophisticated firms bid close to FOC-implied markup}
+    Test: compare the implied Cournot--FOC Lerner against the realised marginal-bid markup. \\
+    \textbf{Strategic-conduct interpretation rejected.} For the leading firm at DA60/ID15, implied Lerner $\approx 0.93$ vs realised marginal-bid Lerner $\approx 0.34$ (ratio $\approx 0.36$); cross-firm: realised markup is fairly uniform ($\approx$\,€13--26/MWh), implied is wildly heterogeneous (0.008--0.93). The implied measure is \emph{formula-mechanical} (size, supply slope), not realised conduct. Regime coefficients survive but cannot be cited as strategic markup.
+  \end{block}
+  \begin{block}{Bushnell (2003, JIE): hydro market power via reservoir shadow-price}
+    Test: regress IB hydro top-quartile dispatch concentration on reservoir level. \\
+    \textbf{Mechanism rejected.} $\beta(\text{reservoir}) \approx 0$, $p \approx 0.87$; the placebo (Fringe firms) actually shows a stronger reservoir gradient than IB. The IB hydro Q4 concentration is real and persistent (+17pp gap vs Fringe, regime-invariant 2018--2025), but the underlying mechanism is \emph{not} classical Bushnell shadow-pricing.
+  \end{block}
 \end{frame}
 
 % ============================================================
@@ -349,17 +397,6 @@
       \end{itemize}
     \item \textbf{Cleanest empirical separator}: the asymmetric-window settlement transfer collapses at the day-ahead 15-min reform \emph{while reforzada is still active} $\Rightarrow$ separates clock-symmetry (lever 1) from operational overlay (lever 3).
   \end{itemize}
-\end{frame}
-
-\begin{frame}{Other surprises (briefly)}
-  \begin{itemize}
-    \item \textbf{Implied-Cournot Lerner test failed}: the regime-difference coefficients on the implied Cournot-FOC Lerner ($+0.318$ for the leading firm) do not match the realised marginal-bid markup in a Hortaçsu--Puller-style sophistication test. The implied measure is formula-mechanical, \emph{not} realised conduct. Cite as ``implied markup index'', not as strategic markup.
-    \item \textbf{Allaz--Vila commitment-slope test failed}: $\partial \Delta Q_{IDA}/\partial q_{DA}$ is a mechanical accounting identity ($Q_{actual} \approx q_{DA} + \Delta Q_{IDA}$) at every granularity I tried; not a structural conduct measure.
-    \item \textbf{Rule 28.8 estimate revised}: my original $-41.7\%$ effect on bilateral volumes was a 12-month-window artefact; under wider-window robustness with placebo tests, the cleaner figure is $\sim -12\%$.
-    \item \textbf{Mis-attributed reforzada effect}: I had attributed a bilateral-nuclear-channel collapse to \emph{operación reforzada}; it actually happened in Q1 2024, three months earlier — see Difficulty 2.
-  \end{itemize}
-  \vfill
-  \footnotesize Each surprise triggered a discipline cycle (status update, evidence log, wider-claim reinterpretation where applicable). Honest scoping is part of the contribution.
 \end{frame}
 
 % ============================================================
