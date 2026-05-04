@@ -27,6 +27,53 @@ Synthesis: **Under symmetric clocks (MTU15-DA), granularity amplifies IR withhol
 
 **Caveats.** (a) DA60/ID15-pre-blackout has only 40 days (G ≈ 40 cluster, borderline Cameron–Miller). (b) Net-load criticality is observable post-MTU15-IDA only; cross-regime application uses post-reform labels assuming demand-profile shape is reform-invariant. (c) Engineering-MC Lerner not yet built; DiD on q₂ is the cleanest currently-available test.
 
+### §X.1 — Critical-hour bid-shape: CCGT post-MTU15-DA "rich-ladder" pattern (2026-05-04)
+
+**Headline.** Post-MTU15-DA (Oct 2025+), Big-4 CCGT in critical hours bid a *richer ladder*, not a *higher single price*. Three jointly-moving features in critical vs flat hours, same firm-day-hour panel, post-MTU15-DA:
+
+| measure (per quarter, qty-weighted)            | flat   | critical | direction         |
+|------------------------------------------------|--------|----------|-------------------|
+| n_tranches per quarter                         | 5.08   | 5.50     | +8% (more tranches) |
+| ladder slope `(p_top − p_bot) / qty_total`     | 1.22   | 1.38     | +13% (steeper)    |
+| qty-weighted avg price `p_avg`                 | 488    | 472      | **−3% (LOWER)**   |
+
+The qty-weighted average price is **lower**, but the ladder is **richer at both ends**: more low-price inframarginal tranches at the bottom (push avg down, lock in clearing) plus a steeper high-price tail (capture scarcity rent if prices spike). Pre-MTU15-DA, the firm could only pick one price level for the hour — could only "tilt" one way. Post-MTU15-DA, the firm can both insure (low-end) AND speculate (high-end) within the same hour, tranche-by-tranche, and they do.
+
+**Distributional view.** The mean differences are subtle (5–13%); the heavy-tailed view is dramatic. Rate of CV(p_avg) > 1% across the 4 quarters of an hour: CCGT 14.3% (flat) → 24.5% (crit), Δ = +10.2 pp (+71% relative). P90 of CV across quarters: CCGT 1.6% (flat) → 7.9% (crit), **ratio 4.9×**. Most CCGT unit-hours bid roughly uniformly; the strategic differentiation tail fires precisely in critical hours.
+
+**Tech selectivity (renewables answer).** Big-4 wind/solar do NOT exhibit the across-quarter differentiation pattern, despite Ito–Reguant downward-curtailment optionality. Wind (P90 1.2× ratio), solar (very low absolute), nuclear (1.1×) all flat. Hydro shows a milder version of the CCGT pattern (P90 2.3×). The strategic bid-shape story is concentrated in **dispatchable thermal + hydro** — exactly the units whose ramping costs make 15-min granularity bind.
+
+**IO interpretation.** This is a richer Allaz–Vila / dynamic-bidding signature than what the v3 single-CV measure captured. Pre-MTU15-DA, you can express *forward commitment* but only at hour-aggregate granularity. Post-MTU15-DA, you can shape your bid LADDER quarter-by-quarter in critical hours, decoupling the inframarginal-clearing decision from the marginal-tail rent decision. The lower avg price in critical hours is therefore not "less aggressive bidding"; it's *more* sophisticated bidding — using the granularity to over-commit cheap MWh while leaving an expensive tail open. Consistent with Chang (2026)'s SFE prediction of behavioural amplification under finer settlement, and complementary to B8's bid-complexification finding (which captured the n_tranches dimension only).
+
+**Script:** `scripts/analysis/firm/bid_shape_by_tech.py`. Outputs: `results/regressions/bid_shape_by_tech.csv`, `figures/working/bid_shape_by_tech.png`.
+
+### §X.2 — Joint q₁ + q₂ + q_continuous: reframe from "strategic withholding" to "withdrawal-not-substitution" (2026-05-04)
+
+**The corrected DiD picture (per Big-4 firm-hour, MWh, vs pre-IDA).** After fixing a PDBF hour-mapping bug (PDBF goes 15-min at MTU15-IDA on 2025-03-19, not at MTU15-DA on 2025-10-01), the per-channel coefficients are:
+
+| channel              | DA60/ID15-prebo | DA60/ID15-reforz | DA15/ID15 |
+|----------------------|-----------------|------------------|-----------|
+| q₁ = q_DA_auction (PDBCE)    | −189   | −253       | +52       |
+| q₁ = q_DA_bilateral (PDBF)   | −79    | −170       | +105      |
+| q₂ = q_IDA (PIBCIE)          | −32    | −30        | +71       |
+| q_continuous (PIBCICE) | −5    | −6         | +5        |
+| **TOTAL OMIE**         | **−305** | **−459**   | **+233**  |
+
+**Joint reading.** All four OMIE channels move in the *same* direction in each regime — DOWN under DA60/ID15-prebo and DA60/ID15-reforz, UP under DA15/ID15. This rules out classic strategic-withholding-as-arbitrage (which would predict q_DA ↓ accompanied by q_IDA ↑ or q_continuous ↑ — withhold from the price-setting market and resell where the higher price you helped create can be captured). What we see is **withdrawal across all channels, not substitution between them**.
+
+**Aggregate-system sanity check.** Spain's total upward reserves dispatch (aFRR-up + mFRR-up + RR-up) under DA60/ID15-prebo = 0.43 GWh/h critical (vs 0.81 in pre-IDA critical) — *lower*, not higher. Down-reserves dispatch in critical hours under DA60/ID15-prebo = 1.01 GWh/h (vs 0.67 pre-IDA) — *higher*, indicating excess energy in the system. So the missing Big-4-thermal energy in critical hours did NOT go to upward reserve dispatch.
+
+**Reframed mechanism.** The DA60/ID15 V-shape on Big-4 supply is consistent with **withdrawal that did not generate rents**, not strategic withholding for arbitrage:
+- Big-4 CCGT withdrew from critical hours under DA60/ID15-prebo (extensive margin: 13 inactive units; intensive margin: lower commitment per active unit)
+- The system absorbed the gap via abundant renewable supply (March-April 2025 = peak solar; high-renewable critical hours)
+- Prices in critical hours did not spike (renewables filled in)
+- Reforzada (post-blackout) compelled CCGT back into critical hours via PO-3.x stability requirements; the 13-unit composition gap closed (back to −2)
+- DA15/ID15 (granularity asymmetry resolved): Big-4 voluntarily return to critical-hour commitment across all channels (V-shape inverts to +233)
+
+**Economic content.** This is *behavioural* (Big-4 specifically reduced commitment, with a clean tech signature in CCGT) but not *profitable* (no price response, no rent extraction). It says granularity asymmetry was a friction that pushed Big-4 CCGT out of critical hours operationally; absent reforzada compulsion, Big-4 stayed out; symmetry restoration brought them back. The bid-shape result (§X.1) is independent of this — it's about HOW operators design their bid ladders given quarter granularity *when they do dispatch*.
+
+**Caveat (calendar-mix risk).** DA60/ID15-prebo and -reforz both fall in the high-solar half of the year (Mar–Sep). Cal-month FE in the DiD absorbs *average* monthly seasonality but not the *renewable-share × hour-of-day interaction* — an Apr-2025 hour-7 has substantially more solar than a Jan-2024 hour-7 even within "April vs January" FE. A renewable-share-by-hour control would tighten the test. The bid-shape and CCGT-composition findings are not subject to this caveat (bid-shape is post-MTU15-DA only; composition is descriptive in counts, not regression-conditional).
+
 ---
 
 ## TODO — discussion-driven open items (2026-05-04)
