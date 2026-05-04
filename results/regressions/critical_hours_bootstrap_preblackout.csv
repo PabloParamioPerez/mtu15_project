@@ -1,0 +1,6 @@
+estimator,value
+original_DiD,-32.331083200466665
+bootstrap_mean,-32.5086651744925
+bootstrap_2.5pct,-54.112605780628606
+bootstrap_97.5pct,-11.522003766299566
+bootstrap_pvalue,0.995
