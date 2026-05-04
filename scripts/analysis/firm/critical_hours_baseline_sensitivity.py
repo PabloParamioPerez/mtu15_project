@@ -89,11 +89,21 @@ def fit_did(panel, outcome="q"):
     y = panel[outcome].values
     cluster = panel["date"].dt.strftime("%Y%m%d").astype(np.int64).values
     m = sm.OLS(y, X.values).fit(cov_type="cluster", cov_kwds={"groups": cluster})
-    return dict(coef=float(m.params[X.columns.get_loc("crit×post")]),
-                se=float(m.bse[X.columns.get_loc("crit×post")]),
-                pval=float(m.pvalues[X.columns.get_loc("crit×post")]),
-                n=len(panel),
-                n_clusters=int(np.unique(cluster).size))
+    return dict(
+        # Pre-window crit-flat gap (parallel-trends check): coef on `critical`
+        crit_pre=float(m.params[X.columns.get_loc("critical")]),
+        crit_pre_se=float(m.bse[X.columns.get_loc("critical")]),
+        crit_pre_p=float(m.pvalues[X.columns.get_loc("critical")]),
+        # DiD δ: coef on `crit×post`
+        did=float(m.params[X.columns.get_loc("crit×post")]),
+        did_se=float(m.bse[X.columns.get_loc("crit×post")]),
+        did_p=float(m.pvalues[X.columns.get_loc("crit×post")]),
+        # `post` main effect (flat-hour level shift across regimes)
+        post=float(m.params[X.columns.get_loc("post")]),
+        post_se=float(m.bse[X.columns.get_loc("post")]),
+        post_p=float(m.pvalues[X.columns.get_loc("post")]),
+        n=len(panel),
+        n_clusters=int(np.unique(cluster).size))
 
 
 def main() -> None:
@@ -136,11 +146,12 @@ def main() -> None:
         post = panel[panel["date"] >= DA15_START].assign(post=1)
         n_post = len(post)
         print()
-        print("=" * 110)
+        print("=" * 130)
         print(f"Baseline-window sensitivity for {label}")
         print(f"DA15/ID15 post sample (Oct 2025+): N = {n_post:,} firm-day-hour rows")
-        print("=" * 110)
-        print(f"  {'baseline':14s} {'months':>9s} {'N_pre':>10s} {'δ_crit×post':>14s} {'SE':>7s}  {'p':>9s}")
+        print("Treated = critical hours, Control = flat hours; pre-window provides parallel-trends check, NOT counterfactual")
+        print("=" * 130)
+        print(f"  {'pre-window':14s} {'mo':>4s} {'N_pre':>9s} | {'crit_pre':>9s} ({'SE':>5s}, p={'p':>7s}) | {'DiD δ':>9s} ({'SE':>5s}, p={'p':>7s}) | {'crit_post':>10s}")
 
         for bl_label, intervals in BASELINES:
             pre = pd.concat([
@@ -153,10 +164,14 @@ def main() -> None:
             full = pd.concat([pre, post], ignore_index=True)
             res = fit_did(full)
             n_months = sum((e - s).days / 30 for s, e in intervals)
-            print(f"  {bl_label:14s} {n_months:>9.1f} {len(pre):>10,} {res['coef']:+14.2f} {res['se']:>7.2f}  {res['pval']:>9.2e}")
+            crit_post = res["crit_pre"] + res["did"]
+            print(f"  {bl_label:14s} {n_months:>4.1f} {len(pre):>9,} | {res['crit_pre']:>+9.2f} ({res['crit_pre_se']:>5.2f}, p={res['crit_pre_p']:>7.1e}) | {res['did']:>+9.2f} ({res['did_se']:>5.2f}, p={res['did_p']:>7.1e}) | {crit_post:>+10.2f}")
             rows.append({"outcome": label, "baseline": bl_label,
                          "n_months": n_months,
-                         "delta": res["coef"], "se": res["se"], "pval": res["pval"],
+                         "crit_pre": res["crit_pre"], "crit_pre_se": res["crit_pre_se"], "crit_pre_p": res["crit_pre_p"],
+                         "did": res["did"], "did_se": res["did_se"], "did_p": res["did_p"],
+                         "crit_post": crit_post,
+                         "post": res["post"], "post_se": res["post_se"], "post_p": res["post_p"],
                          "n_pre": len(pre), "n_post": n_post})
 
     pd.DataFrame(rows).to_csv(OUT_DIR_R / "critical_hours_baseline_sensitivity.csv", index=False)
