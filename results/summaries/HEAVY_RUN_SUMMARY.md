@@ -1,7 +1,7 @@
 # Heavy-data run summary — 2026-04-29 evening
 
 Five tests of model predictions, all at maximum disaggregation, RAM-safe via
-DuckDB. Run while you were at the gym.
+DuckDB. Heavy run, executed in the evening.
 
 ---
 

@@ -12,7 +12,7 @@ Three simpler narratives I considered and rejected:
 
 1. **"MTU15 reform reduces market power"** — REJECTED. F7 (€820M IB transfer post-MTU15-IDA) and F8 (IB hydro Q4 share regime-invariant at +21pp gap vs Fringe across 2018-2026) make this empirically wrong. Whatever good MTU15 did, it did not break IB's hydro Cournot mechanism.
 
-2. **"IB undersupplies voltage control to capture CCGT windfalls" (the original gym-session hypothesis)** — REJECTED. F14 shows nuclear unaccounted reduction is system-wide (22-38% across all 7 reactors). F15 shows the post-blackout CCGT windfall went to **Naturgy +7.1pp share, not IB (-2pp)**. F19/F20 show the aFRR balancing windfall went to **Endesa, not IB**. The simple cross-firm vertical-integration moral-hazard story has no empirical support.
+2. **"IB undersupplies voltage control to capture CCGT windfalls"** — REJECTED. F14 shows nuclear unaccounted reduction is system-wide (22-38% across all 7 reactors). F15 shows the post-blackout CCGT windfall went to **Naturgy +7.1pp share, not IB (-2pp)**. F19/F20 show the aFRR balancing windfall went to **Endesa, not IB**. The simple cross-firm vertical-integration moral-hazard story has no empirical support.
 
 3. **"The blackout created the post-2025 anomalies"** — REJECTED. F8 blackout-split shows IB hydro Q4 share is regime-invariant pre/post-blackout. F7 blackout-split shows IB rent persists at DA15/ID15 (post-blackout) at +12.3% relative markup. S6 blackout-split shows the system-cost shift collapses at MTU15-DA EVEN THOUGH operación reforzada is still in effect. The blackout amplified some absolute-€ readings; the underlying mechanisms are reform-driven, not blackout-driven.
 

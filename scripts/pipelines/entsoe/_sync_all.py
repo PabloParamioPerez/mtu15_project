@@ -5,7 +5,7 @@ under data/raw/entsoe/. Any file already present is skipped (size > 0
 check), so re-running after a partial sync resumes cleanly.
 
 Replaces the one-shot _resync_failed.sh, _resync_v2.sh, _resync_v3.sh
-that were used during the gym-session catch-up download (now in
+that were used during a one-off catch-up download (now in
 _archive/). All datasets here are downloaded by composing _generic_sync.py
 or the existing per-script helpers, with the rate-limit pacing built in.
 
