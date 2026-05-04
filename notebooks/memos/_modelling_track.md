@@ -47,32 +47,40 @@ The qty-weighted average price is **lower**, but the ladder is **richer at both 
 
 **Script:** `scripts/analysis/firm/bid_shape_by_tech.py`. Outputs: `results/regressions/bid_shape_by_tech.csv`, `figures/working/bid_shape_by_tech.png`.
 
-### §X.2 — Joint q₁ + q₂ + q_continuous: reframe from "strategic withholding" to "withdrawal-not-substitution" (2026-05-04)
+### §X.2 — q₁ DiD on PDBCE auction-cleared commitment: same V-shape as q₂, reinforces §X (2026-05-04)
 
-**The corrected DiD picture (per Big-4 firm-hour, MWh, vs pre-IDA).** After fixing a PDBF hour-mapping bug (PDBF goes 15-min at MTU15-IDA on 2025-03-19, not at MTU15-DA on 2025-10-01), the per-channel coefficients are:
+The §X analysis tested the asymmetric-clock-hedging vs symmetric-clock-IR-amplification mechanism on q₂ (PIBCIE, IDA repositioning). The natural follow-up is to test it on q₁ (PDBCE, DA auction-cleared commitment), since the §X mechanism predicts the same sign pattern there: firms should commit less in DA in critical hours under asymmetric clocks (hedging against quarter-shortage penalties), more in DA under symmetric clocks.
+
+**Same DiD framework, q₁ outcome (Big-4 PDBCE auction-cleared sell, MWh per firm-day-hour vs pre-IDA):**
+
+| regime           | q₁ (PDBCE) | q₂ (PIBCIE, from §X for comparison) |
+|------------------|------------|---------------------------------------|
+| 3-sess           | −72        | (small)                               |
+| ISP15-win        | +144       | (small)                               |
+| DA60/ID15-prebo  | **−189**   | −32                                   |
+| DA60/ID15-reforz | **−253**   | −30                                   |
+| DA15/ID15        | **+52**    | +71 (≈ §X v2 +79.4)                   |
+
+**Same V-shape on q₁ and q₂.** Negative coefficients under asymmetric clocks (DA60/ID15), positive under symmetric clocks (DA15/ID15). q₁ magnitude is ~3× larger than q₂ at DA60/ID15 (−189 to −253 vs −31 to −32) — DA commitment is the bigger margin of adjustment, since DA cleared volume is the bulk of total dispatch. At DA15/ID15 the q₁ +52 is smaller than q₂ +71 — when granularity is symmetric, the strategic content shifts from DA-side commitment to IDA-side repositioning (the IR amplification).
+
+**The §X mechanism applies directly.** The hedging-vs-IR-amplification story originally articulated on q₂ in §X explains q₁ identically: under DA60/ID15, asymmetric clocks make critical-hour DA commitment costly (60-min DA cleared MWh has to settle against a steep within-hour profile in 15-min ISP), so firms hedge by under-committing DA; under DA15/ID15, the asymmetry vanishes and firms commit MORE in critical-hour DA. The cross-channel evidence (q_DA_bilateral PDBF and q_continuous PIBCICE also show the V-shape pattern, smaller magnitudes) reinforces the same mechanism — every commitment-margin Big-4 controls behaves consistently with §X.
+
+**Cross-channel coefficient table (for completeness):**
 
 | channel              | DA60/ID15-prebo | DA60/ID15-reforz | DA15/ID15 |
 |----------------------|-----------------|------------------|-----------|
-| q₁ = q_DA_auction (PDBCE)    | −189   | −253       | +52       |
-| q₁ = q_DA_bilateral (PDBF)   | −79    | −170       | +105      |
-| q₂ = q_IDA (PIBCIE)          | −32    | −30        | +71       |
-| q_continuous (PIBCICE) | −5    | −6         | +5        |
-| **TOTAL OMIE**         | **−305** | **−459**   | **+233**  |
+| q₁ = q_DA_auction (PDBCE)   | −189    | −253       | +52       |
+| q_DA_bilateral (PDBF)¹      | −79     | −170       | +105      |
+| q₂ = q_IDA (PIBCIE)         | −32     | −30        | +71       |
+| q_continuous (PIBCICE)      | −5      | −6         | +5        |
 
-**Joint reading.** All four OMIE channels move in the *same* direction in each regime — DOWN under DA60/ID15-prebo and DA60/ID15-reforz, UP under DA15/ID15. This rules out classic strategic-withholding-as-arbitrage (which would predict q_DA ↓ accompanied by q_IDA ↑ or q_continuous ↑ — withhold from the price-setting market and resell where the higher price you helped create can be captured). What we see is **withdrawal across all channels, not substitution between them**.
+¹ PDBF goes 15-min at MTU15-IDA (2025-03-19), not at MTU15-DA (2025-10-01). Hour-mapping must use the MTU15-IDA cutoff for PDBF; using MTU15-DA cutoff produces a spurious −1230 coefficient that is an artifact, not a finding.
 
-**Aggregate-system sanity check.** Spain's total upward reserves dispatch (aFRR-up + mFRR-up + RR-up) under DA60/ID15-prebo = 0.43 GWh/h critical (vs 0.81 in pre-IDA critical) — *lower*, not higher. Down-reserves dispatch in critical hours under DA60/ID15-prebo = 1.01 GWh/h (vs 0.67 pre-IDA) — *higher*, indicating excess energy in the system. So the missing Big-4-thermal energy in critical hours did NOT go to upward reserve dispatch.
+**Tech composition (extensive-margin signature, descriptive).** Counting active Big-4 units per regime × critical/flat: DA60/ID15-prebo shows 13 fewer Big-4 CCGT units active in critical hours (40 vs 53). All 13 are CCGT; hydro/nuclear/thermal-nonRE all match (zero gap). Under reforzada the gap closes to −2 (CCGT compelled back via REE PO-3.x stability requirements after the 2025-04-28 blackout). Under DA15/ID15 the gap is also small (−2). The CCGT extensive-margin signature is consistent with the §X intensive-margin mechanism: under asymmetric clocks, CCGT operators face the worst hedging cost (steepest ramps, highest fuel-cost-of-deviation), so a portion exit critical hours entirely.
 
-**Reframed mechanism.** The DA60/ID15 V-shape on Big-4 supply is consistent with **withdrawal that did not generate rents**, not strategic withholding for arbitrage:
-- Big-4 CCGT withdrew from critical hours under DA60/ID15-prebo (extensive margin: 13 inactive units; intensive margin: lower commitment per active unit)
-- The system absorbed the gap via abundant renewable supply (March-April 2025 = peak solar; high-renewable critical hours)
-- Prices in critical hours did not spike (renewables filled in)
-- Reforzada (post-blackout) compelled CCGT back into critical hours via PO-3.x stability requirements; the 13-unit composition gap closed (back to −2)
-- DA15/ID15 (granularity asymmetry resolved): Big-4 voluntarily return to critical-hour commitment across all channels (V-shape inverts to +233)
+**Aggregate-system sanity check (does the §X-implied DA reduction translate to a price spike?).** No. Spanish total upward-reserves dispatch (aFRR-up + mFRR-up + RR-up) in critical hours under DA60/ID15-prebo = 0.43 GWh/h, *lower* than pre-IDA's 0.81 GWh/h. Down-reserves dispatch in critical hours under DA60/ID15-prebo = 1.01 GWh/h, higher than pre-IDA's 0.67 — system had EXCESS energy in critical hours, not a deficit. So Big-4's hedging-driven DA commitment reduction did NOT trigger upward-reserve scarcity, consistent with high renewable availability filling the gap (Mar–Sep 2025 = peak solar). The §X mechanism is about firm-level *commitment* response to clock asymmetry, not about system-level scarcity — and the data is consistent with that: behavioural withdrawal without system stress.
 
-**Economic content.** This is *behavioural* (Big-4 specifically reduced commitment, with a clean tech signature in CCGT) but not *profitable* (no price response, no rent extraction). It says granularity asymmetry was a friction that pushed Big-4 CCGT out of critical hours operationally; absent reforzada compulsion, Big-4 stayed out; symmetry restoration brought them back. The bid-shape result (§X.1) is independent of this — it's about HOW operators design their bid ladders given quarter granularity *when they do dispatch*.
-
-**Caveat (calendar-mix risk).** DA60/ID15-prebo and -reforz both fall in the high-solar half of the year (Mar–Sep). Cal-month FE in the DiD absorbs *average* monthly seasonality but not the *renewable-share × hour-of-day interaction* — an Apr-2025 hour-7 has substantially more solar than a Jan-2024 hour-7 even within "April vs January" FE. A renewable-share-by-hour control would tighten the test. The bid-shape and CCGT-composition findings are not subject to this caveat (bid-shape is post-MTU15-DA only; composition is descriptive in counts, not regression-conditional).
+**Caveat (calendar-mix risk).** DA60/ID15-prebo and -reforz both fall in the high-solar half of the year. Cal-month FE absorbs *average* monthly seasonality but not the *renewable-share × hour-of-day interaction*. A renewable-share-by-hour control would tighten the q₁ test. The §X q₂ finding at DA15/ID15 spans Oct 2025 – present (all seasons within DA15/ID15) so is less seasonally narrow.
 
 ---
 
