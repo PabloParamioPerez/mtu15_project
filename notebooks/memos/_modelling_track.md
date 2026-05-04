@@ -6,6 +6,45 @@ Goal: organise alive empirical claims around economic models. Each section is a 
 
 References: `CLAIMS_LEDGER.md` (claim status, evidence pointers) | `_identification_target.md` (identification provenance, frozen post-Week 1) | `RESEARCH_LOG.md` (chronological diary) | `thesis/proposal.md` (5-part synthesis written 2026-04-28).
 
+## §X — Critical-hours DiD: granularity amplifies Ito–Reguant withholding (2026-05-04)
+
+**Headline finding.** Under the assumption that finer settlement granularity affects critical hours (steep within-hour profile) but not flat hours, the DiD coefficient on `critical × DA15/ID15` identifies the *causal effect of granularity on $q_2$*. Pre-IDA critical-flat differential is +3.8 MWh/firm-hour (essentially zero, parallel-trends sanity check). Under full MTU15 (DA15/ID15) the differential rises to +83.2, giving DiD δ = **+79.4 MWh/firm-hour (SE 6.7, p ≈ 10⁻³²)**. With $q_2$ defined as Big-4 voluntary IDA repositioning (signed PIBCIE, à la Ito–Reguant), positive q₂ means the firm sells in IDA above DA commitment — the strategic withholding pattern. **A positive DiD coefficient means MORE withholding in critical hours under MTU15. Granularity AMPLIFIES the IR withholding mechanism.** This is consistent with Chang (2026)'s SFE prediction that finer settlement amplifies behavioural welfare loss.
+
+Per-tech (PIBCI, unit FE within-demeaned): Hydro δ = +6.0/unit-hour (SE 1.5, p<0.001), CCGT δ = +5.4/unit-hour (SE 1.0, p<0.001), Nuclear δ = −1.7 (p=0.49, null). Aggregating across units: Hydro contributes ~150 MWh/firm-hour, CCGT ~180. Nuclear does NOT activate under MTU15 — physical inflexibility binds.
+
+**The DA60/ID15 puzzle.** Same DiD framework gives δ = −31 to −32 at DA60/ID15, equally pre-blackout and during reforzada (so not a reforzada signature; the user's point that reforzada operates ex-post on PHF/balancing — not on PIBCIE — is correct). Two candidate mechanisms for why partial granularity (15-min spot, 60-min forward) gives the OPPOSITE sign:
+
+1. **Within-hour DA-mismatch hedging.** Under DA60: DA commitment is hour-aggregate while ISP15 imbalance is settled per quarter. Critical hours have steepest within-hour profile, hence largest hedging-risk from DA-vs-actual within-hour mismatch. Firms REDUCE forward under-commitment in critical hours to manage this risk → smaller q₂. Predicts ISP15-win δ ≈ 0 (no IDA flexibility yet to amplify; only the hedging channel) — empirically true (δ = −1.8). Predicts DA60/ID15 δ < 0 — empirically true (δ = −31). Predicts DA15/ID15 δ > 0 (DA-mismatch resolved, granularity-amplifies-IR dominates) — empirically true (δ = +79).
+2. **Anticipation of REE technical restrictions in critical hours.** Firms expect RT2 dispatch in critical hours and reduce voluntary IDA repositioning. Less salient mechanism since RT2 volumes were modest pre-blackout; can't fully explain the −32 in clean pre-blackout DA60/ID15.
+
+Synthesis: **Under symmetric clocks (MTU15-DA), granularity amplifies IR withholding in critical hours. Under asymmetric clocks (DA60/ID15), the within-hour hedging problem dominates and DAMPENS withholding in critical hours.** The asymmetric-clock regime is qualitatively different from the symmetric-clock regime — different mechanism on the same outcome.
+
+**Load-only vs net-load criticality.** Pearson correlation of σ_within(load) and σ_within(net-load) by hour-of-day is only 0.243 — substantially divergent. Load-only top-5: h{16,17,5,21,9} (pure-demand transitions). Net-load top-5: h{17,7,18,16,8} (solar-dynamics-driven ramps). For the dominant-firm-on-dispatchable-supply story, net-load is the right concept — it's what dispatchable units have to clear. Load-only would speak to a demand-side mechanism. The choice of criticality measure is *substantive*, not arithmetic.
+
+**Scripts**: `scripts/analysis/firm/critical_hours_stratification.py` (criticality measures), `critical_hours_extended.py` (descriptive per-firm-tech with apportionment hack), `critical_hours_did.py` (DiD v1), `critical_hours_did_v2.py` (DiD with blackout split + unit FE + load-only robustness, **canonical**).
+
+**Outputs**: `figures/working/critical_hours_did_v2.png` (headline DiD figure), `critical_hours_did_v2_per_tech.png` (per-tech panel), `results/regressions/critical_hours_did_v2.csv` and `..._per_tech.csv`.
+
+**Caveats.** (a) DA60/ID15-pre-blackout has only 40 days (G ≈ 40 cluster, borderline Cameron–Miller). (b) Net-load criticality is observable post-MTU15-IDA only; cross-regime application uses post-reform labels assuming demand-profile shape is reform-invariant. (c) Engineering-MC Lerner not yet built; DiD on q₂ is the cleanest currently-available test.
+
+---
+
+## TODO — discussion-driven open items (2026-05-04)
+
+Items surfaced in the IO-mechanism dialogue with the user; not yet tested.
+
+1. **Stratify cross-regime markup tests by within-hour demand variation.** Current pooled regressions average MTU15 effect across all hours. The MTU15 mechanism (firm gains from being able to bid differently across 4 within-hour slices) only fires meaningfully in *non-flat* hours — those with steep within-hour demand or supply ramps. Flat hours (overnight, mid-day plateau) dilute the estimate toward zero. **Operationalisation**: identify "critical hours" via two indicators (a) price volatility *across days* at the same hour-of-day position (high cross-day σ → critical), (b) within-hour σ across the 4 ISPs (high within-hour σ → critical). Re-run cross-regime tests on the critical-hours subset only.
+
+2. **Bilateral channel as MTU15 exploitation precondition.** The Q1 2024 collapse of the Big-4 nuclear bilateral share (85% → 50%) was driven exogenously (low auction prices push buyers off bilateral contracts; not a strategic choice by the seller — nuclear is heavily CNMC-supervised). Downstream consequence: by the time MTU15-IDA went live, the dominant firm had more *auction-side discretion* than its historical bilateral commitment ratio would have allowed. The bilateral commitment is typically *flat-block* (no slice-flexibility), so high bilateral share locks the producer into hour-level commitment with no granular flexibility. Lower bilateral share post-Q1-2024 → larger base on which MTU15 granularity can be exploited. **This is a candidate organising story for the firm-level part of the thesis.** Empirically distinct from the asymmetric-clock system-layer story; complementary to it. Not load-bearing yet.
+
+3. **Cross-tech flexibility heterogeneity under MTU15.** Bid-flexibility ≠ dispatch-flexibility. Nuclear: bid-flex (price varies across slices) but no dispatch-flex (constant baseload). Hydro (reservoir): bid-flex AND dispatch-flex (water can be reallocated across slices). CCGT: both, with ramp constraints. This predicts hydro should benefit most from MTU15 granularity in dispatchable terms, with CCGT second (ramp-constrained), and nuclear third (bid-only). Under combined bilateral-share + flexibility lens: technologies with low bilateral share AND high dispatch-flexibility should show largest MTU15 markup gain. Worth specifying as a testable cross-tech pattern.
+
+4. **Engineering MC + Fabra-style structural FOC (two-step approach).** Use plant-specific heat rates (CNMC `data.cnmc.es/energia` for gas + ENTSO-E for coal/CO₂) plus 7% Spanish generation tax to construct engineering MC per plant per day. Step 1 (descriptive): per-plant per-period Lerner = (cleared price − engineering MC) / cleared price; cross-period within-day variation in this Lerner is robust to cross-market FOC misspecification because MC is daily-constant. Step 2 (structural defense, escalation): replicate Fabra–Imelda 2022 ReStud bid-function spec — bid = engineering MC + parametric markup, where markup depends on residual-demand slope (instrumented by weather), expected spot price (constructed from first-stage demand+wind forecast regression), and hedge/bilateral position. This is what Natalia Fabra would expect on a thesis defense; engineering MC alone is step 1; full structural FOC is step 2.
+
+5. **σ_within / σ_across proxy plan for "critical hours" labelling pre-reform.** σ_within(d, h) is only observable post-MTU15-IDA (pre-reform we have one bid per hour, no within-hour granularity). Operational plan: (a) compute both σ_within and σ_across on the post-reform panel; (b) check rank correlation at the day-hour level; (c) if highly correlated, use σ_across as the cross-regime criticality measure (computable pre-reform at hour-of-day level, averaging over days); (d) label hours by this measure for the cross-regime test, holding labelling fixed across regimes. The reform changed bidding granularity, not demand-profile shape, so a labelling derived from post-reform σ should apply meaningfully to pre-reform observations.
+
+
+
 ## ⚠ Status note — 2026-05-02 kill pass
 
 **This file is historical / append-only**; sections below were written between 2026-04-25 and 2026-04-30 and reflect claim statuses at those dates. Three fundamental updates since are not yet propagated through every paragraph:
