@@ -1,0 +1,280 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, fit}
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{natbib}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable, skins}
+
+\definecolor{boxblue}{RGB}{32,72,144}
+
+\newtcolorbox{purposebox}[1]{
+  enhanced, breakable, colback=white, colframe=boxblue,
+  boxrule=0.5pt, arc=0pt, outer arc=0pt,
+  fonttitle=\bfseries\color{boxblue},
+  title=#1,
+  attach boxed title to top left={yshift=-2mm,xshift=4mm},
+  boxed title style={colback=white, frame hidden, sharp corners},
+  before upper=\vspace{1mm}, after upper=\vspace{1mm}
+}
+
+\title{\textbf{Master Thesis Progress Report}\\[3pt]
+       \large Rewiring the market clock in Spanish electricity markets\thanks{This report extends my Energy Economics research proposal of February 2026, focusing on the empirical analysis carried out since.}}
+\author{Pablo Paramio Pérez \\ Advisor: Pedro Mira \\ CEMFI}
+\date{May 5, 2026}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+In line with European Commission Regulation (EU) 2017/2195 mandating a 15-minute imbalance settlement period \citep{EC2017}, the Iberian wholesale electricity market transitioned in 2024--2025 from hourly (60-minute) to quarter-hourly (15-minute) trading intervals --- the Market Time Unit (MTU). Prior to December 2024, the day-ahead (DA), intraday auction (IDA), and continuous intraday (CID) markets all cleared hourly products and the imbalance settlement period was 60 minutes. The reform proceeded in three stages: in December 2024 the imbalance settlement period moved to 15 minutes (ISP15); in March 2025 the intraday auction and continuous markets switched to 15-minute products (ID15); in October 2025 the day-ahead market switched to 15-minute products (DA15). In June 2024, ahead of the MTU15 transition, the intraday auction framework was also reformed: the six local Iberian sessions were consolidated into three European sessions under the SIDC framework. The reform left \emph{two transitional asymmetric-clock windows} (December 2024 -- March 2025 and March 2025 -- October 2025) in which settlement granularity was finer than trading granularity.
+
+\begin{purposebox}{Purpose of this progress report}
+The February 2026 proposal laid out a roadmap for the empirical assessment of the MTU15 reform sequence. This report describes the substantive progress since: I have built an end-to-end data pipeline covering OMIE, ENTSO-E, and ESIOS (\(\sim\)8 years of coverage at native granularity), and I have developed an identification strategy that uses \emph{flat hours within the day} as a counterfactual for hours where the granularity reform should bite economically. The headline empirical result --- a within-day, within-firm difference-in-differences on signed intraday repositioning by Spain's dominant firms --- is presented with its robustness battery and its honest caveats. The report ends with a clear list of what remains to be done before the thesis deadline in mid-June 2026.
+\end{purposebox}
+
+\subsection{Literature}
+
+The literature on time-unit granularity reforms is relatively narrow. \citet{JustWeber2015} propose a simple model of strategic behaviour in balancing mechanisms prior to ISP15. \citet{Eicke2021} reframes balancing as a market equilibrium and instruments imbalance-price shocks. \citet{KochMaskos2020} document that intraday trades respond efficiently to information about the system imbalance, suggesting that finer MTU is more desirable when market depth is preserved. \citet{KochHirth2019} show, for Germany, that the shift to MTU15 reduced balancing-reserve activations even under high renewable penetration. \citet{MaerkleHuss2018} use a Bayesian time-series approach to study the EPEX MTU60-to-MTU15 transition in 2011 and 2014, finding significant price reductions. From a microstructure perspective, \citet{Graf2024} and \citet{Neuhoff2016} examine how frequent batch auctions interact with continuous intraday trading, with implications for liquidity and price quality.
+
+The two papers closest in spirit to my empirical strategy are \citet{ItoReguant2016}, who study sequential markets and strategic intraday repositioning under market power, and \citet{Hortacsu2017}, who study how strategic sophistication translates into observed bidding behaviour. I draw on the empirical signature of \citet{ItoReguant2016} --- the signed intraday repositioning relative to the day-ahead position --- as my outcome variable, but I ask a different question: how does that strategic measure respond when the market mechanism splits each hour into four independent sub-periods? The substantive mechanism, distinct from Allaz--Vila and from Ito--Reguant, is described in Section~\ref{sec:mechanism}.
+
+\section{Market structure}
+
+The Spanish wholesale market is structured as a sequence of trading stages followed by physical balancing and ex-post imbalance settlement. The day-ahead auction (D-1) is a uniform-price auction that determines the bulk of energy commitments. Intraday auctions (D-0) provide three discrete uniform-price sessions to update positions as forecasts and unit availability change. The continuous intraday market (XBID/SIDC) operates as a continuous, pay-as-bid order book until shortly before delivery. Real-time balance is provided by the transmission system operator, Red Eléctrica (REE), which procures balancing reserves --- frequency containment, automatic and manual frequency restoration (\emph{secundaria} and \emph{terciaria}, corresponding to aFRR and mFRR) and replacement reserves. After delivery, residual deviations between scheduled and metered positions are settled financially. REE may also override OMIE programmes when network or stability constraints bind, an instrument that became continuous from April 28, 2025 onward (\emph{operación reforzada}, see Section~\ref{sec:identification}). A more detailed description is given in Appendix~\ref{app:market}.
+
+\section{Data}
+
+I have built an end-to-end data pipeline covering three sources, kept strictly separate at the data layer:
+
+\begin{itemize}
+  \item \textbf{OMIE} (Iberian market operator): prices and bid-level data for the day-ahead, intraday auction, and continuous markets, plus per-firm and per-unit programmes. The OMIE side amounts to approximately 5.7 billion rows ($\sim$413 GB raw, $\sim$198 GB processed). The bid-level data, in particular, are critical: they allow me to test predictions about strategic conduct at the level the theory speaks --- the individual bid function.
+  \item \textbf{ENTSO-E Transparency Platform}: imbalance volumes and prices, balancing-settlement aggregates, generation by type and unit, load and renewable forecasts. All system-level fundamentals come from here.
+  \item \textbf{ESIOS} (REE): Spanish per-segment settlement data, real-time prices, and balancing offers. The public archive endpoints are operational; the per-firm and per-segment API token I requested 3 weeks ago is still pending due to technical issues on the operator's side, which partially blocks reserve-attribution at the firm level.
+\end{itemize}
+
+The pipelines are \emph{idempotent}: re-running any step produces the same output and incorporates new data without manual intervention --- a discipline that supports replication and makes the analysis robust to mid-project data updates. The codebase contains 25+ data families, each with its own parser and tests, and a manifest of downloads. Empirical findings are tracked formally with an \emph{alive / wounded / dead} status and a documented robustness audit trail.
+
+I should be candid that the majority of findings in the audit log are descriptive rather than carrying clear economic content --- for example, the structural break in Q1 2024 nuclear bilateral share that I documented in February but for which the underlying mechanism remains unidentified. The empirical analysis below focuses on the small subset of findings that combine clear economic content with clean identification.
+
+\section{Economic mechanisms}\label{sec:mechanism}
+
+Three theoretical anchors in the literature are relevant to a granularity reform of this kind, but none of them maps directly onto the mechanism the Spanish reform implements.
+
+\paragraph{Allaz \& Vila (1993).} Adding more forward markets prior to spot delivery reduces a Cournot firm's incentive to withhold quantities, because forward sales commit the firm. The \citet{AllazVila1993} mechanism, however, is about adding more forward markets \emph{for the same delivery good}. Here, the reform does something different: it splits a single delivery good (an hour) into four sub-goods (15-minute quarters) that clear independently. The intuition is related --- finer instruments dispel rents --- but the mechanism is not the same.
+
+\paragraph{Ito \& Reguant (2016).} Firms with market power strategically reposition between sequential markets: under-commit in the day-ahead market, sell more in the intraday market when prices rise. The \citet{ItoReguant2016} mechanism speaks to \emph{sequencing across markets}, while my reform changes \emph{granularity within a market}. Their empirical signature --- positive net intraday repositioning relative to the day-ahead position --- is nonetheless informative, and I adopt it as my outcome variable.
+
+\paragraph{Chang (2026).} When the settlement period differs from the dispatch period, averaging over sub-periods within the settlement period changes bidding incentives. \citet{Chang2026} provides a SFE-based account of this. The mechanism does not apply directly to the symmetric MTU15 regime (DA15/ID15) where settlement and dispatch are both 15 minutes --- there is no averaging --- but it does apply to the transitional ISP15-with-DA60 window, in which the imbalance settlement averaged across sub-hourly intervals while trading remained hourly.
+
+\paragraph{Our mechanism: within-market granularity.} The reform allows firms to bid \emph{different prices and quantities for each of the four quarters of an hour}. This is economically meaningful where the within-hour residual-demand profile is steep --- morning ramps, evening peaks --- because conventional production has to track that profile and finer instruments allow firms to reflect it in their bids. In flat hours where within-hour demand is essentially constant, this granularity has \emph{no economic content}: an optimal bid for each of the four quarters coincides with the hourly bid that pre-reform firms had to submit. This asymmetry between hours where granularity bites and hours where it does not is the basis of the identification design described next.
+
+\section{Identification strategy}\label{sec:identification}
+
+\subsection{Critical and flat hours}
+
+For each hour of the day $h \in \{0,1,\ldots,23\}$, I compute $\sigma^2_{\text{within}}(h)$, the variance of conventional production (Spanish total load minus wind generation minus solar generation) across the four 15-minute quarters of hour $h$, averaged across days. High $\sigma^2_{\text{within}}$ means dispatchable units have to ramp a lot \emph{within} the hour --- exactly where within-hour granularity has economic content. Low $\sigma^2_{\text{within}}$ means the within-hour profile is flat and granularity is mechanically irrelevant.
+
+I designate two sets of hours:
+
+\begin{itemize}
+  \item \textbf{Treated} = critical hours $h \in \{7, 8, 16, 17, 18\}$. Top-5 by $\sigma^2_{\text{within}}$: morning ramp and evening peak.
+  \item \textbf{Control} = flat hours $h \in \{3, 4, 5\}$. Bottom of the $\sigma^2_{\text{within}}$ ranking: pre-dawn hours when load is low and slowly varying.
+\end{itemize}
+
+The validity of this control choice rests on the claim that, in equilibrium, the granularity reform has \emph{no economic content} in flat hours. I argue this informally above and recognise that a small theoretical model, anchored in our within-market granularity mechanism, is necessary to defend it formally. This is one of the two main items on the to-do list (see Section~\ref{sec:left}).
+
+\subsection{Bid-shape evidence}
+
+Direct evidence at the bid level supports the within-market granularity mechanism. Restricting attention to the post-MTU15-DA period (October 2025 onward), where dominant firms can bid different prices and quantities for each of the four quarters of an hour, I observe the following pattern for combined-cycle gas turbine (CCGT) units owned by dominant firms:
+
+\begin{itemize}
+  \item More price tranches per quarter in critical hours than in flat hours ($+8\%$).
+  \item A steeper ladder slope (the difference between the top and bottom prices of a quarter's bid, normalised by total quantity), $+13\%$.
+  \item A \emph{lower} quantity-weighted average price.
+\end{itemize}
+
+The interpretation is that operators use the granularity to bid a richer ladder in critical hours: low-price inframarginal tranches at the bottom (which push the average price down and lock clearing) plus a steeper high-price tail (which captures scarcity rent). This is unambiguously the kind of behaviour the within-market granularity mechanism predicts.
+
+The pattern is concentrated in CCGT and (to a lesser extent) hydro --- the dispatchable technologies whose ramping costs make 15-minute granularity meaningful. In contrast, many wind, solar, and nuclear plants \emph{mechanically repeat} their previous hourly bid identically across all four quarters: they do not exploit the granularity at all. This dispatchable / non-dispatchable distinction is exactly what makes the within-day design plausible. Bid behaviour confirms that operators \emph{can} and \emph{do} use within-hour granularity, but only in technologies and hours where it has economic content.
+
+\subsection{Difference-in-differences specification}
+
+The unit of observation is (firm $f$, day $d$, hour $h$). The outcome $q_{fdh}$ is firm $f$'s signed net intraday repositioning during hour $h$ on day $d$, in megawatt-hours. Concretely, $q_{fdh}$ is the sum of the cleared signed quantities across all three intraday auction sessions (PIBCIE), converted to MWh:
+
+\begin{equation*}
+  q_{fdh} \;=\; \sum_{s=1}^{3} \Delta^{\text{IDA}_s}_{fdh}
+        \;=\; q^{\text{post-IDA}}_{fdh} - q^{\text{DA}}_{fdh}
+\end{equation*}
+
+A positive $q_{fdh}$ indicates the firm under-committed in the day-ahead market and net-sold in intraday --- the strategic-arbitrage signature of \citet{ItoReguant2016}. A negative $q_{fdh}$ indicates the firm bought back its day-ahead position in intraday.
+
+I estimate the DiD specification:
+
+\begin{equation}
+  q_{fdh} \;=\; \alpha + \beta_1\,\text{crit}_h + \beta_2\,\text{post}_d + \beta_3\,(\text{crit}_h \times \text{post}_d) + \gamma_f + \delta_{\text{DOW}(d)} + \varepsilon_{fdh}
+  \label{eq:didspec}
+\end{equation}
+
+where $\text{crit}_h = 1$ for $h \in \{7,8,16,17,18\}$ and $0$ for $h \in \{3,4,5\}$; $\text{post}_d = 1$ for $d \geq$ 2025-10-01 and $0$ for the pre-DA15-reform baseline ($d <$ 2024-06-14); $\gamma_f$ are firm fixed effects (Iberdrola, Endesa, Naturgy, EDP); $\delta_{\text{DOW}(d)}$ are day-of-week fixed effects; and $\varepsilon_{fdh}$ is clustered at the date level. The intermediate regimes (3-session IDA, ISP15-window, DA60/ID15 with and without operación reforzada) are excluded from the main specification because each carries its own confounding reform.
+
+The DiD coefficient is $\beta_3$. The design has the following identification properties:
+
+\begin{itemize}
+  \item \textbf{Within-day fixed effects.} Critical and flat hours come from the same dates. Daily-level shocks (weather, demand level, fuel prices, regulatory announcements, macro conditions) absorb mechanically in the within-day comparison.
+  \item \textbf{Calendar mix differences out.} Critical and flat hours have the same calendar mix by construction.
+  \item \textbf{Built-in parallel-trends sanity check.} The pre-DA15-reform crit-flat differential ($\beta_1$) is the placebo: a large or unstable structural pre-existing gap would call the design into question.
+  \item \textbf{Mechanism-targeted contrast.} The treatment-control split is ``hours where granularity should bite'' versus ``hours where it should not'', not ``post-reform versus pre-reform''. This identifies the within-market granularity mechanism specifically.
+\end{itemize}
+
+I should flag that the within-day fixed effects do \emph{not} solve a particular concern: within-hour-of-day trends across calendar time. The Spanish solar fleet grew approximately sixfold between 2018 and 2024, and the renewable share at $h \in \{7, 8, 16, 17, 18\}$ relative to $h \in \{3, 4, 5\}$ has a calendar-time trend that is not absorbed by within-day comparison. I tested whether conditioning on Spanish wind and solar generation interacted with hour-of-day absorbs this drift; it does not (only $\sim 13\%$ of the pre-trend instability is absorbed). Some unobserved trend (CCGT capacity retirement, regulatory anticipation effects in 2024) is likely also at play.
+
+\subsection{Heterogeneity}
+
+The dominant-firm response to the reform is not uniform. In a per-firm decomposition of the headline result, Naturgy carries most of the effect (large CCGT and hydro contributions). Iberdrola contributes through nuclear repositioning, though the technology-level allocation here suffers from a mechanical artefact of the apportionment procedure. Endesa and EDP contribute essentially zero. The cross-firm heterogeneity is consistent with the within-market granularity mechanism: it requires a portfolio of dispatchable units \emph{plus} pivotal market power for the strategic content of the granularity to be exercisable, and only some firms have the required combination at the required hours.
+
+\section{Main results}
+
+\subsection{Headline}
+
+Estimating equation~\eqref{eq:didspec} on the panel of dominant firms during the pre-DA15-reform baseline (2018-01 to 2024-06-13) and the DA15/ID15 period (2025-10 onward), I obtain the following coefficients:
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lrrr}
+    \toprule
+                                                                       & Estimate            & SE       & p-value \\
+    \midrule
+    $\beta_1$ (crit$_h$, pre-DA15-reform crit-flat gap)                & $+41.21$            & $3.35$   & $1.1 \times 10^{-34}$ \\
+    $\beta_2$ (post$_d$, flat-hour level shift pre $\to$ post)         & $-78.53$            & $10.40$  & $4.3 \times 10^{-14}$ \\
+    $\beta_3$ (crit$_h \times$ post$_d$, DiD coefficient)              & $\mathbf{+58.60}$   & $12.18$  & $1.5 \times 10^{-6}$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{DiD specification on dominant-firm signed intraday repositioning, MWh per firm-day-hour. $N = 78{,}232$ firm-day-hours; cluster-robust SE by date.}
+  \label{tab:headline}
+\end{table}
+
+The DiD coefficient $\beta_3 = +58.6$ MWh per firm-day-hour is highly significant. Combined with the pre-DA15-reform crit-flat gap of $\beta_1 = +41.2$ MWh, the implied within-DA15/ID15 critical-flat differential is $\beta_1 + \beta_3 = +99.8$ MWh per firm-day-hour. At DA15/ID15, dominant firms reposition approximately 100 MWh per firm-hour more in critical hours than in flat hours, of which 59 MWh is attributable to the reform.
+
+A caveat on statistical significance: with $N \approx 80{,}000$ observations, statistical power is very high (low type II error) and the conventional $p < 0.05$ threshold becomes too lenient (high type I error). The type I / type II error tradeoff in this regime warrants tighter thresholds, which the headline coefficients comfortably clear (all $p < 10^{-6}$).
+
+The economic interpretation is that the reform allows firms to bid different prices and quantities across the four quarters of an hour. This pays off precisely where the within-hour conventional-production profile is steep --- the rising-demand mornings and evenings --- and firms exploit the granularity to do exactly that. In flat hours where within-hour production is essentially constant, the granularity has no economic content, and the dominant firms' behaviour does not change.
+
+\subsection{Robustness}
+
+I ran the following robustness battery on the headline result:
+
+\begin{itemize}
+  \item \emph{Same-calendar-month restriction.} The pre-DA15-reform window covers all calendar months; the post window covers October--May only. To rule out seasonality, I restrict the pre window to the same calendar months as the post window. The DiD coefficient survives at $96\%$ of the full magnitude. Calendar mix is not the driver.
+  \item \emph{Baseline-window sensitivity.} I re-estimate the DiD using progressively narrower pre-DA15-reform windows: full 6.5 years; excluding the 2022--23 European energy crisis; recent two years; recent one year; recent six months. The within-DA15/ID15 critical-flat fact ($+100$ MWh) is constant across all five windows. The reform-attribution component (the DiD coefficient itself) ranges from $+27$ to $+133$. The pre-trend in the crit-flat gap is real and not stable --- a piece of evidence I take seriously and discuss further below.
+  \item \emph{Per-hour decomposition.} Treating each hour individually as the treated unit reveals two clusters with opposite signs: the morning ramp and evening peak (positive DiD), and the midday plateau (negative DiD). Granularity acts bidirectionally, and the canonical 5 critical hours cleanly capture the rising-production cluster.
+  \item \emph{Conditional parallel trends.} I tested whether conditioning on Spanish wind, solar, and demand interacted with hour-of-day absorbs the pre-trend in the crit-flat gap. It does not: only $\sim 13\%$ of the variation is absorbed. Conditional parallel trends with these specific controls does not hold; an unobserved time trend (most likely CCGT/coal capacity retirement) is also at play.
+  \item \emph{Bid-shape evidence.} As described in Section~\ref{sec:identification}, unit-level bid behaviour confirms the mechanism independently: dominant CCGT units bid richer ladders in critical hours.
+  \item \emph{Extensive-margin shift.} Thirteen dominant-firm CCGT units that were active in critical hours during the pre-DA15-reform baseline became inactive during the asymmetric-clock window, and returned under \emph{operación reforzada}. The pattern is mechanism-coherent: under asymmetric clocks, granularity-related friction pushed CCGT out of critical hours; the operational override forced them back.
+\end{itemize}
+
+\subsection{Fringe placebo}
+
+If the within-market granularity mechanism requires pivotal market power to be exercisable, fringe firms --- those without market power --- should not exhibit the same response, or might even respond in the opposite direction if they are crowded out of strategic positions in critical hours. I re-ran the same DiD specification on the top non-dominant firms in the intraday market (Viesgo (EV), Acciona Green Energy and related entities, Repsol Renewables, and two smaller firms (DET, EGL)).
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lrrr}
+    \toprule
+                                                  & $\beta_3$           & SE      & p-value \\
+    \midrule
+    \textbf{Dominant firms} (IB, GE, GN, EDP)     & $\mathbf{+58.60}$   & $12.18$ & $1.5 \times 10^{-6}$ \\
+    Fringe firms (EV, DET, EGL, EHN, REP)         & $-24.27$            & $8.07$  & $2.7 \times 10^{-3}$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Fringe-firm placebo: same DiD specification, applied to dominant firms (top) and to fringe firms (bottom). Dominant $N = 78{,}232$; fringe $N = 46{,}327$. Outcome: $q_{fdh}$, MWh per firm-day-hour.}
+  \label{tab:fringe}
+\end{table}
+
+The fringe-firm DiD coefficient is statistically significant in the \emph{opposite} direction: at DA15/ID15, fringe firms reposition $24$ MWh \emph{less} in critical hours than in flat hours relative to the pre-DA15-reform baseline. This is consistent with the strategic-mechanism interpretation: granularity exploitation requires pivotal market power, which fringe firms by definition do not have, and the dominant firms' more aggressive critical-hour bidding crowds the fringe out. The placebo gives substantial credibility to the substantive interpretation.
+
+\section{What is robust, what is not}
+
+Before turning to remaining work, I summarise where I have arrived empirically.
+
+\paragraph{Robust.} The within-DA15/ID15 critical-flat fact ($+100$ MWh per firm-hour) is robust across every robustness check I have run --- baseline-window choice, control-set choice, conditional specification. The fringe placebo confirms the strategic-mechanism interpretation: the response is concentrated in firms with pivotal market power, and fringe firms move in the opposite direction. The bid-shape rich-ladder pattern is independent unit-level evidence consistent with the same mechanism. The two-cluster mechanism (ramp and evening peak positive; midday plateau negative) is mechanism-coherent: granularity acts bidirectionally depending on whether residual demand is rising or falling within the hour.
+
+\paragraph{Not robust.} The reform-attributable component ($\beta_3$) is a range, not a point estimate: the pre-trend in the crit-flat gap is real and not stable across baseline windows, ranging from $+73$ in the deep historical baseline to $-33$ in the immediate pre-reform window. Conditional parallel trends with renewable and demand controls does not absorb this drift; some unobserved trend, most likely CCGT capacity retirement or regulatory anticipation, is at play. The cross-firm decomposition shows a heterogeneous response, with Naturgy carrying most of the effect, which complicates a uniform-Big-4 interpretation but is consistent with the mechanism's market-power requirement.
+
+\paragraph{The theoretical-model gap.} The empirical design assumes that, in equilibrium, the within-market granularity reform has no economic content for flat hours. This justifies their use as a control. I have argued the claim informally; defending it rigorously requires a small theoretical model, anchored in our within-market granularity mechanism (\emph{not} directly Allaz--Vila or Ito--Reguant, both of which are related but distinct). This is the first item on the remaining-work list.
+
+\section{What is left}\label{sec:left}
+
+Working backwards from the mid-June 2026 thesis deadline:
+
+\paragraph{Theoretical model.} I will write a stylised industrial-organisation model in which a residual monopolist faces residual demand that varies (in critical hours) or does not vary (in flat hours) within the hour, and choose between submitting a single hourly bid (pre-MTU15-DA) or four independent quarter-hourly bids (post-MTU15-DA). The model needs to deliver the prediction that, in equilibrium, the firm's optimal post-reform bid in flat hours coincides with the pre-reform single hourly bid (no reform effect on flat hours), while in critical hours the post-reform bid differs and the firm exploits the granularity. The model is not a structural-estimation exercise; its purpose is to justify the empirical design and provide an explicit interpretation of the DiD coefficient. I expect this to take two to three weeks.
+
+\paragraph{Identification refinement.} The clean flat-hour control idea came together at the very end of the analysis phase. Given more time, I would push the identification in two directions: a regression discontinuity around the sharp October 1, 2025 boundary that defined the DA15 reform, and an event study with explicit modelling of the pre-trend in the crit-flat gap. Both would help isolate the reform-attributable component more cleanly than the simple two-period DiD.
+
+\paragraph{Demand-side analysis.} The current mechanism and design are supply-side focused. There are likely demand-side effects of the reform that I have not yet examined --- in particular, whether large industrial consumers' bidding behaviour changed differentially in critical hours --- and these should be brought into the analysis if time permits.
+
+\paragraph{Continuous market.} The continuous intraday market is included in the data pipeline but I have not exploited it for the headline analysis. Including continuous-market positions in the outcome variable would provide a richer measure of strategic repositioning.
+
+\paragraph{Reserves attribution.} Per-firm reserve dispatch via ESIOS would close the loop on the energy-conservation question (does the energy that dominant firms do not commit in the day-ahead market in critical hours show up in reserves dispatch?). This depends on the ESIOS API token clearing. It is not a bottleneck for the main result, but useful for completeness.
+
+Drafting begins immediately after this workshop. The empirical analysis is substantively complete; what remains is the theoretical model, two more identification refinements, and the writing.
+
+\bigskip
+
+\begin{thebibliography}{99}\small
+
+\bibitem[Allaz \& Vila, 1993]{AllazVila1993} Allaz, B., \& Vila, J.-L. (1993). Cournot competition, forward markets and efficiency. \textit{Journal of Economic Theory}, 59(1), 1--16.
+
+\bibitem[Chang, 2026]{Chang2026} Chang, C. (2026). Settlement-period granularity and supply-function equilibrium in electricity markets. Working paper.
+
+\bibitem[Eicke et al., 2021]{Eicke2021} Eicke, A., Ruhnau, O., \& Hirth, L. (2021). Electricity balancing as a market equilibrium: An instrument-based estimation of supply and demand for imbalance energy. \textit{Energy Economics}, 102.
+
+\bibitem[European Commission, 2017]{EC2017} European Commission. (2017). Commission Regulation (EU) 2017/2195 establishing a guideline on electricity balancing.
+
+\bibitem[Graf et al., 2024]{Graf2024} Graf, C., Kuppelwieser, T., \& Wozabal, D. (2024). Frequent auctions for intraday electricity markets. \textit{The Energy Journal}, 45(1), 231--256.
+
+\bibitem[Hortaçsu et al., 2017]{Hortacsu2017} Hortaçsu, A., Luco, F., Puller, S. L., \& Zhu, D. (2017). Does strategic ability affect efficiency? Evidence from electricity markets. NBER Working Paper No.~23526.
+
+\bibitem[Ito \& Reguant, 2016]{ItoReguant2016} Ito, K., \& Reguant, M. (2016). Sequential markets, market power, and arbitrage. \textit{American Economic Review}, 106(7), 1921--1957.
+
+\bibitem[Just \& Weber, 2015]{JustWeber2015} Just, S., \& Weber, C. (2015). Strategic behavior in the German balancing energy mechanism. \textit{Journal of Regulatory Economics}, 48(2), 218--243.
+
+\bibitem[Koch \& Hirth, 2019]{KochHirth2019} Koch, C., \& Hirth, L. (2019). Short-term electricity trading for system balancing. \textit{Renewable and Sustainable Energy Reviews}, 113.
+
+\bibitem[Koch \& Maskos, 2020]{KochMaskos2020} Koch, C., \& Maskos, P. (2020). Passive balancing through intraday trading. \textit{International Journal of Energy Economics and Policy}, 10(2), 101--112.
+
+\bibitem[Märkle-Huß et al., 2018]{MaerkleHuss2018} Märkle-Huß, J., Feuerriegel, S., \& Neumann, D. (2018). Contract durations in the electricity market: Causal impact of 15min trading on the EPEX SPOT market. \textit{Energy Economics}, 69, 367--378.
+
+\bibitem[Neuhoff et al., 2016]{Neuhoff2016} Neuhoff, K., Ritter, N., Salah-Abou-El-Enien, A., \& Vassilopoulos, P. (2016). Intraday markets for power: Discretizing the continuous trading. Energy Policy Research Group.
+
+\end{thebibliography}
+
+\appendix
+\section{Spanish electricity market}\label{app:market}
+
+Spain participates in the Iberian wholesale market (MIBEL). The nominated electricity market operator (NEMO) is OMIE (Operador del Mercado Ibérico de Energía), which organises short-term energy markets. In these markets, participants (generators, retailers, large consumers, and other market agents) submit bids and offers for electricity for each delivery period. Market outcomes determine market prices and a set of scheduled energy programmes.
+
+Short-term trading is organised through the following segments:
+
+\begin{itemize}
+  \item \textbf{Day-Ahead market (DA, SDAC):} the first and largest stage of short-term electricity trading for delivery on the next day. It is a multi-unit, uniform-price auction cleared through the Single Day-Ahead Coupling (SDAC). The output is a day-ahead price and a scheduled programme for each delivery period.
+  \item \textbf{Intraday Auctions (IDA):} three discrete intraday auction sessions allow participants to update their positions as forecasts and unit availability change. These auctions follow a multi-unit, uniform-price format and are integrated in the European intraday auction framework where applicable.
+  \item \textbf{Continuous Intraday market (CID, SIDC/XBID):} a continuous order-driven market where buy and sell orders are matched continuously. Trades occur at transaction prices (no single uniform clearing price), and this segment provides the last opportunity to voluntarily adjust positions close to real time.
+\end{itemize}
+
+Because supply and demand must balance physically at all times, Spain has a transmission system operator, Red Eléctrica de España (REE). REE is responsible for secure system operation: it performs feasibility and security checks on market-based schedules (network constraints, operational limits, adequacy of reserves), and it may apply additional system services to ensure that the final schedules are physically deliverable.
+
+After intraday trading closes for a given delivery period (i.e., once voluntary trading opportunities are exhausted), any remaining mismatch between an agent's metered position and its final scheduled programme becomes an \emph{imbalance}. REE manages these real-time deviations by activating balancing and ancillary services (automatic and manual frequency restoration --- aFRR (\emph{secundaria}) and mFRR (\emph{terciaria}) --- and replacement reserves) to maintain system balance and frequency. Deviations are subsequently settled financially in the imbalance settlement mechanism at imbalance prices defined for each imbalance settlement period (aligned with the MTU). The transmission system operator can also override OMIE programmes when network or stability constraints bind --- a route that became continuous from April 28, 2025 onward (\emph{operación reforzada}, the post-blackout reinforced-operation regime).
+
+\end{document}
