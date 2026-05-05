@@ -47,7 +47,7 @@
   timelabel/.style={font=\footnotesize\itshape,cemfigrey},
 }
 
-\title{\textbf{Master Thesis --- Progress Report}\\[2pt]\large Spain's MTU15 reform: empirical assessment in progress}
+\title{\textbf{Master Thesis --- Progress Report}\\[2pt]\large Rewiring the market clock in Spanish electricity markets}
 \author{Pablo Paramio Pérez \\ \small Advisor: Pedro Mira}
 \institute{CEMFI}
 \date{May 2026}
@@ -82,7 +82,7 @@
     \vspace{4pt}
     \item Why interesting: the reform changes the time-unit granularity of the wholesale market in three stages, with \emph{transitional asymmetric-clock windows} where settlement and trading run on different clocks. A useful setting to study how granularity shapes firm conduct.
     \vspace{4pt}
-    \item Why it is hard: the reform sequence overlaps with confounders --- gas-price normalisation (Dec 2023), the 2025-04-28 blackout and post-blackout \emph{operación reforzada}, the elimination of CNMC Rule 28.8 (Mar 2025). \textbf{Institutional awareness is essential.}
+    \item Why it is hard: the reform sequence overlaps with confounders --- gas-price normalisation (Dec 2023), the 2025-04-28 blackout and post-blackout \emph{operación reforzada} (reinforced operation), the elimination of CNMC Rule 28.8 for bilateral contracts (Mar 2025). \textbf{Institutional awareness is essential.}
     \vspace{4pt}
     \item This presentation: identification strategy, headline result on \textbf{dominant firms} (Iberdrola, Endesa, Naturgy, EDP) strategic intraday repositioning, and an honest account of what survives robustness and what does not.
   \end{itemize}
@@ -116,7 +116,7 @@
       \item \textcolor{cemfiblue}{\textbf{OMIE (market operator)}}: day-ahead, intraday auctions, continuous intraday.
       \item \textcolor{cemfiorange}{\textbf{REE (TSO)}}: balancing markets (secundaria $=$ aFRR, terciaria $=$ mFRR, replacement reserve), imbalance settlement, technical restrictions.
       \item \textbf{Sequence:} forward markets get progressively closer to delivery; final adjustments via balancing.
-      \item TSO can \emph{override} OMIE programmes when network or stability constraints bind.
+      \item TSO can modify OMIE programmes when network or stability constraints bind.
       \item Firms have multiple instruments to take strategic positions across stages.
     \end{itemize}
   \end{columns}
@@ -128,7 +128,7 @@
     \footnotesize
     \begin{itemize}
       \item Traditionally MTU = \textbf{60 min} everywhere.
-      \item \textbf{Jun 2024 --- IDA reform}: 6 local MIBEL sessions consolidated into 3 European IDA sessions (still 60-min granularity).
+      \item \textbf{Jun 2024 --- IDA reform}: 6 local Iberian sessions consolidated into 3 European IDA sessions (still 60-min granularity).
       \item Three MTU15 reform stages:
         \begin{itemize}
           \item \textbf{Dec 2024 --- ISP15}: imbalance settlement $\to$ 15 min.
@@ -167,17 +167,17 @@
 
 \begin{frame}{Theoretical anchors and our mechanism}
   \footnotesize
-  \begin{block}{Allaz \& Vila (1993) --- forward markets dispel rents}
+  \begin{block}{Allaz \& Vila (1993, JET) --- forward markets dispel rents}
     Adding more forward markets prior to the spot stage commits Cournot firms to quantities and erodes withholding incentives. \emph{Caveat:} A--V adds \textbf{more markets for the same good} (e.g., a second forward stage). Our reform \textbf{divides one good into four sub-goods} (an hour into 4 quarters). \textbf{Related intuition; not the same mechanism.}
   \end{block}
   \begin{block}{Ito \& Reguant (2016, AER) --- sequential markets and arbitrage}
     Firms with market power reposition across sequential markets (under-commit in DA, sell more in IDA). \emph{Caveat:} I--R is about \textbf{sequencing across markets}; we are about \textbf{granularity within a market}. \textbf{Related, not equivalent.}
   \end{block}
-  \begin{block}{Chang (2026) --- settlement vs dispatch period mismatch}
+  \begin{block}{Chang (2026, WP) --- settlement vs dispatch period mismatch}
     When settlement period differs from dispatch period, averaging effects change bidding incentives. \emph{Does not apply to DA15/ID15}: settlement and dispatch are both 15-min --- no averaging. Only the ISP15-with-DA60 transition window had averaging effects, and only on \emph{quantities} (imbalance settlement averaged within the hour).
   \end{block}
-  \begin{block}{Our mechanism --- within-market granularity (what we test)}
-    Splitting an hour into 4 quarters that clear independently lets firms \textbf{bid different prices and quantities across quarters of the same hour}. Especially valuable when residual demand varies steeply within the hour (morning ramps, evening peaks). In flat hours where within-hour demand is constant, granularity has \textbf{no economic content}.
+  \begin{block}{Our preliminary mechanism --- within-market granularity (what we test)}
+    Splitting an hour into 4 quarters that clear independently lets firms bid different prices and quantities across quarters of the same hour. \textbf{Especially valuable when residual demand varies steeply within the hour} (morning ramps, evening peaks). In flat hours where within-hour demand is constant, granularity has no economic content. \textbf{To be formalized!}
   \end{block}
 \end{frame}
 
@@ -194,18 +194,18 @@
     \item $q_1$ = dominant firms' day-ahead auction-cleared sell, MWh per firm-hour.
     \item Bid-shape: tranche count, ladder slope, qty-weighted price (post-MTU15-DA only).
   \end{itemize}
-  \textbf{How we define critical and flat hours.} For each hour-of-day $h$, compute $\sigma^2_{\text{within}}(h)$ = \textbf{the variance of residual demand (load $-$ wind $-$ solar) across the four 15-min quarters of hour $h$}, averaged over days. High $\sigma^2_{\text{within}}$ means demand changes a lot within the hour --- exactly where granularity has economic content.
+  \textbf{How we define critical and flat hours.} For each hour-of-day $h$, compute $\sigma^2_{\text{within}}(h)$ = \textbf{the variance of conventional production (load $-$ wind $-$ solar) across the four 15-min quarters of hour $h$}, averaged over days. High $\sigma^2_{\text{within}}$ means dispatchable units need to ramp a lot \emph{within} the hour --- exactly where within-hour granularity has economic content.
   \begin{itemize}
     \item \textbf{Treated} = critical hours $h\in\{7,8,16,17,18\}$. Top-5 by $\sigma^2_{\text{within}}$ (morning ramp + evening peak).
     \item \textbf{Control} = flat hours $h\in\{3,4,5\}$. Bottom of $\sigma^2_{\text{within}}$ (pre-dawn).
   \end{itemize}
-  \textbf{Why flat hours are a valid counterfactual.} If the granularity reform has \emph{zero economic content} in flat hours (because there is nothing within the hour to slice strategically), then comparing critical-hour behaviour to flat-hour behaviour identifies the mechanism. \emph{This is a hypothesis I need to defend with a small theoretical model showing that, in equilibrium, the reform is a no-op for flat hours --- ongoing.}
+  \textbf{Why flat hours are a valid counterfactual.} If the granularity reform has \emph{zero economic content} in flat hours (because there is nothing within the hour to slice strategically), then comparing critical-hour behaviour to flat-hour behaviour identifies the mechanism. \emph{This is a hypothesis I need to defend with a small theoretical model showing that, \textbf{in equilibrium}, the reform has no effect for flat hours --- ongoing.}
 \end{frame}
 
 \begin{frame}{Data}
   \footnotesize
   \textbf{Coverage:} 8 years (2018-01 $\to$ 2026-04), at native 60-min/15-min granularity throughout.\\[4pt]
-  \textbf{Three sources, kept strictly separate:}
+  \textbf{Three sources:}
   \begin{itemize}
     \item \textbf{OMIE (Iberian market operator)}: prices and \emph{bid-level} data for DA, IDA, continuous; per-firm and per-unit programmes. $\sim$5.7 billion rows ($\sim$413 GB raw, $\sim$198 GB processed).
     \item \textbf{ENTSO-E Transparency Platform}: imbalance volumes and prices, balancing settlement, generation by type/unit, load and renewable forecasts. All system-level fundamentals come from here.
@@ -213,11 +213,11 @@
   \end{itemize}
   \textbf{Engineering principles:}
   \begin{itemize}
-    \item Pipelines are \textbf{idempotent}: re-running any step produces the same output --- supports replication.
+    \item Pipelines are \textbf{idempotent}: re-running any step produces the same output and includes new data --- supports replication.
     \item 25+ data families, each with its own parser and tests.
     \item Empirical findings tracked formally (alive / wounded / dead) with a documented audit trail.
   \end{itemize}
-  \textbf{Honest caveat.} Most of the empirical findings in the audit log are descriptive rather than carrying clear economic interest --- e.g., the structural break in Q1 2024 nuclear bilateral share (mechanism unidentified). The presentation focuses on the small subset that has both economic content and clean identification.
+  \textbf{Honest caveat.} Most of the empirical findings in the audit log are descriptive rather than carrying clear economic interest --- e.g., the structural break in Q1 2024 nuclear bilateral share. The presentation focuses on the small subset that has both economic content and clean identification.
 \end{frame}
 
 \begin{frame}{Bid-shape: dominant firms exploit granularity (justifies the design)}
@@ -231,7 +231,7 @@
     \item P90 of \textbf{CV} (coefficient of variation $=$ std dev $/$ mean) of average price across the 4 quarters of an hour: \textbf{$7.9\%$ in critical vs $1.6\%$ in flat ($4.9\times$ wider)}.
   \end{itemize}
   \textbf{Interpretation.} Operators bid a richer ladder in critical hours: low-price inframarginal tranches at the bottom (push the qty-weighted average down, lock clearing) plus a steeper high-price tail (capture scarcity rent). They are unambiguously exploiting within-hour granularity.\\[4pt]
-  \textbf{Tech selectivity.} Concentrated in CCGT and (mildly) hydro. Wind, solar, nuclear show no engagement. \textbf{Crucially: many plants mechanically repeat their previous hourly bid identically across all 4 quarters --- not exploiting the granularity at all.} This dispatchable / non-dispatchable distinction is what makes the within-hour design meaningful.\\[4pt]
+  \textbf{Tech selectivity.} Concentrated in CCGT and (mildly) hydro. Wind, solar, nuclear show no engagement. Crucially: many plants \textbf{mechanically repeat their previous hourly bid identically across all 4 quarters} --- not exploiting the granularity at all.\\[4pt]
   \textbf{Why this matters for the design.} Bids confirm operators \emph{can} and \emph{do} use within-hour granularity in the right hours. Where granularity is exploited (critical), we should see effects on quantities; where not (flat), we should not.
 \end{frame}
 
@@ -242,7 +242,7 @@
 \begin{frame}{The DiD specification}
   \footnotesize
   \textbf{Panel.} The unit of observation is (firm $f$, day $d$, hour $h$). We aggregate across the 4 quarters within an hour. So the outcome is $q_{fdh}$.\\[4pt]
-  \textbf{Specification:}
+  \textbf{Specification (very preliminary):}
   \[ q_{fdh} = \alpha + \beta_1 \,\text{crit}_h + \beta_2 \,\text{post}_d + \beta_3 \,(\text{crit}_h \times \text{post}_d) + \gamma_f + \delta_{\text{DOW}(d)} + \varepsilon_{fdh} \]
   $\beta_3$ is the DiD coefficient. $\gamma_f$ are firm fixed effects (Iberdrola, Endesa, Naturgy, EDP); $\delta_{\text{DOW}}$ are day-of-week fixed effects. Cluster-robust SE by date $d$.\\[4pt]
   \textbf{Window in each regression:}
@@ -257,28 +257,27 @@
     \item Pre-IDA crit-flat differential serves as the parallel-trends sanity check.
     \item The contrast we identify is \emph{mechanism-targeted}: hours where granularity should bite vs hours where it should not.
   \end{itemize}
-  \textbf{Heterogeneity.} Most of the response carried by Naturgy (CCGT $+$ Hydro). Iberdrola contributes through nuclear (caveat: apportionment artefact). Endesa and EDP near-zero. Different technologies respond very differently --- consistent with the bid-shape evidence on the previous slide.
+  \textbf{Heterogeneity.} Most of the response carried by Naturgy (CCGT $+$ Hydro). Iberdrola contributes through nuclear (caveat: allocation artefact). Endesa and EDP near-zero. Different technologies respond very differently --- consistent with the bid-shape evidence on the previous slide.
 \end{frame}
 
 \begin{frame}{Headline result: dominant firms reposition more in critical hours}
   \footnotesize
-  \textbf{Outcome:} $q_2$ = dominant firms' signed IDA repositioning per firm-day-hour (MWh).\\
-  \textbf{Treated} = critical hours $h\{7,8,16,17,18\}$. \textbf{Control} = flat hours $h\{3,4,5\}$.\\
-  \textbf{Pre} = 2018-01 $\to$ 2024-06-13. \textbf{Post} = 2025-10 onward.\\[4pt]
+  \textbf{Same panel and spec as previous slide:} outcome $q_{fdh}$ (signed IDA repositioning, MWh per firm-day-hour); $\text{crit}_h = 1$ for $h\{7,8,16,17,18\}$, $0$ for $h\{3,4,5\}$; $\text{post}_d = 1$ from 2025-10, $0$ for pre-IDA.\\[3pt]
   \begin{center}
   \begin{tabular}{lrrr}
     \toprule
-    Coefficient                                    & Estimate     & SE      & p-value \\
+                                                        & Estimate    & SE      & p-value \\
     \midrule
-    crit\_pre (pre-IDA crit$-$flat gap)            & $+41.21$     & $3.36$  & $1.6\!\times\!10^{-34}$ \\
-    DiD $\delta$ (crit $\times$ post)              & $+58.67$     & $12.18$ & $1.5\!\times\!10^{-6}$  \\
-    \textbf{crit\_post (DA15/ID15 crit$-$flat gap)}& \textbf{$+99.80$} & --- & --- \\
+    $\beta_1$ \,(crit$_h$, pre-IDA crit$-$flat gap)     & $+41.21$    & $3.36$  & $1.6\!\times\!10^{-34}$ \\
+    $\beta_3$ \,(crit$_h \times$ post$_d$, DiD)         & $+58.67$    & $12.18$ & $1.5\!\times\!10^{-6}$  \\
+    $\beta_1+\beta_3$ \,(DA15/ID15 crit$-$flat gap)     & $+99.80$    & ---     & --- \\
     \bottomrule
-  \end{tabular}
+  \end{tabular}\\[2pt]
+  \footnotesize $N = 78{,}177$ firm-day-hours; cluster-robust SE by date.
   \end{center}
-  \textbf{Reading.} At DA15/ID15, dominant firms reposit \textbf{$+100$ MWh more in IDA per firm-hour in critical hours than in flat hours.} Significant at $p < 10^{-6}$.\\[4pt]
-  \textbf{Why we restrict to these hours.} Adding more hours dilutes or even flips the result, because midday hours (h10--h15) have the \emph{opposite-sign} response under DA15/ID15 (firms reposit \emph{less} there, due to solar abundance). Top-5 critical against bottom-3 flat isolates the rising-residual-demand cluster cleanly.\\[4pt]
-  \textbf{Interpretation.} \textbf{This is the within-market granularity mechanism: the reform lets firms bid different prices/quantities across the 4 quarters of an hour. This pays off precisely where the within-hour residual-demand profile is steep --- so firms exploit the ramps. In flat hours where there is no within-hour variation, granularity has no economic content, and we see no effect.}
+  \textbf{Sample-size caveat.} $N \approx 80\text{k}$ is huge --- $p$-values are mechanically tiny even for modest effects. Significance thresholds should be tightened accordingly (e.g., $p < 10^{-4}$ instead of $0.05$).\\[3pt]
+  \textbf{Why these hours.} Adding more hours dilutes the result: midday hours (h10--h15) have the \emph{opposite-sign} response under DA15/ID15 (firms reposit \emph{less} there, due to solar abundance). Top-5 critical vs bottom-3 flat isolates the rising-production cluster cleanly.\\[3pt]
+  \textbf{Interpretation.} The outcome $q_2$ (signed IDA repositioning above DA commitment) is the empirical signature \textbf{Ito \& Reguant (2016) use to detect strategic intra-day arbitrage}: positive $q_2$ means firms under-commit in DA and resell in IDA. We adopt their measure but ask a \emph{different} question: \textbf{does this strategic IDA repositioning grow more in critical hours after the reform splits each hour into 4 sub-periods?} The DiD coefficient $\beta_3 = +59$ says yes. Mechanism: \textbf{the reform lets firms bid different prices/quantities for each quarter of an hour. This pays off where the within-hour production profile is steep --- so firms exploit the ramps. Flat hours have no within-hour variation, so no effect.}
 \end{frame}
 
 
@@ -287,14 +286,12 @@
 
 \begin{frame}{Robustness checks (in words)}
   \footnotesize
-  Main robustness battery on the $+100$ result:
   \begin{itemize}
-    \item \textbf{Same-calendar-month restriction.} Pre-IDA covers all calendar months (2018--2024), but the post window is Oct--May only. Spain has strong seasonality, so I want to be sure this calendar mismatch is not driving the result. I restrict pre-IDA to the same calendar months as the post window and re-estimate. The result survives at $96\%$ of the full magnitude. \emph{Calendar mix is not the driver.}
-    \item \textbf{Baseline-window sensitivity.} I re-estimate using progressively narrower pre-IDA windows (full 6.5y / excluding 2022--23 crisis / recent 2y / 1y / 6m). The within-DA15/ID15 fact ($+100$) is constant; the reform-attribution component ranges $+27$ to $+133$. \textbf{To think about:} the pre-trend in the crit-flat gap is real and not stable.
-    \item \textbf{Per-hour decomposition.} Each hour run individually as treated reveals two clusters with opposite signs (ramps + evening peak positive; midday negative). Justifies the choice of canonical 5 hours.
-    \item \textbf{Conditional parallel trends.} Tested whether wind + solar + demand $\times$ hour-of-day controls absorb the pre-trend. \emph{They do not}: only $\sim 13\%$ absorbed. \textbf{To think about:} something else (CCGT retirement, regulatory anticipation) is moving the pre-trend.
-    \item \textbf{Bid-shape evidence.} Independent confirmation at the unit level (richer ladders in critical hours, CCGT only).
-    \item \textbf{Extensive-margin shift.} $13$ dominant-firm CCGT units inactive in critical hours during the asymmetric-clock window; return under \emph{operación reforzada} (REE compulsion). Mechanism-coherent.
+    \item \textbf{Same-calendar-month restriction.} Restricting pre-IDA to the same months as the post window (Oct--May) leaves the result at $96\%$ of the magnitude. Calendar mix not the driver.
+    \item \textbf{Baseline-window sensitivity.} Across 5 narrower pre-IDA windows, the within-DA15/ID15 fact ($+100$) is constant; reform-attribution component ranges $+27$ to $+133$. \textbf{To think about:} pre-trend in the crit-flat gap is not stable.
+    \item \textbf{Per-hour decomposition.} Treating each hour individually shows two clusters with opposite signs (ramps + peak positive; midday negative). Justifies the 5-hour critical set.
+    \item \textbf{Conditional parallel trends.} Wind $+$ solar $+$ demand $\times$ hour controls absorb only $\sim 13\%$ of the pre-trend. \emph{Does NOT hold.} \textbf{To think about:} an unobserved time trend (CCGT retirement, regulatory anticipation) is at play.
+    \item \textbf{Bid-shape and extensive-margin.} Unit-level confirmation: richer bid ladders in critical hours (CCGT only); 13 CCGT units inactive in the asymmetric-clock window, return under \emph{operación reforzada}.
   \end{itemize}
 \end{frame}
 
@@ -320,18 +317,18 @@
   \footnotesize
   \begin{itemize}
     \item \textbf{Stylised theoretical model} that justifies flat hours as control --- the foundation of the empirical design.
-    \item \textbf{Better identification strategy.} The clean flat-hour design came together yesterday; there is more thinking to do (e.g., RDD around Oct 1, 2025; event-study with explicit pre-trend modelling).
+    \item \textbf{Better identification strategy.} The clean flat-hour design came together yesterday; there is more thinking to do.
+    \item Think about the demand side more --- the current mechanism and design are supply-side focused.
+    \item Include the continuous market in the analysis.
     \item Additional robustness checks once the mechanism interpretation is locked.
-    \item Per-segment settlement once the ESIOS API token clears.
-    \item Drafting starts after this presentation; deadline mid-June 2026.
+    \item Per-segment settlement once the ESIOS API token clears, but not necessary a bottleneck for the main result.
   \end{itemize}
 \end{frame}
 
 \begin{frame}[plain]
   \begin{center}
     \vspace{2cm}
-    {\Large \textbf{Thank you!}}\\[14pt]
-    {\small Pablo Paramio Pérez --- CEMFI --- May 2026}
+    {\Large \textbf{Thank you!}}
   \end{center}
 \end{frame}
 
