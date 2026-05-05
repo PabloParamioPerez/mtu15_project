@@ -246,14 +246,14 @@
   $\beta_3$ is the DiD coefficient. $\gamma_f$ are firm fixed effects (Iberdrola, Endesa, Naturgy, EDP); $\delta_{\text{DOW}}$ are day-of-week fixed effects. Cluster-robust SE by date $d$.\\[4pt]
   \textbf{Window in each regression:}
   \begin{itemize}
-    \item \textbf{Pre} = pre-IDA: 2018-01-01 $\to$ 2024-06-13.
+    \item \textbf{Pre} = pre-DA15 reform baseline: 2018-01-01 $\to$ 2024-06-13.
     \item \textbf{Post} = DA15/ID15: 2025-10-01 $\to$ present.
     \item Intermediate regimes (3-sess, ISP15-win, DA60/ID15) handled separately when needed.
   \end{itemize}
   \textbf{Why the DiD removes time-varying confounders:}
   \begin{itemize}
     \item Critical and flat hours come from the \emph{same dates} $\Rightarrow$ daily shocks (weather, demand level, fuel prices, regulatory announcements, macro conditions) absorb mechanically in the within-day comparison.
-    \item Pre-IDA crit-flat differential serves as the parallel-trends sanity check.
+    \item Pre-DA15-reform crit-flat differential serves as the parallel-trends sanity check.
     \item The contrast we identify is \emph{mechanism-targeted}: hours where granularity should bite vs hours where it should not.
   \end{itemize}
   \textbf{Heterogeneity.} Most of the response carried by Naturgy (CCGT $+$ Hydro). Iberdrola contributes through nuclear (caveat: allocation artefact). Endesa and EDP near-zero. Different technologies respond very differently --- consistent with the bid-shape evidence on the previous slide.
@@ -261,13 +261,13 @@
 
 \begin{frame}{Headline result: dominant firms reposition more in critical hours}
   \footnotesize
-  \textbf{Same panel and spec as previous slide:} outcome $q_{fdh}$ (signed IDA repositioning, MWh per firm-day-hour); $\text{crit}_h = 1$ for $h\{7,8,16,17,18\}$, $0$ for $h\{3,4,5\}$; $\text{post}_d = 1$ from 2025-10, $0$ for pre-IDA.\\[3pt]
+  \textbf{Same panel and spec as previous slide:} outcome $q_{fdh}$ (signed IDA repositioning, MWh per firm-day-hour); $\text{crit}_h = 1$ for $h\{7,8,16,17,18\}$, $0$ for $h\{3,4,5\}$; $\text{post}_d = 1$ from 2025-10, $0$ for the pre-DA15-reform baseline.\\[3pt]
   \begin{center}
   \begin{tabular}{lrrr}
     \toprule
                                                                  & Estimate           & SE      & p-value \\
     \midrule
-    $\beta_1$ \,(crit$_h$, pre-IDA crit$-$flat gap)              & $+41.21$           & $3.35$  & $1.1\!\times\!10^{-34}$ \\
+    $\beta_1$ \,(crit$_h$, pre-DA15-reform crit$-$flat gap)      & $+41.21$           & $3.35$  & $1.1\!\times\!10^{-34}$ \\
     $\beta_2$ \,(post$_d$, flat-hour level shift pre$\to$post)   & $-78.53$           & $10.40$ & $4.3\!\times\!10^{-14}$ \\
     $\beta_3$ \,(crit$_h \times$ post$_d$, DiD)                  & $\mathbf{+58.60}$  & $12.18$ & $1.5\!\times\!10^{-6}$  \\
     \bottomrule
