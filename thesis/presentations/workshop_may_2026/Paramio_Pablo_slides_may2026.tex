@@ -228,7 +228,6 @@
     \item More price tranches per quarter ($+8\%$ vs flat hours).
     \item Steeper ladder slope ($+13\%$).
     \item \emph{Lower} qty-weighted average price.
-    \item P90 of \textbf{CV} (coefficient of variation $=$ std dev $/$ mean) of average price across the 4 quarters of an hour: \textbf{$7.9\%$ in critical vs $1.6\%$ in flat ($4.9\times$ wider)}.
   \end{itemize}
   \textbf{Interpretation.} Operators bid a richer ladder in critical hours: low-price inframarginal tranches at the bottom (push the qty-weighted average down, lock clearing) plus a steeper high-price tail (capture scarcity rent). They are unambiguously exploiting within-hour granularity.\\[4pt]
   \textbf{Tech selectivity.} Concentrated in CCGT and (mildly) hydro. Wind, solar, nuclear show no engagement. Crucially: many plants \textbf{mechanically repeat their previous hourly bid identically across all 4 quarters} --- not exploiting the granularity at all.\\[4pt]
@@ -275,8 +274,8 @@
   \end{tabular}\\[2pt]
   \footnotesize $N = 78{,}177$ firm-day-hours; cluster-robust SE by date.
   \end{center}
-  \textbf{Sample-size caveat.} $N \approx 80\text{k}$ is huge --- $p$-values are mechanically tiny even for modest effects. Significance thresholds should be tightened accordingly (e.g., $p < 10^{-4}$ instead of $0.05$).\\[3pt]
-  \textbf{Why these hours.} Adding more hours dilutes the result: midday hours (h10--h15) have the \emph{opposite-sign} response under DA15/ID15 (firms reposit \emph{less} there, due to solar abundance). Top-5 critical vs bottom-3 flat isolates the rising-production cluster cleanly.\\[3pt]
+  \textbf{Type I / type II tradeoff.} With $N \approx 80\text{k}$, statistical power is very high (low type II error), so the conventional $p < 0.05$ threshold becomes too lenient and inflates type I error. Worth thinking carefully about how to set significance thresholds in this regime.\\[3pt]
+  \textbf{Why these hours.} The top-5 critical and bottom-3 flat are the hours where the robustness battery (per-hour DiD, cumulative critical-set sensitivity) confirms the effect most reliably --- we use them as the cleanest contrast.\\[3pt]
   \textbf{Interpretation.} The outcome $q_2$ (signed IDA repositioning above DA commitment) is the empirical signature \textbf{Ito \& Reguant (2016) use to detect strategic intra-day arbitrage}: positive $q_2$ means firms under-commit in DA and resell in IDA. We adopt their measure but ask a \emph{different} question: \textbf{does this strategic IDA repositioning grow more in critical hours after the reform splits each hour into 4 sub-periods?} The DiD coefficient $\beta_3 = +59$ says yes. Mechanism: \textbf{the reform lets firms bid different prices/quantities for each quarter of an hour. This pays off where the within-hour production profile is steep --- so firms exploit the ramps. Flat hours have no within-hour variation, so no effect.}
 \end{frame}
 
