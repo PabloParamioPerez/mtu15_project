@@ -265,14 +265,14 @@
   \begin{center}
   \begin{tabular}{lrrr}
     \toprule
-                                                        & Estimate    & SE      & p-value \\
+                                                                 & Estimate           & SE      & p-value \\
     \midrule
-    $\beta_1$ \,(crit$_h$, pre-IDA crit$-$flat gap)     & $+41.21$    & $3.36$  & $1.6\!\times\!10^{-34}$ \\
-    $\beta_3$ \,(crit$_h \times$ post$_d$, DiD)         & $+58.67$    & $12.18$ & $1.5\!\times\!10^{-6}$  \\
-    $\beta_1+\beta_3$ \,(DA15/ID15 crit$-$flat gap)     & $+99.80$    & ---     & --- \\
+    $\beta_1$ \,(crit$_h$, pre-IDA crit$-$flat gap)              & $+41.21$           & $3.35$  & $1.1\!\times\!10^{-34}$ \\
+    $\beta_2$ \,(post$_d$, flat-hour level shift pre$\to$post)   & $-78.53$           & $10.40$ & $4.3\!\times\!10^{-14}$ \\
+    $\beta_3$ \,(crit$_h \times$ post$_d$, DiD)                  & $\mathbf{+58.60}$  & $12.18$ & $1.5\!\times\!10^{-6}$  \\
     \bottomrule
   \end{tabular}\\[2pt]
-  \footnotesize $N = 78{,}177$ firm-day-hours; cluster-robust SE by date.
+  \footnotesize $N = 78{,}232$ firm-day-hours; cluster-robust SE by date.
   \end{center}
   \textbf{Type I / type II tradeoff.} With $N \approx 80\text{k}$, statistical power is very high (low type II error), so the conventional $p < 0.05$ threshold becomes too lenient and inflates type I error. Worth thinking carefully about how to set significance thresholds in this regime.\\[3pt]
   \textbf{Why these hours.} The top-5 critical and bottom-3 flat are the hours where the robustness battery (per-hour DiD, cumulative critical-set sensitivity) confirms the effect most reliably --- we use them as the cleanest contrast.\\[3pt]
