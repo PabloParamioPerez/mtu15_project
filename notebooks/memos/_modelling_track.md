@@ -1,10 +1,18 @@
 # Economic-modelling track
 
-Working note. Replaces `_modelable_patterns.md` (now archived).
+Working note. Replaces `_modelable_patterns.md` (now deleted; content migrated here and to `CLAIMS_LEDGER.md`).
 
-Goal: organise alive empirical claims around economic models. Each section is a candidate model that (a) rationalises ≥2 alive claims in `CLAIMS_LEDGER.md` and (b) makes one or more sharp predictions that current empirical work either does or could test. Sections end with a "Priority empirical refinement" line: the single focused analysis that would most advance the model. Refinements are *candidates* for Phase 2 of the project plan, not commitments. Each runs only on user approval and only after passing the stop-rule in `CLAUDE.md`.
+## Structure (updated 2026-05-05)
 
-References: `CLAIMS_LEDGER.md` (claim status, evidence pointers) | `_identification_target.md` (identification provenance, frozen post-Week 1) | `RESEARCH_LOG.md` (chronological diary) | `thesis/proposal.md` (5-part synthesis written 2026-04-28).
+After the May 5 CEMFI workshop the project's headline shifted to a within-day critical-vs-flat-hours DiD design on dominant-firm signed IDA repositioning. This file is now organised as:
+
+- **§X (the headline)** — Within-market granularity DiD: identification design, headline coefficient ($\beta_3 = +58.6$), bid-shape evidence, fringe placebo. **Read this first.** The pre-2026-05-05 numbered sections below are background mechanism candidates that informed earlier framings of the project.
+- **§0–§6 (background mechanism candidates)** — Some still alive (Cournot-pivotality, Pigouvian framing, asymmetric-granularity friction, bid complexification, strategic availability), some retired (Allaz–Vila slope killed 2026-04-29; the §6 dual-pricing option-value block rejected 2026-05-02). Marked `[DEAD-KEPT-AS-RECORD]` or `[REJECTED]` in their headers where relevant.
+- **Retired hypotheses summary** — at the end of the file, a brief tombstone block for the killed mechanism narratives (Allaz–Vila slope, HP-sophistication mechanism, Bushnell hydro mechanism, dual-pricing option value), with the kill rationale preserved for viva trail.
+
+Goal of the file: organise alive empirical claims around economic models. Each section is a candidate model that (a) rationalises ≥2 alive claims in `CLAIMS_LEDGER.md` and (b) makes one or more sharp predictions that current empirical work either does or could test.
+
+References: `CLAIMS_LEDGER.md` (claim status, evidence pointers) | `_identification_target.md` (identification provenance, frozen post-Week 1) | `RESEARCH_LOG.md` (chronological diary) | `thesis/proposal.md` (5-part synthesis written 2026-04-28) | `notebooks/memos/_within_market_granularity_model.md` (stub for the stylised IO model that justifies the §X identification design).
 
 ## §X — Critical-hours DiD: granularity amplifies Ito–Reguant withholding (2026-05-04)
 
@@ -174,6 +182,14 @@ The thesis proposal organises 36 alive findings into 4 Parts + appendix (post 20
 | **Appendix — Behavioural + identification** | §5 bid complexification + §2 Allaz–Vila (rejected, appendix-grade) | B1, B3, B4, B5, **B6**, B7, B8, B9 | §5 alive; §2 rejected 2026-04-27 + 2026-04-29 (mechanical-identity argument) |
 
 **Mechanism-side surviving theory after the 2026-05-02 kill pass**: §1 (Cournot-pivotality) at the firm layer (anchored by F7 + F10, not F1/F2); §4 (asymmetric-granularity friction) at the system layer; §3 (Pigouvian) as a static welfare framing for S7; §5 (bid complexification) as the behavioural mirror; §6 (strategic availability) as the Part IV anchor. **§2 (Allaz–Vila) is rejected** (mechanical accounting identity at every granularity). **The HP-sophistication mechanism is also rejected**: F1/F2/F3 implied Cournot Lerner ≠ realized markup. Cite §1 anchored in F7's price-setting decomposition, not F1/F2's matched-price Lerner numbers.
+
+---
+
+---
+
+# Background mechanism candidates (pre-2026-05-05 pivot)
+
+Sections §0–§6 below were written under the project's earlier framing — three reform-driven mechanism-design observations + 41 alive findings. Some of these mechanism candidates are still alive (cite as background context for the §X headline); others are retired with `[DEAD-KEPT-AS-RECORD]` or `[REJECTED]` markers. None of these sections is the new headline. For the headline identification design and supporting evidence, see §X above.
 
 ---
 
@@ -396,7 +412,11 @@ This three-firm partition — Cournot (IB), partial (GE), bilateral-contracts (G
 
 ---
 
-## §2 — Allaz–Vila two-period strategic forward sales
+## §2 — Allaz–Vila two-period strategic forward sales [DEAD-KEPT-AS-RECORD, killed 2026-04-29]
+
+**Status (2026-05-05).** This section is retained as audit trail. The Allaz–Vila commitment-slope test was killed 2026-04-29 as a mechanical accounting identity ($Q_{\text{actual}} \approx q_{\text{DA}} + \Delta Q_{\text{IDA}}$ holds at every granularity by construction). The IB peak-hour signal that briefly survived an OVB rescue did not survive deeper inspection. Do not cite as live mechanism. The §X within-market granularity mechanism (which is *related* to but **not equivalent to** Allaz–Vila — the latter adds more forward markets for the same good, while §X splits one good into four sub-goods) supersedes this section's framing.
+
+Below is the original section content, preserved unchanged for viva-trail purposes.
 
 **Sketch.** When firms can sell forward (DA) and then re-trade in a sequential intraday market (ID), forward sales act as commitment devices that soften IDA competition. Each firm's optimal forward position depends on the perceived *information value* of forward commitment vs IDA flexibility. The reform sequence shifts that trade-off:
 
@@ -856,7 +876,11 @@ Sections may be added or removed as exploration proceeds. The criterion is: **do
 
 These are noted for completeness and not pursued unless the four primary sections above mature.
 
-## §6 Dual-pricing imbalance-settlement option value (NEW, 2026-04-30, exploratory)
+## §6b — Dual-pricing imbalance-settlement option value [REJECTED 2026-05-02, exploratory]
+
+**Status (2026-05-05).** Rejected: the dual-pricing option-value mechanism does NOT explain the B9 q₂ collapse pattern. Original Ito–Reguant strategic-arbitrage reading stands. Retained as audit trail.
+
+Below is the original exploratory section content, preserved unchanged for viva-trail purposes.
 
 **Mechanism (user-proposed 2026-04-30).** Under EBGL Article 52, BRPs whose ISP imbalance has the OPPOSITE sign to the system imbalance are settled at a more favourable price (often DA price), while same-sign BRPs face a penalty. This creates an ex-ante incentive to take positions opposite to the predicted system sign — independent of market power. Distinct from Ito-Reguant (which exploits the DA-IDA *price* spread via supply-curve manipulation): this exploits the DA-imbalance *settlement* spread via positional bet. Both can coexist; predictability of system sign is the key driver for this channel.
 
@@ -871,3 +895,49 @@ These are noted for completeness and not pursued unless the four primary section
 4. **Spread-channel version**: option value scales with k_hurt − p_DA, which S6 found widened 8-14× post-IDA. Even if predictability collapsed, the per-favourable-ISP rent grew. GE's lift peak at ISP15-win is consistent with this. The spread-channel version of dual pricing is NOT rejected by this test.
 
 **Open question**: a hydro-fuel + 15-min replication of the test would be the natural follow-up to either kill the mechanism cleanly or surface it via the spread channel.
+
+
+---
+
+# Retired hypotheses summary (audit trail for viva)
+
+This section is the canonical tombstone for mechanism hypotheses that were tested in the project but are no longer load-bearing. One short block per hypothesis, with the original framing, the test, the failure mode, and the date of retirement. Detailed working is preserved in the corresponding numbered sections above (where applicable) and in `notebooks/memos/_audits.md`.
+
+## R1 — Allaz–Vila two-period strategic forward sales
+
+- **Original framing**: more forward markets dispel rents (Allaz & Vila 1993, JET); MTU15-IDA adds finer forward instruments and therefore should erode the residual monopolist's quantity-withholding incentive.
+- **Test**: commitment-slope regression of $\Delta Q_{\text{IDA}}$ on $q_{\text{DA}}$ at firm and unit level, looking for slope contraction post-MTU15-IDA.
+- **Why retired (killed 2026-04-29)**: the regression returns approximately $-1$ at every granularity by mechanical accounting identity ($Q_{\text{actual}} \approx q_{\text{DA}} + \Delta Q_{\text{IDA}}$ holds by construction). There is no separate slope identification. F5 is dead as Allaz–Vila evidence.
+- **Relation to the §X headline**: the within-market granularity mechanism is related to Allaz–Vila in spirit (finer instruments dispel rents) but not equivalent: §X splits one delivery good into four sub-goods, whereas Allaz–Vila adds more forward markets for the same good. The §X DiD coefficient is a clean test of the within-market-granularity mechanism, free of the mechanical identity that killed F5.
+- **Detailed working**: §2 above (preserved unchanged).
+
+## R2 — Hortaçsu–Puller-style sophistication mechanism
+
+- **Original framing**: implied Cournot–FOC Lerner ($\eta / \text{residual demand slope}$) should match realised marginal-bid markup if firms bid à la Cournot. Heterogeneity in match quality reveals strategic sophistication.
+- **Test**: F1/F2/F3 implied vs realised markup comparison for IB and GE.
+- **Why retired (killed 2026-05-02)**: implied Lerner $\approx 0.93$ for the leading firm vs realised marginal-bid markup $\approx 0.34$ — implied is formula-mechanical (driven by residual-demand slope reciprocal), not realised conduct. Strategic-conduct interpretation of F1/F2/F3 is rejected. The +0.318 / +0.135 regime-difference coefficients survive as **shifts in a formula-mechanical index**, not as evidence of strategic conduct. The mechanism story for IB market power now rests on F7 + F10 + F13 + B8 (and the new §X DiD), not on F1/F2/F3.
+- **Relation to the §X headline**: the §X DiD does not rely on FOC-inversion or Cournot-pivotality assumptions. It identifies a strategic-conduct treatment effect directly via the within-day cross-sectional comparison, with the fringe placebo as a market-power requirement test.
+- **Detailed working**: see F1/F2/F3 entries in `CLAIMS_LEDGER.md` and `f1_f2_f3_hp_sophistication.py`.
+
+## R3 — Bushnell hydro market power via reservoir shadow-price
+
+- **Original framing**: hydro firms with reservoir storage have a reservoir-shadow-price-driven incentive to dispatch into high-price hours (Bushnell 2003, JIE). IB's hydro Q4-quartile dispatch concentration should map to this mechanism.
+- **Test**: F8 — IB hydro Q4-share concentration relative to Fringe, with reservoir-filling controls and water-value placebos.
+- **Why retired (mechanism rejected, 2026-04-30)**: F8 finds IB hydro Q4 share is structurally regime-invariant at +17pp vs Fringe across 2018–2025; the magnitude does not respond to reservoir filling, water-availability cycles, or the reform sequence. Placebo (Portuguese EDP large-reservoir hydro) is stronger than the treatment. The Bushnell water-value mechanism is rejected; F8 remains alive as a *descriptive* finding (IB's hydro fleet does dispatch differently from Fringe's), but with mechanism unidentified.
+- **Relation to the §X headline**: §X is silent on hydro reservoir shadow prices. The within-market granularity mechanism predicts a quarter-of-hour bidding response, which is independent of reservoir dynamics and which the F7 per-IB-unit decomposition shows is concentrated in hydro plants without strong reservoir constraints (run-of-river hydro at TAMEGA / SIL / DUER / TAJO).
+- **Detailed working**: F8 row in `CLAIMS_LEDGER.md`.
+
+## R4 — Dual-pricing imbalance-settlement option value
+
+- **Original framing**: under uniform dual-pricing, BRPs hold a real option to be on the favourable side of the imbalance pool; option value scales with intra-day price-spread predictability and with the system-side k-factor.
+- **Test**: §6b above — predictability test (CCGT firm-level, hourly).
+- **Why retired (rejected 2026-05-02)**: the predictability-channel version of the test rejects the option-value mechanism for B9 q₂ collapse. The original Ito–Reguant strategic-arbitrage reading of B9 stands. A spread-channel version of dual pricing remains theoretically open (option value scales with $k_{\text{hurt}} - p_{\text{DA}}$, which S6 found widened 8–14× post-IDA), but is not currently being pursued because the §X identification design is more direct.
+- **Detailed working**: §6b above (preserved as exploratory).
+
+## R5 — Theory-extension granularity-mediated forward commitment
+
+- **Original framing**: a two-channel model layered on Ito–Reguant / Chang, with $\alpha_r$ activated at ISP15 (imbalance-gaming) and $\Phi(\lambda, \beta, b_{21})$ activated at MTU15-IDA (ramp-thinness). Predicted intensive-margin strategic-bidding responses to the reform.
+- **Test**: unit-level audit (nb09 §11–§12).
+- **Why retired (deprecated 2026-04-24)**: predicted intensive-margin responses are absent or below detection. Aggregate signals initially attributed to these channels are composition artefacts, not within-unit behavioural shifts. Retired in favour of the cross-margin (extensive-margin asset reallocation vs intensive-margin bid-structure change) framing.
+- **Relation to the §X headline**: §X is about within-market granularity at the bid-shape and quantity levels, which is the intensive-margin reading the two-channel model attempted but did not nail. The §X DiD design is cleaner identification than the two-channel model offered.
+- **Detailed working**: archived at `attic/theory_granularity_extension/`. The `attic/README.md` is the canonical pointer.

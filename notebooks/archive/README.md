@@ -1,14 +1,8 @@
-# Archived notebooks and tracking documents
+# Archived notebooks
 
-Material superseded by more focused or more rigorous analyses in the active `explore/` stack, or whose role has been absorbed by `/CLAIMS_LEDGER.md` and `explore/_modelling_track.md`. Preserved for reference and for the viva trail; do not expect them to stay up to date with the thesis narrative.
+Material superseded by more focused or more rigorous analyses in the active `notebooks/eda/` stack, or whose role has been absorbed by `/CLAIMS_LEDGER.md` and `notebooks/memos/_modelling_track.md`. Preserved for reference and for the viva trail; do not expect them to stay up to date with the thesis narrative.
 
-## Tracking documents
-
-| File | Original role | Status |
-|---|---|---|
-| `_modelable_patterns.md` | Working list of empirical regularities with economic-model interpretation. | Archived 2026-04-25 (Batch C). Replaced by `explore/_modelling_track.md`, which reorganises the modelling sections around alive ledger claims. Surviving items now ledger rows (e.g. B6). |
-| `_open_robustness_queue.md` | Priority 1–3 queue of pending analyses. | Archived 2026-04-25 (Batch C). Items either executed in the 2026-04-25 robustness sweep (results in `archive/_robustness_summary.md`) or re-prioritised under `_modelling_track.md` Phase 2 candidates. |
-| `_robustness_summary.md` | Eight robustness checks on nb12 Lerner finding (§1 bootstrap, §2 slope-window, §3 placebo dates, §4 hour-of-day, §5 blackout, §6 seasonal, §7 Spec 3, §8 IDA-offer recalibration, §9 within-tech, §10 France placebo, §11 HHI, §12 capacity withholding, §13 bid-shading). | Archived 2026-04-25 (Batch C). Per-claim status migrated to `/CLAIMS_LEDGER.md`; §-level provenance preserved here for the viva trail. |
+Three earlier tracking documents (`_modelable_patterns.md`, `_open_robustness_queue.md`, `_robustness_summary.md`) were also archived here on 2026-04-25 and then deleted on 2026-05-05 during the post-pivot cleanup. Their content was fully migrated into `/CLAIMS_LEDGER.md` and `notebooks/memos/_modelling_track.md` before deletion.
 
 ## Notebooks
 

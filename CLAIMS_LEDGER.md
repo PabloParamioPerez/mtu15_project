@@ -4,6 +4,21 @@ Single source of truth for empirical claims in this project. One row per claim. 
 
 **Last full audit:** 2026-04-25. **Last red-team audit:** 2026-04-27 (`explore/_audits.md` Part B); ledger framing updated for S6, S8, F9.
 
+## ✦ PIVOT 2026-05-05 — new headline identification
+
+After the May 5 CEMFI workshop, the project's headline identification shifted to a within-day critical-vs-flat-hours difference-in-differences design on dominant-firm signed IDA repositioning ($q_2$). The DiD coefficient $\beta_3 = +58.6$ MWh per firm-hour ($p < 10^{-6}$) is the primary causal claim. **Bid-shape evidence** (post-MTU15-DA CCGT richer ladders in critical hours) is the cleanest mechanism evidence at the unit level, and a **fringe-firm placebo** ($\beta_3 = -24.3$, opposite-signed) supports the strategic-conduct interpretation.
+
+This pivot reorganises the role of pre-existing claims rather than killing them:
+
+- **Direct support for the new headline**: B9 (Big-4 q₂ progressive collapse — the canonical firm-level outcome of the new DiD), B8 (within-unit bid complexity response — corroborates bid-shape), D2 (descriptive: most Big-4 hours don't exploit 15-min granularity — frames the dispatchable / non-dispatchable split), D4 (extensive-margin Fringe exit at MTU15-IDA — context for the fringe placebo).
+- **Background context, still alive but no longer headline-load-bearing**: F7 (€820M IB rent), F10 (IB pivotality structural), F13 (IB price-setting power), S5–S7 (system-layer concordance), the F14–F22 reforzada-related cluster.
+- **Wounded with caveats**: B11, F26, F8, S8, F6, W1.
+- **Dead, retained as audit trail**: F1, F2, F3, F5, X1–X14, F23, F25.
+
+A new claim row will be added below for the **fringe-firm placebo** result; the bid-shape evidence is captured under B8.
+
+The within-day DiD design assumes that in equilibrium the granularity reform has no economic content for flat hours — this is the basis for using them as a counterfactual. Defending this assumption rigorously requires a stylised IO model anchored in the within-market granularity mechanism (distinct from but related to Allaz–Vila and Ito–Reguant). Stub for that model: `notebooks/memos/_within_market_granularity_model.md`.
+
 ## Conventions
 
 **Status values**
@@ -63,6 +78,9 @@ Quick-scan view. The TL;DR statuses below are the **authoritative status** as of
 | **B7** | **ALIVE** | behavioural | France DA prices flat across Spanish reform dates — Spain-specific cross-country placebo |
 | **B8** | **ALIVE** | behavioural | Within-unit bid complexity response to MTU15-IDA is IB-specific, not generic Big-4 |
 | **B9** | **ALIVE** | behavioural | Big-4 progressive q₂_IDA under-commitment collapse across reform regimes; survives PDBF-augmented + canonical Fabra-Imelda spec with forecast-error controls (coef variation <0.1%) |
+| **B12** | **ALIVE** | behavioural | **HEADLINE (2026-05-05)**: within-day critical-vs-flat hours DiD on dominant-firm signed IDA repositioning. β₃ = +58.6 MWh/firm-hour at DA15/ID15 (SE 12.18, p=1.5×10⁻⁶, N=78,232). Crit_post (β₁+β₃) = +99.8 MWh/firm-hour. Robust to same-cal-month, baseline-window sensitivity. Conditional parallel trends with renewable+demand controls does NOT hold (only 13% absorbed). |
+| **B13** | **ALIVE** | behavioural | **Fringe-firm placebo (2026-05-05)**: same DiD spec on top non-dominant firms (EV, DET, EGL, EHN, REP) gives β₃ = −24.3 MWh/firm-hour (SE 8.07, p=2.7×10⁻³, N=46,327). Opposite-signed coefficient supports the strategic-mechanism interpretation: granularity exploitation requires pivotal market power. |
+| **B14** | **ALIVE** | behavioural | **Bid-shape rich-ladder pattern (2026-05-05)**: post-MTU15-DA dominant-firm CCGT bids in critical hours show +8% more tranches per quarter, +13% steeper ladder slope, lower qty-weighted average price than in flat hours. Mechanism-coherent with within-market granularity exploitation. Concentrated in CCGT and (mildly) hydro; wind/solar/nuclear show no engagement (mechanical-repeat across quarters). |
 | **D1** | **ALIVE** | descriptive | Within-month price dispersion rises post-MTU15-DA in Spain (and not in France) |
 | **D2** | **ALIVE** | descriptive | 80–99% of Big-4 offer-hours post-MTU15-DA do not strategically exploit 15-min granularity (identical bids across 4 ISPs) |
 | **D3** | **ALIVE** | descriptive | Market concentration (HHI) is elevated 2023-onwards vs 2018-2022, sustained through reform period |
@@ -107,7 +125,7 @@ Quick-scan view. The TL;DR statuses below are the **authoritative status** as of
 | **X13** | ~~dead~~ | system | A87 reserve-cost redistribution ≈ €840M/yr at ISP15 (residual was the wrong measurement; direct imresecqh shows €71→30M/mo decline) |
 | **X14** | ~~dead~~ | behavioural | Big-4 CCGT DA bid granularity drops 5–7 → 1–2 tranches at MTU15-IDA (MAV-format-change parser artefact) |
 
-**Counts (post-2026-05-02 attack pass):** 41 alive · 7 wounded · 20 dead · 68 active rows. **Attack pass 2026-05-02**: B9 confirmed robust (4-spec + canonical Fabra-Imelda); B11 wounded (−41.7% was window-selection artefact, true ~−12%); F11 already passed OVB battery. **2026-05-02 PDBF alive claims (regression-backed at disaggregated grain)**: B10 (Big-4 sell-side 50–85% bilateral; substitution β=−0.037 GWh/GWh, p≈10⁻³¹), B11 (Rule 28.8 cut bilateral volumes −41.7%, p<10⁻⁴), F24 (tech-asymmetric reform-period bilateral decline; the biggest step is in Q1 2024, NOT at IDA reform), D6 (bilaterals passive intra-day), D7 (cross-tech heterogeneity at reforzada — hydro +3pp opposite of nuclear), **D8 (Q1 2024 cross-tech structural break in dispatchable bilateral channels — preceded IDA reform by 3 months; affects nuclear AND hydro; mechanism unidentified)**. **F23 + F25 KILLED 2026-05-02** (artefacts). **F26 WOUNDED 2026-05-02** — the empirical fact (Big-4 nuclear bilat_share structurally lower 2024-onwards) is real but the "IDA reform" timing attribution is wrong by 3 months; the actual break is Feb-Mar 2024 with mechanism unidentified. The chronology of nuclear bilateral channel: stable 0.80–0.95 through 2018-2023; sharp drop Feb-Mar 2024 (cause unknown); minor +5pp at IDA reform; further −27pp at MTU15-IDA / Rule 28.8 end Mar 2025; temporary blackout-period collapse Apr-May 2025; recovers to 0.50–0.75 band. **For workshop selection: cite from the alive pool only; cite wounded with caveat; do not cite dead.**
+**Counts (post-2026-05-05 pivot):** 44 alive · 7 wounded · 20 dead · 71 active rows. Three new rows added 2026-05-05 documenting the within-day DiD headline (B12), the fringe placebo (B13), and the bid-shape rich-ladder pattern (B14). Pre-pivot count (post-2026-05-02 attack pass): 41 alive · 7 wounded · 20 dead · 68 active rows. **Attack pass 2026-05-02**: B9 confirmed robust (4-spec + canonical Fabra-Imelda); B11 wounded (−41.7% was window-selection artefact, true ~−12%); F11 already passed OVB battery. **2026-05-02 PDBF alive claims (regression-backed at disaggregated grain)**: B10 (Big-4 sell-side 50–85% bilateral; substitution β=−0.037 GWh/GWh, p≈10⁻³¹), B11 (Rule 28.8 cut bilateral volumes −41.7%, p<10⁻⁴), F24 (tech-asymmetric reform-period bilateral decline; the biggest step is in Q1 2024, NOT at IDA reform), D6 (bilaterals passive intra-day), D7 (cross-tech heterogeneity at reforzada — hydro +3pp opposite of nuclear), **D8 (Q1 2024 cross-tech structural break in dispatchable bilateral channels — preceded IDA reform by 3 months; affects nuclear AND hydro; mechanism unidentified)**. **F23 + F25 KILLED 2026-05-02** (artefacts). **F26 WOUNDED 2026-05-02** — the empirical fact (Big-4 nuclear bilat_share structurally lower 2024-onwards) is real but the "IDA reform" timing attribution is wrong by 3 months; the actual break is Feb-Mar 2024 with mechanism unidentified. The chronology of nuclear bilateral channel: stable 0.80–0.95 through 2018-2023; sharp drop Feb-Mar 2024 (cause unknown); minor +5pp at IDA reform; further −27pp at MTU15-IDA / Rule 28.8 end Mar 2025; temporary blackout-period collapse Apr-May 2025; recovers to 0.50–0.75 band. **For workshop selection: cite from the alive pool only; cite wounded with caveat; do not cite dead.**
 
 ---
 
