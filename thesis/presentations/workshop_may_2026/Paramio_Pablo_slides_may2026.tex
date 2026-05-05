@@ -320,7 +320,7 @@
 \end{frame}
 
 
-% ----- Appendix: robustness ----
+% ----- Appendix ----
 \section{Appendix}
 
 \begin{frame}{Appendix --- robustness checks (in words)}
@@ -332,6 +332,23 @@
     \item \textbf{Conditional parallel trends.} Wind $+$ solar $+$ demand $\times$ hour controls absorb only $\sim 13\%$ of the pre-trend. \emph{Does NOT hold.} \textbf{To think about:} an unobserved time trend (CCGT retirement, regulatory anticipation) is at play.
     \item \textbf{Bid-shape and extensive-margin.} Unit-level confirmation: richer bid ladders in critical hours (CCGT only); 13 CCGT units inactive in the asymmetric-clock window, return under \emph{operación reforzada}.
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Appendix --- fringe placebo}
+  \footnotesize
+  \textbf{Same DiD spec, run on fringe firms} (top non-dominant firms in PIBCIE: EV, DET, EGL, EHN, REP). If our mechanism (within-market granularity exploited by firms with pivotal market power) is correct, fringe firms --- by definition without pivotal market power --- should NOT show the same response.\\[4pt]
+  \begin{center}
+  \begin{tabular}{lrrr}
+    \toprule
+                                                  & Estimate          & SE      & p-value \\
+    \midrule
+    \textbf{Dominant firms} (IB, GE, GN, EDP)     & $\mathbf{+58.60}$ & $12.18$ & $1.5\!\times\!10^{-6}$ \\
+    Fringe (EV, DET, EGL, EHN, REP)               & $-24.27$          & $8.07$  & $2.7\!\times\!10^{-3}$ \\
+    \bottomrule
+  \end{tabular}\\[2pt]
+  \footnotesize $\beta_3$ (crit$_h \times$ post$_d$) only; same outcome ($q_2$, MWh/firm-hour) and same window. Dominant N $= 78{,}232$; fringe N $= 46{,}327$.
+  \end{center}
+  \textbf{Reading.} Dominant firms reposition $+59$ MWh more in critical hours after the reform. Fringe firms go the \emph{opposite direction} ($-24$ MWh, $p < 0.01$). The mechanism asks for market power, and the placebo confirms it: where the strategic optionality of within-hour granularity is not exercisable (no pivotal market power), the response is null or opposite-signed --- consistent with fringe firms being crowded out of strategic positions by the dominant firms' more aggressive critical-hour bidding.
 \end{frame}
 
 \end{document}
