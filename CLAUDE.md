@@ -22,7 +22,7 @@ The project is organised by purpose at the top level. Each top-level directory h
 - `src/mtu/validation/` — post-parse checks (`checks.py`)
 - `src/mtu/ingestion/` — shared HTTP/auth/retry helpers (e.g. `entsoe_common.py`, `esios_common.py`)
 - `scripts/pipelines/{omie,esios,entsoe}/` — numbered pipeline steps: `00_` download, `10_` parse, `20_` build
-- `scripts/analysis/{system,firm,regulatory,balancing,bid,lerner,modelling,panels,synthetic,attic}/` — empirical analyses, organised by topic (system = Acts I friction; firm = Acts II Big-4 strategic; regulatory = RT2 + CNMC; balancing = aFRR/mFRR/nuclear-availability)
+- `scripts/analysis/{system,firm,regulatory,balancing,bid,modelling,panels,attic}/` — empirical analyses, organised by topic (system = Acts I friction; firm = Acts II Big-4 strategic; bid = bid-shape and granularity; regulatory = RT2 + CNMC; balancing = aFRR/mFRR/nuclear-availability). The `attic/` subfolder holds retired analyses (lerner/, synthetic/, firm/-dead and other pre-pivot scripts moved 2026-05-04).
 - `scripts/admin/` — one-off audit, inspect, and forensic scripts; not part of the pipeline
 - `scripts/stata/` — Stata `.do` files
 
@@ -34,31 +34,29 @@ The project is organised by purpose at the top level. Each top-level directory h
 - `data/interim/`, `data/metadata/`, `data/external/` — intermediate parsing, manifests, reference tables
 
 **Analytical outputs (code-dependent products):**
-- `results/regressions/` — regression CSVs (one file or sub-directory per analysis script)
-- `results/robustness/` — robustness-check tables
-- `results/summaries/` — human-readable run summaries (e.g. `HEAVY_RUN_SUMMARY.md`)
-- `results/tables/` — tables for thesis/presentation
-- `results/attic/` — retired analytical outputs
+- `results/regressions/{system,firm,bid,balancing,regulatory,modelling,descriptive}/` — regression CSVs subdirectorized by topic, mirroring `scripts/analysis/`. New analyses should write to the matching topic subfolder. `firm/` is further split into `firm/{critical_hours,pdbf,b9,other}/` since it would otherwise be too dense. (Restructured 2026-05-04.)
+- `results/tables/` — tables for thesis/presentation (currently empty post-2026-05-04 cleanup; the pre-pivot tables are in `results/attic/tables/`)
+- `results/attic/{regressions,robustness,summaries,tables}/` — retired analytical outputs from pre-pivot framing (Lerner work, dead claims, old workshop tables)
 
 **Figures:**
-- `figures/thesis/` — final figures referenced by the thesis text
+- `figures/thesis/` — final figures referenced by the thesis text (currently empty; the pre-pivot workshop figures are in `figures/attic/`)
 - `figures/presentation/` — presentation-specific figures
 - `figures/working/` — work-in-progress figures from analysis
-- `figures/attic/`
+- `figures/attic/` — retired figures from pre-pivot framings
 
 **Writing:**
 The thesis output is a single academic paper (`thesis/paper.tex`, sections not chapters). Drafting hasn't started yet.
 - `thesis/proposal.md` — master thesis proposal
 - `thesis/paper.tex` (and `paper.pdf`) — the paper itself, when drafting begins. Single LaTeX file with `\section{}` blocks (intro, data, model, results, conclusion). If sections grow large, split via `\input{}` into a `thesis/sections/` subfolder.
-- `thesis/model/model.tex` — structural model derivation (compiled to `model.pdf`); will be `\input{}`'d into the paper or referenced.
+- `thesis/model/` — directory reserved for the new structural model when written (the pre-pivot `model.tex` was deleted 2026-05-04 since its asymmetric-granularity framing was superseded by the within-day DiD design and within-market granularity model).
 - `thesis/narratives/` — presentation narratives, planning documents
 - `thesis/presentations/workshop_february_2026/` — first thesis-progress presentation
-- `thesis/presentations/workshop_may_2026/` — second thesis-progress presentation (active)
+- `thesis/presentations/workshop_may_2026/` — second thesis-progress presentation (the headline pivot; current reference)
 
 **Notebooks (exploration, not thesis output):**
 - `notebooks/eda/` — numbered exploratory data-analysis notebooks
 - `notebooks/memos/` — research diaries, modelling track, audits (markdown only)
-- `notebooks/archive/` — superseded exploratory work
+- `notebooks/attic/` — superseded exploratory work (renamed from `archive/` 2026-05-04 for consistency with other attics)
 
 **External references:**
 - `docs/{omie,esios,entsoe}/` — operator file specs and protocol docs
@@ -212,6 +210,34 @@ The project tracks empirical claim status in `CLAIMS_LEDGER.md` at the repo root
 For active notebooks in `notebooks/eda/`, the same four fields appear as a markdown cell-1.
 
 **Status meanings.** *Alive* — passed all documented robustness checks; safe to cite. *Wounded* — survives in narrowed form; cite only with caveat. *Dead* — retracted or contradicted; do not cite as positive result, may appear in identification appendix as "attempted but failed".
+
+## Power-vs-energy discipline (added 2026-05-07)
+
+OMIE's `quantity_mw` field is in MW (instantaneous power), regardless of MTU.
+Period duration changes across the reform: 1 hour pre-MTU15, 0.25 hour post.
+Summing `quantity_mw` across periods produces a 4× discrepancy that's mechanical
+(period count), not physical (no extra capacity bid).
+
+**Naming convention** for any new aggregations or derived columns:
+- `*_mw`        — instantaneous power (the OMIE field; rate of energy flow)
+- `*_mwh`       — energy delivered over a defined period (= MW × hours)
+- `power_*`     — semantic prefix where the unit suffix is awkward
+- `energy_*`    — semantic prefix for accumulated quantity over a window
+
+**Hard rules:**
+- Never compare raw `SUM(quantity_mw)` across MTU60 and MTU15 — the post-reform
+  sum will look 4× larger purely from period count.
+- Cross-reform energy comparisons must convert MW → MWh first (multiply by
+  period length: 1.0 pre, 0.25 post), then sum.
+- Per-period **means** of MW are fine WITHIN a regime (mean MW = capacity
+  offered). Across regimes, still flag the period duration in any caption.
+- For cross-reform comparison: report **MWh per hour-equivalent** (energy
+  per clock hour), not raw period sums.
+- Tranche counts, mechanical-repeat rates, and other count-based metrics are
+  unaffected by the MW/MWh distinction — they're pure unit counts.
+
+This was the implicit reason B14 used count-based metrics (n_tranches,
+mech_strict) for cross-reform comparison rather than quantity sums.
 
 ## Seasonality + weather controls (mandatory for cross-regime claims)
 
