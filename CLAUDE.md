@@ -214,6 +214,12 @@ For active notebooks in `notebooks/eda/`, the same four fields appear as a markd
 ## Power-vs-energy discipline (added 2026-05-07)
 
 OMIE's `quantity_mw` field is in MW (instantaneous power), regardless of MTU.
+This is per the OMIE file specification (`docs/omie/ficherosomie137.pdf`):
+DET §5.1.4.2 ("Cantidad de la oferta (MW)"), PDBC §5.1.2.1 / PDBCE §5.1.2.2
+("Potencia asignada (MW)" / "Potencia participada (MW)"), PIBCI §5.2.2.2
+("Potencia asignada (MW)"), and analogous fields throughout. ENTSO-E A65
+load is also reported as `load_mw` (instantaneous power).
+
 Period duration changes across the reform: 1 hour pre-MTU15, 0.25 hour post.
 Summing `quantity_mw` across periods produces a 4× discrepancy that's mechanical
 (period count), not physical (no extra capacity bid).
