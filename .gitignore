@@ -48,6 +48,18 @@ data/metadata/*.csv
 # Outputs
 *.log
 
+# Heavy analytical outputs — not suitable for git tracking.
+# Stata binary files: always ignore (often >100 MB).
+*.dta
+# Archived results (results/attic/) are old retired material — not needed in repo
+results/attic/
+# Parquet panels in results/ are heavy panel outputs; track only CSVs
+results/**/*.parquet
+# Figures: track only thesis-promoted versions; ignore heavy working artefacts
+figures/working/*.png
+figures/working/*.pdf
+figures/attic/
+
 # Local backups
 attic/
 # But DO track scripts/analysis/attic/ as the project's "DEAD-KEPT-AS-RECORD" folder
@@ -66,6 +78,10 @@ data/derived/**/*.dta
 # Exploratory analysis — track notebooks, ignore heavy outputs
 explore/**/.ipynb_checkpoints/
 explore/.tmp/
+
+# DuckDB temp directories (created by DuckDB during heavy queries)
+.tmp/
+**/.tmp/
 
 # R (renv) — commit renv.lock + activate.R, ignore per-machine library
 renv/library/
