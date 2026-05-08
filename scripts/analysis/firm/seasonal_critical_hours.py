@@ -136,16 +136,16 @@ def main():
         axb.set_ylabel("DA price (€/MWh)", color="C3")
         axb.tick_params(axis="y", labelcolor="C3")
         # Highlight canonical 'joint' critical h{7,8,16-22} and flat h{3-5}
-        for h in (7, 8, 16, 17, 18, 19, 20, 21, 22):
+        for h in (5, 6, 7, 16, 17, 18, 19):
             ax.axvspan(h-0.5, h+0.5, alpha=0.10, color="red")
-        for h in (3, 4, 5):
+        for h in (1, 2, 3):
             ax.axvspan(h-0.5, h+0.5, alpha=0.10, color="blue")
         ax.set_title(season)
         ax.set_xlabel("Hour of day (Madrid local)")
         ax.set_xticks(range(0, 24, 2))
         ax.grid(alpha=0.3)
     fig.suptitle("Hourly load and DA price by season, Spain 2025\n"
-                 "Red bands: canonical (joint) critical h{7,8,16-22}.  Blue bands: canonical flat h{3-5}.",
+                 "Red bands: canonical critical h{5,6,7,16-19} (demand surge ∪ VRE transition).  Blue bands: flat h{1-3}.",
                  fontsize=11)
     fig.tight_layout()
     out = FIGDIR / "fig_seasonal_critical_hours"
@@ -159,9 +159,9 @@ def main():
     for ax, (season, vre) in zip(axes2.flat, vre_profiles.items()):
         ax.plot(vre["hour"], vre["wind_gw"], color="green", marker="o", label="Wind (GW)")
         ax.plot(vre["hour"], vre["solar_gw"], color="orange", marker="s", label="Solar (GW)")
-        for h in (7, 8, 16, 17, 18, 19, 20, 21, 22):
+        for h in (5, 6, 7, 16, 17, 18, 19):
             ax.axvspan(h-0.5, h+0.5, alpha=0.10, color="red")
-        for h in (3, 4, 5):
+        for h in (1, 2, 3):
             ax.axvspan(h-0.5, h+0.5, alpha=0.10, color="blue")
         ax.set_title(season)
         ax.set_xlabel("Hour of day (Madrid local)")
@@ -170,7 +170,7 @@ def main():
         ax.grid(alpha=0.3)
         ax.legend(fontsize=8, loc="upper right")
     fig2.suptitle("Hourly wind and solar production by season, Spain 2025\n"
-                  "Red bands: canonical (joint) critical h{7,8,16-22}.  Blue bands: canonical flat h{3-5}.",
+                  "Red bands: canonical critical h{5,6,7,16-19} (demand surge ∪ VRE transition).  Blue bands: flat h{1-3}.",
                   fontsize=11)
     fig2.tight_layout()
     out2 = FIGDIR / "fig_seasonal_vre"

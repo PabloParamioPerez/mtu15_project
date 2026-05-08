@@ -27,8 +27,8 @@ WIND_SOLAR = REPO / "data" / "processed" / "entsoe" / "generation" / "wind_solar
 B1_OUT = REPO / "results" / "regressions" / "firm" / "critical_hours_thesis" / "B1_q2_did.csv"
 B1_PANEL = REPO / "results" / "regressions" / "firm" / "critical_hours_thesis" / "B1_panel.parquet"
 
-CRITICAL_HOURS = (7, 8, 16, 17, 18, 19, 20, 21, 22)  # joint: ramps + evening peak (canonical)
-FLAT_HOURS = (3, 4, 5)
+CRITICAL_HOURS = (5, 6, 7, 16, 17, 18, 19)  # canonical: demand surge ∪ VRE transition
+FLAT_HOURS = (1, 2, 3)
 
 
 def fig_calibration():
@@ -104,7 +104,7 @@ def fig_calibration():
     for h in FLAT_HOURS:
         ax1.axvspan(h-0.5, h+0.5, alpha=0.15, color="blue")
     ax1.set_title("Hourly average load and DA clearing price, Spain Oct–Dec 2025")
-    ax1.text(0.99, 0.05, "red = critical (joint) h{7,8,16–22}\nblue = flat h{3–5}",
+    ax1.text(0.99, 0.05, "red = critical h{5–7, 16–19}\nblue = flat h{1–3}",
              transform=ax1.transAxes, ha="right", fontsize=8, va="bottom",
              bbox=dict(boxstyle="round", facecolor="white", alpha=0.7))
 
@@ -195,8 +195,8 @@ def fig_q2_trajectory():
     for ax, parent in zip(axes.flat, ["IB","GE","GN","HC","Repsol","TotalEnergies"]):
         sub = agg[agg["parent"] == parent]
         for hc, color, marker, label in [
-            ("critical_h18_22", "C3", "o", "critical h{18-22}"),
-            ("flat_h3_5", "C0", "s", "flat h{3-5}"),
+            ("critical_canonical", "C3", "o", "critical h{5-7,16-19}"),
+            ("flat_canonical", "C0", "s", "flat h{1-3}"),
         ]:
             s = sub[sub["hour_class"]==hc].sort_values("year_month")
             if len(s):
