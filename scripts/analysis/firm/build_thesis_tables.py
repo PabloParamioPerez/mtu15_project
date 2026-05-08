@@ -187,6 +187,19 @@ def build_b1_tech_table():
 # Table 3 — B1 per-firm β_3 (treatment group; q_2 + B3 DA cleared joint)
 # ────────────────────────────────────────────────────────────────────────
 
+FIRM_DISPLAY = {
+    "IB": "Iberdrola",
+    "GE": "Endesa",
+    "GN": "Naturgy",
+    "HC": "EDP-Spain",
+    "EDP-PT": "EDP-Portugal",
+    "Engie": "Engie España",
+    "Repsol": "Repsol",
+    "TotalEnergies": "TotalEnergies",
+    "Moeve": "Moeve",
+}
+
+
 def build_per_firm_table():
     b1 = pd.read_csv(SRC / "B1_q2_did.csv")
     b3 = pd.read_csv(SRC / "B3_da_cleared_did.csv")
@@ -203,7 +216,7 @@ def build_per_firm_table():
     tex.append(r"\midrule")
 
     for f in firms:
-        line = f
+        line = FIRM_DISPLAY.get(f, f)
         for src in [b1, b3]:
             if f in src.index:
                 r = src.loc[f]

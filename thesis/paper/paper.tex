@@ -65,7 +65,7 @@
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_seasonal_critical_hours.pdf}
 \caption{\textbf{Hourly load and DA price profile, by season, Spain 2025.}
-Four-panel decomposition by season. Red bands mark the canonical \textit{critical hours} $h\in\{7,8,16,17,18,19,20,21,22\}$ (the \textit{joint} set: morning ramp $\cup$ afternoon-evening peak). Blue bands mark the \textit{flat hours} $h\in\{3,4,5\}$. The price peak h\{18-22\} is stable across all four seasons; spring and summer additionally show a morning ramp peak at h7-8. Flat hours are stable everywhere. The joint set is the natural cross-season-robust definition used in the headline DiD.}
+Four-panel decomposition by season. Load (left axis, blue) is realized Spanish electricity demand from ENTSO-E A65; the slope of the load curve is the demand ramp rate (visible at h6-h9 morning and h16-h20 afternoon-evening across all seasons). Red bands mark the canonical \textit{critical hours} $h\in\{7,8,16,17,18,19,20,21,22\}$ (the \textit{joint} set: morning ramp $\cup$ afternoon-evening peak). Blue bands mark the \textit{flat hours} $h\in\{3,4,5\}$. The price peak h\{18-22\} is stable across all four seasons; spring and summer additionally show a morning ramp peak at h7-8. Flat hours are stable everywhere. The joint set is the natural cross-season-robust definition used in the headline DiD.}
 \label{fig:seasonal}
 \end{figure}
 
@@ -82,24 +82,25 @@ Four-panel decomposition by season. Red bands mark the canonical \textit{critica
 \begin{table}[H]
 \centering
 \caption{\textbf{Pivotality rate by parent firm and hour-class, CCGT only, October--December 2025.}
-Pivotality is the unit-level price-setter rate: tranches straddle the DA clearing price (i.e., $n_{\text{below}}>0$ and $n_{\text{above}}>0$), evaluated per (date, unit, period) and aggregated by parent firm $\times$ hour-class. The treatment-effect set in the empirical specifications is the set of firms with non-trivial CCGT pivotality in critical hours (HC, EDP-PT, GN, GE, IB plus mid-fringe CCGT operators). The placebo set is firms with effectively zero pivotality (Repsol, Engie España, TotalEnergies, Moeve). Source: \texttt{notebooks/memos/\_pivotality\_by\_firm\_critical\_hours.md}.}
+Pivotality is the unit-level price-setter rate: tranches straddle the DA clearing price (i.e., $n_{\text{below}}>0$ and $n_{\text{above}}>0$), evaluated per (date, unit, period) and aggregated by parent firm $\times$ hour-class. The treatment-effect set in the empirical specifications is the set of firms with non-trivial CCGT pivotality in critical hours (top panel). The placebo set is firms with effectively zero pivotality (bottom panel). Source: \texttt{notebooks/memos/\_pivotality\_by\_firm\_critical\_hours.md}.}
 \label{tab:pivotality}
-% Inline values from memo; can be auto-generated later if needed
 \begin{tabular}{l c c c}
 \toprule
 Firm (parent) & flat $h\{3$-$5\}$ & critical $h\{18$-$22\}$ & $\Delta$ crit$-$flat \\
 \midrule
-HC          & 0.72 & 1.00 & +0.28 \\
-EDP-PT      & 0.79 & 0.88 & +0.09 \\
-GN          & 0.02 & 0.84 & \textbf{+0.82} \\
-Other (mid-fringe CCGT) & 0.26 & 0.40 & +0.14 \\
-GE          & 0.12 & 0.31 & +0.19 \\
-IB          & 0.004 & 0.25 & +0.25 \\
+\multicolumn{4}{l}{\textit{Treatment set (pivotal)}} \\
+EDP-Spain                 & 0.72  & 1.00  & +0.28 \\
+EDP-Portugal              & 0.79  & 0.88  & +0.09 \\
+Naturgy                   & 0.02  & 0.84  & \textbf{+0.82} \\
+Mid-fringe CCGT operators & 0.26  & 0.40  & +0.14 \\
+Endesa                    & 0.12  & 0.31  & +0.19 \\
+Iberdrola                 & 0.004 & 0.25  & +0.25 \\
 \midrule
-Engie España & 0.00 & 0.005 & 0.00 \\
-Moeve         & 0.005 & 0.005 & 0.00 \\
-Repsol        & 0.00 & 0.00 & 0.00 \\
-TotalEnergies & 0.00 & 0.00 & 0.00 \\
+\multicolumn{4}{l}{\textit{Placebo set (non-pivotal)}} \\
+Engie España              & 0.00  & 0.005 & 0.00 \\
+Moeve (formerly Cepsa)    & 0.005 & 0.005 & 0.00 \\
+Repsol                    & 0.00  & 0.00  & 0.00 \\
+TotalEnergies             & 0.00  & 0.00  & 0.00 \\
 \bottomrule
 \end{tabular}
 \end{table}
