@@ -307,8 +307,9 @@ def build_b5_robustness_table():
     df = pd.read_csv(SRC / "B5_robustness.csv").set_index("label")
     sections = [
         ("B5.1 — Critical-hours definition", [
-            ("B5.1_price_peak_h18_19_20_21_22", "price\\_peak h\\{18-22\\} (canonical)"),
+            ("B5.1_canonical_demand_surge_vre_transition_h5_6_7_16_17_18_19", r"\textbf{Canonical} h\{5,6,7,16-19\} (demand surge $\cup$ VRE transition)"),
             ("B5.1_supply_ramp_h7_8_16_17_18", "supply\\_ramp h\\{7,8,16,17,18\\}"),
+            ("B5.1_price_peak_h18_19_20_21_22", "price\\_peak h\\{18-22\\}"),
             ("B5.1_demand_peak_h16_17_18_19_20", "demand\\_peak h\\{16-20\\}"),
             ("B5.1_joint_h7_8_16_17_18_19_20_21_22", "joint h\\{7-8, 16-22\\}"),
         ]),
@@ -323,6 +324,14 @@ def build_b5_robustness_table():
         ("B5.4 — Sample exclusions", [
             ("B5.4a_drop_EDP-PT", "Drop EDP-PT"),
             ("B5.4b_drop_ABO2G", "Drop ABO2G"),
+        ]),
+        ("B5.6 — DST transition days (CET $\\leftrightarrow$ CEST)", [
+            ("B5.6a_samecal_drop_DST_days", "Same-cal-month, drop DST transition days"),
+            ("B5.6b_full_window_drop_DST_days", "Full window, drop DST transition days"),
+        ]),
+        ("B5.7 — DST regime separation (clock-hour semantics differ across CEST/CET)", [
+            ("B5.7a_samecal_CEST_only", "Same-cal-month, CEST days only (Oct 1--25)"),
+            ("B5.7b_samecal_CET_only",  "Same-cal-month, CET days only (Oct 27--Dec 31)"),
         ]),
     ]
     tex = []

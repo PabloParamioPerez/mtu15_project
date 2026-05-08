@@ -65,7 +65,7 @@
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_seasonal_critical_hours.pdf}
 \caption{\textbf{Hourly load and DA price profile, by season, Spain 2025.}
-Four-panel decomposition by season. Load (left axis, blue) is realized Spanish electricity demand from ENTSO-E A65; the slope of the load curve is the demand ramp rate (visible at h6-h9 morning and h16-h20 afternoon-evening across all seasons). Red bands mark the canonical \textit{critical hours} $h\in\{7,8,16,17,18,19,20,21,22\}$ (the \textit{joint} set: morning ramp $\cup$ afternoon-evening peak). Blue bands mark the \textit{flat hours} $h\in\{3,4,5\}$. The price peak h\{18-22\} is stable across all four seasons; spring and summer additionally show a morning ramp peak at h7-8. Flat hours are stable everywhere. The joint set is the natural cross-season-robust definition used in the headline DiD.}
+Four-panel decomposition by season. Load (left axis, blue) is realized Spanish electricity demand from ENTSO-E A65; the slope of the load curve is the demand ramp rate (visible at h6-h9 morning and h16-h20 afternoon-evening across all seasons). Red bands mark the canonical \textit{critical hours} $h\in\{5,6,7,16,17,18,19\}$ (\textit{demand surge} $\cup$ \textit{VRE transition}). Blue bands mark the \textit{flat hours} $h\in\{1,2,3\}$. The price peak h\{18-22\} is stable across all four seasons; spring and summer additionally show a morning ramp peak at h7-8. Flat hours are stable everywhere. The joint set is the natural cross-season-robust definition used in the headline DiD.}
 \label{fig:seasonal}
 \end{figure}
 
@@ -73,7 +73,7 @@ Four-panel decomposition by season. Load (left axis, blue) is realized Spanish e
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_seasonal_vre.pdf}
 \caption{\textbf{Hourly wind and solar production by season, Spain 2025.}
-Four-panel decomposition by season. Red bands mark the canonical \textit{critical hours} $h\in\{7,8,16,17,18,19,20,21,22\}$ (the \textit{joint} set: morning ramp $\cup$ afternoon-evening peak). Blue bands mark the \textit{flat hours} $h\in\{3,4,5\}$. Solar production is concentrated in midday hours and disappears in critical-hour bands; wind is broadly flat across the day with mild seasonality. The combination implies that critical hours systematically have low VRE supply year-round, supporting the use of the joint set as the strategically-relevant time-varying window.}
+Four-panel decomposition by season. Red bands mark the canonical \textit{critical hours} $h\in\{5,6,7,16,17,18,19\}$ (\textit{demand surge} $\cup$ \textit{VRE transition}). Blue bands mark the \textit{flat hours} $h\in\{1,2,3\}$. Solar production is concentrated in midday hours and disappears in critical-hour bands; wind is broadly flat across the day with mild seasonality. The combination implies that critical hours systematically have low VRE supply year-round, supporting the use of the joint set as the strategically-relevant time-varying window.}
 \label{fig:vre_seasonal}
 \end{figure}
 
@@ -82,13 +82,13 @@ Four-panel decomposition by season. Red bands mark the canonical \textit{critica
 \begin{table}[H]
 \centering
 \caption{\textbf{Pivotality rate by parent firm and hour-class, CCGT only, October--December 2025.}
-Pivotality is the unit-level price-setter rate: tranches straddle the DA clearing price (i.e., $n_{\text{below}}>0$ and $n_{\text{above}}>0$), evaluated per (date, unit, period) and aggregated by parent firm $\times$ hour-class. The treatment-effect set in the empirical specifications is the set of firms with non-trivial CCGT pivotality in critical hours (top panel). The placebo set is firms with effectively zero pivotality (bottom panel). Source: \texttt{notebooks/memos/\_pivotality\_by\_firm\_critical\_hours.md}.}
+Pivotality is the unit-level price-setter rate: tranches straddle the DA clearing price (i.e., $n_{\text{below}}>0$ and $n_{\text{above}}>0$), evaluated per (date, unit, period) and aggregated by parent firm $\times$ hour-class. The treatment in our identification is at the \textit{hour} level (critical vs flat). Firms enter the analysis as subjects: pivotal firms (top panel) are those expected to react to the treatment because they have a strategic margin in critical hours; non-pivotal firms (bottom panel) serve as placebo because they bid at marginal cost regardless of hour. Source: \texttt{notebooks/memos/\_pivotality\_by\_firm\_critical\_hours.md}.}
 \label{tab:pivotality}
 \begin{tabular}{l c c c}
 \toprule
 Firm (parent) & flat $h\{3$-$5\}$ & critical $h\{18$-$22\}$ & $\Delta$ crit$-$flat \\
 \midrule
-\multicolumn{4}{l}{\textit{Treatment set (pivotal)}} \\
+\multicolumn{4}{l}{\textit{Pivotal firms (expected to react to the hour-level treatment)}} \\
 EDP-Spain                 & 0.72  & 1.00  & +0.28 \\
 EDP-Portugal              & 0.79  & 0.88  & +0.09 \\
 Naturgy                   & 0.02  & 0.84  & \textbf{+0.82} \\
@@ -96,7 +96,7 @@ Mid-fringe CCGT operators & 0.26  & 0.40  & +0.14 \\
 Endesa                    & 0.12  & 0.31  & +0.19 \\
 Iberdrola                 & 0.004 & 0.25  & +0.25 \\
 \midrule
-\multicolumn{4}{l}{\textit{Placebo set (non-pivotal)}} \\
+\multicolumn{4}{l}{\textit{Non-pivotal firms (placebo)}} \\
 Engie España              & 0.00  & 0.005 & 0.00 \\
 Moeve (formerly Cepsa)    & 0.005 & 0.005 & 0.00 \\
 Repsol                    & 0.00  & 0.00  & 0.00 \\
@@ -146,7 +146,7 @@ Same-calendar-month comparison (October--December 2024 vs October--December 2025
 \begin{table}[H]
 \centering
 \caption{\textbf{B1 -- Within-day DiD on $q_2$ (Ito--Reguant strategic IDA upward adjustment).}
-Outcome is $q_2$ in MWh per (unit, clock-hour), defined as the sum of \texttt{pibci} across IDA sessions converted to MWh and aggregated to clock-hour resolution. Specification: $q_{2,fdh} = \alpha + \beta_1 \texttt{crit}_h + \beta_2 \texttt{post}_d + \beta_3 (\texttt{crit}_h \times \texttt{post}_d) + \gamma_f + \delta_{\mathrm{DOW}(d)} + \varepsilon_{fdh}$. Firm and day-of-week fixed effects; cluster-robust standard errors by date. Sample: same-calendar-month windows, October--December 2024 and October--December 2025 (both windows post-MTU15-IDA reform of March 2025). Critical hours: $h\in\{7,8,16,17,18,19,20,21,22\}$ (joint: morning ramp $\cup$ evening peak; cross-season-robust). Flat hours: $h\in\{3,4,5\}$. Treatment group: firms with $\geq 10\%$ pivotality in critical hours (HC, EDP-PT, GN, GE, IB). Placebo: firms with $\sim 0\%$ pivotality (Repsol, Engie España, TotalEnergies, Moeve). Significance: $^{*}$ $p<0.05$, $^{**}$ $p<0.01$, $^{***}$ $p<0.001$; headline interpretation relies on $^{***}$ given the large effective sample size.}
+Outcome is $q_2$ in MWh per (unit, clock-hour), defined as the sum of \texttt{pibci} across IDA sessions converted to MWh and aggregated to clock-hour resolution. Specification: $q_{2,fdh} = \alpha + \beta_1 \texttt{crit}_h + \beta_2 \texttt{post}_d + \beta_3 (\texttt{crit}_h \times \texttt{post}_d) + \gamma_f + \delta_{\mathrm{DOW}(d)} + \varepsilon_{fdh}$. Firm and day-of-week fixed effects; cluster-robust standard errors by date. Sample: same-calendar-month windows, October--December 2024 and October--December 2025 (both windows post-MTU15-IDA reform of March 2025). Critical hours: $h\in\{7,8,16,17,18,19,20,21,22\}$ (joint: morning ramp $\cup$ evening peak; cross-season-robust). Flat hours: $h\in\{1,2,3\}$. Treatment group: firms with $\geq 10\%$ pivotality in critical hours (HC, EDP-PT, GN, GE, IB). Placebo: firms with $\sim 0\%$ pivotality (Repsol, Engie España, TotalEnergies, Moeve). Significance: $^{*}$ $p<0.05$, $^{**}$ $p<0.01$, $^{***}$ $p<0.001$; headline interpretation relies on $^{***}$ given the large effective sample size.}
 \label{tab:B1_main}
 \input{tables/tab_B1_main}
 \end{table}

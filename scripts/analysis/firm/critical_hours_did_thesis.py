@@ -50,9 +50,11 @@ UNITS_CSV = REPO / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 PRE_START, PRE_END = "2024-10-01", "2025-01-01"
 POST_START, POST_END = "2025-10-01", "2026-01-01"
 
-CRITICAL_HOURS = (7, 8, 16, 17, 18, 19, 20, 21, 22)  # 'joint' = supply_ramp ∪ price_peak; canonical
-# (alternatives kept in robustness B5.1: price_peak h{18-22}, supply_ramp h{7,8,16-18}, demand_peak h{16-20})
-FLAT_HOURS = (3, 4, 5)
+CRITICAL_HOURS = (5, 6, 7, 16, 17, 18, 19)  # 'demand_surge_supply_transition': h where demand surges UP and/or VRE transitions
+# Excludes h{20-22} (post-peak descent, no rent-extraction granularity value).
+# Excludes h4 (ramps but system not tight enough for strategic conduct).
+# Robustness alternatives in B5.1: joint h{7,8,16-22}, price_peak h{18-22}, supply_ramp h{7,8,16-18}, demand_peak h{16-20}.
+FLAT_HOURS = (1, 2, 3)  # truly flat: h4 already ramping in spring/summer
 
 
 def parent_of(owner: str | None) -> str:
@@ -79,8 +81,8 @@ PLACEBO_PARENTS = {"Repsol", "Engie", "TotalEnergies", "Moeve"}
 
 
 def hour_class(h: int) -> str:
-    if h in CRITICAL_HOURS: return "critical_joint"
-    if h in FLAT_HOURS:     return "flat_h3_5"
+    if h in CRITICAL_HOURS: return "critical_canonical"
+    if h in FLAT_HOURS:     return "flat_canonical"
     return "other"
 
 
@@ -131,13 +133,13 @@ def build_panel(units: pd.DataFrame) -> pd.DataFrame:
     panel = pd.concat(rows, ignore_index=True)
     panel["d"] = pd.to_datetime(panel["d"])
     panel["hour_class"] = panel["hour"].astype(int).apply(hour_class)
-    panel["crit"] = (panel["hour_class"] == "critical_joint").astype(int)
+    panel["crit"] = (panel["hour_class"] == "critical_canonical").astype(int)
     panel["dow"] = panel["d"].dt.dayofweek
     panel["treatment_group"] = panel["parent"].apply(
         lambda p: "treatment" if p in TREATMENT_PARENTS else
                   ("placebo" if p in PLACEBO_PARENTS else "untagged")
     )
-    panel = panel[panel["hour_class"].isin(["critical_joint", "flat_h3_5"])].copy()
+    panel = panel[panel["hour_class"].isin(["critical_canonical", "flat_canonical"])].copy()
     return panel
 
 

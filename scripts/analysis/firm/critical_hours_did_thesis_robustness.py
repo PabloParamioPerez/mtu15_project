@@ -34,12 +34,16 @@ B1_PANEL = OUTDIR / "B1_panel.parquet"
 
 # All four critical-hours sets per `_critical_hours_calibration.md`
 CRITICAL_HOUR_SETS = {
-    "price_peak": (18, 19, 20, 21, 22),     # canonical B1
-    "supply_ramp": (7, 8, 16, 17, 18),       # original pre-pivot
-    "demand_peak": (16, 17, 18, 19, 20),     # raw demand top-5
-    "joint": (7, 8, 16, 17, 18, 19, 20, 21, 22),  # union supply_ramp + price_peak
+    "canonical_demand_surge_vre_transition": (5, 6, 7, 16, 17, 18, 19),  # canonical B1
+    "supply_ramp": (7, 8, 16, 17, 18),                  # original σ²_within set
+    "price_peak": (18, 19, 20, 21, 22),                  # top-5 by DA price
+    "demand_peak": (16, 17, 18, 19, 20),                 # top-5 by raw load
+    "joint": (7, 8, 16, 17, 18, 19, 20, 21, 22),         # supply_ramp ∪ price_peak
 }
-FLAT_HOURS = (3, 4, 5)
+FLAT_HOURS = (1, 2, 3)  # truly flat (h4 already ramping in spring/summer)
+
+# DST transition days in our 2024-2025 panel (Madrid local)
+DST_DAYS = ("2024-03-31", "2024-10-27", "2025-03-30", "2025-10-26")
 
 PRE_START, PRE_END = "2024-10-01", "2025-01-01"
 POST_START, POST_END = "2025-10-01", "2026-01-01"
@@ -133,11 +137,13 @@ def print_result(r):
     print(f"  {r['label']:50s}  n={r['n']:6d}  G={r['n_clusters']:3d}  β₃={r['beta_3']:+8.3f}  SE={r['se']:6.3f}  p={r['p']:.4f}{sig}")
 
 
-def make_did_columns(df, critical_hours, post_dummy_col=None):
+def make_did_columns(df, critical_hours, post_dummy_col=None, flat_hours=None):
     """Add crit + post dummies for a given critical-hour set."""
+    if flat_hours is None:
+        flat_hours = FLAT_HOURS
     df = df.copy()
     df["crit"] = df["hour"].astype(int).isin(critical_hours).astype(int)
-    df["flat"] = df["hour"].astype(int).isin(FLAT_HOURS).astype(int)
+    df["flat"] = df["hour"].astype(int).isin(flat_hours).astype(int)
     if post_dummy_col is not None and post_dummy_col in df.columns:
         df["post"] = df[post_dummy_col]
     return df[(df["crit"]==1) | (df["flat"]==1)].copy()
@@ -175,7 +181,7 @@ def main():
 
     print("\n=== B5.2 — Firm partition sensitivity ===")
     print("(price_peak critical hours; same-cal-month)\n")
-    sub_pivot = make_did_columns(treat_full, CRITICAL_HOUR_SETS["joint"])  # canonical
+    sub_pivot = make_did_columns(treat_full, CRITICAL_HOUR_SETS["canonical_demand_surge_vre_transition"])  # canonical
     r = run_did(sub_pivot, "B5.2a_pivotality_treatment_set"); results.append(r); print_result(r)
 
     # Administrative dominant set: IB/GE/GN/HC (drop EDP-PT)
@@ -183,7 +189,7 @@ def main():
     post_adm = build_panel_full(units[units["parent"].isin(ADMIN_DOMINANT_PARENTS)], POST_START, POST_END)
     pre_adm["post"] = 0; post_adm["post"] = 1
     admin_full = pd.concat([pre_adm, post_adm], ignore_index=True)
-    sub_adm = make_did_columns(admin_full, CRITICAL_HOUR_SETS["joint"])  # canonical
+    sub_adm = make_did_columns(admin_full, CRITICAL_HOUR_SETS["canonical_demand_surge_vre_transition"])  # canonical
     r = run_did(sub_adm, "B5.2b_admin_IB_GE_GN_HC"); results.append(r); print_result(r)
 
     print("\n=== B5.3 — Window sensitivity (same-cal-month vs full window) ===")
@@ -194,7 +200,7 @@ def main():
     print(f"Full panel rows: {len(treat_full_window):,}")
     # Define post = post-MTU15-DA (Oct 1 2025 onwards)
     treat_full_window["post"] = (treat_full_window["d"] >= pd.Timestamp("2025-10-01")).astype(int)
-    sub_full = make_did_columns(treat_full_window, CRITICAL_HOUR_SETS["joint"])  # canonical
+    sub_full = make_did_columns(treat_full_window, CRITICAL_HOUR_SETS["canonical_demand_surge_vre_transition"])  # canonical
     r = run_did(sub_full, "B5.3a_full_window_2024_2025"); results.append(r); print_result(r)
 
     print("\n=== B5.4 — Sample exclusions ===")
@@ -210,6 +216,27 @@ def main():
     print("(Same-cal-month already excludes these months by design — this is for the full window)\n")
     sub_no_reforzada = sub_full[~sub_full["d"].between(pd.Timestamp("2025-04-28"), pd.Timestamp("2025-09-30"))].copy()
     r = run_did(sub_no_reforzada, "B5.5_full_window_drop_Apr_Sep_2025"); results.append(r); print_result(r)
+
+    print("\n=== B5.6 — Drop DST transition days (CET ↔ CEST clock changes) ===")
+    print("(Spring-forward and fall-back days have non-standard hour counts)\n")
+    dst_dates = [pd.Timestamp(d) for d in DST_DAYS]
+    sub_no_dst = sub_pivot[~sub_pivot["d"].isin(dst_dates)].copy()
+    r = run_did(sub_no_dst, "B5.6a_samecal_drop_DST_days"); results.append(r); print_result(r)
+    sub_no_dst_full = sub_full[~sub_full["d"].isin(dst_dates)].copy()
+    r = run_did(sub_no_dst_full, "B5.6b_full_window_drop_DST_days"); results.append(r); print_result(r)
+
+    print("\n=== B5.7 — DST regime separation (CEST vs CET clock semantics differ) ===")
+    print("(In CEST, clock-h17 = UTC-15; in CET, clock-h17 = UTC-16. Different solar positions.)\n")
+    # CEST in our windows: Oct-26-2024 PRE-fallback = Oct-1 to Oct-25-2024; POST-fallback = Oct-27-2024 to Dec-31-2024.
+    # Same for 2025: Oct-1 to Oct-25-2025 = CEST, Oct-27 to Dec-31-2025 = CET.
+    cest_2024 = (pd.Timestamp("2024-10-01"), pd.Timestamp("2024-10-26"))
+    cest_2025 = (pd.Timestamp("2025-10-01"), pd.Timestamp("2025-10-26"))
+    is_cest = ((sub_pivot["d"] >= cest_2024[0]) & (sub_pivot["d"] < cest_2024[1])) | \
+              ((sub_pivot["d"] >= cest_2025[0]) & (sub_pivot["d"] < cest_2025[1]))
+    sub_cest = sub_pivot[is_cest].copy()
+    sub_cet  = sub_pivot[~is_cest & ~sub_pivot["d"].isin(dst_dates)].copy()
+    r = run_did(sub_cest, "B5.7a_samecal_CEST_only"); results.append(r); print_result(r)
+    r = run_did(sub_cet,  "B5.7b_samecal_CET_only");  results.append(r); print_result(r)
 
     df_results = pd.DataFrame(results)
     df_results.to_csv(OUTDIR / "B5_robustness.csv", index=False)

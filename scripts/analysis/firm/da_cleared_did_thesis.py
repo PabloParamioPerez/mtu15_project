@@ -34,8 +34,8 @@ UNITS_CSV = REPO / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 
 PRE_START, PRE_END = "2024-10-01", "2025-01-01"
 POST_START, POST_END = "2025-10-01", "2026-01-01"
-CRITICAL_HOURS = (7, 8, 16, 17, 18, 19, 20, 21, 22)  # 'joint' = supply_ramp ∪ price_peak; canonical
-FLAT_HOURS = (3, 4, 5)
+CRITICAL_HOURS = (5, 6, 7, 16, 17, 18, 19)  # canonical: demand surge + VRE transition
+FLAT_HOURS = (1, 2, 3)
 
 
 def parent_of(o):
@@ -58,8 +58,8 @@ PLACEBO_PARENTS = {"Repsol","Engie","TotalEnergies","Moeve"}
 
 
 def hour_class(h):
-    if h in CRITICAL_HOURS: return "critical_joint"
-    if h in FLAT_HOURS: return "flat_h3_5"
+    if h in CRITICAL_HOURS: return "critical_canonical"
+    if h in FLAT_HOURS: return "flat_canonical"
     return "other"
 
 
@@ -99,12 +99,12 @@ def build_panel(units):
     panel = pd.concat(rows, ignore_index=True)
     panel["d"] = pd.to_datetime(panel["d"])
     panel["hour_class"] = panel["hour"].astype(int).apply(hour_class)
-    panel["crit"] = (panel["hour_class"] == "critical_joint").astype(int)
+    panel["crit"] = (panel["hour_class"] == "critical_canonical").astype(int)
     panel["dow"] = panel["d"].dt.dayofweek
     panel["treatment_group"] = panel["parent"].apply(
         lambda p: "treatment" if p in TREATMENT_PARENTS else
                   ("placebo" if p in PLACEBO_PARENTS else "untagged"))
-    return panel[panel["hour_class"].isin(["critical_joint","flat_h3_5"])].copy()
+    return panel[panel["hour_class"].isin(["critical_canonical","flat_canonical"])].copy()
 
 
 def run_did(panel, label):
