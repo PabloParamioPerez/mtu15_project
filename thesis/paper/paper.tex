@@ -65,7 +65,7 @@
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_seasonal_critical_hours.pdf}
 \caption{\textbf{Hourly load and DA price profile, by season, Spain 2025.}
-Four-panel decomposition by season verifies that the canonical critical-hours set is robust to seasonal heterogeneity. The price peak h\{18-22\} is stable across all four seasons; spring and summer additionally show a morning ramp peak at h7-8. Flat hours h\{2-4\} are stable everywhere. The canonical \textit{joint} set h\{7,8,16-22\} (used in the headline DiD) is the union of morning-ramp and evening-peak hours; it is the natural cross-season-robust definition.}
+Four-panel decomposition by season. Red bands mark the canonical \textit{critical hours} $h\in\{7,8,16,17,18,19,20,21,22\}$ (the \textit{joint} set: morning ramp $\cup$ afternoon-evening peak). Blue bands mark the \textit{flat hours} $h\in\{3,4,5\}$. The price peak h\{18-22\} is stable across all four seasons; spring and summer additionally show a morning ramp peak at h7-8. Flat hours are stable everywhere. The joint set is the natural cross-season-robust definition used in the headline DiD.}
 \label{fig:seasonal}
 \end{figure}
 
@@ -73,7 +73,7 @@ Four-panel decomposition by season verifies that the canonical critical-hours se
 \centering
 \includegraphics[width=0.92\textwidth]{figures/fig_critical_hours_calibration.pdf}
 \caption{\textbf{Hourly profile of Spanish electricity, October--December 2025.}
-Top panel: average load (left axis, blue) and DA clearing price (right axis, red) by hour of day, Madrid local time. Bottom panel: average wind and solar production. Red bands mark the canonical \textit{critical hours} $h\in\{7,8,16,17,18,19,20,21,22\}$ (the \textit{joint} set: morning ramp $\cup$ afternoon-evening peak) (peak load, peak DA price, no solar). Blue bands mark the \textit{flat hours} $h\in\{3,4,5\}$ (load and price minima, no solar). Critical hours combine high demand with low VRE supply; flat hours have low demand and no time variation in either direction.}
+Top panel: average load (left axis, blue) and DA clearing price (right axis, red) by hour of day, Madrid local time. Bottom panel: average wind and solar production. Red bands mark the canonical \textit{critical hours} $h\in\{7,8,16,17,18,19,20,21,22\}$ (the \textit{joint} set: morning ramp $\cup$ afternoon-evening peak; peak load and peak DA price hours). Blue bands mark the \textit{flat hours} $h\in\{3,4,5\}$ (load and price minima, no solar). Critical hours combine high demand with low VRE supply; flat hours have low demand and no time variation in either direction.}
 \label{fig:calibration}
 \end{figure}
 
