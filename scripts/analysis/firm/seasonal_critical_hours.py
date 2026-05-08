@@ -60,17 +60,47 @@ def hourly_profile(start, end):
     return load, price
 
 
+def vre_profile(start, end):
+    """Hourly mean Spanish wind + solar in GW (averaged across days)."""
+    con = duckdb.connect()
+    df = con.execute(f"""
+        WITH per_isp AS (
+            -- one row per ISP timestamp; sum across psr_type entries within that ISP
+            SELECT isp_start_utc,
+                   (isp_start_utc AT TIME ZONE 'Europe/Madrid')::DATE AS d,
+                   EXTRACT(HOUR FROM (isp_start_utc AT TIME ZONE 'Europe/Madrid')) AS hour,
+                   SUM(CASE WHEN psr_type='B16' THEN quantity_mw ELSE 0 END) AS solar_mw,
+                   SUM(CASE WHEN psr_type IN ('B18','B19') THEN quantity_mw ELSE 0 END) AS wind_mw
+            FROM '{WIND_SOLAR}'
+            WHERE isp_start_utc >= TIMESTAMP '{start}' AND isp_start_utc < TIMESTAMP '{end}'
+            GROUP BY 1,2,3
+        ),
+        per_day_hour AS (
+            -- average within each (d, hour) across the ISPs in that clock-hour
+            SELECT d, hour, AVG(solar_mw) AS solar_mw, AVG(wind_mw) AS wind_mw
+            FROM per_isp GROUP BY 1,2
+        )
+        SELECT hour,
+               AVG(solar_mw)/1000.0 AS solar_gw,
+               AVG(wind_mw)/1000.0 AS wind_gw
+        FROM per_day_hour GROUP BY 1 ORDER BY 1
+    """).df()
+    return df
+
+
 def top_hours_by(df, col, n=5):
     return sorted(df.nlargest(n, col)["hour"].astype(int).tolist())
 
 
 def main():
     profiles = {}
+    vre_profiles = {}
     rankings = []
     for season_name, (start, end) in SEASONS.items():
         print(f"--- {season_name} ---")
         load, price = hourly_profile(start, end)
         profiles[season_name] = (load, price)
+        vre_profiles[season_name] = vre_profile(start, end)
         # Top 5 by price (canonical critical-hours method)
         top_p = top_hours_by(price, "price")
         # Top 5 by demand (raw-load method)
@@ -123,6 +153,31 @@ def main():
     fig.savefig(f"{out}.pdf", bbox_inches="tight")
     plt.close(fig)
     print(f"\nFigure: {out}.png / .pdf")
+
+    # Second figure: 4-panel by-season wind + solar (replaces the autumn-only VRE panel)
+    fig2, axes2 = plt.subplots(2, 2, figsize=(13, 7), sharex=True, sharey=True)
+    for ax, (season, vre) in zip(axes2.flat, vre_profiles.items()):
+        ax.plot(vre["hour"], vre["wind_gw"], color="green", marker="o", label="Wind (GW)")
+        ax.plot(vre["hour"], vre["solar_gw"], color="orange", marker="s", label="Solar (GW)")
+        for h in (7, 8, 16, 17, 18, 19, 20, 21, 22):
+            ax.axvspan(h-0.5, h+0.5, alpha=0.10, color="red")
+        for h in (3, 4, 5):
+            ax.axvspan(h-0.5, h+0.5, alpha=0.10, color="blue")
+        ax.set_title(season)
+        ax.set_xlabel("Hour of day (Madrid local)")
+        ax.set_ylabel("VRE (GW)")
+        ax.set_xticks(range(0, 24, 2))
+        ax.grid(alpha=0.3)
+        ax.legend(fontsize=8, loc="upper right")
+    fig2.suptitle("Hourly wind and solar production by season, Spain 2025\n"
+                  "Red bands: canonical (joint) critical h{7,8,16-22}.  Blue bands: canonical flat h{3-5}.",
+                  fontsize=11)
+    fig2.tight_layout()
+    out2 = FIGDIR / "fig_seasonal_vre"
+    fig2.savefig(f"{out2}.png", dpi=120, bbox_inches="tight")
+    fig2.savefig(f"{out2}.pdf", bbox_inches="tight")
+    plt.close(fig2)
+    print(f"Figure: {out2}.png / .pdf")
 
 
 if __name__ == "__main__":

@@ -64,19 +64,25 @@ def fig_calibration():
     """).df()
 
     vre_df = con.execute(f"""
-        WITH t AS (
-            SELECT (isp_start_utc AT TIME ZONE 'Europe/Madrid')::DATE AS d,
+        WITH per_isp AS (
+            SELECT isp_start_utc,
+                   (isp_start_utc AT TIME ZONE 'Europe/Madrid')::DATE AS d,
                    EXTRACT(HOUR FROM (isp_start_utc AT TIME ZONE 'Europe/Madrid')) AS hour,
-                   psr_type, AVG(quantity_mw) AS mw
+                   SUM(CASE WHEN psr_type='B16' THEN quantity_mw ELSE 0 END) AS solar_mw,
+                   SUM(CASE WHEN psr_type IN ('B18','B19') THEN quantity_mw ELSE 0 END) AS wind_mw
             FROM '{WIND_SOLAR}'
             WHERE isp_start_utc >= TIMESTAMP '2025-10-01'
               AND isp_start_utc <  TIMESTAMP '2026-01-01'
             GROUP BY 1,2,3
+        ),
+        per_day_hour AS (
+            SELECT d, hour, AVG(solar_mw) AS solar_mw, AVG(wind_mw) AS wind_mw
+            FROM per_isp GROUP BY 1,2
         )
         SELECT hour,
-               SUM(CASE WHEN psr_type='B16' THEN mw ELSE 0 END)/1000.0 AS solar_gw,
-               SUM(CASE WHEN psr_type IN ('B18','B19') THEN mw ELSE 0 END)/1000.0 AS wind_gw
-        FROM t GROUP BY 1 ORDER BY 1
+               AVG(solar_mw)/1000.0 AS solar_gw,
+               AVG(wind_mw)/1000.0 AS wind_gw
+        FROM per_day_hour GROUP BY 1 ORDER BY 1
     """).df()
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(9, 6), sharex=True)
