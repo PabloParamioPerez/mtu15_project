@@ -1,4 +1,9 @@
-# Master thesis proposal — economic structure for 44 alive findings
+# [HISTORICAL — May 5 2026 framing] Master thesis proposal — economic structure for 44 alive findings
+
+> **Tombstone (2026-05-08):** This is the May 5 2026 workshop framing of the project. For the current state see `thesis/paper/paper.tex` and the README memo map. Do not cite numbers from this document as current; in particular, the headline DiD coefficient and fringe-placebo specification have been refined and the canonical critical-hours definition has changed.
+
+---
+
 
 **Date:** 2026-04-28; revised 2026-05-02 (kill pass) and 2026-05-05 (post-CEMFI-workshop pivot — within-day DiD added as headline identification; B12, B13, B14 added to CLAIMS_LEDGER). Counts: **44 alive · 7 wounded · 20 dead · 71 active rows**. Working draft.
 
