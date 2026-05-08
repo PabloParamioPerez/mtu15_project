@@ -1,7 +1,7 @@
 \documentclass[11pt,a4paper]{article}
 
 \usepackage{amsmath, amssymb, amsthm, mathtools}
-\usepackage{graphicx, booktabs, subcaption, tikz}
+\usepackage{graphicx, booktabs, subcaption, tikz, float}
 \usepackage[round]{natbib}
 \usepackage[hidelinks]{hyperref}
 \usepackage{geometry}
@@ -61,7 +61,7 @@
 
 \subsection{Critical-vs-flat hours: empirical calibration}\label{sec:data:calibration}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.92\textwidth]{figures/fig_critical_hours_calibration.pdf}
 \caption{\textbf{Hourly profile of Spanish electricity, October--December 2025.}
@@ -71,7 +71,7 @@ Top panel: average load (left axis, blue) and DA clearing price (right axis, red
 
 \subsection{Identification strategy and treatment-effect set}\label{sec:data:identification}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{\textbf{Pivotality rate by parent firm and hour-class, CCGT only, October--December 2025.}
 Pivotality is the unit-level price-setter rate: tranches straddle the DA clearing price (i.e., $n_{\text{below}}>0$ and $n_{\text{above}}>0$), evaluated per (date, unit, period) and aggregated by parent firm $\times$ hour-class. The treatment-effect set in the empirical specifications is the set of firms with non-trivial CCGT pivotality in critical hours (HC, EDP-PT, GN, GE, IB plus mid-fringe CCGT operators). The placebo set is firms with effectively zero pivotality (Repsol, Engie España, TotalEnergies, Moeve). Source: \texttt{notebooks/memos/\_pivotality\_by\_firm\_critical\_hours.md}.}
@@ -105,7 +105,7 @@ TotalEnergies & 0.00 & 0.00 & 0.00 \\
 
 \subsection{Per-firm bid-shape patterns at hour-of-day resolution}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_per_firm_strategic_types.pdf}
 \caption{\textbf{Per-firm CCGT bid-shape patterns, October--December 2025 day-ahead market.}
@@ -117,7 +117,7 @@ Four-panel decomposition of dominant CCGT bidding by firm (Iberdrola, Endesa, Na
 
 \subsection{Pre- vs post-MTU15-DA structural changes}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/fig_per_firm_amplification.pdf}
 \caption{\textbf{Pre- vs post-MTU15-DA amplification of the critical--flat differential, by firm.}
@@ -134,7 +134,7 @@ Same-calendar-month comparison (October--December 2024 vs October--December 2025
 
 \subsection{\texorpdfstring{Within-day DiD on $q_2$: primary outcome}{Within-day DiD on q\_2: primary outcome}}\label{sec:results:q2}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{\textbf{B1 -- Within-day DiD on $q_2$ (Ito--Reguant strategic IDA upward adjustment).}
 Outcome is $q_2$ in MWh per (unit, clock-hour), defined as the sum of \texttt{pibci} across IDA sessions converted to MWh and aggregated to clock-hour resolution. Specification: $q_{2,fdh} = \alpha + \beta_1 \texttt{crit}_h + \beta_2 \texttt{post}_d + \beta_3 (\texttt{crit}_h \times \texttt{post}_d) + \gamma_f + \delta_{\mathrm{DOW}(d)} + \varepsilon_{fdh}$. Firm and day-of-week fixed effects; cluster-robust standard errors by date. Sample: same-calendar-month windows, October--December 2024 and October--December 2025 (both windows post-MTU15-IDA reform of March 2025). Critical hours: $h\in\{18,19,20,21,22\}$. Flat hours: $h\in\{3,4,5\}$. Treatment group: firms with $\geq 10\%$ pivotality in critical hours (HC, EDP-PT, GN, GE, IB). Placebo: firms with $\sim 0\%$ pivotality (Repsol, Engie España, TotalEnergies, Moeve). Significance: $^{*}$ $p<0.05$, $^{**}$ $p<0.01$, $^{***}$ $p<0.001$; headline interpretation relies on $^{***}$ given the large effective sample size.}
@@ -142,7 +142,7 @@ Outcome is $q_2$ in MWh per (unit, clock-hour), defined as the sum of \texttt{pi
 \input{tables/tab_B1_main}
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/fig_tech_stratified_beta3.pdf}
 \caption{\textbf{B1 -- Treatment-effect heterogeneity by technology.}
@@ -150,7 +150,7 @@ Coefficient plot of $\beta_3$ (critical $\times$ post DiD interaction) on $q_2$,
 \label{fig:tech_beta3}
 \end{figure}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{\textbf{B1 -- $\beta_3$ stratified by technology, treatment vs placebo group.}
 Same specification as Table~\ref{tab:B1_main}, restricted by technology and group. The ``Predicted'' column shows the model's directional prediction: $+$ for dispatchable strategic technologies (CCGT, Coal, Hydro, Hydro\_pump), $0$ for must-run (Nuclear) and price-taker (Wind, Biomass). The treatment-group dispatchable techs all show large positive $\beta_3$; Wind shows the predicted null. The placebo group should show $\beta_3 \approx 0$ across all technologies. Significance markers as in Table~\ref{tab:B1_main}.}
@@ -158,7 +158,7 @@ Same specification as Table~\ref{tab:B1_main}, restricted by technology and grou
 \resizebox{\textwidth}{!}{\input{tables/tab_B1_tech_stratified}}
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_q2_samecal_trajectory.pdf}
 \caption{\textbf{$q_2$ monthly mean by firm and hour-class, same-calendar-month windows.}
@@ -166,7 +166,7 @@ Six-panel monthly trajectory of $q_2$ (in MWh per unit-clock-hour) for the four 
 \label{fig:q2_trajectory}
 \end{figure}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{\textbf{Per-firm $\beta_3$ on $q_2$ (B1) and DA cleared MWh (B3).}
 Joint per-firm view of the $q_2$ outcome (Ito--Reguant IDA upward adjustment) and DA cleared volume. The mechanism storyboard predicts \textit{negative} $\beta_3$ on DA cleared (firms withhold in DA in critical hours post-reform) and \textit{positive} $\beta_3$ on $q_2$ (firms add upward in IDA). EDP-PT has no \texttt{pibci} entries (Portuguese-zone units do not appear in OMIE intraday programmes); the DA-side effect is identified.}
@@ -176,7 +176,7 @@ Joint per-firm view of the $q_2$ outcome (Ito--Reguant IDA upward adjustment) an
 
 \subsection{\texorpdfstring{DA $\to$ IDA price wedge: supporting outcome}{DA -> IDA price wedge: supporting outcome}}\label{sec:results:wedge}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{\textbf{B2 -- Within-day DiD on the DA $\to$ IDA price wedge.}
 Outcome is hourly Spain DA clearing price minus IDA clearing price (averaged across IDA sessions) in EUR/MWh. Same-calendar-month restriction (Oct-Dec 2024 vs Oct-Dec 2025) shows the within-day differential expanded modestly post-reform. The full-window specification (2024-01 to 2025-12) attributes most of the within-day wedge spike to the post-blackout \textit{operación reforzada} (April--September 2025): once the reforzada $\times$ critical interaction is included, the post-MTU15-DA $\times$ critical coefficient becomes large and negative, indicating that MTU15-DA itself \textit{reduces} the within-day wedge after controlling for the regulatory overlay. The DA-IDA wedge is therefore a noisy outcome for MTU15-DA identification absent reforzada controls.}
@@ -190,7 +190,7 @@ Outcome is hourly Spain DA clearing price minus IDA clearing price (averaged acr
 
 \subsection{Conditional parallel trends with renewable and reforzada controls}\label{sec:results:cpt}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{\textbf{B4 -- Conditional parallel trends: spec stack for $q_2$, treatment group only.}
 $\beta_3$ stability under successive control additions, starting from the baseline B1 specification (firm + DOW fixed effects). Spec (2) adds Spain hourly wind and solar production levels (ENTSO-E A75); Spec (3) adds the interaction of critical-hour dummy with VRE production (allowing the VRE effect to differ across critical and flat hours); Spec (4) adds calendar-month fixed effects. The same-calendar-month design already absorbs reforzada and MTU15-IDA via the post dummy (both hold constant within each window), so no separate controls for those reforms are needed in this spec stack. Stability of $\beta_3$ across columns is the conditional parallel-trends defence of the headline result.}
@@ -216,7 +216,7 @@ $\beta_3$ stability under successive control additions, starting from the baseli
 
 \subsection{Same-cal-month vs full-window comparisons}\label{app:window}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{\textbf{B5 -- Robustness panel: $\beta_3$ across specifications, treatment group on $q_2$.}
 Each row reports the headline coefficient $\beta_3$ under a single sensitivity. Section B5.1 varies the critical-hours definition between four candidates (price\_peak is canonical). Section B5.2 varies the firm partition between the pivotality-based set (which includes EDP-PT) and the administrative IB/GE/GN/HC tier; the two coincide because EDP-PT lacks \texttt{pibci} data so its inclusion does not alter the q\_2 regression. Section B5.3/B5.5 varies the window: the full 2024--2025 panel reduces the coefficient because the pre-MTU15-DA half of the panel is post-MTU15-IDA, where $q_2$ magnitudes are already crushed by the IDA reform; excluding the reforzada-active months (April--September 2025) recovers a coefficient close to the same-calendar-month estimate. Section B5.4 verifies that excluding individual units (EDP-PT, ABO2G) does not change the result.}
