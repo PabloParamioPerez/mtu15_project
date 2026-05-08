@@ -153,11 +153,12 @@ mtu15_project/
 ├── scripts/
 │   ├── pipelines/{omie,esios,entsoe}/   # 00_download → 10_parse → 20_build
 │   ├── analysis/
-│   │   ├── system/                      # Acts I — system-level friction (S5/S6/B6/B7/S7/S8)
-│   │   ├── firm/                        # Acts II — Big-4 strategic conduct (B9 family + F12/F15/F16)
-│   │   ├── regulatory/                  # Acts III — RT2 + CNMC enforcement
+│   │   ├── system/                      # system-level friction (S5/S6/B6/B7/S7/S8)
+│   │   ├── firm/                        # firm-level strategic conduct (critical-vs-flat DiD, B9/B12-B14, F12/F15/F16, pdbf bilateral)
+│   │   ├── bid/                         # bid-shape and granularity tests (B14 critical_vs_flat_bidshape; B1, B2, B8)
+│   │   ├── regulatory/                  # RT2 + CNMC enforcement
 │   │   ├── balancing/                   # aFRR/mFRR/nuclear-availability
-│   │   ├── lerner/, modelling/, panels/, synthetic/, bid/, attic/
+│   │   ├── modelling/, panels/, attic/  # mechanism-candidate models, panel builders, retired pre-pivot work (incl. lerner/, synthetic/)
 │   ├── admin/                           # audit, inspection, forensic scripts
 │   └── stata/                           # Stata .do files
 │
@@ -170,16 +171,19 @@ mtu15_project/
 ├── notebooks/                 # exploratory notebooks (not thesis output)
 │   ├── eda/                             # numbered EDA notebooks
 │   ├── memos/                           # research diary, modelling track, audits
-│   └── archive/                         # superseded exploratory work
+│   └── attic/                           # superseded exploratory work
 │
 ├── thesis/                    # WRITING ONLY (output = single paper, not multi-chapter)
-│   ├── proposal.md                      # master thesis proposal
-│   ├── paper.tex                        # the paper (when drafting begins; single .tex with \section{} blocks)
-│   ├── model/model.tex                  # structural model derivation (compiled to model.pdf)
+│   ├── paper/                           # the thesis paper (June 2026)
+│   │   ├── paper.tex                    # single .tex with \section{} blocks
+│   │   └── references.bib
+│   ├── model/                           # reserved for new structural model when written
 │   ├── narratives/                      # presentation narratives, planning docs
-│   └── presentations/
-│       ├── workshop_february_2026/      # first thesis-progress presentation
-│       └── workshop_may_2026/           # second thesis-progress presentation (active)
+│   ├── presentations/
+│   │   ├── workshop_february_2026/      # first thesis-progress presentation
+│   │   └── workshop_may_2026/           # second thesis-progress presentation
+│   └── _archive/                        # historical framings (do NOT cite as current)
+│       └── proposal_workshop_may2026.md # May 5 2026 framing
 │
 ├── docs/                      # external reference materials (operator specs, regulation, papers)
 ├── tests/                     # pytest suite
@@ -187,6 +191,22 @@ mtu15_project/
 ├── attic/                     # project-level retired material
 └── renv/, .Rprofile, renv.lock          # R environment (kept for future phases; not currently used)
 ```
+
+---
+
+## Memo map (`notebooks/memos/`)
+
+For thesis-current findings, consult these canonical memos. Earlier per-firm memos are SUPPORTING / SUPERSEDED — kept as historical record.
+
+| Cluster | Canonical memo |
+|---|---|
+| **Identification design** | `_critical_hours_calibration.md`, `_pivotality_by_firm_critical_hours.md`, `_structural_dominance_audit.md`, `_parallel_trends_diagnostic.md` |
+| **Bid-shape mechanism evidence** | `_per_firm_hourly_bidshape.md`, `_per_firm_pre_vs_post_mtu15da.md`, `_per_firm_competitive_zone_bidshape.md`, `_quarter_price_vs_qty_decomposition.md`, `_operational_strategic_decomposition.md` |
+| **Theoretical model** | `_within_market_granularity_model.md` |
+| **Reference / context** | `_modelling_track.md`, `_identification_target.md`, `_euphemia_order_types_check.md` |
+| **Audit trail** | `RESEARCH_DIARY.md`, `RESEARCH_LOG.md`, `_audits.md` |
+
+For the formal claim status of each empirical finding, see `CLAIMS_LEDGER.md`. For the thesis paper itself (drafting in progress, June 2026), see `thesis/paper/paper.tex`.
 
 ---
 
