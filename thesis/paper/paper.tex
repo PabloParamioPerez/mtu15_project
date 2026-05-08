@@ -63,9 +63,17 @@
 
 \begin{figure}[H]
 \centering
+\includegraphics[width=0.95\textwidth]{figures/fig_seasonal_critical_hours.pdf}
+\caption{\textbf{Hourly load and DA price profile, by season, Spain 2025.}
+Four-panel decomposition by season verifies that the canonical critical-hours set is robust to seasonal heterogeneity. The price peak h\{18-22\} is stable across all four seasons; spring and summer additionally show a morning ramp peak at h7-8. Flat hours h\{2-4\} are stable everywhere. The canonical \textit{joint} set h\{7,8,16-22\} (used in the headline DiD) is the union of morning-ramp and evening-peak hours; it is the natural cross-season-robust definition.}
+\label{fig:seasonal}
+\end{figure}
+
+\begin{figure}[H]
+\centering
 \includegraphics[width=0.92\textwidth]{figures/fig_critical_hours_calibration.pdf}
 \caption{\textbf{Hourly profile of Spanish electricity, October--December 2025.}
-Top panel: average load (left axis, blue) and DA clearing price (right axis, red) by hour of day, Madrid local time. Bottom panel: average wind and solar production. Red bands mark the canonical \textit{critical hours} $h\in\{18,19,20,21,22\}$ (peak load, peak DA price, no solar). Blue bands mark the \textit{flat hours} $h\in\{3,4,5\}$ (load and price minima, no solar). Critical hours combine high demand with low VRE supply; flat hours have low demand and no time variation in either direction.}
+Top panel: average load (left axis, blue) and DA clearing price (right axis, red) by hour of day, Madrid local time. Bottom panel: average wind and solar production. Red bands mark the canonical \textit{critical hours} $h\in\{7,8,16,17,18,19,20,21,22\}$ (the \textit{joint} set: morning ramp $\cup$ afternoon-evening peak) (peak load, peak DA price, no solar). Blue bands mark the \textit{flat hours} $h\in\{3,4,5\}$ (load and price minima, no solar). Critical hours combine high demand with low VRE supply; flat hours have low demand and no time variation in either direction.}
 \label{fig:calibration}
 \end{figure}
 
@@ -137,7 +145,7 @@ Same-calendar-month comparison (October--December 2024 vs October--December 2025
 \begin{table}[H]
 \centering
 \caption{\textbf{B1 -- Within-day DiD on $q_2$ (Ito--Reguant strategic IDA upward adjustment).}
-Outcome is $q_2$ in MWh per (unit, clock-hour), defined as the sum of \texttt{pibci} across IDA sessions converted to MWh and aggregated to clock-hour resolution. Specification: $q_{2,fdh} = \alpha + \beta_1 \texttt{crit}_h + \beta_2 \texttt{post}_d + \beta_3 (\texttt{crit}_h \times \texttt{post}_d) + \gamma_f + \delta_{\mathrm{DOW}(d)} + \varepsilon_{fdh}$. Firm and day-of-week fixed effects; cluster-robust standard errors by date. Sample: same-calendar-month windows, October--December 2024 and October--December 2025 (both windows post-MTU15-IDA reform of March 2025). Critical hours: $h\in\{18,19,20,21,22\}$. Flat hours: $h\in\{3,4,5\}$. Treatment group: firms with $\geq 10\%$ pivotality in critical hours (HC, EDP-PT, GN, GE, IB). Placebo: firms with $\sim 0\%$ pivotality (Repsol, Engie España, TotalEnergies, Moeve). Significance: $^{*}$ $p<0.05$, $^{**}$ $p<0.01$, $^{***}$ $p<0.001$; headline interpretation relies on $^{***}$ given the large effective sample size.}
+Outcome is $q_2$ in MWh per (unit, clock-hour), defined as the sum of \texttt{pibci} across IDA sessions converted to MWh and aggregated to clock-hour resolution. Specification: $q_{2,fdh} = \alpha + \beta_1 \texttt{crit}_h + \beta_2 \texttt{post}_d + \beta_3 (\texttt{crit}_h \times \texttt{post}_d) + \gamma_f + \delta_{\mathrm{DOW}(d)} + \varepsilon_{fdh}$. Firm and day-of-week fixed effects; cluster-robust standard errors by date. Sample: same-calendar-month windows, October--December 2024 and October--December 2025 (both windows post-MTU15-IDA reform of March 2025). Critical hours: $h\in\{7,8,16,17,18,19,20,21,22\}$ (joint: morning ramp $\cup$ evening peak; cross-season-robust). Flat hours: $h\in\{3,4,5\}$. Treatment group: firms with $\geq 10\%$ pivotality in critical hours (HC, EDP-PT, GN, GE, IB). Placebo: firms with $\sim 0\%$ pivotality (Repsol, Engie España, TotalEnergies, Moeve). Significance: $^{*}$ $p<0.05$, $^{**}$ $p<0.01$, $^{***}$ $p<0.001$; headline interpretation relies on $^{***}$ given the large effective sample size.}
 \label{tab:B1_main}
 \input{tables/tab_B1_main}
 \end{table}

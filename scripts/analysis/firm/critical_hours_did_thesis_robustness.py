@@ -175,7 +175,7 @@ def main():
 
     print("\n=== B5.2 — Firm partition sensitivity ===")
     print("(price_peak critical hours; same-cal-month)\n")
-    sub_pivot = make_did_columns(treat_full, CRITICAL_HOUR_SETS["price_peak"])
+    sub_pivot = make_did_columns(treat_full, CRITICAL_HOUR_SETS["joint"])  # canonical
     r = run_did(sub_pivot, "B5.2a_pivotality_treatment_set"); results.append(r); print_result(r)
 
     # Administrative dominant set: IB/GE/GN/HC (drop EDP-PT)
@@ -183,7 +183,7 @@ def main():
     post_adm = build_panel_full(units[units["parent"].isin(ADMIN_DOMINANT_PARENTS)], POST_START, POST_END)
     pre_adm["post"] = 0; post_adm["post"] = 1
     admin_full = pd.concat([pre_adm, post_adm], ignore_index=True)
-    sub_adm = make_did_columns(admin_full, CRITICAL_HOUR_SETS["price_peak"])
+    sub_adm = make_did_columns(admin_full, CRITICAL_HOUR_SETS["joint"])  # canonical
     r = run_did(sub_adm, "B5.2b_admin_IB_GE_GN_HC"); results.append(r); print_result(r)
 
     print("\n=== B5.3 — Window sensitivity (same-cal-month vs full window) ===")
@@ -194,7 +194,7 @@ def main():
     print(f"Full panel rows: {len(treat_full_window):,}")
     # Define post = post-MTU15-DA (Oct 1 2025 onwards)
     treat_full_window["post"] = (treat_full_window["d"] >= pd.Timestamp("2025-10-01")).astype(int)
-    sub_full = make_did_columns(treat_full_window, CRITICAL_HOUR_SETS["price_peak"])
+    sub_full = make_did_columns(treat_full_window, CRITICAL_HOUR_SETS["joint"])  # canonical
     r = run_did(sub_full, "B5.3a_full_window_2024_2025"); results.append(r); print_result(r)
 
     print("\n=== B5.4 — Sample exclusions ===")

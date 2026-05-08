@@ -105,8 +105,8 @@ def main():
         axb.plot(price["hour"], price["price"], color="C3", marker="s", label="DA price (€/MWh)")
         axb.set_ylabel("DA price (€/MWh)", color="C3")
         axb.tick_params(axis="y", labelcolor="C3")
-        # Highlight canonical critical h{18-22} and flat h{3-5}
-        for h in (18, 19, 20, 21, 22):
+        # Highlight canonical 'joint' critical h{7,8,16-22} and flat h{3-5}
+        for h in (7, 8, 16, 17, 18, 19, 20, 21, 22):
             ax.axvspan(h-0.5, h+0.5, alpha=0.10, color="red")
         for h in (3, 4, 5):
             ax.axvspan(h-0.5, h+0.5, alpha=0.10, color="blue")
@@ -115,7 +115,7 @@ def main():
         ax.set_xticks(range(0, 24, 2))
         ax.grid(alpha=0.3)
     fig.suptitle("Hourly load and DA price by season, Spain 2025\n"
-                 "Red bands: canonical critical h{18-22}.  Blue bands: canonical flat h{3-5}.",
+                 "Red bands: canonical (joint) critical h{7,8,16-22}.  Blue bands: canonical flat h{3-5}.",
                  fontsize=11)
     fig.tight_layout()
     out = FIGDIR / "fig_seasonal_critical_hours"
