@@ -27,7 +27,7 @@ WIND_SOLAR = REPO / "data" / "processed" / "entsoe" / "generation" / "wind_solar
 B1_OUT = REPO / "results" / "regressions" / "firm" / "critical_hours_thesis" / "B1_q2_did.csv"
 B1_PANEL = REPO / "results" / "regressions" / "firm" / "critical_hours_thesis" / "B1_panel.parquet"
 
-CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19)  # canonical: demand surge ∪ VRE transition
+CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)  # canonical: demand surge ∪ VRE transition
 FLAT_HOURS = (1, 2, 3)
 
 

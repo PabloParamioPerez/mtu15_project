@@ -50,7 +50,7 @@ UNITS_CSV = REPO / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 PRE_START, PRE_END = "2024-10-01", "2025-01-01"
 POST_START, POST_END = "2025-10-01", "2026-01-01"
 
-CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19)  # 'demand_surge_supply_transition': h where demand surges UP and/or VRE transitions
+CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)  # 'demand_surge_supply_transition': h where demand surges UP and/or VRE transitions
 # Excludes h{20-22} (post-peak descent, no rent-extraction granularity value).
 # Excludes h4 (ramps but system not tight enough for strategic conduct).
 # Robustness alternatives in B5.1: joint h{7,8,16-22}, price_peak h{18-22}, supply_ramp h{7,8,16-18}, demand_peak h{16-20}.

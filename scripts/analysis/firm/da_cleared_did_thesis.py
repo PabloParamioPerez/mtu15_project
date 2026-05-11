@@ -34,7 +34,7 @@ UNITS_CSV = REPO / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 
 PRE_START, PRE_END = "2024-10-01", "2025-01-01"
 POST_START, POST_END = "2025-10-01", "2026-01-01"
-CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19)  # canonical: demand surge + VRE transition
+CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)  # canonical: demand surge + VRE transition
 FLAT_HOURS = (1, 2, 3)
 
 
