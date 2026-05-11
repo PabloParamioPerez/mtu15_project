@@ -34,7 +34,7 @@ B1_PANEL = OUTDIR / "B1_panel.parquet"
 
 # All four critical-hours sets per `_critical_hours_calibration.md`
 CRITICAL_HOUR_SETS = {
-    "canonical_demand_surge_vre_transition": (5, 6, 7, 16, 17, 18, 19),  # canonical B1
+    "canonical_demand_surge_vre_transition": (5, 6, 7, 8, 16, 17, 18, 19),  # canonical B1
     "supply_ramp": (7, 8, 16, 17, 18),                  # original σ²_within set
     "price_peak": (18, 19, 20, 21, 22),                  # top-5 by DA price
     "demand_peak": (16, 17, 18, 19, 20),                 # top-5 by raw load

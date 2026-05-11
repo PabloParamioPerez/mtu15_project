@@ -307,7 +307,7 @@ def build_b5_robustness_table():
     df = pd.read_csv(SRC / "B5_robustness.csv").set_index("label")
     sections = [
         ("B5.1 — Critical-hours definition", [
-            ("B5.1_canonical_demand_surge_vre_transition_h5_6_7_16_17_18_19", r"\textbf{Canonical} h\{5,6,7,16-19\} (demand surge $\cup$ VRE transition)"),
+            ("B5.1_canonical_demand_surge_vre_transition_h5_6_7_8_16_17_18_19", r"\textbf{Canonical} h\{5-8, 16-19\} (demand surge $\cup$ VRE transition)"),
             ("B5.1_supply_ramp_h7_8_16_17_18", "supply\\_ramp h\\{7,8,16,17,18\\}"),
             ("B5.1_price_peak_h18_19_20_21_22", "price\\_peak h\\{18-22\\}"),
             ("B5.1_demand_peak_h16_17_18_19_20", "demand\\_peak h\\{16-20\\}"),

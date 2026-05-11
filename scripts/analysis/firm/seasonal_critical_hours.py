@@ -136,7 +136,7 @@ def main():
         axb.set_ylabel("DA price (€/MWh)", color="C3")
         axb.tick_params(axis="y", labelcolor="C3")
         # Highlight canonical 'joint' critical h{7,8,16-22} and flat h{3-5}
-        for h in (5, 6, 7, 16, 17, 18, 19):
+        for h in (5, 6, 7, 8, 16, 17, 18, 19):
             ax.axvspan(h-0.5, h+0.5, alpha=0.10, color="red")
         for h in (1, 2, 3):
             ax.axvspan(h-0.5, h+0.5, alpha=0.10, color="blue")
@@ -159,7 +159,7 @@ def main():
     for ax, (season, vre) in zip(axes2.flat, vre_profiles.items()):
         ax.plot(vre["hour"], vre["wind_gw"], color="green", marker="o", label="Wind (GW)")
         ax.plot(vre["hour"], vre["solar_gw"], color="orange", marker="s", label="Solar (GW)")
-        for h in (5, 6, 7, 16, 17, 18, 19):
+        for h in (5, 6, 7, 8, 16, 17, 18, 19):
             ax.axvspan(h-0.5, h+0.5, alpha=0.10, color="red")
         for h in (1, 2, 3):
             ax.axvspan(h-0.5, h+0.5, alpha=0.10, color="blue")
