@@ -29,17 +29,22 @@ def main():
     df["class"] = df["hour"].apply(cls)
     df = df.sort_values("hour")
     tex = []
-    tex.append(r"\begin{tabular}{r r r r r r l}")
+    tex.append(r"\begin{tabular}{l r r r r r l}")
     tex.append(r"\toprule")
-    tex.append(r"$h$ & load (GW) & solar (GW) & net-load (GW) & $\sigma_{\text{within}}$ (MW) & $\Delta$load (MW) & class \\")
+    tex.append(r"Clock-hour & demand (GW) & solar (GW) & residual demand (GW) & $\sigma_{\text{within}}$ (MW) & within-hour $\Delta$ demand (MW) & class \\")
     tex.append(r"\midrule")
     for _, r in df.iterrows():
         h = int(r["hour"])
         emph = r"\textbf{" if r["class"] == "critical" else (r"\textit{" if r["class"] == "flat" else "{")
         end = "}"
-        line = (f"{emph}{h:>2}{end} & {r['load_gw']:.1f} & {r['solar_gw']:.1f} & "
+        # Clock-hour label: hour as 24h format "HH:00--(HH+1):00"
+        hh = f"{h:02d}:00--{(h+1)%24:02d}:00"
+        # Render Δ with minus only (positive shown without sign)
+        d = r["delta_load_mw"]
+        delta_str = f"$-${abs(d):.0f}" if d < 0 else f"{d:.0f}"
+        line = (f"{emph}{hh}{end} & {r['load_gw']:.1f} & {r['solar_gw']:.1f} & "
                 f"{r['netload_gw']:.1f} & {r['sigma_netload_mw']:.0f} & "
-                f"{r['delta_load_mw']:+.0f} & \\textit{{{r['class']}}} \\\\")
+                f"{delta_str} & \\textit{{{r['class']}}} \\\\")
         tex.append(line)
     tex.append(r"\bottomrule")
     tex.append(r"\end{tabular}")

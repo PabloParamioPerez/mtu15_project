@@ -63,35 +63,35 @@ OJO, IF REE RESTRICTS THE RAMPS (QUANTITY CANNOT CHANGE A LOT), THE MTU15 REFORM
 
 \subsection{Critical-vs-flat hours: empirical calibration}\label{sec:data:calibration}
 
-Our identification strategy relies on the idea that the reform does not give extra strategic space for firms to exploit in all hours (REFERENCE TO OUR MODEL). The reform's strategic effect is concentrated where there is high \textit{within-hour variation of residual demand} (load minus VRE) — those are the hours where higher granularity allows firms to set quarter-specific bids that better match within-hour conditions.
+Our identification strategy relies on the idea that the reform does not give extra strategic space for firms to exploit in all hours (REFERENCE TO OUR MODEL). The reform's strategic effect is concentrated in hours where the \textit{residual demand} (electricity demand minus wind and solar production) varies substantially within the hour — those are the hours where finer time resolution allows firms to set quarter-specific bids that match the within-hour conditions.
 
-\textbf{Classification criterion.} For each clock-hour $h$, define
+\textbf{Classification criterion.} For each clock-hour $h$, define the within-hour variance of residual demand,
 \begin{equation}
    \sigma^2_{\text{within}}(h) \;=\; \mathbb{E}_d\!\left[\,\tfrac{1}{4}\sum_{q=1}^{4}\bigl(D_{h,q,d}-\bar{D}_{h,d}\bigr)^{2}\,\right],
-   \qquad D_{h,q,d} = \text{load}_{h,q,d} - \text{wind}_{h,q,d} - \text{solar}_{h,q,d},
+   \qquad D_{h,q,d} = \text{demand}_{h,q,d} - \text{wind}_{h,q,d} - \text{solar}_{h,q,d},
 \end{equation}
-the within-hour variance of residual demand across the four 15-minute quarters $q$, averaged over days $d$. \textbf{Critical hours} are those with high $\sigma^2_{\text{within}}$ (large within-hour residual-demand variation, direction-blind); \textbf{flat hours} are those with low $\sigma^2_{\text{within}}$. \textbf{Borderline hours} (moderate variance, no clean class assignment) are dropped from the analysis.
+where the expectation is taken across days $d$ and the variance is taken across the four 15-minute quarters $q$ of clock-hour $h$. \textbf{Critical hours} are those with high $\sigma^2_{\text{within}}$ (large within-hour movement in residual demand, in either direction); \textbf{flat hours} are those with low $\sigma^2_{\text{within}}$. Borderline hours (moderate variance, no clean class assignment) are dropped from the analysis.
 
-Applying this criterion to Spain 2025 data yields the following hour-of-day taxonomy:
+Applying this criterion to Spain 2025 yields the following grouping:
 
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{l l p{6.5cm} l}
+\begin{tabular}{l l p{6.7cm} l}
 \toprule
-\textbf{Pattern} & \textbf{Hours} & \textbf{Mechanism} & \textbf{Class} \\
+\textbf{Pattern} & \textbf{Hours (local)} & \textbf{Mechanism} & \textbf{Class} \\
 \midrule
-Overnight valley & h\{1,2,3\} & Demand low and stable; no solar; system slack & \textit{flat} \\
-Morning ramp + solar entry & h\{5,6,7,8\} & Demand surges up (+1500--1800 MW within-hour); solar enters at h6--h8 & \textit{critical} \\
-Midday solar plateau & h\{11,12,13,14\} & Demand flat; solar at peak but variable across days (clouds) & dropped \\
-Afternoon ramp + solar exit & h\{16,17,18,19\} & Demand rises (+600--900 MW); solar fades & \textit{critical} \\
-Post-peak descent & h\{20,21,22\} & Demand falls sharply (-1500 to -1900 MW); solar zero & \textit{critical} \\
-Transitional & h\{0, 4, 9, 10, 15, 23\} & Mixed/small variation; no clean assignment & dropped \\
+Overnight valley & 01:00--04:00 & Demand low and stable; no solar; system slack & \textit{flat} \\
+Morning ramp + solar entry & 05:00--09:00 & Demand rises sharply (1.5--1.8 GW within the hour); solar production starts entering between 06:00 and 09:00 & \textit{critical} \\
+Midday solar plateau & 11:00--15:00 & Demand flat at its daytime level; solar near peak but variable across days (cloud cover) & dropped \\
+Afternoon ramp + solar exit & 16:00--20:00 & Demand rises into the evening peak; solar production fades & \textit{critical} \\
+Post-peak descent & 20:00--23:00 & Demand falls sharply from the evening peak (1.5--1.9 GW within the hour); solar already gone & \textit{critical} \\
+Transitional & 00:00--01:00, 04:00--05:00, 09:00--10:00, 15:00--16:00, 23:00--24:00 & Mixed/small variation; no clean assignment & dropped \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Critical hours: $h\in\{5,6,7,8,16,17,18,19,20,21,22\}$. Flat hours: $h\in\{1,2,3\}$. The full 24-hour ranking with $\sigma^2_{\text{within}}$, mean load, mean solar, and within-hour $\Delta\text{load}$ is in Appendix~\ref{app:hour_metrics}.
+The critical-hour set used in the empirical analysis is 05:00--09:00 and 16:00--23:00 (eleven clock-hours). The flat-hour set is 01:00--04:00 (three clock-hours). The full 24-hour ranking by $\sigma^2_{\text{within}}$, mean demand, mean solar, and within-hour demand change is reported in Appendix~\ref{app:hour_metrics}.
 
 
 
@@ -99,7 +99,7 @@ Critical hours: $h\in\{5,6,7,8,16,17,18,19,20,21,22\}$. Flat hours: $h\in\{1,2,3
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_seasonal_critical_hours.pdf}
 \caption{\textbf{Hourly load and DA price profile, by season, Spain 2025.}
-Four-panel decomposition by season. Load (left axis, blue) is realized Spanish electricity demand from ENTSO-E A65; the slope of the load curve is the demand ramp rate (visible at h5--h8 morning and h16--h22 afternoon-evening across all seasons). Red bands mark the canonical \textit{critical hours} $h\in\{5,6,7,8,16,17,18,19,20,21,22\}$ (high within-hour variance of residual demand). Blue bands mark the \textit{flat hours} $h\in\{1,2,3\}$ (overnight valley). Critical hours combine the morning ramp + solar entry, the afternoon ramp + solar exit, and the post-peak descent; flat hours have low demand, no solar, and stable system state.}
+Four-panel decomposition by season. Blue line: realized Spanish electricity demand; the slope of the line is the within-hour demand ramp rate. Red line: day-ahead clearing price. Red bands mark the \textit{critical hours} (05:00--09:00 and 16:00--23:00, local time): high within-hour variance of residual demand. Blue bands mark the \textit{flat hours} (01:00--04:00): low and stable demand, no solar, system slack. Critical hours combine the morning ramp, the afternoon transition into the evening peak, and the post-peak descent; flat hours are the overnight valley.}
 \label{fig:seasonal}
 \end{figure}
 
@@ -107,7 +107,7 @@ Four-panel decomposition by season. Load (left axis, blue) is realized Spanish e
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_seasonal_vre.pdf}
 \caption{\textbf{Hourly wind and solar production by season, Spain 2025.}
-Four-panel decomposition by season. Red bands mark the canonical \textit{critical hours} $h\in\{5,6,7,8,16,17,18,19,20,21,22\}$ (\textit{demand surge} $\cup$ \textit{VRE transition}). Blue bands mark the \textit{flat hours} $h\in\{1,2,3\}$. Solar production is concentrated in midday hours and disappears in critical-hour bands; wind is broadly flat across the day with mild seasonality. The combination implies that critical hours systematically have low VRE supply year-round, supporting the use of the canonical set as the strategically-relevant time-varying window.}
+Four-panel decomposition by season. Red bands mark the \textit{critical hours} (05:00--09:00 and 16:00--23:00). Blue bands mark the \textit{flat hours} (01:00--04:00). Solar production is concentrated in midday hours and fades sharply at the boundaries of the critical-hour bands; wind is broadly flat across the day with mild seasonality. The combination implies that critical hours systematically coincide with low renewable supply year-round, reinforcing the case for treating them as the strategically relevant time-varying window.}
 \label{fig:vre_seasonal}
 \end{figure}
 
@@ -120,17 +120,17 @@ Pivotality is the unit-level price-setter rate: tranches straddle the DA clearin
 \label{tab:pivotality}
 \begin{tabular}{l c c c}
 \toprule
-Firm (parent) & flat $h\{1,2,3\}$ & critical $h\{5,6,7,8,16,17,18,19,20,21,22\}$ & $\Delta$ crit$-$flat \\
+Firm (parent) & flat (01:00--04:00) & critical (05:00--09:00, 16:00--23:00) & $\Delta$ crit$-$flat \\
 \midrule
 \multicolumn{4}{l}{\textit{Pivotal firms (expected to react to the hour-level treatment)}} \\
-EDP-Spain      & 0.523 & 0.998 & \textbf{+0.475} \\
-Naturgy        & 0.018 & 0.515 & \textbf{+0.497} \\
-EDP-Portugal   & 0.744 & 0.865 & +0.121 \\
-Iberdrola      & 0.009 & 0.156 & +0.147 \\
-Endesa         & 0.124 & 0.240 & +0.117 \\
+EDP-Spain      & 0.523 & 0.998 & \textbf{0.475} \\
+Naturgy        & 0.018 & 0.515 & \textbf{0.497} \\
+EDP-Portugal   & 0.744 & 0.865 & 0.121 \\
+Iberdrola      & 0.009 & 0.156 & 0.147 \\
+Endesa         & 0.124 & 0.240 & 0.117 \\
 \midrule
 \multicolumn{4}{l}{\textit{Non-pivotal firms (placebo)}} \\
-Engie España           & 0.000 & 0.002 & +0.002 \\
+Engie España           & 0.000 & 0.002 & 0.002 \\
 Moeve (formerly Cepsa) & 0.005 & 0.005 & $-$0.001 \\
 Repsol                 & 0.000 & 0.000 & 0.000 \\
 TotalEnergies          & 0.000 & 0.000 & 0.000 \\

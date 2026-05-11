@@ -73,7 +73,7 @@ def build_b1_main_table():
     line = r"$\beta_3$: \texttt{crit} $\times$ \texttt{post}"
     for lbl in rows_we_want:
         r = sub.loc[lbl]
-        line += " & " + (f"${r['beta_3']:+.2f}${stars(r['p'])}" if not pd.isna(r['beta_3']) else "---")
+        line += " & " + (f"${r['beta_3']:.2f}${stars(r['p'])}" if not pd.isna(r['beta_3']) else "---")
     line += r" \\"
     tex.append(line)
     # SE row
@@ -101,7 +101,7 @@ def build_b1_main_table():
         for lbl in rows_we_want:
             r = sub.loc[lbl]
             v = r.get(key, np.nan)
-            line += " & " + (f"${v:+.2f}$" if not pd.isna(v) else "---")
+            line += " & " + (f"${v:.2f}$" if not pd.isna(v) else "---")
         line += r" \\"
         tex.append(line)
 
@@ -170,7 +170,7 @@ def build_b1_tech_table():
             if t in src.index:
                 r = src.loc[t]
                 if pd.notna(r.get("beta_3", np.nan)):
-                    line += f" & ${r['beta_3']:+.2f}${stars(r['p'])} & ({r['se']:.2f}) / {int(r['n']):,}"
+                    line += f" & ${r['beta_3']:.2f}${stars(r['p'])} & ({r['se']:.2f}) / {int(r['n']):,}"
                 else:
                     line += " & --- & ---"
             else:
@@ -221,7 +221,7 @@ def build_per_firm_table():
             if f in src.index:
                 r = src.loc[f]
                 if pd.notna(r.get("beta_3", np.nan)):
-                    line += f" & ${r['beta_3']:+.2f}${stars(r['p'])} & ({r['se']:.2f})"
+                    line += f" & ${r['beta_3']:.2f}${stars(r['p'])} & ({r['se']:.2f})"
                 else:
                     line += " & --- & ---"
             else:
@@ -256,7 +256,7 @@ def build_b2_wedge_table():
         r = df.loc[key]
         line = lbl
         if pd.notna(r["beta_3"]):
-            line += f" & ${r['beta_3']:+.2f}${stars(r['p'])} & ({r['se']:.2f}) & {r['p']:.4f} & {int(r['n_clusters'])}"
+            line += f" & ${r['beta_3']:.2f}${stars(r['p'])} & ({r['se']:.2f}) & {r['p']:.4f} & {int(r['n_clusters'])}"
         else:
             line += " & --- & --- & --- & ---"
         line += r" \\"
@@ -289,7 +289,7 @@ def build_b4_cpt_table():
         r = df.loc[key]
         line = labels[key]
         if pd.notna(r["beta_3"]):
-            line += f" & ${r['beta_3']:+.2f}${stars(r['p'])} & ({r['se']:.2f}) & {r['p']:.4f} & {int(r['n_clusters'])}"
+            line += f" & ${r['beta_3']:.2f}${stars(r['p'])} & ({r['se']:.2f}) & {r['p']:.4f} & {int(r['n_clusters'])}"
         else:
             line += " & --- & --- & --- & ---"
         line += r" \\"
@@ -346,7 +346,7 @@ def build_b5_robustness_table():
             r = df.loc[key]
             line = r"\quad " + lbl
             if pd.notna(r["beta_3"]):
-                line += f" & ${r['beta_3']:+.2f}${stars(r['p'])} & ({r['se']:.2f}) & {r['p']:.4f} & {int(r['n_clusters'])}"
+                line += f" & ${r['beta_3']:.2f}${stars(r['p'])} & ({r['se']:.2f}) & {r['p']:.4f} & {int(r['n_clusters'])}"
             else:
                 line += " & --- & --- & --- & ---"
             line += r" \\"
