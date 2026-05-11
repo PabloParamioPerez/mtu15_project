@@ -183,7 +183,7 @@ def main() -> None:
     t4 = con.execute(f"""
         SELECT uf.firm, uf.tech_group,
                CASE WHEN p.mtu_minutes = 60 THEN p.period
-                    ELSE ((p.period - 1) / 4) + 1 END AS hour_of_day,
+                    ELSE ((p.period - 1) // 4) + 1 END AS hour_of_day,
                SUM(CASE WHEN p.offer_type = 4 AND p.assigned_power_mw > 0
                         THEN p.assigned_power_mw * p.mtu_minutes / 60.0
                         ELSE 0 END) AS bilateral_mwh,

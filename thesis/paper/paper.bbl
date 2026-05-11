@@ -1,0 +1,43 @@
+\begin{thebibliography}{7}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Allaz and Vila(1993)]{allaz_vila_1993}
+Blaise Allaz and Jean-Luc Vila.
+\newblock {Cournot competition, forward markets and efficiency}.
+\newblock \emph{Journal of Economic Theory}, 59\penalty0 (1):\penalty0 1--16, 1993.
+
+\bibitem[Bushnell(2003)]{bushnell_2003}
+James~B. Bushnell.
+\newblock A mixed complementarity model of hydro-thermal electricity competition in the western {US}.
+\newblock \emph{Operations Research}, 51\penalty0 (1):\penalty0 80--93, 2003.
+
+\bibitem[de~Chaisemartin and D'Haultf\oe~uille(2020)]{de_chaisemartin_2020}
+Cl\'ement de~Chaisemartin and Xavier D'Haultf\oe~uille.
+\newblock Two-way fixed effects estimators with heterogeneous treatment effects.
+\newblock \emph{American Economic Review}, 110\penalty0 (9):\penalty0 2964--96, 2020.
+
+\bibitem[Horta\c{c}su and Puller(2008)]{hortacsu_puller_2008}
+Ali Horta\c{c}su and Steven~L. Puller.
+\newblock Understanding strategic bidding in multi-unit auctions: a case study of the texas electricity spot market.
+\newblock \emph{RAND Journal of Economics}, 39\penalty0 (1):\penalty0 86--114, 2008.
+
+\bibitem[Ito and Reguant(2016)]{ito_reguant_2016}
+Koichiro Ito and Mar Reguant.
+\newblock Sequential markets, market power, and arbitrage.
+\newblock \emph{American Economic Review}, 106\penalty0 (7):\penalty0 1921--57, 2016.
+
+\bibitem[Mansur(2008)]{mansur_2008}
+Erin~T. Mansur.
+\newblock Measuring welfare in restructured electricity markets.
+\newblock \emph{Review of Economics and Statistics}, 90\penalty0 (2):\penalty0 369--386, 2008.
+
+\bibitem[Wolak(2003)]{wolak_2003}
+Frank~A. Wolak.
+\newblock Measuring unilateral market power in wholesale electricity markets: the california market, 1998--2000.
+\newblock \emph{American Economic Review}, 93\penalty0 (2):\penalty0 425--430, 2003.
+
+\end{thebibliography}

@@ -1,6 +1,22 @@
 # Pivotality by firm in critical hours: empirical treatment-effect set
 
 **Created:** 2026-05-08
+**Updated:** 2026-05-11 — firm-classification audit (see [`_firm_classification_audit.md`](_firm_classification_audit.md))
+
+> **2026-05-11 amendment.** The pivotality numbers below were computed against
+> an earlier version of the firm-to-unit mapping that contained four bugs:
+> triple-counted joint-owned nuclear (Almaraz, Trillo, Vandellós II, Ascó 2),
+> a misclassified `IBERENERGIA, S.A.` (it holds EDP-Spain's 15.5% Trillo stake,
+> not Iberdrola's), an inflated Repsol set that bundled in 42 third-party
+> REPRESENTANTE-aggregated renewables (`REPSOL SERVICIOS RENOVABLES, S.A.`),
+> and an Engie set polluted by the Belgian trading desk `ENGIE GLOBAL MARKETS,
+> BELGIAN BRANCH`. Pivotality on CCGT specifically is robust to these bugs
+> (none of the misclassified entities have CCGT capacity), so the
+> firm-partition conclusions below are unchanged. The classification pipeline
+> has since been centralized in `src/mtu/classification/units.py` with 36
+> unit tests, and all downstream headline regressions (B1 q_2, B3 DA cleared,
+> B4 CPT, B5 robustness) have been re-run under the corrected mapping. See
+> the audit memo for details.
 
 **Purpose.** The identification strategy treats critical-vs-flat hours as
 the treatment axis, with firms acting as subjects. The expected magnitude

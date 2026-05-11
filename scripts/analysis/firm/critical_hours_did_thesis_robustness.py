@@ -25,7 +25,13 @@ from scipy.stats import norm
 
 REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "src"))
-from mtu.classification.units import classify_units  # noqa: E402
+# Centralized firm classification: see src/mtu/classification/units.py and
+# notebooks/memos/_firm_classification_audit.md for the audit trail.
+from mtu.classification.units import (  # noqa: E402
+    firm_unit_panel,
+    TREATMENT_PARENTS_SHORT as TREATMENT_PARENTS,
+    PLACEBO_PARENTS_SHORT as PLACEBO_PARENTS,
+)
 
 OUTDIR = REPO / "results" / "regressions" / "firm" / "critical_hours_thesis"
 PIBCI = REPO / "data" / "processed" / "omie" / "mercado_intradiario_subastas" / "programas" / "pibci_all.parquet"
@@ -50,24 +56,7 @@ POST_START, POST_END = "2025-10-01", "2026-01-01"
 FULL_START, FULL_END = "2024-01-01", "2026-01-01"
 
 
-def parent_of(o):
-    if not isinstance(o, str): return "Other"
-    o = o.upper()
-    if "IBERDROLA" in o: return "IB"
-    if "ENDESA" in o: return "GE"
-    if "NATURGY" in o or "GAS NATURAL" in o: return "GN"
-    if "EDP ESPAÑA" in o: return "HC"
-    if "EDP GEM PORTUGAL" in o: return "EDP-PT"
-    if "ENGIE" in o: return "Engie"
-    if "REPSOL" in o: return "Repsol"
-    if "TOTALENERGIES" in o: return "TotalEnergies"
-    if "MOEVE" in o or "CEPSA" in o: return "Moeve"
-    return "Other"
-
-
-TREATMENT_PARENTS = {"IB","GE","GN","HC","EDP-PT"}
-PLACEBO_PARENTS = {"Repsol","Engie","TotalEnergies","Moeve"}
-ADMIN_DOMINANT_PARENTS = {"IB","GE","GN","HC"}
+ADMIN_DOMINANT_PARENTS = {"IB", "GE", "GN", "HC"}
 
 
 def build_panel_full(units, start, end):
@@ -88,7 +77,7 @@ def build_panel_full(units, start, end):
         with_hour AS (
             SELECT p.d, p.unit_code, u.parent, u.tech_group, u.zone,
                    CASE WHEN mtu = 60 THEN period - 1
-                        WHEN mtu = 15 THEN (period - 1) / 4
+                        WHEN mtu = 15 THEN (period - 1) // 4
                         ELSE NULL END AS hour,
                    q2_mw * mtu / 60.0 AS q2_mwh
             FROM pibci_summed p JOIN units u USING (unit_code)
@@ -150,9 +139,10 @@ def make_did_columns(df, critical_hours, post_dummy_col=None, flat_hours=None):
 
 
 def main():
-    units = classify_units(csv_path=str(UNITS_CSV),
-                           keep_columns=["unit_code","owner_agent","tech_group","zone"])
-    units["parent"] = units["owner_agent"].apply(parent_of)
+    # primary_owner mode deduplicates joint-owned nuclear to one row per
+    # unit_code; see notebooks/memos/_firm_classification_audit.md.
+    units = firm_unit_panel(csv_path=str(UNITS_CSV), scheme="short",
+                             mode="primary_owner")
 
     # Load B1 panel for B5.1, B5.2, B5.4
     print("Loading B1 panel (same-cal-month, treatment group)...")

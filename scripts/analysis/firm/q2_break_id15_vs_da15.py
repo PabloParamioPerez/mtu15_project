@@ -21,7 +21,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "src"))
-from mtu.classification.units import classify_units  # noqa: E402
+from mtu.classification.units import firm_unit_panel  # noqa: E402
 
 OUTDIR = REPO / "results" / "regressions" / "firm" / "parallel_trends"
 FIGDIR = REPO / "figures" / "working"
@@ -37,28 +37,10 @@ CRITICAL_HOURS = (18, 19, 20, 21, 22)
 FLAT_HOURS = (3, 4, 5)
 
 
-def parent_of(owner: str | None) -> str:
-    if not isinstance(owner, str):
-        return "Other"
-    o = owner.upper()
-    if "IBERDROLA" in o: return "IB"
-    if "ENDESA" in o: return "GE"
-    if "NATURGY" in o or "GAS NATURAL" in o: return "GN"
-    if "EDP ESPAÑA" in o: return "HC"
-    if "EDP GEM PORTUGAL" in o: return "EDP-PT"
-    if "ENGIE" in o: return "Engie"
-    if "REPSOL" in o: return "Repsol"
-    if "TOTALENERGIES" in o: return "TotalEnergies"
-    if "MOEVE" in o or "CEPSA" in o: return "Moeve"
-    return "Other"
-
-
 def main() -> None:
-    units = classify_units(
-        csv_path=str(UNITS_CSV),
-        keep_columns=["unit_code", "owner_agent", "tech_group", "zone"],
-    )
-    units["parent"] = units["owner_agent"].apply(parent_of)
+    # Centralized firm classification (see _firm_classification_audit.md).
+    units = firm_unit_panel(csv_path=str(UNITS_CSV), scheme="short",
+                              mode="primary_owner")
     ccgt = units[units["tech_group"] == "CCGT"][["unit_code", "parent", "zone"]].copy()
     print(f"CCGT pool: {len(ccgt)} units across {ccgt['parent'].nunique()} parents")
 
@@ -90,7 +72,7 @@ def main() -> None:
         with_hour AS (
             SELECT p.*, c.parent,
                    CASE WHEN mtu_minutes = 60 THEN period - 1
-                        WHEN mtu_minutes = 15 THEN (period - 1) / 4
+                        WHEN mtu_minutes = 15 THEN (period - 1) // 4
                         ELSE NULL END AS hour,
                    q2_mw * mtu_minutes / 60.0 AS q2_mwh
             FROM pibci_summed p JOIN ccgt_pool c USING (unit_code)

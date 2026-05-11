@@ -1,6 +1,6 @@
-# `scripts/analysis/regulatory/` — regulatory cascade (Act III)
+# `scripts/analysis/regulatory/` — RT2 + CNMC enforcement
 
-Analyses of REE/CNMC regulatory channels that operate as parallel forces alongside the friction story. Reported separately, not as part of the friction model.
+Analyses of REE/CNMC regulatory channels — quantification of Phase-2 technical restrictions (RT2) and replication of CNMC bid-price-wedge methodology. These operate as supporting context for the within-day DiD headline (the strategic-conduct mechanism is identified in `firm/`); regulatory channels are reported separately as parallel forces.
 
 ## What lives here
 

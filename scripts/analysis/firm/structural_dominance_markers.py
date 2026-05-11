@@ -120,7 +120,7 @@ def main() -> None:
                    assigned_power_mw,
                    -- hour of day: period 1 = h0 in MTU60; period 1 = h0 in MTU15 (period 1-4 = h0)
                    CASE WHEN mtu_minutes = 60 THEN period - 1
-                        WHEN mtu_minutes = 15 THEN (period - 1) / 4
+                        WHEN mtu_minutes = 15 THEN (period - 1) // 4
                         ELSE NULL END AS hour
             FROM '{PDBCE}'
             WHERE date::DATE >= DATE '{START}'

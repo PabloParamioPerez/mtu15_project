@@ -65,7 +65,7 @@ def build_wedge_panel(start: str, end: str) -> pd.DataFrame:
         da_h AS (
             SELECT d,
                    CASE WHEN mtu_minutes = 60 THEN period - 1
-                        ELSE (period - 1) / 4 END AS hour,
+                        ELSE (period - 1) // 4 END AS hour,
                    AVG(da_p) AS da_p_h
             FROM da WHERE period IS NOT NULL
             GROUP BY 1,2 HAVING hour BETWEEN 0 AND 23
@@ -79,7 +79,7 @@ def build_wedge_panel(start: str, end: str) -> pd.DataFrame:
         ida_h AS (
             SELECT d,
                    CASE WHEN mtu_minutes = 60 THEN period - 1
-                        ELSE (period - 1) / 4 END AS hour,
+                        ELSE (period - 1) // 4 END AS hour,
                    AVG(ida_p) AS ida_p_h
             FROM ida WHERE period IS NOT NULL
             GROUP BY 1,2 HAVING hour BETWEEN 0 AND 23

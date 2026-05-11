@@ -1,30 +1,30 @@
-\begin{tabular}{l r r r r r l}
+\begin{tabular}{l r r r r r r l}
 \toprule
-Clock-hour & demand (GW) & solar (GW) & residual demand (GW) & $\sigma_{\text{within}}$ (MW) & within-hour $\Delta$ demand (MW) & class \\
+Clock-hour & \makecell{Demand\\(GW)} & \makecell{Solar\\(GW)} & \makecell{Wind\\(GW)} & \makecell{Residual\\demand (GW)} & \makecell{$\sigma_{\text{within}}$\\(MW)} & \makecell{$\Delta$ demand\\(MW)} & Class \\
 \midrule
-{00:00--01:00} & 23.2 & 0.2 & 16.1 & 398 & $-$864 & \textit{dropped} \\
-\textit{01:00--02:00} & 22.4 & 0.1 & 15.4 & 356 & $-$481 & \textit{flat} \\
-\textit{02:00--03:00} & 22.0 & 0.1 & 15.1 & 272 & $-$193 & \textit{flat} \\
-\textit{03:00--04:00} & 21.9 & 0.1 & 15.2 & 328 & 194 & \textit{flat} \\
-{04:00--05:00} & 22.9 & 0.1 & 16.3 & 654 & 1179 & \textit{dropped} \\
-\textbf{05:00--06:00} & 24.9 & 0.3 & 18.4 & 768 & 1795 & \textit{critical} \\
-\textbf{06:00--07:00} & 27.0 & 1.9 & 18.9 & 1004 & 1420 & \textit{critical} \\
-\textbf{07:00--08:00} & 28.3 & 5.8 & 16.7 & 1261 & 602 & \textit{critical} \\
-\textbf{08:00--09:00} & 28.7 & 10.5 & 12.9 & 1122 & 218 & \textit{critical} \\
-{09:00--10:00} & 28.8 & 13.5 & 10.2 & 795 & $-$102 & \textit{dropped} \\
-{10:00--11:00} & 28.6 & 15.0 & 8.7 & 583 & $-$78 & \textit{dropped} \\
-{11:00--12:00} & 28.7 & 15.5 & 8.2 & 481 & 116 & \textit{dropped} \\
-{12:00--13:00} & 28.6 & 15.5 & 8.0 & 438 & $-$60 & \textit{dropped} \\
-{13:00--14:00} & 28.3 & 15.2 & 7.9 & 458 & $-$290 & \textit{dropped} \\
-{14:00--15:00} & 28.0 & 14.4 & 8.2 & 550 & $-$57 & \textit{dropped} \\
-{15:00--16:00} & 28.3 & 13.0 & 9.4 & 758 & 344 & \textit{dropped} \\
-\textbf{16:00--17:00} & 28.9 & 10.1 & 12.5 & 1237 & 634 & \textit{critical} \\
-\textbf{17:00--18:00} & 30.0 & 6.4 & 16.7 & 1367 & 902 & \textit{critical} \\
-\textbf{18:00--19:00} & 31.1 & 2.6 & 21.3 & 1186 & 847 & \textit{critical} \\
-\textbf{19:00--20:00} & 32.0 & 0.7 & 23.8 & 549 & 163 & \textit{critical} \\
-\textbf{20:00--21:00} & 31.0 & 0.3 & 23.2 & 619 & $-$1487 & \textit{critical} \\
-\textbf{21:00--22:00} & 28.6 & 0.2 & 20.9 & 801 & $-$1926 & \textit{critical} \\
-\textbf{22:00--23:00} & 26.4 & 0.2 & 18.8 & 695 & $-$1441 & \textit{critical} \\
-{23:00--00:00} & 24.6 & 0.2 & 17.2 & 536 & $-$1093 & \textit{dropped} \\
+{00:00--01:00} & 23.2 & 0.2 & 7.1 & 16.0 & 405 & $-$864 & \textit{dropped} \\
+\flatrow \textit{01:00--02:00} & 22.4 & 0.1 & 6.8 & 15.4 & 353 & $-$481 & \textit{flat} \\
+\flatrow \textit{02:00--03:00} & 21.9 & 0.1 & 6.6 & 15.1 & 269 & $-$193 & \textit{flat} \\
+\flatrow \textit{03:00--04:00} & 21.9 & 0.1 & 6.5 & 15.3 & 324 & 194 & \textit{flat} \\
+{04:00--05:00} & 22.9 & 0.1 & 6.4 & 16.4 & 649 & 1179 & \textit{dropped} \\
+\critrow \textbf{05:00--06:00} & 24.9 & 0.3 & 6.3 & 18.3 & 766 & 1795 & \textit{critical} \\
+\critrow \textbf{06:00--07:00} & 27.0 & 1.9 & 6.2 & 18.9 & 1009 & 1420 & \textit{critical} \\
+\critrow \textbf{07:00--08:00} & 28.3 & 5.9 & 5.8 & 16.7 & 1259 & 602 & \textit{critical} \\
+\critrow \textbf{08:00--09:00} & 28.7 & 10.5 & 5.3 & 12.9 & 1116 & 218 & \textit{critical} \\
+{09:00--10:00} & 28.7 & 13.6 & 5.0 & 10.1 & 783 & $-$103 & \textit{dropped} \\
+{10:00--11:00} & 28.6 & 15.0 & 4.8 & 8.7 & 576 & $-$78 & \textit{dropped} \\
+{11:00--12:00} & 28.6 & 15.6 & 4.9 & 8.1 & 471 & 116 & \textit{dropped} \\
+{12:00--13:00} & 28.7 & 15.6 & 5.1 & 8.0 & 448 & $-$60 & \textit{dropped} \\
+{13:00--14:00} & 28.3 & 15.2 & 5.3 & 7.9 & 453 & $-$290 & \textit{dropped} \\
+{14:00--15:00} & 28.0 & 14.4 & 5.5 & 8.1 & 545 & $-$57 & \textit{dropped} \\
+{15:00--16:00} & 28.3 & 13.0 & 5.8 & 9.4 & 747 & 344 & \textit{dropped} \\
+\critrow \textbf{16:00--17:00} & 28.9 & 10.1 & 6.3 & 12.5 & 1241 & 634 & \textit{critical} \\
+\critrow \textbf{17:00--18:00} & 30.0 & 6.4 & 6.8 & 16.8 & 1362 & 902 & \textit{critical} \\
+\critrow \textbf{18:00--19:00} & 31.2 & 2.7 & 7.3 & 21.2 & 1185 & 847 & \textit{critical} \\
+\critrow \textbf{19:00--20:00} & 32.0 & 0.7 & 7.4 & 23.9 & 557 & 163 & \textit{critical} \\
+\critrow \textbf{20:00--21:00} & 31.1 & 0.3 & 7.5 & 23.2 & 614 & $-$1487 & \textit{critical} \\
+\critrow \textbf{21:00--22:00} & 28.6 & 0.2 & 7.5 & 20.9 & 801 & $-$1926 & \textit{critical} \\
+\critrow \textbf{22:00--23:00} & 26.4 & 0.2 & 7.4 & 18.8 & 694 & $-$1441 & \textit{critical} \\
+{23:00--00:00} & 24.6 & 0.2 & 7.2 & 17.2 & 534 & $-$1093 & \textit{dropped} \\
 \bottomrule
 \end{tabular}

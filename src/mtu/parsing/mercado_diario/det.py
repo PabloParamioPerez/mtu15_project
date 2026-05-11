@@ -56,14 +56,23 @@ _COLNAMES_POST = [
 
 # ── Pre-reform format (line length 57) ──────────────────────────────────────
 # Used for sessions before 2025-03-19.
+#
+# CORRECTION 2026-05-07: the prior column mapping conflated the legacy
+# (always-zero) numeric field at pos 15-31 with the price, and shifted price/
+# quantity by one column. Empirically verified by inspecting raw files: the
+# field at pos 15-31 is always "0.000" for every row across 2018-2024; the
+# field at pos 32-48 contains the actual prices including negative values
+# (-499, -150) and price-cap values (3000); the 7-char field at pos 49-55
+# contains the quantity (MW). Corrected layout below.
+#
 #   CodOferta     I7    pos  1-7   -> [0:7]
 #   Version       I3    pos  8-10  -> [7:10]
 #   Período       I2    pos 11-12  -> [10:12]
 #   NumTramo      I2    pos 13-14  -> [12:14]
-#   PrecEuro      F17.3 pos 15-31  -> [14:31]
-#   Cantidad      F17.3 pos 32-48  -> [31:48]  (wider field in old format)
-#   MAV           F7.1  pos 49-55  -> [48:55]
-#   _marker       A2    pos 56-57  -> [55:57]  (always 'SS'; no MAR in old format)
+#   _legacy_zero  F17.3 pos 15-31  -> [14:31]   (always 0.000; field deprecated in old format)
+#   PrecEuro      F17.3 pos 32-48  -> [31:48]   (price in EUR/MWh)
+#   Cantidad      F7.1  pos 49-55  -> [48:55]   (quantity in MW)
+#   _marker       A2    pos 56-57  -> [55:57]   (always 'SS'; no MAR in old format)
 _COLSPECS_PRE = [
     (0, 7),
     (7, 10),
@@ -79,9 +88,9 @@ _COLNAMES_PRE = [
     "version",
     "period",
     "segment_number",
+    "_legacy_zero",
     "price_eur_mwh",
     "quantity_mw",
-    "min_acceptable_volume_mw",
     "_marker",
 ]
 
@@ -183,11 +192,11 @@ def parse_det_file(path: Path) -> pd.DataFrame:
     ).astype("Int64")
     df["price_eur_mwh"] = pd.to_numeric(df["price_eur_mwh"].str.strip(), errors="coerce")
     df["quantity_mw"] = pd.to_numeric(df["quantity_mw"].str.strip(), errors="coerce")
-    df["min_acceptable_volume_mw"] = pd.to_numeric(
-        df["min_acceptable_volume_mw"].str.strip(), errors="coerce"
-    )
 
     if fmt == "post":
+        df["min_acceptable_volume_mw"] = pd.to_numeric(
+            df["min_acceptable_volume_mw"].str.strip(), errors="coerce"
+        )
         df["block_number"] = pd.to_numeric(
             df["block_number"].str.strip(), errors="coerce"
         ).astype("Int64")
@@ -198,12 +207,14 @@ def parse_det_file(path: Path) -> pd.DataFrame:
             df["min_acceptable_ratio"].str.strip(), errors="coerce"
         )
     else:
-        # Pre-reform format has no block_number/exclusive_group/MAR fields.
-        # The '_marker' column is always 'SS' and has no numeric meaning.
+        # Pre-reform format has no block_number/exclusive_group/MAV/MAR fields.
+        # The '_legacy_zero' field at cols 15-31 is always "0.000" (deprecated).
+        # The '_marker' column at cols 56-57 is always 'SS' and has no numeric meaning.
+        df["min_acceptable_volume_mw"] = float("nan")
         df["block_number"] = pd.array([0] * len(df), dtype="Int64")
         df["exclusive_group"] = pd.array([0] * len(df), dtype="Int64")
         df["min_acceptable_ratio"] = float("nan")
-        df = df.drop(columns=["_marker"])
+        df = df.drop(columns=["_legacy_zero", "_marker"])
 
     mtu_minutes = infer_mtu_minutes_from_periods(df["period"])
     validate_period_values(path, df["period"], mtu_minutes)

@@ -24,7 +24,13 @@ from scipy.stats import norm
 
 REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "src"))
-from mtu.classification.units import classify_units  # noqa: E402
+# Centralized firm classification: see src/mtu/classification/units.py and
+# notebooks/memos/_firm_classification_audit.md.
+from mtu.classification.units import (  # noqa: E402
+    firm_unit_panel,
+    TREATMENT_PARENTS_SHORT as TREATMENT_PARENTS,
+    PLACEBO_PARENTS_SHORT as PLACEBO_PARENTS,
+)
 
 OUTDIR = REPO / "results" / "regressions" / "firm" / "critical_hours_thesis"
 OUTDIR.mkdir(parents=True, exist_ok=True)
@@ -34,27 +40,8 @@ UNITS_CSV = REPO / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 
 PRE_START, PRE_END = "2024-10-01", "2025-01-01"
 POST_START, POST_END = "2025-10-01", "2026-01-01"
-CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)  # canonical: demand surge + VRE transition
+CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)
 FLAT_HOURS = (1, 2, 3)
-
-
-def parent_of(o):
-    if not isinstance(o, str): return "Other"
-    o = o.upper()
-    if "IBERDROLA" in o: return "IB"
-    if "ENDESA" in o: return "GE"
-    if "NATURGY" in o or "GAS NATURAL" in o: return "GN"
-    if "EDP ESPAÑA" in o: return "HC"
-    if "EDP GEM PORTUGAL" in o: return "EDP-PT"
-    if "ENGIE" in o: return "Engie"
-    if "REPSOL" in o: return "Repsol"
-    if "TOTALENERGIES" in o: return "TotalEnergies"
-    if "MOEVE" in o or "CEPSA" in o: return "Moeve"
-    return "Other"
-
-
-TREATMENT_PARENTS = {"IB","GE","GN","HC","EDP-PT"}
-PLACEBO_PARENTS = {"Repsol","Engie","TotalEnergies","Moeve"}
 
 
 def hour_class(h):
@@ -81,7 +68,7 @@ def build_panel(units):
             with_hour AS (
                 SELECT p.d, p.unit_code, u.parent, u.tech_group, u.zone,
                        CASE WHEN p.mtu_minutes = 60 THEN p.period - 1
-                            WHEN p.mtu_minutes = 15 THEN (p.period - 1)/4
+                            WHEN p.mtu_minutes = 15 THEN (p.period - 1) // 4
                             ELSE NULL END AS hour,
                        p.assigned_power_mw * p.mtu_minutes / 60.0 AS mwh
                 FROM p JOIN units u USING (unit_code)
@@ -147,9 +134,8 @@ def print_result(r):
 
 
 def main():
-    units = classify_units(csv_path=str(UNITS_CSV),
-                           keep_columns=["unit_code","owner_agent","tech_group","zone"])
-    units["parent"] = units["owner_agent"].apply(parent_of)
+    units = firm_unit_panel(csv_path=str(UNITS_CSV), scheme="short",
+                             mode="primary_owner")
     panel = build_panel(units)
     print(f"\nPanel rows: {len(panel):,}")
 

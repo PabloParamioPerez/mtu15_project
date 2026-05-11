@@ -30,7 +30,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "src"))
-from mtu.classification.units import classify_units  # noqa: E402
+from mtu.classification.units import firm_unit_panel  # noqa: E402
 
 OUTDIR = REPO / "results" / "regressions" / "firm" / "operational_vs_strategic"
 FIGDIR = REPO / "figures" / "working"
@@ -51,22 +51,6 @@ CRITICAL_HOURS = (18, 19, 20, 21, 22)
 FLAT_HOURS = (3, 4, 5)
 
 
-def parent_of(owner: str | None) -> str:
-    if not isinstance(owner, str):
-        return "Other"
-    o = owner.upper()
-    if "IBERDROLA" in o: return "IB"
-    if "ENDESA" in o: return "GE"
-    if "NATURGY" in o or "GAS NATURAL" in o: return "GN"
-    if "EDP ESPAÑA" in o: return "HC"
-    if "EDP GEM PORTUGAL" in o: return "EDP-PT"
-    if "ENGIE" in o: return "Engie"
-    if "REPSOL" in o: return "Repsol"
-    if "TOTALENERGIES" in o: return "TotalEnergies"
-    if "MOEVE" in o or "CEPSA" in o: return "Moeve"
-    return "Other"
-
-
 def hour_class(h: int) -> str:
     if h in CRITICAL_HOURS: return "critical_h18_22"
     if h in FLAT_HOURS:     return "flat_h3_5"
@@ -74,11 +58,9 @@ def hour_class(h: int) -> str:
 
 
 def main() -> None:
-    units = classify_units(
-        csv_path=str(UNITS_CSV),
-        keep_columns=["unit_code", "owner_agent", "tech_group", "zone"],
-    )
-    units["parent"] = units["owner_agent"].apply(parent_of)
+    # Centralized firm classification (see _firm_classification_audit.md).
+    units = firm_unit_panel(csv_path=str(UNITS_CSV), scheme="short",
+                              mode="primary_owner")
     ccgt = units[units["tech_group"] == "CCGT"][["unit_code", "parent"]].copy()
     print(f"CCGT pool: {len(ccgt)}")
 
@@ -104,7 +86,7 @@ def main() -> None:
         with_hour AS (
             SELECT p.d, p.unit_code,
                    CASE WHEN mtu_minutes = 60 THEN period - 1
-                        WHEN mtu_minutes = 15 THEN (period - 1) / 4
+                        WHEN mtu_minutes = 15 THEN (period - 1) // 4
                         ELSE NULL END AS hour,
                    p.assigned_power_mw * mtu_minutes / 60.0 AS mwh
             FROM p
@@ -131,7 +113,7 @@ def main() -> None:
         )
         SELECT d, unit_code,
                CASE WHEN mtu = 60 THEN period - 1
-                    WHEN mtu = 15 THEN (period - 1) / 4
+                    WHEN mtu = 15 THEN (period - 1) // 4
                     ELSE NULL END AS hour,
                SUM(strat_mw * mtu / 60.0) AS strategic_ida_mwh
         FROM per_period
@@ -190,7 +172,7 @@ def main() -> None:
         )
         SELECT d, unit_code,
                CASE WHEN mtu_minutes = 60 THEN period - 1
-                    WHEN mtu_minutes = 15 THEN (period - 1) / 4
+                    WHEN mtu_minutes = 15 THEN (period - 1) // 4
                     ELSE NULL END AS hour,
                SUM((phf_mw - pibca_mw) * mtu_minutes / 60.0) AS rt2_mwh
         FROM joined
@@ -271,7 +253,7 @@ def main() -> None:
         da_h AS (
             SELECT d,
                    CASE WHEN mtu_minutes = 60 THEN period - 1
-                        ELSE (period - 1) / 4 END AS hour,
+                        ELSE (period - 1) // 4 END AS hour,
                    AVG(da_p) AS da_p_h
             FROM da WHERE period IS NOT NULL
             GROUP BY 1,2 HAVING hour BETWEEN 0 AND 23
@@ -286,7 +268,7 @@ def main() -> None:
             -- average across sessions and within-hour periods
             SELECT d,
                    CASE WHEN mtu_minutes = 60 THEN period - 1
-                        ELSE (period - 1) / 4 END AS hour,
+                        ELSE (period - 1) // 4 END AS hour,
                    AVG(ida_p) AS ida_p_h
             FROM ida WHERE period IS NOT NULL
             GROUP BY 1,2 HAVING hour BETWEEN 0 AND 23

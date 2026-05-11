@@ -36,15 +36,22 @@ END = "2026-01-01"
 
 
 def load_unit_classification() -> pd.DataFrame:
-    from mtu.classification.units import classify_units
+    # Centralized firm classification (see _firm_classification_audit.md):
+    # primary_owner mode deduplicates joint-owned units; scheme='short' yields
+    # IB/GE/GN/HC/EDP-PT/Repsol/Engie/TotalEnergies/Moeve, with REPSOL SERVICIOS
+    # RENOVABLES and ENGIE GLOBAL MARKETS excluded. For column-name backward
+    # compatibility we rename `parent` to the legacy name `firm_class`.
+    from mtu.classification.units import firm_unit_panel
 
-    return classify_units(csv_path=str(UNITS_CSV))
+    df = firm_unit_panel(csv_path=str(UNITS_CSV), scheme="short",
+                          mode="primary_owner")
+    return df.rename(columns={"parent": "firm_class"})
 
 
 def main() -> None:
     units = load_unit_classification()
     ccgt_units = units.loc[units["tech_group"] == "CCGT", ["unit_code", "firm_class"]]
-    print(f"CCGT units in register: {len(ccgt_units)}")
+    print(f"CCGT units in register (within thesis firm set): {len(ccgt_units)}")
     print(ccgt_units["firm_class"].value_counts().to_string())
 
     con = duckdb.connect()

@@ -33,24 +33,34 @@ Output:
 from __future__ import annotations
 
 from pathlib import Path
+import sys
 
 import duckdb
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 PROJECT  = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(PROJECT / "src"))
+# Centralized firm classification (see _firm_classification_audit.md).
+from mtu.classification.units import firm_unit_panel  # noqa: E402
+
 CAB      = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "cab_all.parquet"
 DET      = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "det_all.parquet"
-PDBCE    = PROJECT / "data" / "processed" / "omie" / "mercado_diario" / "programas" / "pdbce_all.parquet"
 UNITS    = PROJECT / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 
-OUT_DIR_R = PROJECT / "results" / "regressions"
+OUT_DIR_R = PROJECT / "results" / "regressions" / "bid"
 OUT_DIR_F = PROJECT / "figures" / "working"
 
-MTU15_DA_DATE = pd.Timestamp("2025-10-01")
-CRITICAL_HOURS = [7, 8, 16, 17, 18]
-BIG4 = ["IB", "GE", "GN", "HC"]
+# Canonical critical/flat hour sets (per _critical_hours_calibration.md).
+CRITICAL_HOURS = [5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22]
+FLAT_HOURS = [1, 2, 3]
+
+# Full thesis firm set — IB/GE/GN/HC + EDP-PT + Repsol/Engie/TotalEnergies/Moeve.
+THESIS_FIRMS = ["IB", "GE", "GN", "HC", "EDP-PT",
+                "Repsol", "Engie", "TotalEnergies", "Moeve"]
 
 
 def tech_bucket(t: str | None) -> str:
@@ -71,35 +81,18 @@ def main() -> None:
     con.execute("SET memory_limit='8GB'")
     con.execute("SET threads=4")
 
-    print("[setup] unit → firm + tech…", flush=True)
-    # Firm-1: from PDBCE grupo_empresarial (thermal/hydro/nuclear)
-    firms_thermal = con.execute(f"""
-        SELECT unit_code, grupo_empresarial AS firm FROM (
-          SELECT unit_code, grupo_empresarial,
-                 ROW_NUMBER() OVER (PARTITION BY unit_code ORDER BY date DESC) AS rn
-          FROM '{PDBCE}' WHERE grupo_empresarial IS NOT NULL) WHERE rn = 1
-    """).df()
-    # Firm-2: from owner_agent in lista_unidades (renewables go here)
-    units = pd.read_csv(UNITS)[["unit_code", "technology", "owner_agent"]]
-    units["tech"] = units["technology"].apply(tech_bucket)
-
-    def owner_to_firm(s: str | None) -> str | None:
-        if s is None or pd.isna(s): return None
-        s = str(s).upper()
-        if "IBERDROLA" in s: return "IB"
-        if "ENDESA" in s or "ENEL GREEN POWER" in s: return "GE"
-        if "NATURGY" in s or "GAS NATURAL" in s: return "GN"
-        if "EDP" in s or "HIDROELÉCTRICA DEL CANTÁBRICO" in s or "HC ENERG" in s: return "HC"
-        return None
-    units["firm_owner"] = units["owner_agent"].apply(owner_to_firm)
-    units = units.merge(firms_thermal, on="unit_code", how="left")
-    # Use grupo_empresarial when present (thermal/hydro/nuclear), else owner-based mapping
-    units["firm_combined"] = units["firm"].fillna(units["firm_owner"])
-    uft = units[units["firm_combined"].notna()][["unit_code", "tech"]].copy()
-    uft["firm"] = units.loc[uft.index, "firm_combined"].values
-    uft = uft[uft.firm.isin(BIG4)]
+    print("[setup] unit → firm + tech via centralized classifier…", flush=True)
+    # Centralized firm panel: scheme='short' yields IB/GE/GN/HC/EDP-PT/Repsol/...
+    # primary_owner mode deduplicates joint-owned nuclear (Almaraz, Trillo) to
+    # the majority shareholder. See _firm_classification_audit.md.
+    units = firm_unit_panel(csv_path=str(UNITS), scheme="short",
+                              mode="primary_owner")
+    units["tech_b"] = units["technology"].apply(tech_bucket)
+    uft = units.rename(columns={"parent": "firm"})[["unit_code", "firm", "tech_b"]].copy()
+    uft = uft.rename(columns={"tech_b": "tech"})
+    uft = uft[uft.firm.isin(THESIS_FIRMS)]
     con.register("uft", uft[["unit_code","firm","tech"]])
-    print(f"   {len(uft):,} Big-4 unit-codes mapped (thermal via PDBCE + RE via owner_agent)", flush=True)
+    print(f"   {len(uft):,} thesis-firm unit-codes mapped", flush=True)
     print(uft.groupby(["firm","tech"]).size().unstack(fill_value=0).to_string())
 
     # ---------------------------------------------------------------
@@ -126,7 +119,7 @@ def main() -> None:
             AND d.quantity_mw IS NOT NULL AND d.quantity_mw > 0
         )
         SELECT det.d AS date, det.period,
-               CAST((det.period - 1) / 4 AS INTEGER) AS hour,
+               CAST((det.period - 1) // 4 AS INTEGER) AS hour,
                ((det.period - 1) % 4) AS quarter,
                cab_latest.unit_code, uft.firm, uft.tech,
                det.price, det.qty
@@ -176,9 +169,12 @@ def main() -> None:
     pv["ladder_identical"] = pv.apply(all_identical, axis=1)
 
     pv["regime"] = "DA15/ID15"
-    pv["critical"] = pv["hour"].isin(CRITICAL_HOURS).astype(int)
-    pv_complete = pv[pv["n_quarters_with_data"] == 4].copy()
-    print(f"   {len(pv_complete):,} unit-hours with all 4 quarters of data", flush=True)
+    pv["hour_class"] = pv["hour"].apply(
+        lambda h: "critical" if h in CRITICAL_HOURS else
+                  ("flat" if h in FLAT_HOURS else "dropped"))
+    pv["critical"] = (pv["hour_class"] == "critical").astype(int)
+    pv_complete = pv[(pv["n_quarters_with_data"] == 4) & (pv["hour_class"] != "dropped")].copy()
+    print(f"   {len(pv_complete):,} unit-hours with all 4 quarters and in critical/flat", flush=True)
 
     # ---------------------------------------------------------------
     # Aggregate by tech × firm × critical/flat
@@ -192,7 +188,7 @@ def main() -> None:
     for tech in ["CCGT","wind","solar","hydro","nuclear","thermal_nonRE","thermal_RE"]:
         tdf = pv_complete[pv_complete.tech == tech]
         if len(tdf) < 100: continue
-        for firm in BIG4 + ["ALL"]:
+        for firm in THESIS_FIRMS + ["ALL"]:
             fdf = tdf if firm == "ALL" else tdf[tdf.firm == firm]
             if len(fdf) < 100: continue
             crit_rate = fdf[fdf.critical==1]["ladder_identical"].mean()
@@ -249,7 +245,7 @@ def main() -> None:
     for tech in ["CCGT","wind","solar","hydro","nuclear"]:
         tdf = q_meas[q_meas.tech == tech]
         if len(tdf) < 100: continue
-        for firm in BIG4 + ["ALL"]:
+        for firm in THESIS_FIRMS + ["ALL"]:
             fdf = tdf if firm == "ALL" else tdf[tdf.firm == firm]
             if len(fdf) < 100: continue
             fdf = fdf.assign(critical=fdf["hour"].isin(CRITICAL_HOURS).astype(int))

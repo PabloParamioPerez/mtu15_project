@@ -39,7 +39,13 @@ from statsmodels.stats.sandwich_covariance import cov_cluster
 
 REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "src"))
-from mtu.classification.units import classify_units  # noqa: E402
+# Centralized firm classification: see src/mtu/classification/units.py and
+# notebooks/memos/_firm_classification_audit.md for the audit trail.
+from mtu.classification.units import (  # noqa: E402
+    firm_unit_panel,
+    TREATMENT_PARENTS_SHORT as TREATMENT_PARENTS,
+    PLACEBO_PARENTS_SHORT as PLACEBO_PARENTS,
+)
 
 OUTDIR = REPO / "results" / "regressions" / "firm" / "critical_hours_thesis"
 OUTDIR.mkdir(parents=True, exist_ok=True)
@@ -50,34 +56,8 @@ UNITS_CSV = REPO / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 PRE_START, PRE_END = "2024-10-01", "2025-01-01"
 POST_START, POST_END = "2025-10-01", "2026-01-01"
 
-CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)  # 'demand_surge_supply_transition': h where demand surges UP and/or VRE transitions
-# Excludes h{20-22} (post-peak descent, no rent-extraction granularity value).
-# Excludes h4 (ramps but system not tight enough for strategic conduct).
-# Robustness alternatives in B5.1: joint h{7,8,16-22}, price_peak h{18-22}, supply_ramp h{7,8,16-18}, demand_peak h{16-20}.
-FLAT_HOURS = (1, 2, 3)  # truly flat: h4 already ramping in spring/summer
-
-
-def parent_of(owner: str | None) -> str:
-    if not isinstance(owner, str):
-        return "Other"
-    o = owner.upper()
-    if "IBERDROLA" in o: return "IB"
-    if "ENDESA" in o: return "GE"
-    if "NATURGY" in o or "GAS NATURAL" in o: return "GN"
-    if "EDP ESPAÑA" in o: return "HC"
-    if "EDP GEM PORTUGAL" in o: return "EDP-PT"
-    if "ENGIE" in o: return "Engie"
-    if "REPSOL" in o: return "Repsol"
-    if "TOTALENERGIES" in o: return "TotalEnergies"
-    if "MOEVE" in o or "CEPSA" in o: return "Moeve"
-    return "Other"
-
-
-# Treatment-effect set per `_pivotality_by_firm_critical_hours.md`:
-#   - Treatment (≥10% pivotal in critical hours): IB, GE, GN, HC, EDP-PT
-#   - Placebo (~0% pivotal): Repsol, Engie España (CTNU), TotalEnergies, Moeve
-TREATMENT_PARENTS = {"IB", "GE", "GN", "HC", "EDP-PT"}
-PLACEBO_PARENTS = {"Repsol", "Engie", "TotalEnergies", "Moeve"}
+CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)
+FLAT_HOURS = (1, 2, 3)
 
 
 def hour_class(h: int) -> str:
@@ -111,7 +91,7 @@ def build_panel(units: pd.DataFrame) -> pd.DataFrame:
                 SELECT p.d, p.unit_code, p.period, p.mtu,
                        u.parent, u.tech_group, u.zone,
                        CASE WHEN mtu = 60 THEN period - 1
-                            WHEN mtu = 15 THEN (period - 1) / 4
+                            WHEN mtu = 15 THEN (period - 1) // 4
                             ELSE NULL END AS hour,
                        q2_mw * mtu / 60.0 AS q2_mwh
                 FROM pibci_summed p JOIN units u USING (unit_code)
@@ -203,11 +183,12 @@ def print_result(r: dict) -> None:
 
 
 def main() -> None:
-    units = classify_units(
-        csv_path=str(UNITS_CSV),
-        keep_columns=["unit_code", "owner_agent", "tech_group", "zone"],
-    )
-    units["parent"] = units["owner_agent"].apply(parent_of)
+    # primary_owner mode: deduplicate joint-owned nuclear (ALZ1, ALZ2, ASC2,
+    # TRL1, VAN2) to a single row per unit_code, attributed to the largest-
+    # share owner. Without this, the JOIN to PIBCI triples nuclear obs for
+    # the firms sharing each plant — see _firm_classification_audit.md.
+    units = firm_unit_panel(csv_path=str(UNITS_CSV), scheme="short",
+                             mode="primary_owner")
 
     panel = build_panel(units)
     print(f"\nFull panel rows: {len(panel):,}")

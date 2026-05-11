@@ -56,7 +56,7 @@ def fig_calibration():
         ),
         h AS (
             SELECT d, CASE WHEN mtu_minutes = 60 THEN period - 1
-                          ELSE (period-1)/4 END AS hour,
+                          ELSE (period - 1) // 4 END AS hour,
                    AVG(price_es_eur_mwh) AS p
             FROM t WHERE period IS NOT NULL GROUP BY 1,2 HAVING hour BETWEEN 0 AND 23
         )

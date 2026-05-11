@@ -24,7 +24,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "src"))
-from mtu.classification.units import classify_units  # noqa: E402
+from mtu.classification.units import firm_unit_panel  # noqa: E402
 
 OUTDIR = REPO / "results" / "regressions" / "bid"
 OUTDIR.mkdir(parents=True, exist_ok=True)
@@ -119,7 +119,9 @@ def hour_class(h: int) -> str:
 
 
 def main() -> None:
-    units = classify_units(csv_path=str(UNITS_CSV))
+    # Centralized firm classification (see _firm_classification_audit.md).
+    units = firm_unit_panel(csv_path=str(UNITS_CSV), scheme="short",
+                              mode="primary_owner").rename(columns={"parent": "firm_class"})
     ccgt = units.loc[units["tech_group"] == "CCGT", ["unit_code", "firm_class"]]
 
     con = duckdb.connect()

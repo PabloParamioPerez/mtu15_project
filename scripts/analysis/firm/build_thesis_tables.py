@@ -65,7 +65,7 @@ def build_b1_main_table():
     tex = []
     tex.append(r"\begin{tabular}{l c c c}")
     tex.append(r"\toprule")
-    tex.append(r" & All firms & Treatment group & Placebo group \\")
+    tex.append(r" & All firms & Pivotal firms & Non-pivotal firms \\")
     tex.append(r" & (1) & (2) & (3) \\")
     tex.append(r"\midrule")
 
@@ -155,7 +155,7 @@ def build_b1_tech_table():
     tex = []
     tex.append(r"\begin{tabular}{l c c c c c}")
     tex.append(r"\toprule")
-    tex.append(r" & \multicolumn{2}{c}{Treatment group} & \multicolumn{2}{c}{Placebo group} & \\")
+    tex.append(r" & \multicolumn{2}{c}{Pivotal firms} & \multicolumn{2}{c}{Non-pivotal firms} & \\")
     tex.append(r"\cmidrule(lr){2-3} \cmidrule(lr){4-5}")
     tex.append(r"Technology & $\beta_3$ & SE / $n$ & $\beta_3$ & SE / $n$ & Predicted \\")
     tex.append(r"\midrule")
@@ -314,7 +314,7 @@ def build_b5_robustness_table():
             ("B5.1_joint_h7_8_16_17_18_19_20_21_22", "joint h\\{7-8, 16-22\\}"),
         ]),
         ("B5.2 — Firm partition", [
-            ("B5.2a_pivotality_treatment_set", "Pivotality-based treatment set"),
+            ("B5.2a_pivotality_treatment_set", "Pivotality-based firm set"),
             ("B5.2b_admin_IB_GE_GN_HC", "Administrative IB/GE/GN/HC"),
         ]),
         ("B5.3 / B5.5 — Window", [
