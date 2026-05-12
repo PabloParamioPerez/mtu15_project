@@ -133,7 +133,7 @@ file open tex using "`texdir'/tab_firm_ddd.tex", write replace
 file write tex "\begin{tabular}{l c c c c}" _n
 file write tex "\toprule" _n
 file write tex " & (1) & (2) & (3) & (4) \\" _n
-file write tex " & DDD & + X & + X{$\times$}\{crit, post, piv\} & + clock-hour FE \\" _n
+file write tex " & \makecell{DDD\\baseline} & \makecell{+ X\\(additive)} & \makecell{+ X{$\times$}\{crit,\\post, piv\}} & \makecell{+ clock-hour\\FE} \\" _n
 file write tex "\midrule" _n
 file write tex "$\beta_{123}$ (crit{$\times$}post{$\times$}piv)"
 forvalues r = 1/4 {
