@@ -299,9 +299,9 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 % solar, demand): strong overlap fails by construction. We defend PTA
 % directly with: (i) time placebos that shift the reform date within periods
 % where no reform occurred (Table~\ref{tab:B1_time_placebos}, App.~\ref{app:time_placebos});
-% (ii) a firm partition robustness in Appendix~\ref{app:firm_dr_did} that flips
-% the DiD groups to pivotal vs non-pivotal firms (where overlap holds) and
-% applies doubly-robust DiD per \citet{santannaZhao2020}.
+% (ii) a triple-difference robustness in Appendix~\ref{app:firm_ddd} that
+% pools pivotal and non-pivotal firms and identifies the moderating effect
+% of market power as the (crit x post x pivotal) interaction.
 \begin{equation}\label{eq:pta}
    \mathbb{E}\!\left[Y_{\text{post}}(0) - Y_{\text{pre}}(0) \,\middle|\, \mathrm{crit}\right] \;=\; \mathbb{E}\!\left[Y_{\text{post}}(0) - Y_{\text{pre}}(0) \,\middle|\, \mathrm{flat}\right].
 \end{equation}
@@ -377,27 +377,25 @@ The DA-to-IDA price wedge is a candidate supporting outcome but it is a noisy me
 % P3 shifted back one year (crosses 2024-06-13 IDA reform): -2.79*, sign flips,
 % consistent with that earlier reform consolidating q_2 across sessions.
 
-\subsection{Conditional DiD with firm-partition groups}\label{app:firm_dr_did}
+\subsection{Triple-difference: pivotality as moderator}\label{app:firm_ddd}
 
-% TODO: prose. The within-day critical-vs-flat partition does not admit a
-% conditional-PT defense because clock-of-day determines both the treatment
-% indicator and the natural covariate set X = (wind, solar, demand) -- strong
-% overlap fails. This appendix re-orients the DiD: groups become pivotal vs
-% non-pivotal firms (which is independent of day-level weather), outcome
-% becomes the within-day differential q_2(crit) - q_2(flat) per unit-day, and
-% X enters at the day level. Under this partition overlap holds and the
-% Sant'Anna & Zhao (2020) DR DiD estimator is applicable.
+% TODO prose. Rationale: in the within-day DiD (Eq. 1) hours are the treatment
+% partition (critical vs flat) and pivotal firms enter only as the sample
+% restriction. Here we pool both pivotal and non-pivotal firms and run a
+% triple-difference: the headline coefficient is the (critical × post × pivotal)
+% interaction, which identifies the moderating effect of market power on the
+% reform's response in critical hours. b123 = b3(pivotal) - b3(non-pivotal)
+% by construction.
 
-\begin{equation}\label{eq:firm_cpt}
-   \mathbb{E}\!\left[\Delta Y_{\text{post}}(0) \,\middle|\, \mathrm{pivotal},\, X_d\right] \;=\; \mathbb{E}\!\left[\Delta Y_{\text{post}}(0) \,\middle|\, \mathrm{non\text{-}pivotal},\, X_d\right] \quad \text{a.s.},
+\begin{equation}\label{eq:ddd}
+   q_{2,fudh} = \alpha + \sum_{j \in \{\text{crit, post, piv}\}} \beta_j \mathbb{1}_j + \sum_{j < k} \beta_{jk} \mathbb{1}_j \mathbb{1}_k + \beta_{123}\,\text{crit}_h \cdot \text{post}_d \cdot \text{piv}_f + \gamma_f + \delta_{\mathrm{DOW}(d)} + \varepsilon_{fudh}.
 \end{equation}
-where $\Delta Y_{\text{post}}(0)$ is the counterfactual change in the within-day differential $Y_{ud} = q_{2,ud,\text{crit}} - q_{2,ud,\text{flat}}$ in the absence of the reform, and $X_d$ is day-level Spain wind, solar, and demand.
 
 \begin{table}[H]
 \centering
-\caption{\textbf{ATT under the firm-partition DiD design.} Outcome $Y_{ud}$ is the within-day per-hour differential of $q_2$ (mean MWh per clock-hour in critical hours 05:00--09:00 and 16:00--23:00, minus mean in flat hours 01:00--04:00) for unit $u$ on day $d$. Groups are pivotal firms (Iberdrola, Endesa, Naturgy, EDP-Spain, EDP-PT) vs non-pivotal (Repsol, Engie, TotalEnergies, Moeve). Covariates $X_d$ are day-level Spain wind, solar, and demand (GW). Columns (3)--(5) use \texttt{drdid} per \citet{santannaZhao2020} in repeated-cross-section mode; SE clustered by \texttt{unit\_code}. Under this partition, strong overlap holds (firm class is independent of day-level weather) and the five estimators converge to similar point estimates around $\beta_3 \approx +0.7$~MWh per clock-hour.}
-\label{tab:firm_dr_did}
-\input{tables/tab_firm_dr_did}
+\caption{\textbf{Triple-difference on $q_2$: $\text{crit} \times \text{post} \times \text{pivotal}$.} Sample pools pivotal and non-pivotal firms across critical and flat hours, October--December 2024 and October--December 2025 (N=293{,}838 unit-day-hour cells). $\beta_{123}$ is the headline triple-interaction coefficient; the implied within-group $\beta_3$ for pivotal and non-pivotal firms are reconstructions of the §\ref{sec:results:q2} columns (2) and (3) of Table~\ref{tab:B1_main}. Column~(1) is the baseline DDD; column~(2) adds day-level Spain wind, solar, and demand (GW) additively; column~(3) lets each covariate enter with separate slopes by crit, post, and pivotal; column~(4) absorbs clock-hour fixed effects. SE clustered by date.}
+\label{tab:firm_ddd}
+\input{tables/tab_firm_ddd}
 \end{table}
 
 \begin{table}[H]
