@@ -257,12 +257,18 @@ Day-ahead bids submitted by the four largest CCGT operators in Spain (Iberdrola,
 \section{Main empirical results}\label{sec:results}
 % =====================================================================
 
-\subsection{\texorpdfstring{Within-day DiD on $q_2$: primary outcome}{Within-day DiD on q\_2: primary outcome}}\label{sec:results:q2}
+\subsection{Strategic withholding and intraday upward repositioning}\label{sec:results:q2}
+
+MECHANISM: UNDER THE HIGHER-GRANULARITY REGIME, A PIVOTAL DOMINANT FIRM IN A CRITICAL HOUR CAN WITHHOLD CAPACITY FROM THE DAY-AHEAD CLEARING AND REPOSITION THAT CAPACITY UPWARD IN THE INTRADAY AUCTIONS AT HIGHER PER-QUARTER PRICES. UPWARD SELL ADJUSTMENT SUMMED ACROSS THE THREE INTRADAY AUCTIONS, $q_{2,fdh}$, IN MWH PER UNIT-CLOCK-HOUR:
+
+\begin{equation}\label{eq:B1}
+   q_{2,fdh} \;=\; \alpha + \beta_1\,\mathrm{crit}_h + \beta_2\,\mathrm{post}_d + \beta_3\,(\mathrm{crit}_h \times \mathrm{post}_d) + \gamma_f + \delta_{\mathrm{DOW}(d)} + \varepsilon_{fdh},
+\end{equation}
+with firm fixed effects $\gamma_f$, day-of-week fixed effects $\delta_{\mathrm{DOW}(d)}$, and cluster-robust standard errors by date. The sample restricts to the same-calendar-month windows October--December 2024 (pre) and October--December 2025 (post), so the March 2025 intraday reform is held constant. Critical hours are 05:00--09:00 and 16:00--23:00; flat hours are 01:00--04:00. Pivotal firms are those with non-trivial price-setting capacity in critical hours (Iberdrola, Endesa, Naturgy, EDP-Spain, EDP-Portugal); non-pivotal firms (Repsol, Engie Espa\~na, TotalEnergies, Moeve) serve as a negative control.
 
 \begin{table}[H]
 \centering
-\caption{\textbf{B1 -- Within-day DiD on $q_2$ (Ito--Reguant strategic IDA upward adjustment).}
-Outcome is $q_2$ in MWh per (unit, clock-hour), defined as the sum of \texttt{pibci} across IDA sessions converted to MWh and aggregated to clock-hour resolution. Specification: $q_{2,fdh} = \alpha + \beta_1 \texttt{crit}_h + \beta_2 \texttt{post}_d + \beta_3 (\texttt{crit}_h \times \texttt{post}_d) + \gamma_f + \delta_{\mathrm{DOW}(d)} + \varepsilon_{fdh}$. Firm and day-of-week fixed effects; cluster-robust standard errors by date. Sample: same-calendar-month windows, October--December 2024 and October--December 2025 (both windows post-MTU15-IDA reform of March 2025). Critical hours: $h\in\{5,6,7,8,16,17,18,19,20,21,22\}$ (canonical: demand surge $\cup$ wind-and-solar transition; excludes post-peak h\{20-22\} which are descending and h4 which is too early for system tightness). Flat hours: $h\in\{1,2,3\}$. Pivotal firms: firms with $\geq 10\%$ pivotality in critical hours (Iberdrola, Endesa, Naturgy, EDP-Spain, EDP-Portugal). Non-pivotal firms (negative control): firms with $\sim 0\%$ pivotality in either hour-class (Repsol, Engie España, TotalEnergies, Moeve). Significance: $^{*}$ $p<0.05$, $^{**}$ $p<0.01$, $^{***}$ $p<0.001$; headline interpretation relies on $^{***}$ given the large effective sample size.}
+\caption{\textbf{B1 -- Within-day DiD on $q_2$ (intraday upward adjustment).} Estimates of Equation~\ref{eq:B1}. Significance: $^{*}$ $p<0.05$, $^{**}$ $p<0.01$, $^{***}$ $p<0.001$.}
 \label{tab:B1_main}
 \input{tables/tab_B1_main}
 \end{table}
@@ -270,16 +276,14 @@ Outcome is $q_2$ in MWh per (unit, clock-hour), defined as the sum of \texttt{pi
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/fig_tech_stratified_beta3.pdf}
-\caption{\textbf{B1 -- Heterogeneity in the critical-vs-flat differential, by technology.}
-Coefficient plot of $\beta_3$ (critical $\times$ post DiD interaction) on $q_2$, stratified by \texttt{tech\_group} within the pivotal-firm sample. Error bars are 95\% confidence intervals using cluster-robust standard errors by date. Color coding: red = dispatchable strategic technologies (CCGT, Hydro, Hydro\_pump, Coal); orange = must-run (Nuclear); blue = price-taker variable renewable (Wind). The dispatchable--non-dispatchable split is the key validation of the within-day-DiD design: granularity has economic content for technologies that can strategically reshape supply, not for must-run or price-taker technologies. Source: Table~\ref{tab:B1_tech}.}
+\caption{\textbf{B1 -- Heterogeneity in $\beta_3$ by technology, pivotal firms.} Estimates of Equation~\ref{eq:B1} restricted to each technology in the pivotal-firm sample. Error bars are 95\% cluster-robust confidence intervals. The dispatchable--non-dispatchable split is the key validation of the within-day-DiD design: granularity has economic content for technologies that can strategically reshape supply, not for must-run or price-taker technologies.}
 \label{fig:tech_beta3}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_q2_samecal_trajectory.pdf}
-\caption{\textbf{$q_2$ monthly mean by firm and hour-class, same-calendar-month windows.}
-Six-panel monthly trajectory of $q_2$ (in MWh per unit-clock-hour) for the four dominant operators (Iberdrola, Endesa, Naturgy, EDP-Spain) and two non-pivotal operators (Repsol, TotalEnergies). Red = critical hours $h\{18$-$22\}$; blue = flat hours $h\{3$-$5\}$. The two same-calendar-month windows (October--December 2024 and October--December 2025) bracket the MTU15-DA reform of October 1, 2025. Both windows are post-MTU15-IDA so the IDA reform of March 2025 is held constant. Source: \texttt{scripts/analysis/firm/thesis\_figures.py}.}
+\caption{\textbf{$q_2$ monthly mean by firm and hour-class, same-calendar-month windows.} Six panels for the four dominant operators (Iberdrola, Endesa, Naturgy, EDP-Spain) and two non-pivotal placebo operators (Repsol, TotalEnergies). Red lines: critical hours (05:00--09:00 and 16:00--23:00). Blue lines: flat hours (01:00--04:00). Dashed vertical line: the October 2025 day-ahead reform.}
 \label{fig:q2_trajectory}
 \end{figure}
 
@@ -287,10 +291,15 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 
 \subsection{Conditional parallel trends with renewable and reforzada controls}\label{sec:results:cpt}
 
+The same-calendar-month design in Equation~\ref{eq:B1} absorbs structural confounds (the March 2025 intraday reform, seasonal weather, calendar-month effects) via the \texttt{post} dummy. To stress-test the parallel-trends assumption conditionally on hourly weather variation \textit{within} each window, we re-estimate Equation~\ref{eq:B1} with progressively richer controls:
+\begin{equation}\label{eq:cpt}
+   q_{2,fdh} \;=\; \alpha + \beta_1\mathrm{crit}_h + \beta_2\mathrm{post}_d + \beta_3(\mathrm{crit}_h \times \mathrm{post}_d) + \gamma_f + \delta_{\mathrm{DOW}(d)} + \boldsymbol{\theta}\,X_{dh} + \varepsilon_{fdh},
+\end{equation}
+where $X_{dh}$ are hourly Spain wind and solar production (ENTSO-E A75), with extensions that add the interaction $\mathrm{crit}_h \times X_{dh}$ and calendar-month fixed effects. A stable $\beta_3$ across these specifications is the conditional parallel-trends defence of the headline result.
+
 \begin{table}[H]
 \centering
-\caption{\textbf{B4 -- Conditional parallel trends: spec stack for $q_2$, pivotal firms only.}
-$\beta_3$ stability under successive control additions, starting from the baseline B1 specification (firm and day-of-week fixed effects). Spec (2) adds Spain hourly wind and solar production levels (ENTSO-E A75); Spec (3) adds the interaction of critical-hour dummy with renewable production (allowing the renewable effect to differ across critical and flat hours); Spec (4) adds calendar-month fixed effects. The same-calendar-month design already absorbs reforzada and MTU15-IDA via the post dummy (both hold constant within each window), so no separate controls for those reforms are needed in this spec stack. Stability of $\beta_3$ across columns is the conditional parallel-trends defence of the headline result.}
+\caption{\textbf{B4 -- Conditional parallel trends: spec stack for $q_2$, pivotal firms only.} Each row is a separate estimate of Equation~\ref{eq:cpt} with progressively richer controls. Significance markers as in Table~\ref{tab:B1_main}.}
 \label{tab:B4_cpt}
 \input{tables/tab_B4_cpt}
 \end{table}
@@ -357,6 +366,21 @@ The DA-to-IDA price wedge is a candidate supporting outcome but it is a noisy me
 \subsection{Operational vs strategic decomposition (PIBCA vs PHF)}\label{app:operational}
 
 \subsection{Bid-shape robustness in the competitive-zone restriction}\label{app:competitive_zone}
+
+\subsection{Time placebos}\label{app:time_placebos}
+
+% TODO: prose. The table reports B1 re-run over windows that do NOT cross the
+% MTU15-DA reform. Headline (pivotal CCGT): beta_3 = +3.87***. P1 within-2024
+% (no reform): -2.00, p=0.63. P2 within-2025-pre-MTU15-DA: +2.14, p=0.26.
+% P3 shifted back one year (crosses 2024-06-13 IDA reform): -2.79*, sign flips,
+% consistent with that earlier reform consolidating q_2 across sessions.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Time-placebo $\beta_3$ on $q_2$.} Same specification as Equation~\ref{eq:B1} re-estimated over windows that do not cross the October 2025 day-ahead reform. P1 and P2 are within-regime placebos; P3 shifts both windows back one year and crosses the June 2024 intraday reform. Pivotal-firm sample defined as in Table~\ref{tab:firms_main}; non-pivotal placebo sample is the same negative-control firms used in the headline.}
+\label{tab:B1_time_placebos}
+\input{tables/tab_B1_time_placebos}
+\end{table}
 
 
 % =====================================================================

@@ -164,15 +164,17 @@ def fig_tech_beta3():
     ax.set_yticks(ypos)
     ax.set_yticklabels(sub["tech"])
     ax.set_xlabel(r"$\beta_3$: critical $\times$ post DiD coefficient on $q_2$ (MWh / unit-clock-hour)")
-    ax.set_title("Treatment-effect heterogeneity by technology\n(treatment group: pivotal firms only, same-cal-month Oct-Dec 2024 vs Oct-Dec 2025)")
+    ax.set_title("Critical-vs-flat differential by technology, pivotal-firm sample")
     ax.grid(axis="x", alpha=0.3)
-    # Legend
     handles = [
-        plt.Line2D([0],[0], marker="o", color="w", markerfacecolor="C3", markersize=10, label="dispatchable strategic"),
-        plt.Line2D([0],[0], marker="o", color="w", markerfacecolor="C1", markersize=10, label="must-run"),
-        plt.Line2D([0],[0], marker="o", color="w", markerfacecolor="C0", markersize=10, label="price-taker / VRE"),
+        plt.Line2D([0],[0], marker="o", color="w", markerfacecolor="C3", markersize=10,
+                    label="Dispatchable thermal/hydro (CCGT, coal, hydro)"),
+        plt.Line2D([0],[0], marker="o", color="w", markerfacecolor="C1", markersize=10,
+                    label="Always-on (nuclear)"),
+        plt.Line2D([0],[0], marker="o", color="w", markerfacecolor="C0", markersize=10,
+                    label="Wind (intermittent)"),
     ]
-    ax.legend(handles=handles, loc="lower right", fontsize=8)
+    ax.legend(handles=handles, loc="lower right", fontsize=8, frameon=False)
     fig.tight_layout()
     out = THESIS_FIG / "fig_tech_stratified_beta3"
     fig.savefig(f"{out}.png", dpi=120, bbox_inches="tight")
@@ -182,37 +184,49 @@ def fig_tech_beta3():
 
 
 def fig_q2_trajectory():
-    """F3: q_2 monthly trajectory by firm × hour-class for the two same-cal-month windows."""
+    """F3: q_2 monthly trajectory by firm × hour-class. Side-by-side same-cal-month
+    panels (Oct-Dec 2024 pre, Oct-Dec 2025 post) for cleanest visual contrast."""
     print("F3: q_2 same-cal-month trajectory by firm × hour-class...")
     panel = pd.read_parquet(B1_PANEL)
     panel["d"] = pd.to_datetime(panel["d"])
     panel["year_month"] = panel["d"].dt.to_period("M").dt.to_timestamp()
-    # Aggregate per (parent, year_month, hour_class)
     agg = (panel.groupby(["parent","year_month","hour_class"])["q2_mwh_clock_hour"]
            .mean().reset_index())
 
-    fig, axes = plt.subplots(2, 3, figsize=(13, 6.5), sharex=True, sharey=False)
-    for ax, parent in zip(axes.flat, ["IB","GE","GN","HC","Repsol","TotalEnergies"]):
-        sub = agg[agg["parent"] == parent]
+    firm_label = {"IB": "Iberdrola", "GE": "Endesa", "GN": "Naturgy",
+                   "HC": "EDP-Spain", "Repsol": "Repsol",
+                   "TotalEnergies": "TotalEnergies"}
+    firms = ["IB", "GE", "GN", "HC", "Repsol", "TotalEnergies"]
+
+    fig, axes = plt.subplots(2, 3, figsize=(13, 6.8), sharex=True)
+    for ax, parent in zip(axes.flat, firms):
+        sub = agg[agg["parent"] == parent].copy()
         for hc, color, marker, label in [
-            ("critical_canonical", "C3", "o", "critical h{5-7,16-19}"),
-            ("flat_canonical", "C0", "s", "flat h{1-3}"),
+            ("critical_canonical", "#d34a4a", "o", "Critical hours (05:00--09:00, 16:00--23:00)"),
+            ("flat_canonical",     "#3a78b8", "s", "Flat hours (01:00--04:00)"),
         ]:
             s = sub[sub["hour_class"]==hc].sort_values("year_month")
             if len(s):
-                ax.plot(s["year_month"], s["q2_mwh_clock_hour"], color=color, marker=marker, label=label, linewidth=1.3)
-        ax.set_title(parent)
-        ax.set_ylabel("$q_2$ MWh / unit-clock-hour")
-        ax.tick_params(axis="x", rotation=45, labelsize=7)
-        ax.grid(alpha=0.3)
+                ax.plot(s["year_month"], s["q2_mwh_clock_hour"],
+                        color=color, marker=marker, label=label,
+                        linewidth=1.6, markersize=7)
+        # Visual separator at reform date (Oct 1 2025)
+        ax.axvline(pd.Timestamp("2025-10-01"), color="black", linewidth=0.7,
+                   linestyle="--", alpha=0.6)
+        ax.set_title(firm_label[parent], fontsize=11)
+        ax.set_ylabel(r"$q_2$ MWh / unit-clock-hour", fontsize=9)
+        ax.tick_params(axis="x", rotation=35, labelsize=8)
+        ax.grid(alpha=0.25)
         ax.axhline(0, color="black", linewidth=0.5)
-        if parent == "IB":
-            ax.legend(fontsize=7)
-    fig.suptitle("$q_2$ monthly mean by firm × hour-class (same-cal-month windows)",
-                 fontsize=11)
-    fig.tight_layout()
+    # One shared legend at the figure level
+    handles, labels = axes[0,0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="upper center", ncol=2,
+               bbox_to_anchor=(0.5, 1.02), fontsize=9, frameon=False)
+    fig.text(0.5, 0.965, "Dashed line: October 2025 day-ahead reform",
+             ha="center", fontsize=8, style="italic", color="dimgray")
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
     out = THESIS_FIG / "fig_q2_samecal_trajectory"
-    fig.savefig(f"{out}.png", dpi=110, bbox_inches="tight")
+    fig.savefig(f"{out}.png", dpi=140, bbox_inches="tight")
     fig.savefig(f"{out}.pdf", bbox_inches="tight")
     plt.close(fig)
     print(f"  saved: {out}.png / .pdf")
