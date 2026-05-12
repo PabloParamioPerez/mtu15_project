@@ -1,0 +1,25 @@
+\begin{table}[htbp]\centering
+\caption{B1 -- Within-day DiD on q$\_2$ (MWh), headline window}
+\begin{tabular}{l*{3}{c}}
+\toprule
+                    &\multicolumn{1}{c}{(1)}&\multicolumn{1}{c}{(2)}&\multicolumn{1}{c}{(3)}\\
+                    &\multicolumn{1}{c}{All firms}&\multicolumn{1}{c}{Pivotal}&\multicolumn{1}{c}{Non-pivotal}\\
+\midrule
+Critical ($\beta\_1$)&       1.280&      -4.454&       4.993\\
+                    &     (0.328)&     (0.893)&     (0.320)\\
+\addlinespace
+Post ($\beta\_2$)    &      -2.562&      -8.294&       1.140\\
+                    &     (0.486)&     (1.146)&     (0.415)\\
+\addlinespace
+Critical $\times$ Post ($\beta\_3$)&      -1.397&       3.866&      -4.741\\
+                    &     (0.446)&     (1.147)&     (0.423)\\
+\midrule
+Observations        &     293,838&     122,495&     171,343\\
+Clusters (days)     &         184&         184&         184\\
+R$^2$               &      0.0132&      0.0056&      0.0113\\
+Adj. R$^2$          &      0.0131&      0.0055&      0.0113\\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{4}{l}{\footnotesize Outcome is the strategic intraday upward sell adjustment q$\_2$ in MWh per (unit, date, clock-hour) cell, summed across the three IDA sessions. Critical hours: 05:00--09:00 and 16:00--23:00. Flat hours: 01:00--04:00. Pre window: October--December 2024. Post window: October--December 2025. Standard errors clustered by date.}\\
+\end{tabular}
+\end{table}

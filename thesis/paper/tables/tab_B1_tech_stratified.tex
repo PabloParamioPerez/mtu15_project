@@ -1,15 +1,12 @@
-\begin{tabular}{l c c c c c}
+\begin{tabular}{l c c c c c c c}
 \toprule
- & \multicolumn{2}{c}{Pivotal firms} & \multicolumn{2}{c}{Non-pivotal firms} & \\
-\cmidrule(lr){2-3} \cmidrule(lr){4-5}
-Technology & $\beta_3$ & SE / $n$ & $\beta_3$ & SE / $n$ & Predicted \\
+ & CCGT & Hydro & Hydro pump & Coal & Nuclear & Wind & Solar PV \\
 \midrule
-CCGT & $15.23$$^{***}$ & (3.74) / 25,232 & $-69.95$ & (48.13) / 3,320 & + \\
-Hydro & $-1.96$ & (3.59) / 16,997 & --- & --- & + \\
-Hydro\_pump & $16.24$ & (15.34) / 3,125 & --- & --- & + \\
-Coal & $69.00$$^{*}$ & (34.36) / 413 & --- & --- & + \\
-Nuclear & $63.22$ & (35.88) / 2,440 & --- & --- & 0 \\
-Wind & $-2.24$ & (1.78) / 31,344 & $0.17$ & (0.17) / 83,758 & 0 \\
-Biomass & --- & --- & --- & --- & 0 \\
+
+Critical $\times$ Post ($\beta_3$)&       15.23&      -1.963&       16.24&       69.00&       63.22&      -2.244&           0\\
+                    &     (3.738)&     (3.586)&     (15.34)&     (34.36)&     (35.88)&     (1.779)&         (.)\\
+\midrule
+Obs.                &      25,232&      16,997&       3,125&         413&       2,440&      31,344&       7,276\\
+Clusters            &         184&         184&         183&          58&         118&         184&         184\\
 \bottomrule
 \end{tabular}
