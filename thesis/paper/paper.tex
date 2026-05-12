@@ -461,13 +461,9 @@ where $X_{dh} = (\text{wind}_{dh},\,\text{solar}_{dh},\,\text{demand}_{dh})$ in 
 
 \subsection{Firms in the analysis sample (detailed)}\label{app:firms}
 
-Extends the main-text Table~\ref{tab:firms_main} with a channel-segregated breakdown of each firm's 2025 cleared volume and the OMIE generation-unit count. Capacity is the proxy $\sum_u \max_{t \in 2025} \text{max\_power\_mw}(u,t)$ taken from the day-ahead bid headers (\texttt{cab}, sell side), share-weighted across joint-owned plants; it is a tight lower bound on installed nameplate.
-
 I THINK WE CAN TAKE THE CAPAPCITY DATA! BUT MAYBE IT IS ONLY FOR EXPORTS AND IMPORTS!.
 
-The three channel columns break the headline market share by the route through which each firm dispatches its production: \textit{DA auction share} is the firm's share of Iberian DA-cleared volume in PDBF offer-type 1; \textit{DA bilateral share} is the firm's share of bilateral contract executions in PDBF offer-type 4; \textit{IDA cumulative share} is the firm's share of the final intraday-auction programme (PIBCA accumulated, last session per unit-period). The three channels differ in nature: the DA auction is anonymous and price-discovering, bilateral contracts are pre-negotiated firm-to-firm transfers (typically internal: from a group's generation arm to its retail subsidiary), and the IDA accumulates incremental adjustments after the DA clearing. Comparing channels reveals the routing strategy: Iberdrola is roughly balanced across channels, Endesa is auction-heavy (37\% of DA-cleared), Naturgy is bilateral-heavy (16\% of bilateral, only 4\% of auction).
-
-The net-position column uses cleared volumes in the day-ahead spot market for April--December 2025 (post-MTU15-IDA, so the pre-reform rule-28.8 opportunity-cost bids do not contaminate buy-side data); a firm is \textit{net seller} if its cleared sales exceed 60\% of its cleared day-ahead turnover, \textit{net buyer} if below 40\%, \textit{mixed} otherwise. The aggregation joins generation units and retail-arm units of the same group via a broad \texttt{owner\_agent} match. The label is descriptive only — vertical integration is not part of the identification strategy.
+Column definitions. \textit{DA auction share}: PDBF offer-type 1, anonymous DA clearing. \textit{DA bilateral share}: PDBF offer-type 4, pre-negotiated firm-to-firm transfers. \textit{IDA cumulative share}: PIBCA accumulated (last session per unit-period). \textit{Net position}: net seller if 2025 DA sales $>60\%$ of turnover, net buyer if $<40\%$, mixed otherwise. The net-position label is descriptive; vertical integration does not enter the identification.
 
 \begin{table}[H]
 \centering
