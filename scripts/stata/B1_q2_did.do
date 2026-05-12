@@ -61,7 +61,7 @@ estimates store m3_nonpivotal
 
 esttab m1_all m2_pivotal m3_nonpivotal ///
     using "`texdir'/tab_B1_main.tex", replace ///
-    fragment se label booktabs star(* 0.10 ** 0.05 *** 0.01) nomtitles nonum ///
+    fragment se label booktabs star(* 0.05 ** 0.01 *** 0.001) nomtitles nonum ///
     keep(1.crit#1.post 1.crit 1.post) ///
     coeflabels(1.crit#1.post "Critical $\times$ Post ($\beta_3$)" ///
                1.crit "Critical ($\beta_1$)" ///
@@ -99,7 +99,7 @@ foreach tech in "CCGT" "Hydro" "Hydro_pump" "Coal" "Nuclear" "Wind" "Solar PV" {
 
 esttab `tech_models' ///
     using "`texdir'/tab_B1_tech_stratified.tex", replace ///
-    fragment se label booktabs star(* 0.10 ** 0.05 *** 0.01) nomtitles nonum ///
+    fragment se label booktabs star(* 0.05 ** 0.01 *** 0.001) nomtitles nonum ///
     keep(1.crit#1.post) ///
     coeflabels(1.crit#1.post "Critical $\times$ Post ($\beta_3$)") ///
     prehead("\begin{tabular}{l c c c c c c c}" ///
@@ -134,7 +134,7 @@ foreach firm in "IB" "GE" "GN" "HC" "Repsol" "TotalEnergies" "Engie" "Moeve" {
 
 esttab `firm_models' ///
     using "`texdir'/tab_B1_per_firm.tex", replace ///
-    fragment se label booktabs star(* 0.10 ** 0.05 *** 0.01) nomtitles nonum ///
+    fragment se label booktabs star(* 0.05 ** 0.01 *** 0.001) nomtitles nonum ///
     keep(1.crit#1.post) ///
     coeflabels(1.crit#1.post "Critical $\times$ Post ($\beta_3$)") ///
     prehead("\begin{tabular}{l c c c c c c c c}" ///
@@ -194,7 +194,7 @@ estimates store p3_npiv
 * Export placebo table (rows = sample, columns = placebo window)
 esttab p1_all p1_piv p1_npiv p2_all p2_piv p2_npiv p3_all p3_piv p3_npiv ///
     using "`texdir'/tab_B1_time_placebos.tex", replace ///
-    fragment se label booktabs star(* 0.10 ** 0.05 *** 0.01) nomtitles nonum ///
+    fragment se label booktabs star(* 0.05 ** 0.01 *** 0.001) nomtitles nonum ///
     keep(1.crit#1.post) ///
     coeflabels(1.crit#1.post "Critical $\times$ Post ($\beta_3$)") ///
     prehead("\begin{tabular}{l c c c c c c c c c}" ///
