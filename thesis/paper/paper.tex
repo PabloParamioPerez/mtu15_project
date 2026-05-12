@@ -172,7 +172,7 @@ OJO, IF WE INTRODUCE THE 11:00-15:00 PERIOD IN THE CONTROL, WE ARE MIXING THE OP
 \label{fig:seasonal}
 \end{figure}
 
-\textit{Reading.} Critical hours combine the morning ramp and evening peak; flat hours fall in the overnight valley. The pattern is stable across seasons.
+\textit{Reading} (\textbf{supportive}). Critical hours combine the morning ramp and evening peak; flat hours fall in the overnight valley. The pattern is stable across seasons.
 
 \begin{figure}[H]
 \centering
@@ -181,7 +181,7 @@ OJO, IF WE INTRODUCE THE 11:00-15:00 PERIOD IN THE CONTROL, WE ARE MIXING THE OP
 \label{fig:vre_seasonal}
 \end{figure}
 
-\textit{Reading.} Solar production concentrates around midday and fades sharply at the critical-hour boundaries; wind is broadly flat. Critical hours systematically face low renewable supply, reinforcing their role as the time-varying window.
+\textit{Reading} (\textbf{supportive}). Solar production concentrates around midday and fades sharply at the critical-hour boundaries; wind is broadly flat. Critical hours systematically face low renewable supply, reinforcing their role as the time-varying window.
 
 \subsection{Firms in the analysis sample}\label{sec:data:firms}
 
@@ -197,7 +197,7 @@ The empirical analysis follows nine parent firms in two blocks. The first block 
 \input{tables/tab_firm_descriptive_main}
 \end{table}
 
-\textit{Reading.} The four CNMC-dominant operators (Iberdrola, Endesa, Naturgy, EDP-Spain) plus EDP-Portugal together hold the bulk of Iberian generation capacity. The non-dominant block (Repsol, Engie, TotalEnergies, Moeve) is substantially smaller and serves as the placebo.
+\textit{Reading} (\textbf{descriptive}). The four CNMC-dominant operators (Iberdrola, Endesa, Naturgy, EDP-Spain) plus EDP-Portugal together hold the bulk of Iberian generation capacity. The non-dominant block (Repsol, Engie, TotalEnergies, Moeve) is substantially smaller and serves as the placebo.
 
 \subsection{Identification strategy and treatment-effect set}\label{sec:data:identification}
 
@@ -246,7 +246,7 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 \end{tabular}
 \end{table}
 
-\textit{Reading.} Naturgy is the most pivotal firm in critical hours (4.4\%), followed by EDP-Spain and EDP-Portugal. Repsol, Engie, TotalEnergies, and Moeve are essentially never tightly pivotal and serve as the negative control.
+\textit{Reading} (\textbf{supportive}). Naturgy is the most pivotal firm in critical hours (4.4\%), followed by EDP-Spain and EDP-Portugal. Repsol, Engie, TotalEnergies, and Moeve are essentially never tightly pivotal and serve as the negative control.
 
 \subsection{Per-firm bid-shape and granularity exploitation}\label{sec:bid_evidence:perfirm}
 
@@ -257,7 +257,7 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 \label{fig:per_firm_strategic_types}
 \end{figure}
 
-\textit{Reading.} Two distinct strategic patterns appear. Iberdrola enriches the bid ladder in critical hours (more steps) but keeps the four quarters of each hour nearly identical. Naturgy keeps the ladder shallow and varies bids strongly across quarters.
+\textit{Reading} (\textbf{supportive}). Two distinct strategic patterns appear. Iberdrola enriches the bid ladder in critical hours (more steps) but keeps the four quarters of each hour nearly identical. Naturgy keeps the ladder shallow and varies bids strongly across quarters.
 
 % =====================================================================
 \section{Main empirical results}\label{sec:results}
@@ -279,7 +279,7 @@ with firm fixed effects $\gamma_f$, day-of-week fixed effects $\delta_{\mathrm{D
 \input{tables/tab_B1_main}
 \end{table}
 
-\textit{Reading.} $\beta_3 = +3.87$~MWh per unit-clock-hour for pivotal firms and $-4.74$ for the non-pivotal placebo, both significant at the 0.1\% level. The sign reverses across firm classes, which the placebo prediction requires.
+\textit{Reading} (\textbf{supportive}). $\beta_3 = +3.87$~MWh per unit-clock-hour for pivotal firms and $-4.74$ for the non-pivotal placebo, both significant at the 0.1\% level. The sign reverses across firm classes, which the placebo prediction requires.
 
 \begin{figure}[H]
 \centering
@@ -288,7 +288,7 @@ with firm fixed effects $\gamma_f$, day-of-week fixed effects $\delta_{\mathrm{D
 \label{fig:tech_beta3}
 \end{figure}
 
-\textit{Reading.} Positive $\beta_3$ concentrates in dispatchable technologies (CCGT $+15.2$, Coal $+69$, Hydro\_pump $+16.2$); Wind shows the predicted null. Nuclear is large and noisy. Granularity has economic content where the technology can strategically reshape supply.
+\textit{Reading} (\textbf{mixed}). Positive $\beta_3$ concentrates in the strategically dispatchable techs (CCGT $+15.2$, Coal $+69$, Hydro\_pump $+16.2$) and Wind shows the predicted null, both consistent with the mechanism. But Hydro is mildly negative against a positive prediction, and Nuclear is large with very wide error bars and few units --- neither sharply contradicts the mechanism but neither cleanly supports it.
 
 \begin{figure}[H]
 \centering
@@ -297,7 +297,7 @@ with firm fixed effects $\gamma_f$, day-of-week fixed effects $\delta_{\mathrm{D
 \label{fig:q2_trajectory}
 \end{figure}
 
-\textit{Reading.} The pivotal-firm panels show the critical line tracking above the flat line after October 2025, while the non-pivotal panels show the two lines collapsing together. The pre-reform trends are visually parallel in both blocks.
+\textit{Reading} (\textbf{supportive}). The pivotal-firm panels show the critical line tracking above the flat line after October 2025, while the non-pivotal panels show the two lines collapsing together. The pre-reform trends are visually parallel in both blocks.
 
 The full table of $\beta_3$ stratified by technology (with the non-pivotal placebo column) is reported in Appendix~\ref{app:B1_tech}. The per-firm decomposition of $\beta_3$ jointly on $q_2$ and on day-ahead cleared volume (the withholding outcome) is in Appendix~\ref{app:per_firm}. A supporting analysis on the day-ahead $\to$ intraday price wedge is in Appendix~\ref{app:wedge}; the wedge is a noisy outcome under the post-blackout \textit{operaci\'on reforzada} regulatory overlay and is not informative on its own.
 
@@ -343,7 +343,7 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 \input{tables/tab_B5_robustness}
 \end{table}
 
-\textit{Reading.} $\beta_3$ stays in the $+3.4$ to $+6.3$~MWh range across critical-hours definitions, firm partitions, window choices, and DST handling, with $p < 0.001$ throughout. The only sub-window where the sign flips is the 50-day CEST-only segment, which is small and confounded by daylight saving.
+\textit{Reading} (\textbf{supportive}). $\beta_3$ stays in the $+3.4$ to $+6.3$~MWh range across critical-hours definitions, firm partitions, window choices, and DST handling, with $p < 0.001$ throughout. The only sub-window where the sign flips is the 50-day CEST-only segment, which is small and confounded by daylight saving.
 
 \subsection{$\beta_3$ stratified by technology}\label{app:B1_tech}
 
@@ -358,7 +358,7 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 \resizebox{\textwidth}{!}{\input{tables/tab_B1_tech_stratified}}
 \end{table}
 
-\textit{Reading.} Same conclusion as Figure~\ref{fig:tech_beta3} in numeric form: dispatchable techs (CCGT, Hydro\_pump, Coal) carry large positive $\beta_3$; Wind and Solar PV are null; Nuclear is large but extremely noisy with $n$ small.
+\textit{Reading} (\textbf{mixed}). Same picture as Figure~\ref{fig:tech_beta3} in numeric form: dispatchable carry the result, Wind and Solar PV are null, Nuclear is large but extremely noisy. Hydro pushes against the directional prediction, in line with reservoir water-value optimisation rather than within-hour strategy.
 
 \subsection{Per-firm decomposition: $q_2$ and day-ahead cleared MWh}\label{app:per_firm}
 
@@ -374,7 +374,7 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 \input{tables/tab_per_firm_q2_da}
 \end{table}
 
-\textit{Reading.} Iberdrola and Naturgy show the joint pattern predicted by the mechanism (negative DA, positive IDA). Endesa adds in IDA without DA withholding. EDP-Spain is weak on both sides. EDP-Portugal lacks \texttt{pibci} data so only the DA side is identified.
+\textit{Reading} (\textbf{mixed}). Iberdrola and Naturgy show the joint pattern predicted by the mechanism (negative DA, positive IDA). Endesa adds in IDA without DA withholding, and EDP-Spain is weak on both sides --- the mechanism is not uniform across pivotal firms. EDP-Portugal lacks \texttt{pibci} data so only the DA side is identified for that firm.
 
 \subsection{DA $\to$ IDA price wedge (supporting outcome)}\label{app:wedge}
 
@@ -390,7 +390,7 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 \input{tables/tab_B2_wedge}
 \end{table}
 
-\textit{Reading.} Under same-calendar-month restriction the within-day wedge expands modestly post-reform. In the full-window spec, once the reforzada $\times$ critical interaction is included, the reform's own coefficient turns large and negative -- so the wedge is not informative without controlling for the regulatory overlay.
+\textit{Reading} (\textbf{problematic}). Under same-calendar-month restriction the within-day wedge expands modestly post-reform, but once the reforzada $\times$ critical interaction is included in the full-window spec the reform's own coefficient turns large and negative. The wedge is not informative without controlling for the regulatory overlay, so we cannot use it as a clean supporting outcome.
 
 \subsection{Operational vs strategic decomposition (PIBCA vs PHF)}\label{app:operational}
 
@@ -441,7 +441,7 @@ where $X_{dh} = (\text{wind}_{dh},\,\text{solar}_{dh},\,\text{demand}_{dh})$ in 
 \input{tables/tab_firm_ddd}
 \end{table}
 
-\textit{Reading.} $\beta_{123} \approx +8.6$~MWh (SE $\approx 1.4$) across all four specifications, with $p < 0.001$. The covariates and clock-hour fixed effects move the coefficient by less than 0.02~MWh, so the result does not rely on the day-level controls.
+\textit{Reading} (\textbf{supportive}). $\beta_{123} \approx +8.6$~MWh (SE $\approx 1.4$) across all four specifications, with $p < 0.001$. The covariates and clock-hour fixed effects move the coefficient by less than 0.02~MWh, so the result does not rely on the day-level controls.
 
 \begin{table}[H]
 \centering
@@ -450,7 +450,7 @@ where $X_{dh} = (\text{wind}_{dh},\,\text{solar}_{dh},\,\text{demand}_{dh})$ in 
 \input{tables/tab_B1_time_placebos}
 \end{table}
 
-\textit{Reading.} P1 (within-2024) and P2 (within-2025 pre-MTU15-DA) give $\beta_3$ statistically indistinguishable from zero in the pivotal sample. P3, which crosses the June 2024 intraday reform, picks up a negative coefficient consistent with that earlier structural shift, not the October 2025 reform.
+\textit{Reading} (\textbf{supportive}). P1 (within-2024) and P2 (within-2025 pre-MTU15-DA) give $\beta_3$ statistically indistinguishable from zero in the pivotal sample. P3, which crosses the June 2024 intraday reform, picks up a negative coefficient consistent with that earlier structural shift, not the October 2025 reform.
 
 
 % =====================================================================
@@ -476,7 +476,7 @@ The net-position column uses cleared volumes in the day-ahead spot market for Ap
 \input{tables/tab_firm_descriptive}
 \end{table}
 
-\textit{Reading.} Iberdrola is roughly balanced across channels. Endesa is auction-heavy. Naturgy is bilateral-heavy. Vertical-integration status is descriptive only and does not enter the identification.
+\textit{Reading} (\textbf{descriptive}). Iberdrola is roughly balanced across channels. Endesa is auction-heavy. Naturgy is bilateral-heavy. Vertical-integration status is descriptive only and does not enter the identification.
 
 \subsection{File-format specifications and parser conventions}
 
@@ -493,7 +493,7 @@ The net-position column uses cleared volumes in the day-ahead spot market for Ap
 \input{tables/tab_hour_classification}
 \end{table}
 
-\textit{Reading.} Critical hours (05:00--09:00, 16:00--23:00) have within-hour SD of net-load several times higher than flat hours (01:00--04:00). The ranking pins the classification directly to the structural variability of residual demand.
+\textit{Reading} (\textbf{supportive}). Critical hours (05:00--09:00, 16:00--23:00) have within-hour SD of net-load several times higher than flat hours (01:00--04:00). The ranking pins the classification directly to the structural variability of residual demand.
 
 
 % Bibliography: comment out until \cite{} commands are added in the prose,
