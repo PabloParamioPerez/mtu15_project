@@ -289,22 +289,22 @@ with firm fixed effects $\gamma_f$, day-of-week fixed effects $\delta_{\mathrm{D
 
 The full table of $\beta_3$ stratified by technology (with the non-pivotal placebo column) is reported in Appendix~\ref{app:B1_tech}. The per-firm decomposition of $\beta_3$ jointly on $q_2$ and on day-ahead cleared volume (the withholding outcome) is in Appendix~\ref{app:per_firm}. A supporting analysis on the day-ahead $\to$ intraday price wedge is in Appendix~\ref{app:wedge}; the wedge is a noisy outcome under the post-blackout \textit{operaci\'on reforzada} regulatory overlay and is not informative on its own.
 
-\subsection{Conditional parallel trends with renewable and demand controls}\label{sec:results:cpt}
+\subsection{Parallel trends discussion}\label{sec:results:pta}
 
-% TODO prose. Identification statement (conditional parallel trends, Sant'Anna 2025
-% Lecture 5): E[Y_post(0) - Y_pre(0) | crit, X] = E[Y_post(0) - Y_pre(0) | flat, X].
-% Estimation per Sant'Anna & Zhao (2020): doubly-robust DiD using drdid.
-\begin{equation}\label{eq:cpt}
-   \mathbb{E}\!\left[Y_{\text{post}}(0) - Y_{\text{pre}}(0) \,\middle|\, \mathrm{crit},\, X_{dh}\right] \;=\; \mathbb{E}\!\left[Y_{\text{post}}(0) - Y_{\text{pre}}(0) \,\middle|\, \mathrm{flat},\, X_{dh}\right],
+% TODO prose. Identifying assumption is unconditional parallel trends between
+% critical and flat hours in the absence of the reform. We do NOT defend it
+% via the conditional PT machinery of Sant'Anna & Zhao (2020) because in this
+% within-day design the treatment indicator (critical hour) is determined by
+% clock-of-day, which also pins down the natural covariate set X = (wind,
+% solar, demand): strong overlap fails by construction. We defend PTA
+% directly with: (i) time placebos that shift the reform date within periods
+% where no reform occurred (Table~\ref{tab:B1_time_placebos}, App.~\ref{app:time_placebos});
+% (ii) a firm partition robustness in Appendix~\ref{app:firm_dr_did} that flips
+% the DiD groups to pivotal vs non-pivotal firms (where overlap holds) and
+% applies doubly-robust DiD per \citet{santannaZhao2020}.
+\begin{equation}\label{eq:pta}
+   \mathbb{E}\!\left[Y_{\text{post}}(0) - Y_{\text{pre}}(0) \,\middle|\, \mathrm{crit}\right] \;=\; \mathbb{E}\!\left[Y_{\text{post}}(0) - Y_{\text{pre}}(0) \,\middle|\, \mathrm{flat}\right].
 \end{equation}
-where $X_{dh} = (\text{wind}_{dh},\,\text{solar}_{dh},\,\text{demand}_{dh})$ in GW (ENTSO-E A75 generation, A65 load) and $Y$ is $q_2$ averaged over the window for each unit-hour cell.
-
-\begin{table}[H]
-\centering
-\caption{\textbf{B4 -- ATT on $q_2$ under five estimation strategies for the conditional DiD.} Column~(1) is the unconditional 2x2 DiD with no covariates. Column~(2) adds $X$ additively to the TWFE specification; \citet{santanna2025covariates} shows this estimator is biased when treatment effects are heterogeneous in $X$. Columns~(3)--(5) implement the correct conditional-DiD estimators from \citet{santannaZhao2020}: regression adjustment \citep{heckman1997}, Hajek-stabilized inverse-probability weighting \citep{abadie2005}, and the doubly-robust estimator. In this application "treatment" (critical hour) is determined by clock-of-day, which also determines the mean weather and demand load: strong-overlap is violated and the propensity-based estimators (4) and (5) become unstable.}
-\label{tab:B4_cpt}
-\input{tables/tab_B4_cpt}
-\end{table}
 
 
 % =====================================================================
@@ -376,6 +376,29 @@ The DA-to-IDA price wedge is a candidate supporting outcome but it is a noisy me
 % (no reform): -2.00, p=0.63. P2 within-2025-pre-MTU15-DA: +2.14, p=0.26.
 % P3 shifted back one year (crosses 2024-06-13 IDA reform): -2.79*, sign flips,
 % consistent with that earlier reform consolidating q_2 across sessions.
+
+\subsection{Conditional DiD with firm-partition groups}\label{app:firm_dr_did}
+
+% TODO: prose. The within-day critical-vs-flat partition does not admit a
+% conditional-PT defense because clock-of-day determines both the treatment
+% indicator and the natural covariate set X = (wind, solar, demand) -- strong
+% overlap fails. This appendix re-orients the DiD: groups become pivotal vs
+% non-pivotal firms (which is independent of day-level weather), outcome
+% becomes the within-day differential q_2(crit) - q_2(flat) per unit-day, and
+% X enters at the day level. Under this partition overlap holds and the
+% Sant'Anna & Zhao (2020) DR DiD estimator is applicable.
+
+\begin{equation}\label{eq:firm_cpt}
+   \mathbb{E}\!\left[\Delta Y_{\text{post}}(0) \,\middle|\, \mathrm{pivotal},\, X_d\right] \;=\; \mathbb{E}\!\left[\Delta Y_{\text{post}}(0) \,\middle|\, \mathrm{non\text{-}pivotal},\, X_d\right] \quad \text{a.s.},
+\end{equation}
+where $\Delta Y_{\text{post}}(0)$ is the counterfactual change in the within-day differential $Y_{ud} = q_{2,ud,\text{crit}} - q_{2,ud,\text{flat}}$ in the absence of the reform, and $X_d$ is day-level Spain wind, solar, and demand.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{ATT under the firm-partition DiD design.} Outcome $Y_{ud}$ is the daily within-day differential of $q_2$ (MWh) between critical (05:00--09:00, 16:00--23:00) and flat (01:00--04:00) hours for unit $u$ on day $d$. Groups are pivotal firms (Iberdrola, Endesa, Naturgy, EDP-Spain, EDP-PT) vs non-pivotal (Repsol, Engie, TotalEnergies, Moeve). Covariates $X_d$ are day-level Spain wind, solar, and demand (GW). Columns (3)--(5) use \texttt{drdid} per \citet{santannaZhao2020}. Under this partition, strong overlap holds (firm class is independent of weather conditions) and the five estimators converge to similar point estimates around $\beta_3 \approx +28$~MWh/day.}
+\label{tab:firm_dr_did}
+\input{tables/tab_firm_dr_did}
+\end{table}
 
 \begin{table}[H]
 \centering
