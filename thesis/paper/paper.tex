@@ -291,15 +291,17 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 
 \subsection{Conditional parallel trends with renewable and demand controls}\label{sec:results:cpt}
 
-% TODO prose.
+% TODO prose. Identification statement (conditional parallel trends, Sant'Anna 2025
+% Lecture 5): E[Y_post(0) - Y_pre(0) | crit, X] = E[Y_post(0) - Y_pre(0) | flat, X].
+% Estimation per Sant'Anna & Zhao (2020): doubly-robust DiD using drdid.
 \begin{equation}\label{eq:cpt}
-   q_{2,fdh} \;=\; \alpha + \beta_1\mathrm{crit}_h + \beta_2\mathrm{post}_d + \beta_3(\mathrm{crit}_h \times \mathrm{post}_d) + \gamma_f + \delta_{\mathrm{DOW}(d)} + \boldsymbol{\theta}\,X_{dh} + \boldsymbol{\phi}\,(\mathrm{crit}_h \times X_{dh}) + \varepsilon_{fdh},
+   \mathbb{E}\!\left[Y_{\text{post}}(0) - Y_{\text{pre}}(0) \,\middle|\, \mathrm{crit},\, X_{dh}\right] \;=\; \mathbb{E}\!\left[Y_{\text{post}}(0) - Y_{\text{pre}}(0) \,\middle|\, \mathrm{flat},\, X_{dh}\right],
 \end{equation}
-where $X_{dh} = (\text{wind}_{dh}, \text{solar}_{dh}, \text{demand}_{dh})$ in GW (ENTSO-E A75 generation, A65 load), demeaned over the panel. Column~(4) of Table~\ref{tab:B4_cpt} adds calendar-month fixed effects.
+where $X_{dh} = (\text{wind}_{dh},\,\text{solar}_{dh},\,\text{demand}_{dh})$ in GW (ENTSO-E A75 generation, A65 load) and $Y$ is $q_2$ averaged over the window for each unit-hour cell.
 
 \begin{table}[H]
 \centering
-\caption{\textbf{B4 -- Conditional parallel trends: spec stack for $q_2$, pivotal firms only.} Each row is a separate estimate of Equation~\ref{eq:cpt} with progressively richer controls. Significance markers as in Table~\ref{tab:B1_main}.}
+\caption{\textbf{B4 -- ATT on $q_2$ under five estimation strategies for the conditional DiD.} Column~(1) is the unconditional 2x2 DiD with no covariates. Column~(2) adds $X$ additively to the TWFE specification; \citet{santanna2025covariates} shows this estimator is biased when treatment effects are heterogeneous in $X$. Columns~(3)--(5) implement the correct conditional-DiD estimators from \citet{santannaZhao2020}: regression adjustment \citep{heckman1997}, Hajek-stabilized inverse-probability weighting \citep{abadie2005}, and the doubly-robust estimator. In this application "treatment" (critical hour) is determined by clock-of-day, which also determines the mean weather and demand load: strong-overlap is violated and the propensity-based estimators (4) and (5) become unstable.}
 \label{tab:B4_cpt}
 \input{tables/tab_B4_cpt}
 \end{table}

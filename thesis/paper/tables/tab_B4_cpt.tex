@@ -1,33 +1,13 @@
-\begin{tabular}{l c c c c}
+\begin{tabular}{l c c c c c}
 \toprule
- & (1) & (2) & (3) & (4) \\
- & Baseline & + Wind/Solar & + Demand & + cal-month FE \\
+ & (1) & (2) & (3) & (4) & (5) \\
+ & TWFE & TWFE+X & OR & IPW & DR \\
+ & no controls & (biased) & Heckman-IT 1997 & Abadie 2005 & Sant'Anna-Zhao 2020 \\
 \midrule
-
-Critical $\times$ Post ($\beta_3$)&       3.866&       3.787&       4.257&       4.259\\
-                    &     (1.147)&     (1.111)&     (1.120)&     (1.122)\\
-\addlinespace
-Wind (GW)           &            &      -0.750&      -0.764&      -0.780\\
-                    &            &     (0.164)&     (0.167)&     (0.169)\\
-\addlinespace
-Solar (GW)          &            &      -0.690&       0.694&       2.140\\
-                    &            &     (5.425)&     (5.195)&     (5.391)\\
-\addlinespace
-Demand (GW)         &            &            &       0.648&       0.574\\
-                    &            &            &     (0.370)&     (0.380)\\
-\addlinespace
-Critical $\times$ Wind&            &       0.344&       0.368&       0.371\\
-                    &            &     (0.170)&     (0.170)&     (0.171)\\
-\addlinespace
-Critical $\times$ Solar&            &       0.456&      -0.949&      -2.369\\
-                    &            &     (5.424)&     (5.190)&     (5.385)\\
-\addlinespace
-Critical $\times$ Demand&            &            &      -0.829&      -0.783\\
-                    &            &            &     (0.338)&     (0.349)\\
+ATT ($\beta_3$) &     6.889 &     7.169 &   196.167 &     1.972 & -1028.293 \\
+  & (    3.411) & (    3.496) & (  139.499) & (    5.094) & (   19.665) \\
 \midrule
-Observations        &     122,495&     122,495&     122,495&     122,495\\
-Clusters (days)     &         184&         184&         184&         184\\
-$R^2$               &      0.0056&      0.0069&      0.0070&      0.0071\\
-Adj. $R^2$          &      0.0055&      0.0068&      0.0069&      0.0069\\
+Cell-periods & 3{,}006 & 3{,}006 & 3{,}006 & 3{,}006 & 3{,}006 \\
+Unit-hour cells & 1{,}503 & 1{,}503 & 1{,}503 & 1{,}503 & 1{,}503 \\
 \bottomrule
 \end{tabular}
