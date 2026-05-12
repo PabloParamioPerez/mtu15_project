@@ -138,10 +138,10 @@ def fig_tech_beta3():
     # Treatment group, by tech
     sub = df[df["label"].str.startswith("treatment_") & ~df["label"].isin(["treatment_only"])].copy()
     sub["tech"] = sub["label"].str.replace("treatment_", "")
-    # Filter to clean techs (drop spurious Solar PV result)
-    sub = sub[sub["tech"].isin(["CCGT","Hydro","Hydro_pump","Coal","Nuclear","Wind","Biomass"])].copy()
+    sub = sub[sub["tech"].isin(["CCGT","Hydro","Hydro_pump","Coal","Nuclear","Wind","Solar PV"])].copy()
     sub["beta_3"] = sub["beta_3"].astype(float)
     sub["se"] = sub["se"].astype(float)
+    sub = sub.dropna(subset=["beta_3", "se"])
     sub["ci_lo"] = sub["beta_3"] - 1.96 * sub["se"]
     sub["ci_hi"] = sub["beta_3"] + 1.96 * sub["se"]
     sub = sub.sort_values("beta_3")
@@ -172,7 +172,7 @@ def fig_tech_beta3():
         plt.Line2D([0],[0], marker="o", color="w", markerfacecolor="C1", markersize=10,
                     label="Always-on (nuclear)"),
         plt.Line2D([0],[0], marker="o", color="w", markerfacecolor="C0", markersize=10,
-                    label="Wind (intermittent)"),
+                    label="Wind & solar (intermittent)"),
     ]
     ax.legend(handles=handles, loc="lower right", fontsize=8, frameon=False)
     fig.tight_layout()
