@@ -1,10 +1,27 @@
 \begin{tabular}{l c c c c}
 \toprule
-Specification & $\beta_3$ & SE & $p$ & $G$ \\
+ & (1) & (2) & (3) & (4) \\
+ & Baseline & + VRE levels & + VRE $\times$ crit & + cal-month FE \\
 \midrule
-(1) Baseline (firm + DOW FE) & $3.87$$^{***}$ & (1.15) & 0.0008 & 184 \\
-(2) + wind, solar levels & $3.93$$^{***}$ & (1.14) & 0.0006 & 184 \\
-(3) + crit $\times$ VRE & $3.79$$^{***}$ & (1.11) & 0.0006 & 184 \\
-(4) + calendar-month FE & $3.78$$^{***}$ & (1.11) & 0.0006 & 184 \\
+
+Critical $\times$ Post ($\beta_3$)&       3.866&       3.927&       3.787&       3.791\\
+                    &     (1.147)&     (1.143)&     (1.111)&     (1.112)\\
+\addlinespace
+Wind (centered MW)  &            &   -0.000465&   -0.000750&   -0.000766\\
+                    &            &  (0.000102)&  (0.000164)&  (0.000167)\\
+\addlinespace
+Solar (centered MW) &            &   -0.000246&   -0.000690&    0.000167\\
+                    &            & (0.0000794)&   (0.00542)&   (0.00568)\\
+\addlinespace
+Critical $\times$ Wind&            &            &    0.000344&    0.000346\\
+                    &            &            &  (0.000170)&  (0.000170)\\
+\addlinespace
+Critical $\times$ Solar&            &            &    0.000456&   -0.000387\\
+                    &            &            &   (0.00542)&   (0.00568)\\
+\midrule
+Observations        &     122,495&     122,495&     122,495&     122,495\\
+Clusters (days)     &         184&         184&         184&         184\\
+$R^2$               &      0.0056&      0.0068&      0.0069&      0.0069\\
+Adj. $R^2$          &      0.0055&      0.0067&      0.0068&      0.0068\\
 \bottomrule
 \end{tabular}
