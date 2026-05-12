@@ -395,7 +395,7 @@ where $\Delta Y_{\text{post}}(0)$ is the counterfactual change in the within-day
 
 \begin{table}[H]
 \centering
-\caption{\textbf{ATT under the firm-partition DiD design.} Outcome $Y_{ud}$ is the daily within-day differential of $q_2$ (MWh) between critical (05:00--09:00, 16:00--23:00) and flat (01:00--04:00) hours for unit $u$ on day $d$. Groups are pivotal firms (Iberdrola, Endesa, Naturgy, EDP-Spain, EDP-PT) vs non-pivotal (Repsol, Engie, TotalEnergies, Moeve). Covariates $X_d$ are day-level Spain wind, solar, and demand (GW). Columns (3)--(5) use \texttt{drdid} per \citet{santannaZhao2020}. Under this partition, strong overlap holds (firm class is independent of weather conditions) and the five estimators converge to similar point estimates around $\beta_3 \approx +28$~MWh/day.}
+\caption{\textbf{ATT under the firm-partition DiD design.} Outcome $Y_{ud}$ is the within-day per-hour differential of $q_2$ (mean MWh per clock-hour in critical hours 05:00--09:00 and 16:00--23:00, minus mean in flat hours 01:00--04:00) for unit $u$ on day $d$. Groups are pivotal firms (Iberdrola, Endesa, Naturgy, EDP-Spain, EDP-PT) vs non-pivotal (Repsol, Engie, TotalEnergies, Moeve). Covariates $X_d$ are day-level Spain wind, solar, and demand (GW). Columns (3)--(5) use \texttt{drdid} per \citet{santannaZhao2020} in repeated-cross-section mode; SE clustered by \texttt{unit\_code}. Under this partition, strong overlap holds (firm class is independent of day-level weather) and the five estimators converge to similar point estimates around $\beta_3 \approx +0.7$~MWh per clock-hour.}
 \label{tab:firm_dr_did}
 \input{tables/tab_firm_dr_did}
 \end{table}

@@ -39,6 +39,14 @@ POST_START, POST_END = "2025-10-01", "2026-01-01"
 
 
 def build_unit_day_panel(units):
+    """Per (unit, date) panel keeping all day-level variation.
+
+    Aggregation is at the (clock-hour) level within each critical/flat class,
+    so the within-hour quarter-level variation is preserved as separate
+    period observations that get summed to clock-hour totals, then averaged
+    across the 11 critical / 3 flat hours of the day. The day-level variation
+    across ~92 dates in each window is retained as separate rows.
+    """
     con = duckdb.connect()
     con.execute("PRAGMA threads = 4")
     con.execute("SET memory_limit = '10GB'")
@@ -64,19 +72,24 @@ def build_unit_day_panel(units):
                 FROM pibci_summed p JOIN units u USING (unit_code)
             ),
             classified AS (
-                SELECT d, unit_code, parent, tech_group,
+                SELECT d, unit_code, parent, tech_group, hour,
                        CASE WHEN hour IN ({','.join(map(str, CRITICAL_HOURS))}) THEN 'critical'
                             WHEN hour IN ({','.join(map(str, FLAT_HOURS))})     THEN 'flat'
                             ELSE 'other' END AS hour_class,
                        q2_mwh
                 FROM with_hour
                 WHERE hour IS NOT NULL AND hour BETWEEN 0 AND 23
+            ),
+            hourly AS (
+                SELECT d, unit_code, parent, tech_group, hour, hour_class,
+                       SUM(q2_mwh) AS q2_mwh_hour
+                FROM classified
+                WHERE hour_class IN ('critical', 'flat')
+                GROUP BY 1,2,3,4,5,6
             )
             SELECT d, unit_code, parent, tech_group, hour_class,
-                   SUM(q2_mwh) AS q2_mwh_sum,
-                   COUNT(*) AS n_hours
-            FROM classified
-            WHERE hour_class IN ('critical', 'flat')
+                   AVG(q2_mwh_hour) AS q2_mwh_per_hour
+            FROM hourly
             GROUP BY 1,2,3,4,5
         """).df()
         df["window"] = label
@@ -127,14 +140,16 @@ def main():
     panel = build_unit_day_panel(units)
     print(f"unit-day-hourclass rows: {len(panel):,}")
 
-    # Pivot to wide: one row per (unit, date) with crit_sum and flat_sum
+    # Pivot to wide: one row per (unit, date) with crit and flat MEAN-per-hour
     wide = panel.pivot_table(index=["d", "unit_code", "parent", "tech_group", "post"],
-                              columns="hour_class", values="q2_mwh_sum", aggfunc="sum").reset_index()
+                              columns="hour_class", values="q2_mwh_per_hour", aggfunc="mean").reset_index()
     wide.columns = [c if isinstance(c, str) else c for c in wide.columns]
     if "critical" not in wide.columns: wide["critical"] = 0
     if "flat" not in wide.columns:     wide["flat"] = 0
     wide["critical"] = wide["critical"].fillna(0)
     wide["flat"] = wide["flat"].fillna(0)
+    # Per-hour-equivalent differential (MWh per clock-hour). This normalizes
+    # for the asymmetry between 11 critical and 3 flat hours.
     wide["y_diff"] = wide["critical"] - wide["flat"]
     print(f"unit-day rows: {len(wide):,}")
 

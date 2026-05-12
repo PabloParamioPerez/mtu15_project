@@ -1,26 +1,25 @@
 *============================================================================
-* Appendix — DR DiD with firm-partition DiD groups
+* Appendix — DR DiD with firm-partition DiD groups, day-level data
 * Author: Pablo Paramio Pérez
 * Last audit: 2026-05-12
 *
 * This is the appendix version of B4 that re-orients the DiD partition so the
-* covariate conditioning has genuine support overlap.
+* covariate conditioning has genuine support overlap (firm class is
+* independent of weather, unlike clock-of-day).
 *
 * Setup:
-*   Y = within-day differential q_2(critical hours) - q_2(flat hours), MWh,
-*       summed over hours within each (unit, date) cell.
-*   G = pivotal (1 if parent in pivotal-firm set, 0 if non-pivotal).
+*   Y = within-day per-hour differential of q_2 (MWh per clock-hour):
+*       mean q_2 in critical hours minus mean q_2 in flat hours, computed
+*       per (unit, date). Normalization by hours-per-class makes critical
+*       (11 hours) and flat (3 hours) directly comparable.
+*   G = pivotal (1 if parent in {IB, GE, GN, HC, EDP-PT}; 0 if in
+*       {Repsol, Engie, TotalEnergies, Moeve}).
 *   T = post (1 if Oct-Dec 2025, 0 if Oct-Dec 2024).
-*   X = day-level Spain wind, solar, demand (GW) from ENTSO-E A75 + A65.
+*   X = day-level Spain wind, solar, demand (GW) from ENTSO-E.
 *
-* Why this satisfies overlap: the firm partition is determined by ownership
-* identity (Iberdrola, Endesa, Naturgy, EDP-Spain, EDP-PT vs Repsol, Engie,
-* TotalEnergies, Moeve), which is independent of day-level weather. Both
-* firm classes operate on all days, so P(pivotal | X) is bounded away
-* from 0 and 1 across all X regions.
-*
-* Estimation: drdid (Rios-Avila Stata port) — outcome regression,
-* standardized IPW, and improved doubly-robust (Sant'Anna & Zhao 2020).
+* Estimation: drdid (Rios-Avila Stata port) in RCS mode -- preserves all
+* unit-day observations rather than collapsing to (unit, period) cells.
+* Cluster-robust SE by unit_code.
 *============================================================================
 
 clear all
@@ -35,25 +34,19 @@ local texdir  "`repo'/thesis/paper/tables"
 
 log using "`outdir'/firm_dr_did.log", replace text
 
-*-- Load and collapse to a balanced 2-period panel --------------------------
+*-- Load unit-day panel -----------------------------------------------------
 use "`datadir'/firm_dr_did_panel.dta", clear
-
-* Each "unit" in the drdid panel is a generation unit_code (with fixed
-* pivotal status across pre and post). Y = mean over days in window.
 encode unit_code, gen(unit_id)
-collapse (mean) y_diff wind_gw solar_gw demand_gw (first) pivotal parent tech_group, ///
-    by(unit_id post)
-bysort unit_id: gen n_periods = _N
-keep if n_periods == 2
-drop n_periods
-xtset unit_id post
+encode parent, gen(parent_id)
 
-display _newline "Panel: " _N " obs across " _N/2 " units x 2 periods"
-tab pivotal post
+display _newline "Unit-day panel: " _N " obs across " ///
+    `r(N)' " unit-days; " `=r(N)/2' " avg per (post, pivotal) cell"
+
+tab post pivotal, summarize(y_diff)
 
 label var pivotal     "Pivotal firm"
 label var post        "Post (Oct-Dec 2025)"
-label var y_diff      "Critical-flat q_2 differential (MWh/day)"
+label var y_diff      "Within-day q_2 differential (MWh per clock-hour)"
 label var wind_gw     "Wind (GW)"
 label var solar_gw    "Solar (GW)"
 label var demand_gw   "Demand (GW)"
@@ -68,35 +61,35 @@ postfile `res' str20 method double(att se n) using "`outdir'/firm_dr_did_results
 
 *-- Spec 1: Baseline TWFE (no X) -------------------------------------------
 display _newline "=== Spec 1: TWFE baseline (no X) ==="
-reghdfe y_diff i.pivotal##i.post, noabsorb vce(cluster unit_id)
+reghdfe y_diff i.pivotal##i.post, absorb(parent_id) vce(cluster unit_id)
 local b = _b[1.pivotal#1.post]
 local s = _se[1.pivotal#1.post]
 post `res' ("twfe_baseline") (`b') (`s') (`e(N)')
 
 *-- Spec 2: TWFE + X additive (biased per slides) --------------------------
 display _newline "=== Spec 2: TWFE + X additive (biased) ==="
-reghdfe y_diff i.pivotal##i.post wind_gw solar_gw demand_gw, noabsorb vce(cluster unit_id)
+reghdfe y_diff i.pivotal##i.post wind_gw solar_gw demand_gw, absorb(parent_id) vce(cluster unit_id)
 local b = _b[1.pivotal#1.post]
 local s = _se[1.pivotal#1.post]
 post `res' ("twfe_plus_X") (`b') (`s') (`e(N)')
 
-*-- Spec 3: drdid Outcome Regression (Heckman-Ichimura-Todd 1997) ----------
-display _newline "=== Spec 3: drdid OR ==="
-drdid y_diff wind_gw solar_gw demand_gw, ivar(unit_id) time(post) tr(pivotal) reg
+*-- Spec 3: drdid OR (RCS, no ivar; cluster by unit) -----------------------
+display _newline "=== Spec 3: drdid OR (RCS) ==="
+drdid y_diff wind_gw solar_gw demand_gw, time(post) tr(pivotal) reg cluster(unit_id)
 local b = _b[r1vs0.pivotal]
 local s = _se[r1vs0.pivotal]
 post `res' ("drdid_OR") (`b') (`s') (`e(N)')
 
-*-- Spec 4: drdid Standardized IPW (Abadie 2005) ---------------------------
-display _newline "=== Spec 4: drdid IPW ==="
-drdid y_diff wind_gw solar_gw demand_gw, ivar(unit_id) time(post) tr(pivotal) stdipw
+*-- Spec 4: drdid IPW (RCS) ------------------------------------------------
+display _newline "=== Spec 4: drdid IPW (RCS, std Hajek) ==="
+drdid y_diff wind_gw solar_gw demand_gw, time(post) tr(pivotal) stdipw cluster(unit_id)
 local b = _b[r1vs0.pivotal]
 local s = _se[r1vs0.pivotal]
 post `res' ("drdid_IPW") (`b') (`s') (`e(N)')
 
-*-- Spec 5: drdid Doubly Robust (Sant'Anna & Zhao 2020) --------------------
-display _newline "=== Spec 5: drdid DR ==="
-drdid y_diff wind_gw solar_gw demand_gw, ivar(unit_id) time(post) tr(pivotal) drimp
+*-- Spec 5: drdid DR (RCS, Sant'Anna-Zhao 2020 improved) -------------------
+display _newline "=== Spec 5: drdid DR (RCS, drimp) ==="
+drdid y_diff wind_gw solar_gw demand_gw, time(post) tr(pivotal) drimp cluster(unit_id)
 local b = _b[r1vs0.pivotal]
 local s = _se[r1vs0.pivotal]
 post `res' ("drdid_DR") (`b') (`s') (`e(N)')
@@ -131,7 +124,7 @@ forvalues r = 1/5 {
 }
 file write tex " \\" _n
 file write tex "\midrule" _n
-file write tex "Unit-periods"
+file write tex "Unit-days"
 forvalues r = 1/5 {
     file write tex " & " %9.0fc (n`r')
 }
