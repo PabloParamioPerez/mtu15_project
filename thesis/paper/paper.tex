@@ -289,13 +289,13 @@ with firm fixed effects $\gamma_f$, day-of-week fixed effects $\delta_{\mathrm{D
 
 The full table of $\beta_3$ stratified by technology (with the non-pivotal placebo column) is reported in Appendix~\ref{app:B1_tech}. The per-firm decomposition of $\beta_3$ jointly on $q_2$ and on day-ahead cleared volume (the withholding outcome) is in Appendix~\ref{app:per_firm}. A supporting analysis on the day-ahead $\to$ intraday price wedge is in Appendix~\ref{app:wedge}; the wedge is a noisy outcome under the post-blackout \textit{operaci\'on reforzada} regulatory overlay and is not informative on its own.
 
-\subsection{Conditional parallel trends with renewable and reforzada controls}\label{sec:results:cpt}
+\subsection{Conditional parallel trends with renewable and demand controls}\label{sec:results:cpt}
 
-The same-calendar-month design in Equation~\ref{eq:B1} absorbs structural confounds (the March 2025 intraday reform, seasonal weather, calendar-month effects) via the \texttt{post} dummy. To stress-test the parallel-trends assumption conditionally on hourly weather variation \textit{within} each window, we re-estimate Equation~\ref{eq:B1} with progressively richer controls:
+% TODO prose.
 \begin{equation}\label{eq:cpt}
-   q_{2,fdh} \;=\; \alpha + \beta_1\mathrm{crit}_h + \beta_2\mathrm{post}_d + \beta_3(\mathrm{crit}_h \times \mathrm{post}_d) + \gamma_f + \delta_{\mathrm{DOW}(d)} + \boldsymbol{\theta}\,X_{dh} + \varepsilon_{fdh},
+   q_{2,fdh} \;=\; \alpha + \beta_1\mathrm{crit}_h + \beta_2\mathrm{post}_d + \beta_3(\mathrm{crit}_h \times \mathrm{post}_d) + \gamma_f + \delta_{\mathrm{DOW}(d)} + \boldsymbol{\theta}\,X_{dh} + \boldsymbol{\phi}\,(\mathrm{crit}_h \times X_{dh}) + \varepsilon_{fdh},
 \end{equation}
-where $X_{dh}$ are hourly Spain wind and solar production (ENTSO-E A75), with extensions that add the interaction $\mathrm{crit}_h \times X_{dh}$ and calendar-month fixed effects. A stable $\beta_3$ across these specifications is the conditional parallel-trends defence of the headline result.
+where $X_{dh} = (\text{wind}_{dh}, \text{solar}_{dh}, \text{demand}_{dh})$ in GW (ENTSO-E A75 generation, A65 load), demeaned over the panel. Column~(4) of Table~\ref{tab:B4_cpt} adds calendar-month fixed effects.
 
 \begin{table}[H]
 \centering

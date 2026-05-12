@@ -6,15 +6,20 @@
 * Sample: pivotal-firm subset of the headline Oct-Dec 2024 vs Oct-Dec 2025
 *         panel (122,495 obs).
 *
-* Equation 2:
-*   q_{2,fdh} = alpha + b1 crit + b2 post + b3 (crit*post)
+* Equation 2 (matches the workshop slide spec — wind + solar + demand +
+* their crit interactions, with cal-month FE on top):
+*
+*   q_{2,fdh} = alpha + b1 crit_h + b2 post_d + b3 (crit_h * post_d)
 *               + gamma_f + delta_DOW + theta X_{dh} + eps_{fdh}
 *
 * X_{dh} sequence:
 *   (1) baseline: no X
-*   (2) X = {wind_z, solar_z}                       [demeaned MW]
-*   (3) X = {wind_z, solar_z, crit*wind_z, crit*solar_z}
+*   (2) X = {wind, solar, wind*crit, solar*crit}
+*   (3) X = {wind, solar, demand, wind*crit, solar*crit, demand*crit}
 *   (4) (3) plus calendar-month fixed effects
+*
+* All controls in GW (wind/solar/demand) and demeaned so b3 reads off as
+* the critical-vs-flat post-vs-pre coefficient at sample means.
 *============================================================================
 
 clear all
@@ -32,16 +37,18 @@ log using "`outdir'/B4_cpt.log", replace text
 use "`datadir'/B4_cpt_panel.dta", clear
 encode parent, gen(parent_id)
 
-* Generate centered VRE-by-crit interactions
-gen crit_wind  = crit * wind_z
-gen crit_solar = crit * solar_z
+gen crit_wind   = crit * wind_gw_z
+gen crit_solar  = crit * solar_gw_z
+gen crit_demand = crit * demand_gw_z
 
-label var crit       "Critical"
-label var post       "Post"
-label var wind_z     "Spain wind production (MW, centered)"
-label var solar_z    "Spain solar production (MW, centered)"
-label var crit_wind  "Critical $\times$ wind"
-label var crit_solar "Critical $\times$ solar"
+label var crit         "Critical"
+label var post         "Post"
+label var wind_gw_z    "Spain wind (GW, centered)"
+label var solar_gw_z   "Spain solar (GW, centered)"
+label var demand_gw_z  "Spain demand (GW, centered)"
+label var crit_wind    "Critical $\times$ Wind"
+label var crit_solar   "Critical $\times$ Solar"
+label var crit_demand  "Critical $\times$ Demand"
 
 local fe_opts "vce(cluster d_int)"
 
@@ -49,33 +56,40 @@ local fe_opts "vce(cluster d_int)"
 reghdfe q2_mwh i.crit##i.post, absorb(parent_id dow) `fe_opts'
 estimates store cpt1
 
-*-- Spec 2: + wind + solar levels
-reghdfe q2_mwh i.crit##i.post wind_z solar_z, absorb(parent_id dow) `fe_opts'
+*-- Spec 2: + wind/solar levels + their crit interactions
+reghdfe q2_mwh i.crit##i.post wind_gw_z solar_gw_z crit_wind crit_solar, ///
+    absorb(parent_id dow) `fe_opts'
 estimates store cpt2
 
-*-- Spec 3: + critical-hour interactions with wind/solar
-reghdfe q2_mwh i.crit##i.post wind_z solar_z crit_wind crit_solar, absorb(parent_id dow) `fe_opts'
+*-- Spec 3: + demand level + its crit interaction
+reghdfe q2_mwh i.crit##i.post wind_gw_z solar_gw_z demand_gw_z ///
+    crit_wind crit_solar crit_demand, ///
+    absorb(parent_id dow) `fe_opts'
 estimates store cpt3
 
 *-- Spec 4: + calendar-month fixed effects
-reghdfe q2_mwh i.crit##i.post wind_z solar_z crit_wind crit_solar, absorb(parent_id dow month) `fe_opts'
+reghdfe q2_mwh i.crit##i.post wind_gw_z solar_gw_z demand_gw_z ///
+    crit_wind crit_solar crit_demand, ///
+    absorb(parent_id dow month) `fe_opts'
 estimates store cpt4
 
 *-- Export
 esttab cpt1 cpt2 cpt3 cpt4 ///
     using "`texdir'/tab_B4_cpt.tex", replace ///
     fragment se label booktabs nostar nomtitles nonum ///
-    keep(1.crit#1.post wind_z solar_z crit_wind crit_solar) ///
-    order(1.crit#1.post wind_z solar_z crit_wind crit_solar) ///
+    keep(1.crit#1.post wind_gw_z solar_gw_z demand_gw_z crit_wind crit_solar crit_demand) ///
+    order(1.crit#1.post wind_gw_z solar_gw_z demand_gw_z crit_wind crit_solar crit_demand) ///
     coeflabels(1.crit#1.post "Critical $\times$ Post ($\beta_3$)" ///
-               wind_z      "Wind (centered MW)" ///
-               solar_z     "Solar (centered MW)" ///
-               crit_wind   "Critical $\times$ Wind" ///
-               crit_solar  "Critical $\times$ Solar") ///
+               wind_gw_z    "Wind (GW)" ///
+               solar_gw_z   "Solar (GW)" ///
+               demand_gw_z  "Demand (GW)" ///
+               crit_wind    "Critical $\times$ Wind" ///
+               crit_solar   "Critical $\times$ Solar" ///
+               crit_demand  "Critical $\times$ Demand") ///
     prehead("\begin{tabular}{l c c c c}" ///
             "\toprule" ///
             " & (1) & (2) & (3) & (4) \\" ///
-            " & Baseline & + VRE levels & + VRE $\times$ crit & + cal-month FE \\" ///
+            " & Baseline & + Wind/Solar & + Demand & + cal-month FE \\" ///
             "\midrule") ///
     posthead("") ///
     prefoot("\midrule") ///
@@ -83,7 +97,6 @@ esttab cpt1 cpt2 cpt3 cpt4 ///
           labels("Observations" "Clusters (days)" "\$R^2\$" "Adj. \$R^2\$")) ///
     postfoot("\bottomrule" "\end{tabular}")
 
-* Fix label-escape (esttab escapes underscore in $\beta_3$ etc.)
 shell sed -i '' 's/\\beta\\_3/\\beta_3/g; s/\\beta\\_1/\\beta_1/g; s/\\beta\\_2/\\beta_2/g' "`texdir'/tab_B4_cpt.tex"
 
 display _newline "Done. Output: `texdir'/tab_B4_cpt.tex"

@@ -22,6 +22,7 @@ from mtu.classification.units import (  # noqa: E402
 
 PIBCI = REPO / "data" / "processed" / "omie" / "mercado_intradiario_subastas" / "programas" / "pibci_all.parquet"
 WIND_SOLAR = REPO / "data" / "processed" / "entsoe" / "generation" / "wind_solar_actual_all.parquet"
+LOAD = REPO / "data" / "processed" / "entsoe" / "load" / "load_actual_all.parquet"
 UNITS_CSV = REPO / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 
 OUTDIR = REPO / "results" / "regressions" / "firm" / "critical_hours_thesis" / "stata_panels"
@@ -109,6 +110,23 @@ def build_vre(start, end):
     return df[["d","hour","wind_mw","solar_mw"]]
 
 
+def build_demand(start, end):
+    """Hourly Spanish demand (load) in MW."""
+    con = duckdb.connect()
+    df = con.execute(f"""
+        SELECT (isp_start_utc AT TIME ZONE 'Europe/Madrid')::DATE AS d,
+               EXTRACT(HOUR FROM (isp_start_utc AT TIME ZONE 'Europe/Madrid')) AS hour,
+               AVG(load_mw) AS demand_mw
+        FROM '{LOAD}'
+        WHERE isp_start_utc >= TIMESTAMP '{start}'
+          AND isp_start_utc <  TIMESTAMP '{end}'
+        GROUP BY 1,2
+    """).df()
+    df["d"] = pd.to_datetime(df["d"])
+    df["hour"] = df["hour"].astype(int)
+    return df[["d","hour","demand_mw"]]
+
+
 def main():
     units = firm_unit_panel(csv_path=str(UNITS_CSV), scheme="short", mode="primary_owner")
     panel = build_q2_panel(units)
@@ -119,16 +137,21 @@ def main():
     print(f"Pivotal subset: {len(panel):,}")
 
     vre = pd.concat([build_vre(PRE_START, PRE_END), build_vre(POST_START, POST_END)], ignore_index=True)
-    print(f"VRE rows: {len(vre):,}")
+    dem = pd.concat([build_demand(PRE_START, PRE_END), build_demand(POST_START, POST_END)], ignore_index=True)
+    print(f"VRE rows: {len(vre):,}  Demand rows: {len(dem):,}")
 
     panel = panel.merge(vre, on=["d", "hour"], how="left")
-    # Fill missing with sample mean (defensive)
-    panel["wind_mw"] = panel["wind_mw"].fillna(panel["wind_mw"].mean())
-    panel["solar_mw"] = panel["solar_mw"].fillna(panel["solar_mw"].mean())
+    panel = panel.merge(dem, on=["d", "hour"], how="left")
+    for c in ["wind_mw", "solar_mw", "demand_mw"]:
+        panel[c] = panel[c].fillna(panel[c].mean())
 
-    # Demean for interpretability of interactions
-    panel["wind_z"] = panel["wind_mw"] - panel["wind_mw"].mean()
-    panel["solar_z"] = panel["solar_mw"] - panel["solar_mw"].mean()
+    # Convert to GW for numerical stability (coefficients otherwise ~1e-4)
+    panel["wind_gw"]   = panel["wind_mw"]   / 1000.0
+    panel["solar_gw"]  = panel["solar_mw"]  / 1000.0
+    panel["demand_gw"] = panel["demand_mw"] / 1000.0
+    # Demean
+    for c in ["wind_gw", "solar_gw", "demand_gw"]:
+        panel[c + "_z"] = panel[c] - panel[c].mean()
 
     panel["d_int"] = (panel["d"] - pd.Timestamp("1960-01-01")).dt.days
     panel["unit_code"] = panel["unit_code"].astype(str).str[:32]
@@ -138,7 +161,9 @@ def main():
 
     out = OUTDIR / "B4_cpt_panel.dta"
     panel[["d_int","unit_code","parent","tech_group","hour","hour_class",
-           "crit","post","month","dow","q2_mwh","wind_mw","solar_mw","wind_z","solar_z"]].to_stata(
+           "crit","post","month","dow","q2_mwh",
+           "wind_gw","solar_gw","demand_gw",
+           "wind_gw_z","solar_gw_z","demand_gw_z"]].to_stata(
         out, version=118, write_index=False)
     print(f"Saved {out}  ({len(panel):,} obs)")
 
