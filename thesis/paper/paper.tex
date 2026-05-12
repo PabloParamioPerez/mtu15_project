@@ -387,15 +387,18 @@ The DA-to-IDA price wedge is a candidate supporting outcome but it is a noisy me
 % reform's response in critical hours. b123 = b3(pivotal) - b3(non-pivotal)
 % by construction.
 %
-% On conditional parallel trends: Sant'Anna's CPT framework is built for the
-% canonical 2x2 DiD, not for DDD. The identifying assumption here is that, in
-% the absence of the reform, the within-day critical-flat differential would
-% have evolved in parallel between pivotal and non-pivotal firms. Adding X
-% (specs 2-4) makes this assumption CONDITIONAL on day-level fundamentals;
-% spec 3 lets X enter with separate slopes by crit, post, and pivotal, which
-% is the DDD analog of letting the conditioning be flexible rather than
-% imposing the (restrictive) homogeneous-X-effect assumption flagged by
-% \citet{santanna2025covariates}.
+% Identifying assumption: unconditional parallel trends on the second-level
+% DiD -- in the absence of the reform, the within-day critical-flat
+% differential would have evolved in parallel between pivotal and non-pivotal
+% firms. We do NOT invoke conditional parallel trends in the Sant'Anna sense:
+% CPT is an assumption about counterfactual evolution given X, which justifies
+% the OR / IPW / doubly-robust estimators of Sant'Anna and Zhao (2020), not
+% OLS with X on the right-hand side. The X variables in specs (2)-(4) below
+% are standard regression-style controls that absorb day-level shocks
+% (renewables and demand), not a CPT defense. Their role is to verify
+% robustness: the headline beta_123 is essentially invariant to whether they
+% are included or excluded, which says the unconditional PTA passes the
+% no-correlated-confounders sniff test for these specific observables.
 
 \begin{multline}\label{eq:ddd}
    q_{2,fudh} = \alpha + \beta_1\,\mathrm{crit}_h + \beta_2\,\mathrm{post}_d + \beta_3\,\mathrm{piv}_f \\
