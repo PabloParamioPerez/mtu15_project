@@ -386,14 +386,27 @@ The DA-to-IDA price wedge is a candidate supporting outcome but it is a noisy me
 % interaction, which identifies the moderating effect of market power on the
 % reform's response in critical hours. b123 = b3(pivotal) - b3(non-pivotal)
 % by construction.
+%
+% On conditional parallel trends: Sant'Anna's CPT framework is built for the
+% canonical 2x2 DiD, not for DDD. The identifying assumption here is that, in
+% the absence of the reform, the within-day critical-flat differential would
+% have evolved in parallel between pivotal and non-pivotal firms. Adding X
+% (specs 2-4) makes this assumption CONDITIONAL on day-level fundamentals;
+% spec 3 lets X enter with separate slopes by crit, post, and pivotal, which
+% is the DDD analog of letting the conditioning be flexible rather than
+% imposing the (restrictive) homogeneous-X-effect assumption flagged by
+% \citet{santanna2025covariates}.
 
-\begin{equation}\label{eq:ddd}
-   q_{2,fudh} = \alpha + \sum_{j \in \{\text{crit, post, piv}\}} \beta_j \mathbb{1}_j + \sum_{j < k} \beta_{jk} \mathbb{1}_j \mathbb{1}_k + \beta_{123}\,\text{crit}_h \cdot \text{post}_d \cdot \text{piv}_f + \gamma_f + \delta_{\mathrm{DOW}(d)} + \varepsilon_{fudh}.
-\end{equation}
+\begin{multline}\label{eq:ddd}
+   q_{2,fudh} = \alpha + \beta_1\,\mathrm{crit}_h + \beta_2\,\mathrm{post}_d + \beta_3\,\mathrm{piv}_f \\
+   {}+ \beta_{12}\,\mathrm{crit}_h\,\mathrm{post}_d + \beta_{13}\,\mathrm{crit}_h\,\mathrm{piv}_f + \beta_{23}\,\mathrm{post}_d\,\mathrm{piv}_f \\
+   {}+ \beta_{123}\,\mathrm{crit}_h\,\mathrm{post}_d\,\mathrm{piv}_f + \gamma_f + \delta_{\mathrm{DOW}(d)} + \boldsymbol{\theta}'\,X_{dh} + \varepsilon_{fudh},
+\end{multline}
+where $X_{dh}$ is the day-level vector of Spain wind, solar, and demand (GW) and enters in specifications (2)--(4) of Table~\ref{tab:firm_ddd}. Specification~(3) additionally interacts $X_{dh}$ with each of $\mathrm{crit}_h$, $\mathrm{post}_d$, and $\mathrm{piv}_f$; specification~(4) absorbs clock-hour fixed effects.
 
 \begin{table}[H]
 \centering
-\caption{\textbf{Triple-difference on $q_2$: $\text{crit} \times \text{post} \times \text{pivotal}$.} Sample pools pivotal and non-pivotal firms across critical and flat hours, October--December 2024 and October--December 2025 (N=293{,}838 unit-day-hour cells). $\beta_{123}$ is the headline triple-interaction coefficient; the implied within-group $\beta_3$ for pivotal and non-pivotal firms are reconstructions of the §\ref{sec:results:q2} columns (2) and (3) of Table~\ref{tab:B1_main}. Column~(1) is the baseline DDD; column~(2) adds day-level Spain wind, solar, and demand (GW) additively; column~(3) lets each covariate enter with separate slopes by crit, post, and pivotal; column~(4) absorbs clock-hour fixed effects. SE clustered by date.}
+\caption{\textbf{Triple-difference on $q_2$: $\text{crit} \times \text{post} \times \text{pivotal}$.} Sample pools pivotal and non-pivotal firms across critical and flat hours, October--December 2024 and October--December 2025 (N=293{,}838 unit-day-hour cells). $\beta_{123}$ is the headline triple-interaction coefficient; the implied within-group $\beta_3$ for pivotal and non-pivotal firms are reconstructions of columns~(2) and~(3) of Table~\ref{tab:B1_main}. Standard errors clustered by date.}
 \label{tab:firm_ddd}
 \input{tables/tab_firm_ddd}
 \end{table}
