@@ -108,38 +108,97 @@ def load_tranches(techs=None):
 
 
 def build_per_hour_supply_curves(df):
-    """EUPHEMIA aggregation per (firm, hour-of-day). Returns curves for
-    critical, midday, and flat hour classes; other hours are dropped."""
+    """EUPHEMIA aggregation per (firm, hour-of-day), normalised by the
+    number of (date, period) cells in the window. This is unconditional
+    on whether any of the firm's units submitted on a given day: dates
+    where the firm bid nothing contribute zero MW. Curves of two firms
+    in the same hour are therefore comparable as "average MW offered by
+    the firm per period at bid price <= p".
+    """
     df = df[df["hour_class"].isin(["critical", "midday", "flat"])].copy()
+    # Total (date, period) cells in the window. Post-MTU15-DA: 4 periods
+    # per clock-hour.
+    n_dates = df["d"].nunique()
+    n_periods_per_hour = n_dates * 4
     out = []
     for (firm, hour), g in df.groupby(["firm", "hour"]):
-        n_cells = g.groupby(["d", "unit_code", "period"]).ngroups
         g_binned = (
             g.assign(price_bin=g["price"].round(0))
             .groupby("price_bin", as_index=False)["qty"].sum()
             .rename(columns={"price_bin": "price"})
             .sort_values("price")
         )
-        g_binned["cum_qty_per_period"] = g_binned["qty"].cumsum() / n_cells
+        g_binned["cum_qty_per_period"] = g_binned["qty"].cumsum() / n_periods_per_hour
         g_binned["firm"] = firm
         g_binned["hour"] = int(hour)
         g_binned["hour_class"] = g["hour_class"].iloc[0]
-        g_binned["n_cells"] = n_cells
+        g_binned["n_periods_denom"] = n_periods_per_hour
         out.append(g_binned)
     return pd.concat(out, ignore_index=True)
+
+
+def build_offer_diagnostics(df):
+    """For each (firm, hour-class), report the fraction of (date, period)
+    cells in the window in which at least one of the firm's units
+    submitted any tranche. Selection bias check: if this rate differs
+    sharply between hour classes, the supply curves include compositional
+    rather than purely strategic differences."""
+    df = df[df["hour_class"].isin(["critical", "midday", "flat"])].copy()
+    n_dates_total = df["d"].nunique()
+    hours_per_class = {"critical": len(CRITICAL_HOURS),
+                       "midday":   len(MIDDAY_HOURS),
+                       "flat":     len(FLAT_HOURS)}
+    rows = []
+    for (firm, hc), g in df.groupby(["firm", "hour_class"]):
+        n_obs_periods = g.groupby(["d", "hour", "period"]).ngroups
+        n_total_periods = n_dates_total * hours_per_class[hc] * 4
+        rows.append({
+            "firm": firm,
+            "hour_class": hc,
+            "n_obs_periods": n_obs_periods,
+            "n_total_periods": n_total_periods,
+            "offer_rate": n_obs_periods / n_total_periods if n_total_periods else float("nan"),
+            "n_unique_units": g["unit_code"].nunique(),
+        })
+    return pd.DataFrame(rows)
+
+
+def write_offer_diagnostic_table(diag, tech, out_path):
+    """Write a compact LaTeX table of offer rates by (firm, hour-class)."""
+    pivot = diag.pivot(index="firm", columns="hour_class", values="offer_rate")
+    for col in ("critical", "midday", "flat"):
+        if col not in pivot.columns:
+            pivot[col] = float("nan")
+    pivot = pivot[["critical", "midday", "flat"]]
+    units = diag.pivot(index="firm", columns="hour_class", values="n_unique_units").max(axis=1)
+    lines = [
+        r"\begin{tabular}{l c c c c}",
+        r"\toprule",
+        r"Firm & Critical & Midday & Flat & N units \\",
+        r"\midrule",
+    ]
+    for firm in PIVOTAL_FIRMS:
+        if firm not in pivot.index:
+            continue
+        row = pivot.loc[firm]
+        n_u = int(units.loc[firm]) if firm in units.index and not pd.isna(units.loc[firm]) else 0
+        lines.append(
+            f"{FIRM_DISPLAY[firm]} & {row['critical']:.2f} & {row['midday']:.2f} & {row['flat']:.2f} & {n_u} \\\\"
+        )
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    Path(out_path).write_text("\n".join(lines) + "\n")
+    print(f"  saved {out_path}")
 
 
 def plot_bid_curves(curves, tech_label, out_stem):
     fig, axes = plt.subplots(2, 2, figsize=(11, 7.5), sharex=False, sharey=False)
     firms_to_plot = ["IB", "GE", "GN", "HC"]
     for ax, firm in zip(axes.flatten(), firms_to_plot):
-        # Draw critical first, then midday, then flat -- so flat (3 hours)
-        # is on top and visible even where it overlaps with critical.
+        panel_curves = curves[curves["firm"] == firm]
         for hc in DRAW_ORDER:
-            hours = sorted(curves[(curves["firm"] == firm) &
-                                  (curves["hour_class"] == hc)]["hour"].unique())
+            hours = sorted(panel_curves[panel_curves["hour_class"] == hc]["hour"].unique())
             for hour in hours:
-                sub = curves[(curves["firm"] == firm) & (curves["hour"] == hour)].sort_values("price")
+                sub = panel_curves[panel_curves["hour"] == hour].sort_values("price")
                 if len(sub) == 0:
                     continue
                 ax.step(sub["cum_qty_per_period"], sub["price"], where="post",
@@ -148,7 +207,18 @@ def plot_bid_curves(curves, tech_label, out_stem):
         ax.set_xlabel("MW offered per period (cumulative)")
         ax.set_ylabel("Bid price (EUR/MWh)")
         ax.grid(alpha=0.3)
-        ax.set_ylim(-50, 500)
+        # Adaptive y-axis: focus on the "body" of the supply curve,
+        # cropping out cap-reservation tail. y-high = quantity-weighted
+        # 80th percentile of price, plus a small buffer, capped at 700.
+        if len(panel_curves) > 0:
+            qty_per_price = panel_curves.groupby("price")["qty"].sum().sort_index()
+            cum = qty_per_price.cumsum() / qty_per_price.sum()
+            p_low = float(qty_per_price.index.min())
+            p_hi_idx = cum[cum >= 0.80].index
+            p_hi = float(p_hi_idx.min()) if len(p_hi_idx) else float(qty_per_price.index.max())
+            ymin = min(p_low - 10, 0)
+            ymax = min(max(p_hi + 30, 50), 700)
+            ax.set_ylim(ymin, ymax)
     handles = [plt.Line2D([0], [0], color=CLASS_COLOR[hc], linewidth=2.0,
                           alpha=0.7, label=CLASS_LABEL[hc])
                for hc in ("critical", "midday", "flat")]
@@ -247,6 +317,13 @@ def main():
     ccgt = df[df["tech_group"] == "CCGT"].copy()
     plot_bid_curves(build_per_hour_supply_curves(ccgt),
                      "CCGT", str(FIGDIR / "fig_per_firm_bid_curves"))
+
+    # CCGT offer-rate diagnostic
+    diag = build_offer_diagnostics(ccgt)
+    print("CCGT offer rates:")
+    print(diag.to_string(index=False))
+    write_offer_diagnostic_table(diag, "CCGT",
+                                 TABDIR / "tab_per_firm_offer_rate.tex")
 
     # Appendix figures: one per tech in TECHS_APPENDIX
     for tech in TECHS_APPENDIX:
