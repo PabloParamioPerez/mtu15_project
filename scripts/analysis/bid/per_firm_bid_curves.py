@@ -217,6 +217,15 @@ def plot_quarter_curves(curves, tech_label, out_stem, ylim=None):
         ax.grid(alpha=0.3)
         if ylim is not None:
             ax.set_ylim(*ylim)
+            # X-axis: zoom to the cumulative-MW range corresponding to
+            # the price band, so the cap tail does not waste horizontal
+            # space either.
+            in_band = panel[(panel["price"] >= ylim[0]) & (panel["price"] <= ylim[1])]
+            if len(in_band) > 0:
+                x_lo = float(in_band["cum_qty_per_cell"].min())
+                x_hi = float(in_band["cum_qty_per_cell"].max())
+                buf = max(50.0, 0.05 * (x_hi - x_lo))
+                ax.set_xlim(max(0, x_lo - buf), x_hi + buf)
         elif len(panel) > 0:
             qpp = panel.groupby("price")["qty"].sum().sort_index()
             cum = qpp.cumsum() / qpp.sum()
@@ -236,6 +245,119 @@ def plot_quarter_curves(curves, tech_label, out_stem, ylim=None):
     fig.tight_layout(rect=[0, 0, 1, 0.92])
     for ext in ("pdf", "png"):
         fig.savefig(f"{out_stem}.{ext}", bbox_inches="tight", dpi=120 if ext == "png" else None)
+    plt.close(fig)
+    print(f"  saved {out_stem}.pdf")
+
+
+def plot_compact_grid_per_hour(df, techs, out_stem):
+    """Grid figure: rows = firms, columns = techs. Same colour scheme
+    as plot_bid_curves (red/green/blue per hour-class). Used in the
+    appendix to scan all (firm, tech) combinations at a glance."""
+    firms = ["IB", "GE", "GN", "HC"]
+    n_rows, n_cols = len(firms), len(techs)
+    fig, axes = plt.subplots(n_rows, n_cols,
+                              figsize=(2.6 * n_cols, 2.2 * n_rows),
+                              sharex=False, sharey=False)
+    for i, firm in enumerate(firms):
+        for j, tech in enumerate(techs):
+            ax = axes[i, j] if n_rows > 1 else axes[j]
+            sub = df[(df["firm"] == firm) & (df["tech_group"] == tech)].copy()
+            if len(sub) == 0:
+                ax.set_xticks([]); ax.set_yticks([])
+                ax.text(0.5, 0.5, "(no units)", ha="center", va="center",
+                        transform=ax.transAxes, fontsize=8, color="gray")
+            else:
+                curves = build_per_hour_supply_curves(sub)
+                panel = curves[curves["firm"] == firm]
+                for hc in DRAW_ORDER:
+                    hours = sorted(panel[panel["hour_class"] == hc]["hour"].unique())
+                    for hour in hours:
+                        s = panel[panel["hour"] == hour].sort_values("price")
+                        if len(s) == 0:
+                            continue
+                        ax.step(s["cum_qty_per_period"], s["price"], where="post",
+                                color=CLASS_COLOR[hc], linewidth=0.5, alpha=0.55)
+                # Adaptive y-axis on quantity-weighted 80th percentile
+                qpp = panel.groupby("price")["qty"].sum().sort_index()
+                if len(qpp) > 0:
+                    cum = qpp.cumsum() / qpp.sum()
+                    p_low = float(qpp.index.min())
+                    p_hi_idx = cum[cum >= 0.80].index
+                    p_hi = float(p_hi_idx.min()) if len(p_hi_idx) else float(qpp.index.max())
+                    ax.set_ylim(min(p_low - 10, 0),
+                                min(max(p_hi + 30, 50), 700))
+            ax.grid(alpha=0.3)
+            ax.tick_params(labelsize=7)
+            if i == 0:
+                ax.set_title(tech, fontsize=10)
+            if j == 0:
+                ax.set_ylabel(FIRM_DISPLAY.get(firm, firm), fontsize=9)
+            ax.set_xlabel("MW", fontsize=7)
+    handles = [plt.Line2D([0], [0], color=CLASS_COLOR[hc], linewidth=2.0,
+                          alpha=0.7, label=CLASS_LABEL[hc])
+               for hc in ("critical", "midday", "flat")]
+    fig.legend(handles=handles, loc="upper center", ncol=3, frameon=False,
+               fontsize=9, bbox_to_anchor=(0.5, 0.985))
+    fig.suptitle("Aggregate DA supply curves by firm and technology (Oct--Dec 2025)",
+                 fontsize=11, y=0.995)
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    for ext in ("pdf", "png"):
+        fig.savefig(f"{out_stem}.{ext}", bbox_inches="tight",
+                    dpi=140 if ext == "png" else None)
+    plt.close(fig)
+    print(f"  saved {out_stem}.pdf")
+
+
+def plot_compact_grid_per_quarter(df, techs, out_stem, ylim=(50, 200)):
+    """Same compact grid but for the 4-quarter view within critical hours."""
+    firms = ["IB", "GE", "GN", "HC"]
+    quarter_colors = {1: "#1f77b4", 2: "#2ca02c", 3: "#ff7f0e", 4: "#d62728"}
+    n_rows, n_cols = len(firms), len(techs)
+    fig, axes = plt.subplots(n_rows, n_cols,
+                              figsize=(2.6 * n_cols, 2.2 * n_rows),
+                              sharex=False, sharey=False)
+    for i, firm in enumerate(firms):
+        for j, tech in enumerate(techs):
+            ax = axes[i, j] if n_rows > 1 else axes[j]
+            sub = df[(df["firm"] == firm) & (df["tech_group"] == tech)].copy()
+            if len(sub) == 0:
+                ax.set_xticks([]); ax.set_yticks([])
+                ax.text(0.5, 0.5, "(no units)", ha="center", va="center",
+                        transform=ax.transAxes, fontsize=8, color="gray")
+            else:
+                curves = build_per_quarter_curves(sub)
+                panel = curves[curves["firm"] == firm]
+                for q in (1, 2, 3, 4):
+                    s = panel[panel["quarter"] == q].sort_values("price")
+                    if len(s) == 0:
+                        continue
+                    ax.step(s["cum_qty_per_cell"], s["price"], where="post",
+                            color=quarter_colors[q], linewidth=0.9, alpha=0.85)
+                if ylim is not None:
+                    ax.set_ylim(*ylim)
+                    in_band = panel[(panel["price"] >= ylim[0]) & (panel["price"] <= ylim[1])]
+                    if len(in_band) > 0:
+                        x_lo = float(in_band["cum_qty_per_cell"].min())
+                        x_hi = float(in_band["cum_qty_per_cell"].max())
+                        buf = max(50.0, 0.05 * (x_hi - x_lo))
+                        ax.set_xlim(max(0, x_lo - buf), x_hi + buf)
+            ax.grid(alpha=0.3)
+            ax.tick_params(labelsize=7)
+            if i == 0:
+                ax.set_title(tech, fontsize=10)
+            if j == 0:
+                ax.set_ylabel(FIRM_DISPLAY.get(firm, firm), fontsize=9)
+            ax.set_xlabel("MW", fontsize=7)
+    handles = [plt.Line2D([0], [0], color=quarter_colors[q], linewidth=2.0,
+                          label=f"Q{q}") for q in (1, 2, 3, 4)]
+    fig.legend(handles=handles, loc="upper center", ncol=4, frameon=False,
+               fontsize=9, bbox_to_anchor=(0.5, 0.985))
+    fig.suptitle("Aggregate DA supply curves by quarter within critical hours, by firm and tech",
+                 fontsize=11, y=0.995)
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    for ext in ("pdf", "png"):
+        fig.savefig(f"{out_stem}.{ext}", bbox_inches="tight",
+                    dpi=140 if ext == "png" else None)
     plt.close(fig)
     print(f"  saved {out_stem}.pdf")
 
@@ -426,6 +548,15 @@ def main():
         print(f"{tech} curves (appendix, per-quarter)...")
         plot_quarter_curves(build_per_quarter_curves(sub), tech,
                              str(FIGDIR / f"fig_per_firm_bid_curves_quarters_{slug}"))
+
+    # Consolidated compact grids for the appendix: rows = firms, cols = techs
+    techs_grid = ["CCGT", "Hydro", "Nuclear", "Wind", "Solar PV"]
+    print("compact grid: per-hour, all techs...")
+    plot_compact_grid_per_hour(df, techs_grid,
+                                str(FIGDIR / "fig_bid_curves_grid_per_hour"))
+    print("compact grid: per-quarter, all techs...")
+    plot_compact_grid_per_quarter(df, techs_grid,
+                                    str(FIGDIR / "fig_bid_curves_grid_per_quarter"))
 
     print("building bid-shape detail table (CCGT)...")
     agg = build_table(df)
