@@ -199,7 +199,7 @@ def build_per_quarter_curves(df):
     return pd.concat(out, ignore_index=True)
 
 
-def plot_quarter_curves(curves, tech_label, out_stem):
+def plot_quarter_curves(curves, tech_label, out_stem, ylim=None):
     fig, axes = plt.subplots(2, 2, figsize=(11, 7.5))
     firms_to_plot = ["IB", "GE", "GN", "HC"]
     quarter_colors = {1: "#1f77b4", 2: "#2ca02c", 3: "#ff7f0e", 4: "#d62728"}
@@ -215,7 +215,9 @@ def plot_quarter_curves(curves, tech_label, out_stem):
         ax.set_xlabel("MW offered per period (cumulative)")
         ax.set_ylabel("Bid price (EUR/MWh)")
         ax.grid(alpha=0.3)
-        if len(panel) > 0:
+        if ylim is not None:
+            ax.set_ylim(*ylim)
+        elif len(panel) > 0:
             qpp = panel.groupby("price")["qty"].sum().sort_index()
             cum = qpp.cumsum() / qpp.sum()
             p_low = float(qpp.index.min())
@@ -394,9 +396,13 @@ def main():
                      "CCGT", str(FIGDIR / "fig_per_firm_bid_curves"))
 
     # Quarter-within-hour comparison (CCGT, critical hours)
+    # Zoom y-axis to the relevant clearing band (50-200 EUR/MWh) so
+    # quarter-to-quarter variation in the body of the supply curve
+    # is visible.
     print("CCGT per-quarter curves (granularity exploitation)...")
     plot_quarter_curves(build_per_quarter_curves(ccgt),
-                         "CCGT", str(FIGDIR / "fig_per_firm_bid_curves_quarters_ccgt"))
+                         "CCGT", str(FIGDIR / "fig_per_firm_bid_curves_quarters_ccgt"),
+                         ylim=(50, 200))
 
     # CCGT offer-rate diagnostic (per-unit, averaged within firm-hour-class)
     diag, per_unit = build_offer_diagnostics(ccgt)

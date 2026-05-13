@@ -240,7 +240,7 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves.pdf}
-\caption{\textbf{Aggregate DA supply curves by pivotal firm and clock-hour, CCGT, October--December 2025.} EUPHEMIA aggregation (public description, sec.~7.1) per (firm, hour): pool sell tranches, sort ascending by price, cumulate, normalise by $N_{\text{dates}} \times 4$ quarters. Red: 11 critical hours; green: 4 midday hours (11:00--14:00, dropped from the DiD); blue: 3 flat hours. Submission rates by hour-class in Table~\ref{tab:per_firm_offer_rate}; other technologies in Appendix~\ref{app:supply_curves_other_tech}.}
+\caption{\textbf{Aggregate DA supply curves by pivotal firm and clock-hour, CCGT, October--December 2025.} EUPHEMIA aggregation (public description, sec.~7.1) per (firm, hour): pool sell tranches, sort ascending by price, cumulate, normalise by $N_{\text{dates}} \times 4$ quarters. Red: 11 critical hours; green: 4 midday hours (11:00--14:00, dropped from the DiD); blue: 3 flat hours. Submission rates by hour-class in Table~\ref{tab:per_firm_offer_rate}; Hydro analogue in Appendix~\ref{app:supply_curves_other_tech}.}
 \label{fig:per_firm_bid_curves}
 \end{figure}
 
@@ -258,11 +258,11 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_quarters_ccgt.pdf}
-\caption{\textbf{Aggregate DA supply curves by quarter within critical hours, CCGT.} EUPHEMIA aggregation per (firm, quarter) over the 11 critical hours and all days in October--December 2025. One curve per quarter.}
+\caption{\textbf{Aggregate DA supply curves by quarter within critical hours, CCGT.} EUPHEMIA aggregation per (firm, quarter) over the 11 critical hours and all days in October--December 2025. Y-axis zoomed to 50--200 EUR/MWh, the clearing-relevant band. One curve per quarter.}
 \label{fig:per_firm_bid_curves_quarters_ccgt}
 \end{figure}
 
-\textit{Reading} (\textbf{mixed}). On average over critical hours the four quarter-curves nearly coincide for all four firms --- consistent with the mechanical-repeat rates in Table~\ref{tab:per_firm_bid_shape}. Naturgy shows the largest within-hour quarter dispersion, visible around 2{,}400--2{,}900 MW. Granularity is exploited episodically, not as a systematic four-quarter bid plan. Hydro, Wind and Solar PV per-quarter analogues are in Appendix~\ref{app:supply_curves_other_tech}.
+\textit{Reading} (\textbf{mixed}). Naturgy shows visible quarter dispersion in the 1{,}500--2{,}800 MW band: Q1 sits below Q4 in the body of the curve. Iberdrola, Endesa and EDP-Spain produce four overlapping curves. Granularity is exploited episodically by one firm, not as a systematic four-quarter bid plan. Hydro analogue in Appendix~\ref{app:supply_curves_other_tech}.
 
 % =====================================================================
 \section{Main empirical results}\label{sec:results}
@@ -414,63 +414,32 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 
 \textit{Reading} (\textbf{supportive}). Within each firm, critical / midday / flat rates differ by $<0.003$. No hour-class selection: same units bid across hour classes.
 
-\subsection{Per-firm aggregate supply curves, other technologies}\label{app:supply_curves_other_tech}
+\subsection{Per-firm aggregate supply curves, Hydro}\label{app:supply_curves_other_tech}
 
-% TODO prose. Same construction as Figure 4 but for hydro, wind, and
-% solar PV (CCGT is in the main text). Nuclear and coal are not shown
-% because under primary_owner allocation only one pivotal firm holds
-% the assets (Nuclear -> Endesa via Asco/Vandellos; Coal -> EDP-Spain
-% via Soto de Ribera), so the cross-firm comparison degenerates.
+% TODO prose. Hydro is the only non-CCGT technology where pivotal firms
+% all have meaningful unit counts and where the supply curve has shape
+% (price-taker techs like wind and solar bid at the floor and do not
+% exploit granularity; nuclear and coal are held by a single pivotal
+% firm under primary-owner allocation). Wind and Solar PV per-hour /
+% per-quarter figures are produced by the same script but omitted from
+% the paper for brevity (the curves cluster at the price floor with
+% negligible within-day variation).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_hydro.pdf}
-\caption{\textbf{Aggregate DA supply curves, Hydro, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_bid_curves}.}
+\caption{\textbf{Aggregate DA supply curves by clock-hour, Hydro.} Same construction as Figure~\ref{fig:per_firm_bid_curves}.}
 \label{fig:supply_curves_hydro}
 \end{figure}
-
-\textit{Reading} (\textbf{mixed}). Iberdrola and Naturgy show clear within-class spread of red curves --- hydro is reservoir-managed but still bid-shaped within the day. Endesa's hydro is tiny and concentrated at a few capacity bins. EDP-Spain hydro is essentially a single curve across all hours: no within-day differentiation.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_wind.pdf}
-\caption{\textbf{Aggregate DA supply curves, Wind, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_bid_curves}.}
-\label{fig:supply_curves_wind}
-\end{figure}
-
-\textit{Reading} (\textbf{supportive}). Wind units bid at the price floor as expected of a price-taker technology; the curves are essentially horizontal. Cross-hour spread is minimal -- consistent with the prediction that intermittent renewables do not exploit within-hour granularity.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_solar_pv.pdf}
-\caption{\textbf{Aggregate DA supply curves, Solar PV, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_bid_curves}.}
-\label{fig:supply_curves_solar_pv}
-\end{figure}
-
-\textit{Reading} (\textbf{supportive}). Same picture as Wind: solar PV bids cluster at the price floor with negligible within-day variation. The Endesa panel is essentially empty -- under the primary-owner allocation Endesa retains little solar capacity in our sample window. Nuclear and Coal are omitted: under primary-owner allocation only one pivotal firm holds the assets (Asc\'o / Vandell\`os $\to$ Endesa; Soto de Ribera coal $\to$ EDP-Spain), so the within-firm comparison degenerates.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_quarters_hydro.pdf}
-\caption{\textbf{Aggregate DA supply curves by quarter, Hydro.} Same construction as Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt}, restricted to critical hours.}
+\caption{\textbf{Aggregate DA supply curves by quarter, Hydro, critical hours.} Same construction as Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt}.}
 \label{fig:supply_curves_quarters_hydro}
 \end{figure}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_quarters_wind.pdf}
-\caption{\textbf{Aggregate DA supply curves by quarter, Wind.}}
-\label{fig:supply_curves_quarters_wind}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_quarters_solar_pv.pdf}
-\caption{\textbf{Aggregate DA supply curves by quarter, Solar PV.}}
-\label{fig:supply_curves_quarters_solar_pv}
-\end{figure}
-
-\textit{Reading} (\textbf{supportive}). Across Hydro, Wind and Solar PV the four quarter-curves are visually indistinguishable for every firm. None of the non-CCGT technologies of pivotal firms exploits the within-hour granularity of the day-ahead market.
+\textit{Reading} (\textbf{mixed}). Iberdrola and Naturgy spread their hydro curves across critical hours while EDP-Spain's hydro is essentially a single curve. The four quarter-curves coincide for every firm: hydro is reservoir-managed and does not exploit within-hour granularity even though it has bid-shape capacity.
 
 \subsection{Time placebos}\label{app:time_placebos}
 
