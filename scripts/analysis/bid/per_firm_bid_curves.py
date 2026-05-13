@@ -89,60 +89,55 @@ def load_tranches():
     return df
 
 
-def representative_unit_per_firm(df):
-    """Pick the CCGT unit with the most tranche rows per firm (proxy for
-    largest / most active). Returns dict firm -> unit_code."""
-    counts = df.groupby(["firm", "unit_code"]).size().reset_index(name="n")
-    rep = counts.sort_values(["firm", "n"], ascending=[True, False]).groupby("firm").first()
-    return rep["unit_code"].to_dict()
+def build_aggregate_supply_curves(df):
+    """OMIE / EUPHEMIA aggregation: pool all sell tranches by (firm,
+    hour-class), sort ascending by price, cumulate quantities. Normalise
+    by the number of (date, unit, period) cells so the y-axis reads as
+    "average MW offered per period at bid price <= p."
 
-
-def build_bid_curves(df):
-    """Average ladder for the representative CCGT of each firm. Holding
-    the unit constant means cost structure is constant within each panel,
-    so the average over days is a meaningful 'typical bid'."""
+    Public-description of EUPHEMIA, sec. 7.1 (p.43-44): supply tranches
+    are pooled, sorted by ascending price, and inverse functions added
+    pointwise. For pure step orders this is equivalent to sorting (price,
+    quantity) pairs by price and cumulating quantities. We restrict to
+    CCGT here to match the rest of section 4.2.
+    """
     df = df[df["hour_class"].isin(["critical", "flat"])].copy()
-    rep = representative_unit_per_firm(df)
-    df = df[df.apply(lambda r: r["unit_code"] == rep.get(r["firm"]), axis=1)].copy()
-    df = df.sort_values(["d", "unit_code", "period", "price"])
-    df["rank"] = df.groupby(["d", "unit_code", "period"]).cumcount() + 1
-    df["cum_qty"] = df.groupby(["d", "unit_code", "period"])["qty"].cumsum()
-    avg = (
-        df.groupby(["firm", "unit_code", "hour_class", "rank"], as_index=False)
-        .agg(price=("price", "mean"),
-             cum_qty=("cum_qty", "mean"),
-             qty=("qty", "mean"),
-             n_cells=("d", "count"))
-    )
-    # Only keep ranks present in at least 30% of cells (so we don't show
-    # the long tail of rare-large-ladder days)
-    n_rank1 = avg[avg["rank"] == 1].set_index(["firm", "hour_class"])["n_cells"]
-    avg = avg.merge(n_rank1.rename("n_rank1"), on=["firm", "hour_class"])
-    avg = avg[avg["n_cells"] >= 0.30 * avg["n_rank1"]]
-    return avg, rep
+    out = []
+    for (firm, hc), g in df.groupby(["firm", "hour_class"]):
+        n_cells = g.groupby(["d", "unit_code", "period"]).ngroups
+        # Bin to 1 EUR/MWh price grid to keep the curve plottable
+        g_binned = (
+            g.assign(price_bin=g["price"].round(0))
+            .groupby("price_bin", as_index=False)["qty"].sum()
+            .rename(columns={"price_bin": "price"})
+            .sort_values("price")
+        )
+        g_binned["cum_qty_per_period"] = g_binned["qty"].cumsum() / n_cells
+        g_binned["firm"] = firm
+        g_binned["hour_class"] = hc
+        g_binned["n_cells"] = n_cells
+        out.append(g_binned)
+    return pd.concat(out, ignore_index=True)
 
 
-def plot_bid_curves(avg, rep):
+def plot_bid_curves(curves):
     fig, axes = plt.subplots(2, 2, figsize=(11, 7.5), sharex=False, sharey=False)
     firms_to_plot = ["IB", "GE", "GN", "HC"]
     for ax, firm in zip(axes.flatten(), firms_to_plot):
-        unit = rep.get(firm, "?")
         for hc, color in [("critical", "C3"), ("flat", "C0")]:
-            sub = avg[(avg["firm"] == firm) & (avg["hour_class"] == hc)].sort_values("rank")
+            sub = curves[(curves["firm"] == firm) & (curves["hour_class"] == hc)].sort_values("price")
             if len(sub) == 0:
                 continue
-            # Prepend a starting point at cum_qty=0 so the step starts visible
-            x = np.concatenate(([0.0], sub["cum_qty"].values))
-            y = np.concatenate(([sub["price"].iloc[0]], sub["price"].values))
-            ax.step(x, y, where="post", color=color, linewidth=2.0,
+            ax.step(sub["cum_qty_per_period"], sub["price"], where="post",
+                    color=color, linewidth=1.8,
                     label=("Critical hours" if hc == "critical" else "Flat hours"))
-            ax.scatter(sub["cum_qty"], sub["price"], color=color, s=25, zorder=3)
-        ax.set_title(f"{FIRM_DISPLAY.get(firm, firm)} ({unit})")
-        ax.set_xlabel("Cumulative quantity (MW)")
+        ax.set_title(FIRM_DISPLAY.get(firm, firm))
+        ax.set_xlabel("MW offered per period (cumulative)")
         ax.set_ylabel("Bid price (EUR/MWh)")
         ax.grid(alpha=0.3)
+        ax.set_ylim(-50, 700)  # focus on relevant clearing range
         ax.legend(fontsize=8, frameon=False, loc="upper left")
-    fig.suptitle("Average DA bid curves, largest CCGT unit per pivotal firm (Oct--Dec 2025)",
+    fig.suptitle(r"Aggregate DA supply curves by pivotal firm (CCGT, Oct--Dec 2025)",
                  fontsize=12, y=1.00)
     fig.tight_layout()
     for ext in ("pdf", "png"):
@@ -150,7 +145,6 @@ def plot_bid_curves(avg, rep):
         fig.savefig(out, bbox_inches="tight", dpi=120 if ext == "png" else None)
     plt.close(fig)
     print(f"saved {FIGDIR / 'fig_per_firm_bid_curves.pdf'}")
-    print("  representative units:", rep)
 
 
 def build_table(df):
@@ -229,9 +223,9 @@ def main():
     df = load_tranches()
     print(f"  {len(df):,} tranche rows across {df['firm'].nunique()} firms")
 
-    print("building average ladders...")
-    avg, rep = build_bid_curves(df)
-    plot_bid_curves(avg, rep)
+    print("building aggregate supply curves (OMIE methodology)...")
+    curves = build_aggregate_supply_curves(df)
+    plot_bid_curves(curves)
 
     print("building bid-shape detail table...")
     agg = build_table(df)
