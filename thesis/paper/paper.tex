@@ -133,37 +133,14 @@ INCLUDE SAMPLE SIZE AND FAMILIES.
 
 \subsection{Critical-vs-flat hours: empirical calibration}\label{sec:data:calibration}
 
-Our identification strategy relies on the idea that the reform does not give extra strategic space for firms to exploit in all hours (see Section~\ref{sec:model:predictions}). The reform's strategic effect is concentrated in hours where the \textit{residual demand} (electricity demand minus wind and solar production) varies substantially within the hour — those are the hours where finer time resolution allows firms to set quarter-specific bids that match the within-hour conditions.
-
-\textbf{Classification criterion.} For each clock-hour $h$, define the \textbf{within-hour variance of residual demand},
+Hours are classified by the \textbf{within-hour variance of residual demand},
 \begin{equation}
    \sigma^2_{\text{within}}(h) \;=\; \mathbb{E}_d\!\left[\,\tfrac{1}{4}\sum_{q=1}^{4}\bigl(D_{h,q,d}-\bar{D}_{h,d}\bigr)^{2}\,\right],
-   \qquad D_{h,q,d} = \text{demand}_{h,q,d} - \text{wind}_{h,q,d} - \text{solar}_{h,q,d},
+   \qquad D_{h,q,d} = \text{demand}_{h,q,d} - \text{wind}_{h,q,d} - \text{solar}_{h,q,d}.
 \end{equation}
-where $\mathbb{E}_d$ denotes the empirical expectation taken across days $d$ and the variance is taken across the four 15-minute quarters $q$ for a particular clock-hour $h$. \textbf{Critical hours} are those with high $\sigma^2_{\text{within}}$ (large within-hour movement in residual demand, in either direction); \textbf{flat hours} are those with low $\sigma^2_{\text{within}}$. Borderline hours (moderate variance, no clean class assignment) are dropped from the analysis.
+\textbf{Critical hours}: high $\sigma^2_{\text{within}}$, 05:00--09:00 and 16:00--23:00 (eleven clock-hours). \textbf{Flat hours}: low $\sigma^2_{\text{within}}$, 01:00--04:00 (three clock-hours). Borderline hours are dropped. Full 24-hour ranking in Appendix~\ref{app:hour_metrics}.
 
-Applying this criterion to Spain 2025 yields the following grouping:
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{p{3.5cm} p{2.4cm} p{6.5cm} l}
-\toprule
-\textbf{Pattern} & \textbf{Hours (local)} & \textbf{Mechanism} & \textbf{Class} \\
-\midrule
-\flatrow Overnight valley & 01:00--04:00 & Demand low and stable; no solar; system slack & \textit{flat} \\
-\critrow Morning ramp + solar entry & 05:00--09:00 & Demand rises sharply (1.5--1.8 GW within the hour); solar starts entering between 06:00 and 09:00 & \textit{critical} \\
-Midday solar plateau & 11:00--15:00 & Demand flat at its daytime level; solar near peak but variable across days (cloud cover) & dropped \\
-\critrow Afternoon ramp + solar exit & 16:00--20:00 & Demand rises into the evening peak; solar production fades & \textit{critical} \\
-\critrow Post-peak descent & 20:00--23:00 & Demand falls sharply from the evening peak (1.5--1.9 GW within the hour); solar already gone & \textit{critical} \\
-Transitional & 00:00, 04:00, 09:00, 10:00, 15:00, 23:00 & Mixed/small variation; no clean class assignment & dropped \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The critical-hour set used in the empirical analysis is 05:00--09:00 and 16:00--23:00 (eleven clock-hours). The flat-hour set is 01:00--04:00 (three clock-hours). The full 24-hour ranking by $\sigma^2_{\text{within}}$, mean demand, mean solar, and within-hour demand change is reported in Appendix~\ref{app:hour_metrics}.
-
-OJO, IF WE INTRODUCE THE 11:00-15:00 PERIOD IN THE CONTROL, WE ARE MIXING THE OPERATIONAL AND STRATEGIC CHANNELS OF THE REFORM, BECAUSE THE OPERATIONAL EFFECT IS CONCENTRATED IN THOSE HOURS!!! 
+OJO, IF WE INTRODUCE THE 11:00-15:00 PERIOD IN THE CONTROL, WE ARE MIXING THE OPERATIONAL AND STRATEGIC CHANNELS OF THE REFORM, BECAUSE THE OPERATIONAL EFFECT IS CONCENTRATED IN THOSE HOURS!!!
 
 
 \begin{figure}[H]
