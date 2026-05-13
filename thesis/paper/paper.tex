@@ -240,7 +240,7 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves.pdf}
-\caption{\textbf{Aggregate DA supply curves by pivotal firm and clock-hour, CCGT, October--December 2025.} One curve per (firm, clock-hour). Each curve is built per the EUPHEMIA aggregation rule (public description, sec.~7.1): pool all sell tranches across days for that (firm, hour), sort by ascending price, cumulate, and normalise by $N_{\text{dates}} \times 4$ quarters so the y-axis reads as firm-level MW offered per period. Red: each of the 11 critical hours. Green: each of the 4 midday hours (11:00--14:00, dropped from the DiD). Blue: each of the 3 flat hours. CCGT offer rate is 1.00 across all (firm, hour-class) cells: every pivotal firm submits bids for every CCGT unit in every period, so the curves capture pure bid-strategy differences rather than compositional selection. The same construction applied to Hydro, Wind, and Solar PV is in Appendix~\ref{app:supply_curves_other_tech}.}
+\caption{\textbf{Aggregate DA supply curves by pivotal firm and clock-hour, CCGT, October--December 2025.} One curve per (firm, clock-hour). Each curve is built per the EUPHEMIA aggregation rule (public description, sec.~7.1): pool all sell tranches across days for that (firm, hour), sort by ascending price, cumulate, and normalise by $N_{\text{dates}} \times 4$ quarters so the y-axis reads as firm-level MW offered per period. Red: each of the 11 critical hours. Green: each of the 4 midday hours (11:00--14:00, dropped from the DiD). Blue: each of the 3 flat hours. Per-unit DA submission rates by hour-class are reported in Table~\ref{tab:per_firm_offer_rate}: critical, midday and flat rates differ by less than $0.003$ within every firm, so the curves capture bid-strategy differences rather than compositional selection. The same construction applied to Hydro, Wind, and Solar PV is in Appendix~\ref{app:supply_curves_other_tech}.}
 \label{fig:per_firm_bid_curves}
 \end{figure}
 
@@ -391,6 +391,24 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 \subsection{Operational vs strategic decomposition (PIBCA vs PHF)}\label{app:operational}
 
 \subsection{Bid-shape robustness in the competitive-zone restriction}\label{app:competitive_zone}
+
+\subsection{DA submission rates by hour-class (selection check)}\label{app:offer_rate}
+
+% TODO prose. Per-unit DA submission rate broken down by hour-class.
+% Mean rate computed across the firm's CCGT units (each unit gets one
+% rate per hour-class, then averaged). DET contains all submitted
+% tranches including those at the price cap, so an offer rate < 1 means
+% the unit did not submit at all for the corresponding (date, period)
+% cells (offline, maintenance, withdrawn before gate closure).
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Mean per-unit CCGT DA submission rate, by firm and hour-class, October--December 2025.}}
+\label{tab:per_firm_offer_rate}
+\input{tables/tab_per_firm_offer_rate}
+\end{table}
+
+\textit{Reading} (\textbf{supportive}). Each row shows the average fraction of (date, period) cells in which the firm's CCGT units submitted any bid, separately for critical, midday and flat hours. Within each firm the three rates are within $0.003$ of each other: critical-hour units are the same units that bid in flat hours. The cross-firm differences (Endesa $\sim 0.73$, EDP-Spain $\sim 0.995$) reflect firm-level operational profiles, not hour-class selection. The within-day spread of the bid-curve panels (Figure~\ref{fig:per_firm_bid_curves}) therefore reflects bid-strategy variation across hours, not unit composition.
 
 \subsection{Per-firm aggregate supply curves, other technologies}\label{app:supply_curves_other_tech}
 

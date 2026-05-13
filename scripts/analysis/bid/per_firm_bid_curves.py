@@ -138,39 +138,50 @@ def build_per_hour_supply_curves(df):
 
 
 def build_offer_diagnostics(df):
-    """For each (firm, hour-class), report the fraction of (date, period)
-    cells in the window in which at least one of the firm's units
-    submitted any tranche. Selection bias check: if this rate differs
-    sharply between hour classes, the supply curves include compositional
-    rather than purely strategic differences."""
+    """Per (firm, unit, hour-class), compute the fraction of (date, period)
+    cells in the window in which the unit submitted at least one tranche.
+    DET contains tranches from every offer that entered the auction
+    (including unaccepted tranches at the price cap), so a unit-period
+    cell missing from DET means the unit did not submit at all for that
+    period (offline, maintenance, withdrawn before gate closure, etc.).
+
+    Aggregates to (firm, hour-class) as the simple mean across units.
+    If this rate differs sharply between hour classes, the supply curves
+    include compositional changes (some units bidding more often in
+    critical hours) on top of bid-strategy changes."""
     df = df[df["hour_class"].isin(["critical", "midday", "flat"])].copy()
     n_dates_total = df["d"].nunique()
     hours_per_class = {"critical": len(CRITICAL_HOURS),
                        "midday":   len(MIDDAY_HOURS),
                        "flat":     len(FLAT_HOURS)}
-    rows = []
-    for (firm, hc), g in df.groupby(["firm", "hour_class"]):
-        n_obs_periods = g.groupby(["d", "hour", "period"]).ngroups
-        n_total_periods = n_dates_total * hours_per_class[hc] * 4
-        rows.append({
-            "firm": firm,
-            "hour_class": hc,
-            "n_obs_periods": n_obs_periods,
-            "n_total_periods": n_total_periods,
-            "offer_rate": n_obs_periods / n_total_periods if n_total_periods else float("nan"),
-            "n_unique_units": g["unit_code"].nunique(),
-        })
-    return pd.DataFrame(rows)
+    # n_obs_periods per (firm, unit, hour-class)
+    per_unit = (
+        df.groupby(["firm", "unit_code", "hour_class"])[["d", "hour", "period"]]
+        .apply(lambda g: g.drop_duplicates().shape[0])
+        .reset_index(name="n_obs_periods")
+    )
+    per_unit["n_total_periods"] = per_unit["hour_class"].map(
+        lambda hc: n_dates_total * hours_per_class[hc] * 4
+    )
+    per_unit["offer_rate"] = per_unit["n_obs_periods"] / per_unit["n_total_periods"]
+    # Aggregate to (firm, hour-class): mean across units
+    agg = (
+        per_unit.groupby(["firm", "hour_class"], as_index=False)
+        .agg(mean_offer_rate=("offer_rate", "mean"),
+             min_offer_rate=("offer_rate", "min"),
+             n_units=("unit_code", "count"))
+    )
+    return agg, per_unit
 
 
 def write_offer_diagnostic_table(diag, tech, out_path):
-    """Write a compact LaTeX table of offer rates by (firm, hour-class)."""
-    pivot = diag.pivot(index="firm", columns="hour_class", values="offer_rate")
+    """Write LaTeX table: mean per-unit offer rate by (firm, hour-class)."""
+    pivot = diag.pivot(index="firm", columns="hour_class", values="mean_offer_rate")
     for col in ("critical", "midday", "flat"):
         if col not in pivot.columns:
             pivot[col] = float("nan")
     pivot = pivot[["critical", "midday", "flat"]]
-    units = diag.pivot(index="firm", columns="hour_class", values="n_unique_units").max(axis=1)
+    units = diag.pivot(index="firm", columns="hour_class", values="n_units").max(axis=1)
     lines = [
         r"\begin{tabular}{l c c c c}",
         r"\toprule",
@@ -183,7 +194,7 @@ def write_offer_diagnostic_table(diag, tech, out_path):
         row = pivot.loc[firm]
         n_u = int(units.loc[firm]) if firm in units.index and not pd.isna(units.loc[firm]) else 0
         lines.append(
-            f"{FIRM_DISPLAY[firm]} & {row['critical']:.2f} & {row['midday']:.2f} & {row['flat']:.2f} & {n_u} \\\\"
+            f"{FIRM_DISPLAY[firm]} & {row['critical']:.3f} & {row['midday']:.3f} & {row['flat']:.3f} & {n_u} \\\\"
         )
     lines += [r"\bottomrule", r"\end{tabular}"]
     Path(out_path).write_text("\n".join(lines) + "\n")
@@ -318,10 +329,12 @@ def main():
     plot_bid_curves(build_per_hour_supply_curves(ccgt),
                      "CCGT", str(FIGDIR / "fig_per_firm_bid_curves"))
 
-    # CCGT offer-rate diagnostic
-    diag = build_offer_diagnostics(ccgt)
-    print("CCGT offer rates:")
+    # CCGT offer-rate diagnostic (per-unit, averaged within firm-hour-class)
+    diag, per_unit = build_offer_diagnostics(ccgt)
+    print("CCGT mean per-unit offer rates by firm x hour-class:")
     print(diag.to_string(index=False))
+    print("\nUnit-level rates (sample):")
+    print(per_unit.head(15).to_string(index=False))
     write_offer_diagnostic_table(diag, "CCGT",
                                  TABDIR / "tab_per_firm_offer_rate.tex")
 
