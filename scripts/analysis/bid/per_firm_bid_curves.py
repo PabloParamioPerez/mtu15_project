@@ -30,6 +30,14 @@ TABDIR = REPO / "thesis" / "paper" / "tables"
 
 CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)
 FLAT_HOURS = (1, 2, 3)
+MIDDAY_HOURS = (11, 12, 13, 14)
+
+CLASS_COLOR = {"critical": "C3", "flat": "C0", "midday": "tab:green"}
+CLASS_LABEL = {
+    "critical": "Critical hours (05:00--09:00, 16:00--23:00)",
+    "midday":   "Midday (11:00--14:00)",
+    "flat":     "Flat hours (01:00--04:00)",
+}
 
 FIRM_DISPLAY = {
     "IB":     "Iberdrola",
@@ -40,13 +48,20 @@ FIRM_DISPLAY = {
 }
 PIVOTAL_FIRMS = list(FIRM_DISPLAY.keys())
 
+# Order to draw curves so the lightest-density class is on top
+DRAW_ORDER = ("critical", "midday", "flat")
+TECHS_APPENDIX = ("Hydro", "Nuclear", "Wind", "Solar PV", "Coal")
 
-def load_tranches():
-    """Pull DET+CAB joined tranches for pivotal CCGT, sell-side, Oct-Dec 2025."""
+
+def load_tranches(techs=None):
+    """Pull DET+CAB joined tranches for pivotal firms, sell-side, Oct-Dec 2025.
+    If techs is None, all techs in the firm panel are returned (with the
+    tech_group column preserved). If techs is a list, restrict to those."""
     units = firm_unit_panel(csv_path=str(UNITS_CSV), scheme="short", mode="primary_owner")
-    uft = units[units["parent"].isin(PIVOTAL_FIRMS) & (units["tech_group"] == "CCGT")][
-        ["unit_code", "parent"]
-    ].rename(columns={"parent": "firm"})
+    mask = units["parent"].isin(PIVOTAL_FIRMS)
+    if techs is not None:
+        mask &= units["tech_group"].isin(list(techs))
+    uft = units[mask][["unit_code", "parent", "tech_group"]].rename(columns={"parent": "firm"})
 
     con = duckdb.connect()
     con.execute("PRAGMA threads = 4")
@@ -76,28 +91,26 @@ def load_tranches():
               AND price_eur_mwh IS NOT NULL
         )
         SELECT d.d, d.period, ((d.period - 1) // 4)::INT AS hour,
-               c.unit_code, u.firm, d.price, d.qty
+               c.unit_code, u.firm, u.tech_group, d.price, d.qty
         FROM det d
           JOIN cab_l c USING (d, offer_code, version)
           JOIN uft u ON c.unit_code = u.unit_code
         """
     ).df()
-    df["hour_class"] = np.where(
-        df["hour"].isin(CRITICAL_HOURS), "critical",
-        np.where(df["hour"].isin(FLAT_HOURS), "flat", "other"),
+    df["hour_class"] = np.select(
+        [df["hour"].isin(CRITICAL_HOURS),
+         df["hour"].isin(FLAT_HOURS),
+         df["hour"].isin(MIDDAY_HOURS)],
+        ["critical", "flat", "midday"],
+        default="other",
     )
     return df
 
 
 def build_per_hour_supply_curves(df):
-    """EUPHEMIA aggregation applied per (firm, hour-of-day). Pools all
-    sell tranches across days for the given firm and clock-hour, sorts
-    by ascending price, cumulates, and normalises by the number of
-    (date, unit, period) cells in that hour. Plotting one curve per
-    hour preserves the within-day evolution of bidding behaviour that
-    a single-class aggregation hides.
-    """
-    df = df[df["hour_class"].isin(["critical", "flat"])].copy()
+    """EUPHEMIA aggregation per (firm, hour-of-day). Returns curves for
+    critical, midday, and flat hour classes; other hours are dropped."""
+    df = df[df["hour_class"].isin(["critical", "midday", "flat"])].copy()
     out = []
     for (firm, hour), g in df.groupby(["firm", "hour"]):
         n_cells = g.groupby(["d", "unit_code", "period"]).ngroups
@@ -116,42 +129,45 @@ def build_per_hour_supply_curves(df):
     return pd.concat(out, ignore_index=True)
 
 
-def plot_bid_curves(curves):
+def plot_bid_curves(curves, tech_label, out_stem):
     fig, axes = plt.subplots(2, 2, figsize=(11, 7.5), sharex=False, sharey=False)
     firms_to_plot = ["IB", "GE", "GN", "HC"]
     for ax, firm in zip(axes.flatten(), firms_to_plot):
-        for hour in sorted(curves[curves["firm"] == firm]["hour"].unique()):
-            sub = curves[(curves["firm"] == firm) & (curves["hour"] == hour)].sort_values("price")
-            if len(sub) == 0:
-                continue
-            color = "C3" if sub["hour_class"].iloc[0] == "critical" else "C0"
-            ax.step(sub["cum_qty_per_period"], sub["price"], where="post",
-                    color=color, linewidth=0.7, alpha=0.45)
+        # Draw critical first, then midday, then flat -- so flat (3 hours)
+        # is on top and visible even where it overlaps with critical.
+        for hc in DRAW_ORDER:
+            hours = sorted(curves[(curves["firm"] == firm) &
+                                  (curves["hour_class"] == hc)]["hour"].unique())
+            for hour in hours:
+                sub = curves[(curves["firm"] == firm) & (curves["hour"] == hour)].sort_values("price")
+                if len(sub) == 0:
+                    continue
+                ax.step(sub["cum_qty_per_period"], sub["price"], where="post",
+                        color=CLASS_COLOR[hc], linewidth=0.7, alpha=0.55)
         ax.set_title(FIRM_DISPLAY.get(firm, firm))
         ax.set_xlabel("MW offered per period (cumulative)")
         ax.set_ylabel("Bid price (EUR/MWh)")
         ax.grid(alpha=0.3)
         ax.set_ylim(-50, 500)
-    # Single shared legend below the suptitle
-    crit_line = plt.Line2D([0], [0], color="C3", linewidth=2.0, alpha=0.7,
-                            label="Critical hours (05:00--09:00, 16:00--23:00)")
-    flat_line = plt.Line2D([0], [0], color="C0", linewidth=2.0, alpha=0.7,
-                            label="Flat hours (01:00--04:00)")
-    fig.suptitle(r"Aggregate DA supply curves by pivotal firm and clock-hour (CCGT, Oct--Dec 2025)",
+    handles = [plt.Line2D([0], [0], color=CLASS_COLOR[hc], linewidth=2.0,
+                          alpha=0.7, label=CLASS_LABEL[hc])
+               for hc in ("critical", "midday", "flat")]
+    fig.suptitle(rf"Aggregate DA supply curves by pivotal firm and clock-hour ({tech_label}, Oct--Dec 2025)",
                  fontsize=12, y=0.99)
-    fig.legend(handles=[crit_line, flat_line], loc="upper center",
-               ncol=2, frameon=False, fontsize=9, bbox_to_anchor=(0.5, 0.955))
+    fig.legend(handles=handles, loc="upper center", ncol=3, frameon=False,
+               fontsize=9, bbox_to_anchor=(0.5, 0.955))
     fig.tight_layout(rect=[0, 0, 1, 0.92])
     for ext in ("pdf", "png"):
-        out = FIGDIR / f"fig_per_firm_bid_curves.{ext}"
-        fig.savefig(out, bbox_inches="tight", dpi=120 if ext == "png" else None)
+        fig.savefig(f"{out_stem}.{ext}", bbox_inches="tight", dpi=120 if ext == "png" else None)
     plt.close(fig)
-    print(f"saved {FIGDIR / 'fig_per_firm_bid_curves.pdf'}")
+    print(f"  saved {out_stem}.pdf")
 
 
 def build_table(df):
-    """Per-firm bid-shape detail table aggregated to canonical hour classes."""
-    df = df[df["hour_class"].isin(["critical", "flat"])].copy()
+    """Per-firm bid-shape detail table aggregated to canonical hour classes.
+    Always restricted to CCGT (matches the section's framing)."""
+    df = df[(df["hour_class"].isin(["critical", "flat"])) &
+            (df["tech_group"] == "CCGT")].copy()
     # Per-cell summaries: one row per (date, unit, period)
     by_cell = (
         df.groupby(["firm", "hour_class", "d", "unit_code", "period"], as_index=False)
@@ -221,15 +237,28 @@ def write_table_tex(agg):
 
 
 def main():
-    print("loading tranches...")
-    df = load_tranches()
-    print(f"  {len(df):,} tranche rows across {df['firm'].nunique()} firms")
+    print("loading all tranches for pivotal firms...")
+    df = load_tranches(techs=None)
+    print(f"  {len(df):,} tranche rows across {df['firm'].nunique()} firms and "
+          f"{df['tech_group'].nunique()} tech groups")
 
-    print("building per-hour aggregate supply curves (OMIE methodology)...")
-    curves = build_per_hour_supply_curves(df)
-    plot_bid_curves(curves)
+    # Main-text figure: CCGT only
+    print("CCGT curves (main text)...")
+    ccgt = df[df["tech_group"] == "CCGT"].copy()
+    plot_bid_curves(build_per_hour_supply_curves(ccgt),
+                     "CCGT", str(FIGDIR / "fig_per_firm_bid_curves"))
 
-    print("building bid-shape detail table...")
+    # Appendix figures: one per tech in TECHS_APPENDIX
+    for tech in TECHS_APPENDIX:
+        sub = df[df["tech_group"] == tech].copy()
+        if sub.empty or sub.groupby(["firm", "hour"]).ngroups < 4:
+            print(f"skipping {tech}: not enough data")
+            continue
+        print(f"{tech} curves (appendix)...")
+        stem = FIGDIR / f"fig_per_firm_bid_curves_{tech.lower().replace(' ', '_')}"
+        plot_bid_curves(build_per_hour_supply_curves(sub), tech, str(stem))
+
+    print("building bid-shape detail table (CCGT)...")
     agg = build_table(df)
     write_table_tex(agg)
 

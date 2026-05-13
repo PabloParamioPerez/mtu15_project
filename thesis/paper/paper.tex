@@ -240,11 +240,11 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves.pdf}
-\caption{\textbf{Aggregate DA supply curves by pivotal firm and clock-hour, CCGT, October--December 2025.} One curve per (firm, clock-hour). Each curve is built per the EUPHEMIA aggregation rule (public description, sec.~7.1): pool all sell tranches across days for that (firm, hour), sort by ascending price, cumulate, and normalise by the number of (date, unit, period) cells. Red: each of the 11 critical hours; blue: each of the 3 flat hours.}
+\caption{\textbf{Aggregate DA supply curves by pivotal firm and clock-hour, CCGT, October--December 2025.} One curve per (firm, clock-hour). Each curve is built per the EUPHEMIA aggregation rule (public description, sec.~7.1): pool all sell tranches across days for that (firm, hour), sort by ascending price, cumulate, and normalise by the number of (date, unit, period) cells. Red: each of the 11 critical hours. Green: each of the 4 midday hours (11:00--14:00, dropped from the DiD). Blue: each of the 3 flat hours. The same construction applied to Hydro, Wind, and Solar PV is in Appendix~\ref{app:supply_curves_other_tech}.}
 \label{fig:per_firm_bid_curves}
 \end{figure}
 
-\textit{Reading} (\textbf{supportive}). Within-day variation is what we look at: the spread of red curves within a panel shows whether the firm differentiates its bid hour-by-hour in critical hours. Iberdrola's red curves spread across a wide range (offered capacity at $\sim$110~EUR/MWh varies from $\sim$220 to $\sim$580~MW across critical hours) while the three blue flat-hour curves sit tightly together. Naturgy's pattern is the same and even sharper: critical-hour curves span $\sim$50--400~MW at moderate prices, flat curves cluster at $\sim$50~MW. EDP-Spain shows clear within-class variation in critical hours too. Endesa is the exception: red and blue curves overlap and do not spread --- no within-day differentiation.
+\textit{Reading} (\textbf{supportive}). Within-day variation is what we look at: the spread of red curves within a panel shows whether the firm differentiates its bid hour-by-hour in critical hours. Iberdrola's red curves spread across a wide range (offered capacity at $\sim$110~EUR/MWh varies from $\sim$220 to $\sim$580~MW across critical hours) while the three blue flat-hour curves sit tightly together; midday (green) sits between the two. Naturgy's pattern is sharper: critical-hour curves span $\sim$50--400~MW at moderate prices, flat curves cluster at $\sim$50~MW. EDP-Spain shows the same within-class fan in critical hours. Endesa is the exception: red, green, and blue curves overlap and do not spread --- no within-day differentiation.
 
 \begin{table}[H]
 \centering
@@ -391,6 +391,41 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 \subsection{Operational vs strategic decomposition (PIBCA vs PHF)}\label{app:operational}
 
 \subsection{Bid-shape robustness in the competitive-zone restriction}\label{app:competitive_zone}
+
+\subsection{Per-firm aggregate supply curves, other technologies}\label{app:supply_curves_other_tech}
+
+% TODO prose. Same construction as Figure 4 but for hydro, wind, and
+% solar PV (CCGT is in the main text). Nuclear and coal are not shown
+% because under primary_owner allocation only one pivotal firm holds
+% the assets (Nuclear -> Endesa via Asco/Vandellos; Coal -> EDP-Spain
+% via Soto de Ribera), so the cross-firm comparison degenerates.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_hydro.pdf}
+\caption{\textbf{Aggregate DA supply curves, Hydro, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_bid_curves}.}
+\label{fig:supply_curves_hydro}
+\end{figure}
+
+\textit{Reading} (\textbf{mixed}). Iberdrola and Naturgy show clear within-class spread of red curves --- hydro is reservoir-managed but still bid-shaped within the day. Endesa's hydro is tiny and concentrated at a few capacity bins. EDP-Spain hydro is essentially a single curve across all hours: no within-day differentiation.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_wind.pdf}
+\caption{\textbf{Aggregate DA supply curves, Wind, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_bid_curves}.}
+\label{fig:supply_curves_wind}
+\end{figure}
+
+\textit{Reading} (\textbf{supportive}). Wind units bid at the price floor as expected of a price-taker technology; the curves are essentially horizontal. Cross-hour spread is minimal -- consistent with the prediction that intermittent renewables do not exploit within-hour granularity.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_solar_pv.pdf}
+\caption{\textbf{Aggregate DA supply curves, Solar PV, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_bid_curves}.}
+\label{fig:supply_curves_solar_pv}
+\end{figure}
+
+\textit{Reading} (\textbf{supportive}). Same picture as Wind: solar PV bids cluster at the price floor with negligible within-day variation. The Endesa panel is essentially empty -- under the primary-owner allocation Endesa retains little solar capacity in our sample window. Nuclear and Coal are omitted: under primary-owner allocation only one pivotal firm holds the assets (Asc\'o / Vandell\`os $\to$ Endesa; Soto de Ribera coal $\to$ EDP-Spain), so the within-firm comparison degenerates.
 
 \subsection{Time placebos}\label{app:time_placebos}
 
