@@ -32,6 +32,20 @@ CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)
 FLAT_HOURS = (1, 2, 3)
 MIDDAY_HOURS = (11, 12, 13, 14)
 
+# Per-tech informative price band, used to set the y-range in the
+# compact appendix grids. Each tech bids in a different range:
+# - dispatchable thermal/hydro bid around clearing (50-200)
+# - nuclear deeply negative to ensure dispatch (-500 to 50)
+# - wind/solar at the price floor as price-takers (-10 to 50)
+TECH_YLIM = {
+    "CCGT":     (50, 200),
+    "Hydro":    (0, 250),
+    "Nuclear":  (-500, 50),
+    "Wind":     (-15, 50),
+    "Solar PV": (-15, 50),
+    "Coal":     (0, 200),
+}
+
 CLASS_COLOR = {"critical": "C3", "flat": "C0", "midday": "tab:green"}
 CLASS_LABEL = {
     "critical": "Critical hours (05:00--09:00, 16:00--23:00)",
@@ -250,9 +264,10 @@ def plot_quarter_curves(curves, tech_label, out_stem, ylim=None):
 
 
 def plot_compact_grid_per_hour(df, techs, out_stem):
-    """Grid figure: rows = firms, columns = techs. Same colour scheme
-    as plot_bid_curves (red/green/blue per hour-class). Used in the
-    appendix to scan all (firm, tech) combinations at a glance."""
+    """Grid figure: rows = firms, columns = techs. Y-range is fixed per
+    tech (using TECH_YLIM, the informative price band for that tech).
+    X-range is per-panel: the cumulative-MW range corresponding to the
+    y-band, with a small buffer."""
     firms = ["IB", "GE", "GN", "HC"]
     n_rows, n_cols = len(firms), len(techs)
     fig, axes = plt.subplots(n_rows, n_cols,
@@ -277,15 +292,16 @@ def plot_compact_grid_per_hour(df, techs, out_stem):
                             continue
                         ax.step(s["cum_qty_per_period"], s["price"], where="post",
                                 color=CLASS_COLOR[hc], linewidth=0.5, alpha=0.55)
-                # Adaptive y-axis on quantity-weighted 80th percentile
-                qpp = panel.groupby("price")["qty"].sum().sort_index()
-                if len(qpp) > 0:
-                    cum = qpp.cumsum() / qpp.sum()
-                    p_low = float(qpp.index.min())
-                    p_hi_idx = cum[cum >= 0.80].index
-                    p_hi = float(p_hi_idx.min()) if len(p_hi_idx) else float(qpp.index.max())
-                    ax.set_ylim(min(p_low - 10, 0),
-                                min(max(p_hi + 30, 50), 700))
+                # Per-tech informative y-range, per-panel x-range.
+                ylim = TECH_YLIM.get(tech)
+                if ylim is not None:
+                    ax.set_ylim(*ylim)
+                    in_band = panel[(panel["price"] >= ylim[0]) & (panel["price"] <= ylim[1])]
+                    if len(in_band) > 0:
+                        x_lo = float(in_band["cum_qty_per_period"].min())
+                        x_hi = float(in_band["cum_qty_per_period"].max())
+                        buf = max(20.0, 0.05 * (x_hi - x_lo))
+                        ax.set_xlim(max(0, x_lo - buf), x_hi + buf)
             ax.grid(alpha=0.3)
             ax.tick_params(labelsize=7)
             if i == 0:
@@ -308,8 +324,9 @@ def plot_compact_grid_per_hour(df, techs, out_stem):
     print(f"  saved {out_stem}.pdf")
 
 
-def plot_compact_grid_per_quarter(df, techs, out_stem, ylim=(50, 200)):
-    """Same compact grid but for the 4-quarter view within critical hours."""
+def plot_compact_grid_per_quarter(df, techs, out_stem):
+    """Same compact grid but for the 4-quarter view within critical hours.
+    Y-range fixed per tech via TECH_YLIM, x-range per-panel."""
     firms = ["IB", "GE", "GN", "HC"]
     quarter_colors = {1: "#1f77b4", 2: "#2ca02c", 3: "#ff7f0e", 4: "#d62728"}
     n_rows, n_cols = len(firms), len(techs)
@@ -333,13 +350,14 @@ def plot_compact_grid_per_quarter(df, techs, out_stem, ylim=(50, 200)):
                         continue
                     ax.step(s["cum_qty_per_cell"], s["price"], where="post",
                             color=quarter_colors[q], linewidth=0.9, alpha=0.85)
+                ylim = TECH_YLIM.get(tech)
                 if ylim is not None:
                     ax.set_ylim(*ylim)
                     in_band = panel[(panel["price"] >= ylim[0]) & (panel["price"] <= ylim[1])]
                     if len(in_band) > 0:
                         x_lo = float(in_band["cum_qty_per_cell"].min())
                         x_hi = float(in_band["cum_qty_per_cell"].max())
-                        buf = max(50.0, 0.05 * (x_hi - x_lo))
+                        buf = max(20.0, 0.05 * (x_hi - x_lo))
                         ax.set_xlim(max(0, x_lo - buf), x_hi + buf)
             ax.grid(alpha=0.3)
             ax.tick_params(labelsize=7)
