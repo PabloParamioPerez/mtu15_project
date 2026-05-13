@@ -189,15 +189,17 @@ def build_offer_diagnostics(df):
     return agg, per_unit
 
 
-def build_per_quarter_curves(df):
-    """EUPHEMIA aggregation per (firm, quarter-of-hour) within critical
-    hours. One curve per quarter (q1..q4). Visualises whether the firm
-    differentiates bids across the 4 quarters of a clock-hour."""
-    df = df[df["hour_class"] == "critical"].copy()
+def build_per_quarter_curves(df, hour_class="critical"):
+    """EUPHEMIA aggregation per (firm, quarter-of-hour) within the
+    chosen hour-class. One curve per quarter (q1..q4). Visualises
+    whether the firm differentiates bids across the 4 quarters of a
+    clock-hour."""
+    df = df[df["hour_class"] == hour_class].copy()
     n_dates = df["d"].nunique()
-    # Total (date, hour) cells for critical: n_dates * len(critical hours).
-    # Each (date, hour) cell has one quarter-1, one quarter-2 etc.
-    n_cells_per_quarter = n_dates * len(CRITICAL_HOURS)
+    hours_in_class = {"critical": len(CRITICAL_HOURS),
+                      "flat":     len(FLAT_HOURS),
+                      "midday":   len(MIDDAY_HOURS)}[hour_class]
+    n_cells_per_quarter = n_dates * hours_in_class
     out = []
     for (firm, quarter), g in df.groupby(["firm", "quarter"]):
         g_binned = (
@@ -213,7 +215,7 @@ def build_per_quarter_curves(df):
     return pd.concat(out, ignore_index=True)
 
 
-def plot_quarter_curves(curves, tech_label, out_stem, ylim=None):
+def plot_quarter_curves(curves, tech_label, out_stem, ylim=None, suptitle=None):
     fig, axes = plt.subplots(2, 2, figsize=(11, 7.5))
     firms_to_plot = ["IB", "GE", "GN", "HC"]
     quarter_colors = {1: "#1f77b4", 2: "#2ca02c", 3: "#ff7f0e", 4: "#d62728"}
@@ -252,8 +254,9 @@ def plot_quarter_curves(curves, tech_label, out_stem, ylim=None):
     handles = [plt.Line2D([0], [0], color=quarter_colors[q], linewidth=2.0,
                           label=f"Quarter {q} ({(q-1)*15:02d}--{q*15:02d} min)")
                for q in (1, 2, 3, 4)]
-    fig.suptitle(rf"Aggregate DA supply curves by quarter within critical hours ({tech_label}, Oct--Dec 2025)",
-                 fontsize=12, y=0.99)
+    if suptitle is None:
+        suptitle = rf"Aggregate DA supply curves by quarter within critical hours ({tech_label}, Oct--Dec 2025)"
+    fig.suptitle(suptitle, fontsize=12, y=0.99)
     fig.legend(handles=handles, loc="upper center", ncol=4, frameon=False,
                fontsize=9, bbox_to_anchor=(0.5, 0.955))
     fig.tight_layout(rect=[0, 0, 1, 0.92])
@@ -536,13 +539,19 @@ def main():
                      "CCGT", str(FIGDIR / "fig_per_firm_bid_curves"))
 
     # Quarter-within-hour comparison (CCGT, critical hours)
-    # Zoom y-axis to the relevant clearing band (50-200 EUR/MWh) so
-    # quarter-to-quarter variation in the body of the supply curve
-    # is visible.
-    print("CCGT per-quarter curves (granularity exploitation)...")
-    plot_quarter_curves(build_per_quarter_curves(ccgt),
+    print("CCGT per-quarter curves (critical hours, granularity exploitation)...")
+    plot_quarter_curves(build_per_quarter_curves(ccgt, hour_class="critical"),
                          "CCGT", str(FIGDIR / "fig_per_firm_bid_curves_quarters_ccgt"),
                          ylim=(50, 200))
+    # Same plot restricted to FLAT hours -- falsification: if quarter
+    # dispersion is strategic, it should be absent (or much smaller)
+    # in flat hours where granularity has no economic content.
+    print("CCGT per-quarter curves (flat hours, falsification)...")
+    plot_quarter_curves(build_per_quarter_curves(ccgt, hour_class="flat"),
+                         "CCGT",
+                         str(FIGDIR / "fig_per_firm_bid_curves_quarters_ccgt_flat"),
+                         ylim=(50, 200),
+                         suptitle=r"Aggregate DA supply curves by quarter within flat hours (CCGT, Oct--Dec 2025)")
 
     # CCGT offer-rate diagnostic (per-unit, averaged within firm-hour-class)
     diag, per_unit = build_offer_diagnostics(ccgt)
