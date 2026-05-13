@@ -237,6 +237,24 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 
 \textit{Reading} (\textbf{supportive}). Two distinct strategic patterns appear. Iberdrola enriches the bid ladder in critical hours (more steps) but keeps the four quarters of each hour nearly identical. Naturgy keeps the ladder shallow and varies bids strongly across quarters.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves.pdf}
+\caption{\textbf{Average DA bid curves by pivotal firm, October--December 2025.} Step functions are average price-quantity ladders across (date, unit, period) cells, indexed by tranche rank. Red: critical hours; blue: flat hours.}
+\label{fig:per_firm_bid_curves}
+\end{figure}
+
+\textit{Reading} (\textbf{supportive}). The bid curves in critical hours sit visibly lower and span a wider quantity range than in flat hours for Iberdrola, Naturgy and EDP-Spain --- pivotal firms put more capacity in play at lower prices when the granularity matters. Endesa is the exception: an essentially flat ladder at very high prices that does not shift between hour classes.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Per-firm DA bid-shape detail, October--December 2025.} Mean number of tranches, median tranche price, total quantity offered, and the share of clock-hours in which all four 15-min quarters carry an identical bid (mechanical-repeat rate).}
+\label{tab:per_firm_bid_shape}
+\resizebox{\textwidth}{!}{\input{tables/tab_per_firm_bid_shape_detail}}
+\end{table}
+
+\textit{Reading} (\textbf{mixed}). The ladder enrichment in critical hours is clear in Iberdrola (9.7 vs 4.4 tranches) and Naturgy (6.3 vs 1.3); Endesa stays flat (1.9 vs 1.8). Mechanical repetition across the four quarters drops sharply in critical hours only for Naturgy (0.81 vs 1.00) and EDP-Portugal (0.07 vs 0.27): they are the firms genuinely exploiting MTU15 within-hour granularity. Iberdrola, Endesa, and EDP-Spain enrich the ladder but copy it across quarters.
+
 % =====================================================================
 \section{Main empirical results}\label{sec:results}
 % =====================================================================
