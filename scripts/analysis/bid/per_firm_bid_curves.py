@@ -89,45 +89,60 @@ def load_tranches():
     return df
 
 
+def representative_unit_per_firm(df):
+    """Pick the CCGT unit with the most tranche rows per firm (proxy for
+    largest / most active). Returns dict firm -> unit_code."""
+    counts = df.groupby(["firm", "unit_code"]).size().reset_index(name="n")
+    rep = counts.sort_values(["firm", "n"], ascending=[True, False]).groupby("firm").first()
+    return rep["unit_code"].to_dict()
+
+
 def build_bid_curves(df):
-    """For each (firm, hour-class), compute the average ladder across
-    (date, unit, period) cells, indexed by tranche rank within the cell."""
+    """Average ladder for the representative CCGT of each firm. Holding
+    the unit constant means cost structure is constant within each panel,
+    so the average over days is a meaningful 'typical bid'."""
     df = df[df["hour_class"].isin(["critical", "flat"])].copy()
+    rep = representative_unit_per_firm(df)
+    df = df[df.apply(lambda r: r["unit_code"] == rep.get(r["firm"]), axis=1)].copy()
     df = df.sort_values(["d", "unit_code", "period", "price"])
     df["rank"] = df.groupby(["d", "unit_code", "period"]).cumcount() + 1
     df["cum_qty"] = df.groupby(["d", "unit_code", "period"])["qty"].cumsum()
-    # Average by (firm, hour_class, rank)
     avg = (
-        df.groupby(["firm", "hour_class", "rank"], as_index=False)
+        df.groupby(["firm", "unit_code", "hour_class", "rank"], as_index=False)
         .agg(price=("price", "mean"),
              cum_qty=("cum_qty", "mean"),
              qty=("qty", "mean"),
              n_cells=("d", "count"))
     )
-    # Only keep ranks with enough support (>= 5% of cells at rank 1)
+    # Only keep ranks present in at least 30% of cells (so we don't show
+    # the long tail of rare-large-ladder days)
     n_rank1 = avg[avg["rank"] == 1].set_index(["firm", "hour_class"])["n_cells"]
     avg = avg.merge(n_rank1.rename("n_rank1"), on=["firm", "hour_class"])
-    avg = avg[avg["n_cells"] >= 0.05 * avg["n_rank1"]]
-    return avg
+    avg = avg[avg["n_cells"] >= 0.30 * avg["n_rank1"]]
+    return avg, rep
 
 
-def plot_bid_curves(avg):
+def plot_bid_curves(avg, rep):
     fig, axes = plt.subplots(2, 2, figsize=(11, 7.5), sharex=False, sharey=False)
-    firms_to_plot = ["IB", "GE", "GN", "HC"]  # pivotal CCGT operators with data
+    firms_to_plot = ["IB", "GE", "GN", "HC"]
     for ax, firm in zip(axes.flatten(), firms_to_plot):
+        unit = rep.get(firm, "?")
         for hc, color in [("critical", "C3"), ("flat", "C0")]:
             sub = avg[(avg["firm"] == firm) & (avg["hour_class"] == hc)].sort_values("rank")
             if len(sub) == 0:
                 continue
-            ax.step(sub["cum_qty"], sub["price"], where="post", color=color, linewidth=1.8,
+            # Prepend a starting point at cum_qty=0 so the step starts visible
+            x = np.concatenate(([0.0], sub["cum_qty"].values))
+            y = np.concatenate(([sub["price"].iloc[0]], sub["price"].values))
+            ax.step(x, y, where="post", color=color, linewidth=2.0,
                     label=("Critical hours" if hc == "critical" else "Flat hours"))
-            ax.scatter(sub["cum_qty"], sub["price"], color=color, s=18, zorder=3)
-        ax.set_title(FIRM_DISPLAY.get(firm, firm))
+            ax.scatter(sub["cum_qty"], sub["price"], color=color, s=25, zorder=3)
+        ax.set_title(f"{FIRM_DISPLAY.get(firm, firm)} ({unit})")
         ax.set_xlabel("Cumulative quantity (MW)")
         ax.set_ylabel("Bid price (EUR/MWh)")
         ax.grid(alpha=0.3)
-        ax.legend(fontsize=8, frameon=False, loc="lower right")
-    fig.suptitle("Average day-ahead bid curves by pivotal firm, October--December 2025",
+        ax.legend(fontsize=8, frameon=False, loc="upper left")
+    fig.suptitle("Average DA bid curves, largest CCGT unit per pivotal firm (Oct--Dec 2025)",
                  fontsize=12, y=1.00)
     fig.tight_layout()
     for ext in ("pdf", "png"):
@@ -135,6 +150,7 @@ def plot_bid_curves(avg):
         fig.savefig(out, bbox_inches="tight", dpi=120 if ext == "png" else None)
     plt.close(fig)
     print(f"saved {FIGDIR / 'fig_per_firm_bid_curves.pdf'}")
+    print("  representative units:", rep)
 
 
 def build_table(df):
@@ -214,8 +230,8 @@ def main():
     print(f"  {len(df):,} tranche rows across {df['firm'].nunique()} firms")
 
     print("building average ladders...")
-    avg = build_bid_curves(df)
-    plot_bid_curves(avg)
+    avg, rep = build_bid_curves(df)
+    plot_bid_curves(avg, rep)
 
     print("building bid-shape detail table...")
     agg = build_table(df)
