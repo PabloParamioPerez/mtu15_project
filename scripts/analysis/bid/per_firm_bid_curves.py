@@ -89,23 +89,18 @@ def load_tranches():
     return df
 
 
-def build_aggregate_supply_curves(df):
-    """OMIE / EUPHEMIA aggregation: pool all sell tranches by (firm,
-    hour-class), sort ascending by price, cumulate quantities. Normalise
-    by the number of (date, unit, period) cells so the y-axis reads as
-    "average MW offered per period at bid price <= p."
-
-    Public-description of EUPHEMIA, sec. 7.1 (p.43-44): supply tranches
-    are pooled, sorted by ascending price, and inverse functions added
-    pointwise. For pure step orders this is equivalent to sorting (price,
-    quantity) pairs by price and cumulating quantities. We restrict to
-    CCGT here to match the rest of section 4.2.
+def build_per_hour_supply_curves(df):
+    """EUPHEMIA aggregation applied per (firm, hour-of-day). Pools all
+    sell tranches across days for the given firm and clock-hour, sorts
+    by ascending price, cumulates, and normalises by the number of
+    (date, unit, period) cells in that hour. Plotting one curve per
+    hour preserves the within-day evolution of bidding behaviour that
+    a single-class aggregation hides.
     """
     df = df[df["hour_class"].isin(["critical", "flat"])].copy()
     out = []
-    for (firm, hc), g in df.groupby(["firm", "hour_class"]):
+    for (firm, hour), g in df.groupby(["firm", "hour"]):
         n_cells = g.groupby(["d", "unit_code", "period"]).ngroups
-        # Bin to 1 EUR/MWh price grid to keep the curve plottable
         g_binned = (
             g.assign(price_bin=g["price"].round(0))
             .groupby("price_bin", as_index=False)["qty"].sum()
@@ -114,7 +109,8 @@ def build_aggregate_supply_curves(df):
         )
         g_binned["cum_qty_per_period"] = g_binned["qty"].cumsum() / n_cells
         g_binned["firm"] = firm
-        g_binned["hour_class"] = hc
+        g_binned["hour"] = int(hour)
+        g_binned["hour_class"] = g["hour_class"].iloc[0]
         g_binned["n_cells"] = n_cells
         out.append(g_binned)
     return pd.concat(out, ignore_index=True)
@@ -124,22 +120,28 @@ def plot_bid_curves(curves):
     fig, axes = plt.subplots(2, 2, figsize=(11, 7.5), sharex=False, sharey=False)
     firms_to_plot = ["IB", "GE", "GN", "HC"]
     for ax, firm in zip(axes.flatten(), firms_to_plot):
-        for hc, color in [("critical", "C3"), ("flat", "C0")]:
-            sub = curves[(curves["firm"] == firm) & (curves["hour_class"] == hc)].sort_values("price")
+        for hour in sorted(curves[curves["firm"] == firm]["hour"].unique()):
+            sub = curves[(curves["firm"] == firm) & (curves["hour"] == hour)].sort_values("price")
             if len(sub) == 0:
                 continue
+            color = "C3" if sub["hour_class"].iloc[0] == "critical" else "C0"
             ax.step(sub["cum_qty_per_period"], sub["price"], where="post",
-                    color=color, linewidth=1.8,
-                    label=("Critical hours" if hc == "critical" else "Flat hours"))
+                    color=color, linewidth=0.7, alpha=0.45)
         ax.set_title(FIRM_DISPLAY.get(firm, firm))
         ax.set_xlabel("MW offered per period (cumulative)")
         ax.set_ylabel("Bid price (EUR/MWh)")
         ax.grid(alpha=0.3)
-        ax.set_ylim(-50, 700)  # focus on relevant clearing range
-        ax.legend(fontsize=8, frameon=False, loc="upper left")
-    fig.suptitle(r"Aggregate DA supply curves by pivotal firm (CCGT, Oct--Dec 2025)",
-                 fontsize=12, y=1.00)
-    fig.tight_layout()
+        ax.set_ylim(-50, 500)
+    # Single shared legend below the suptitle
+    crit_line = plt.Line2D([0], [0], color="C3", linewidth=2.0, alpha=0.7,
+                            label="Critical hours (05:00--09:00, 16:00--23:00)")
+    flat_line = plt.Line2D([0], [0], color="C0", linewidth=2.0, alpha=0.7,
+                            label="Flat hours (01:00--04:00)")
+    fig.suptitle(r"Aggregate DA supply curves by pivotal firm and clock-hour (CCGT, Oct--Dec 2025)",
+                 fontsize=12, y=0.99)
+    fig.legend(handles=[crit_line, flat_line], loc="upper center",
+               ncol=2, frameon=False, fontsize=9, bbox_to_anchor=(0.5, 0.955))
+    fig.tight_layout(rect=[0, 0, 1, 0.92])
     for ext in ("pdf", "png"):
         out = FIGDIR / f"fig_per_firm_bid_curves.{ext}"
         fig.savefig(out, bbox_inches="tight", dpi=120 if ext == "png" else None)
@@ -223,8 +225,8 @@ def main():
     df = load_tranches()
     print(f"  {len(df):,} tranche rows across {df['firm'].nunique()} firms")
 
-    print("building aggregate supply curves (OMIE methodology)...")
-    curves = build_aggregate_supply_curves(df)
+    print("building per-hour aggregate supply curves (OMIE methodology)...")
+    curves = build_per_hour_supply_curves(df)
     plot_bid_curves(curves)
 
     print("building bid-shape detail table...")

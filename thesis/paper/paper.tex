@@ -240,11 +240,11 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves.pdf}
-\caption{\textbf{Aggregate DA supply curves by pivotal firm, CCGT, October--December 2025.} Constructed per the EUPHEMIA aggregation rule (public description, sec. 7.1): all sell-side tranches from a firm's CCGT units within an hour class are pooled, sorted by ascending price, and cumulated. The cumulative quantity is normalised by the number of (date, unit, period) cells to read as MW offered per period at bid price $\le p$. Red: critical hours; blue: flat hours.}
+\caption{\textbf{Aggregate DA supply curves by pivotal firm and clock-hour, CCGT, October--December 2025.} One curve per (firm, clock-hour). Each curve is built per the EUPHEMIA aggregation rule (public description, sec.~7.1): pool all sell tranches across days for that (firm, hour), sort by ascending price, cumulate, and normalise by the number of (date, unit, period) cells. Red: each of the 11 critical hours; blue: each of the 3 flat hours.}
 \label{fig:per_firm_bid_curves}
 \end{figure}
 
-\textit{Reading} (\textbf{supportive}). Iberdrola, Naturgy and EDP-Spain offer substantially more CCGT capacity at low prices in critical hours than in flat hours: at $\sim$110 EUR/MWh Iberdrola's critical supply reaches $\sim$530~MW versus $\sim$210~MW flat; Naturgy and EDP-Spain show the same pattern at smaller scale. Endesa's curves overlap across hour classes --- it is the firm that does not differentiate its bid by within-day strategic state.
+\textit{Reading} (\textbf{supportive}). Within-day variation is what we look at: the spread of red curves within a panel shows whether the firm differentiates its bid hour-by-hour in critical hours. Iberdrola's red curves spread across a wide range (offered capacity at $\sim$110~EUR/MWh varies from $\sim$220 to $\sim$580~MW across critical hours) while the three blue flat-hour curves sit tightly together. Naturgy's pattern is the same and even sharper: critical-hour curves span $\sim$50--400~MW at moderate prices, flat curves cluster at $\sim$50~MW. EDP-Spain shows clear within-class variation in critical hours too. Endesa is the exception: red and blue curves overlap and do not spread --- no within-day differentiation.
 
 \begin{table}[H]
 \centering
