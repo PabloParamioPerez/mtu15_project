@@ -271,6 +271,31 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 
 \textit{Reading} (\textbf{supportive}). In critical hours Naturgy shows visible quarter dispersion in the 1{,}500--2{,}800 MW band (Q1 below Q4 in the body of the curve); in flat hours the four quarters of Naturgy --- and of every other firm --- collapse onto a single curve. Granularity differentiation is hour-class-specific: it appears only where within-hour demand variation gives it economic content. This is the falsification check the within-day design requires.
 
+\paragraph{IDA mirror.} The same construction applied to the intraday auction (ICAB + IDET, pooled across the 3 daily IDA sessions) is shown in Figures~\ref{fig:per_firm_bid_curves_ida_main}--\ref{fig:per_firm_bid_curves_quarters_ccgt_ida_flat_main}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_ida.pdf}
+\caption{\textbf{Aggregate IDA supply curves by pivotal firm and clock-hour, CCGT.} Same construction as Figure~\ref{fig:per_firm_bid_curves} on ICAB+IDET data, pooled across the 3 IDA sessions per day; normalisation $N_{\text{dates}} \times 4 \times 3$.}
+\label{fig:per_firm_bid_curves_ida_main}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_quarters_ccgt_ida.pdf}
+\caption{\textbf{Aggregate IDA supply curves by quarter within critical hours, CCGT.} Same construction as Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt}.}
+\label{fig:per_firm_bid_curves_quarters_ccgt_ida_main}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_quarters_ccgt_ida_flat.pdf}
+\caption{\textbf{Aggregate IDA supply curves by quarter within flat hours, CCGT.} Same construction as Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt_flat}.}
+\label{fig:per_firm_bid_curves_quarters_ccgt_ida_flat_main}
+\end{figure}
+
+\textit{Reading} (\textbf{supportive}). In IDA, all four pivotal firms (not just Naturgy as in DA) show monotone Q1--Q4 dispersion in critical hours: Q1 offers the most MW, Q4 the least, at prices near clearing. The flat-hour falsification holds for every firm. IDA is where pivotal firms actively reposition $q_2$, and the granularity exploitation pattern is sharper here than in the day-ahead.
+
 % =====================================================================
 \section{Main empirical results}\label{sec:results}
 % =====================================================================
@@ -421,43 +446,16 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 
 \textit{Reading} (\textbf{supportive}). Within each firm, critical / midday / flat rates differ by $<0.003$. No hour-class selection: same units bid across hour classes.
 
-\subsection{IDA mirror: same construction on intraday auctions}\label{app:ida_bid_curves}
+\subsection{IDA per-firm supply curves, all technologies}\label{app:ida_bid_curves}
 
-% TODO prose. Same per-firm bid-curve analysis applied to the IDA
-% market (ICAB + IDET), pooling tranches across the 3 daily IDA
-% sessions. Normalisation: N_dates x 4 quarters x 3 sessions for the
-% per-hour curves; N_dates x len(hour-class) x 3 for the per-quarter
-% curves. The pattern is sharper than in DA: all four pivotal firms
-% show monotone quarter-by-quarter dispersion (Q1 > Q4 in offered MW)
-% in critical hours, and the dispersion collapses in flat hours.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_ida.pdf}
-\caption{\textbf{Aggregate IDA supply curves by pivotal firm and clock-hour, CCGT, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_bid_curves} on ICAB+IDET data, pooled across the 3 IDA sessions.}
-\label{fig:per_firm_bid_curves_ida}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_quarters_ccgt_ida.pdf}
-\caption{\textbf{Aggregate IDA supply curves by quarter within critical hours, CCGT.}}
-\label{fig:per_firm_bid_curves_quarters_ccgt_ida}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_quarters_ccgt_ida_flat.pdf}
-\caption{\textbf{Aggregate IDA supply curves by quarter within flat hours, CCGT.}}
-\label{fig:per_firm_bid_curves_quarters_ccgt_ida_flat}
-\end{figure}
-
-\textit{Reading} (\textbf{supportive}). In IDA, granularity exploitation in critical hours is visible for \emph{all four} pivotal firms, not just Naturgy as in DA. The Q1--Q4 curves fan monotonically (Q1 offers the most MW, Q4 the least) at prices near clearing. The flat-hour falsification holds: all four firms' quarter-curves collapse onto a single curve overnight. The pattern is sharper than in DA, consistent with IDA being the market where pivotal firms actively reposition q\_2 and have the most strategic flexibility to differentiate bids quarter by quarter.
+% TODO prose. Compact 4x5 grids on IDA data, analogous to the DA grids
+% in Appendix B (X). Per-tech price band shared across firms via
+% TECH_YLIM; x-axis adaptive per panel.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_bid_curves_grid_per_hour_ida.pdf}
-\caption{\textbf{Aggregate IDA supply curves by firm and technology, by hour-class.} Compact grid; same construction as Figure~\ref{fig:bid_curves_grid_per_hour} on IDA data.}
+\caption{\textbf{Aggregate IDA supply curves by firm and technology, by hour-class.} Compact grid analogue of Figure~\ref{fig:bid_curves_grid_per_hour} on IDA data.}
 \label{fig:bid_curves_grid_per_hour_ida}
 \end{figure}
 
@@ -470,7 +468,7 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 
 \textit{Reading} (\textbf{supportive}). The CCGT column carries the quarter dispersion across all four firms (visible in the Q1--Q4 colour fan). Hydro shows the same effect at smaller scale. Wind, Solar PV and Nuclear columns are flat across quarters as expected.
 
-\subsection{Per-firm aggregate supply curves, all technologies}\label{app:supply_curves_other_tech}
+\subsection{Per-firm aggregate supply curves, all technologies (DA)}\label{app:supply_curves_other_tech}
 
 % TODO prose. Compact 4x5 grid of supply curves (rows = pivotal firms,
 % columns = tech groups CCGT, Hydro, Nuclear, Wind, Solar PV). One
