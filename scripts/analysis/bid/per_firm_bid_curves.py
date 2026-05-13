@@ -91,6 +91,7 @@ def load_tranches(techs=None):
               AND price_eur_mwh IS NOT NULL
         )
         SELECT d.d, d.period, ((d.period - 1) // 4)::INT AS hour,
+               (((d.period - 1) % 4) + 1)::INT AS quarter,
                c.unit_code, u.firm, u.tech_group, d.price, d.qty
         FROM det d
           JOIN cab_l c USING (d, offer_code, version)
@@ -172,6 +173,69 @@ def build_offer_diagnostics(df):
              n_units=("unit_code", "count"))
     )
     return agg, per_unit
+
+
+def build_per_quarter_curves(df):
+    """EUPHEMIA aggregation per (firm, quarter-of-hour) within critical
+    hours. One curve per quarter (q1..q4). Visualises whether the firm
+    differentiates bids across the 4 quarters of a clock-hour."""
+    df = df[df["hour_class"] == "critical"].copy()
+    n_dates = df["d"].nunique()
+    # Total (date, hour) cells for critical: n_dates * len(critical hours).
+    # Each (date, hour) cell has one quarter-1, one quarter-2 etc.
+    n_cells_per_quarter = n_dates * len(CRITICAL_HOURS)
+    out = []
+    for (firm, quarter), g in df.groupby(["firm", "quarter"]):
+        g_binned = (
+            g.assign(price_bin=g["price"].round(0))
+            .groupby("price_bin", as_index=False)["qty"].sum()
+            .rename(columns={"price_bin": "price"})
+            .sort_values("price")
+        )
+        g_binned["cum_qty_per_cell"] = g_binned["qty"].cumsum() / n_cells_per_quarter
+        g_binned["firm"] = firm
+        g_binned["quarter"] = int(quarter)
+        out.append(g_binned)
+    return pd.concat(out, ignore_index=True)
+
+
+def plot_quarter_curves(curves, tech_label, out_stem):
+    fig, axes = plt.subplots(2, 2, figsize=(11, 7.5))
+    firms_to_plot = ["IB", "GE", "GN", "HC"]
+    quarter_colors = {1: "#1f77b4", 2: "#2ca02c", 3: "#ff7f0e", 4: "#d62728"}
+    for ax, firm in zip(axes.flatten(), firms_to_plot):
+        panel = curves[curves["firm"] == firm]
+        for q in (1, 2, 3, 4):
+            sub = panel[panel["quarter"] == q].sort_values("price")
+            if len(sub) == 0:
+                continue
+            ax.step(sub["cum_qty_per_cell"], sub["price"], where="post",
+                    color=quarter_colors[q], linewidth=1.2, alpha=0.85)
+        ax.set_title(FIRM_DISPLAY.get(firm, firm))
+        ax.set_xlabel("MW offered per period (cumulative)")
+        ax.set_ylabel("Bid price (EUR/MWh)")
+        ax.grid(alpha=0.3)
+        if len(panel) > 0:
+            qpp = panel.groupby("price")["qty"].sum().sort_index()
+            cum = qpp.cumsum() / qpp.sum()
+            p_low = float(qpp.index.min())
+            p_hi_idx = cum[cum >= 0.80].index
+            p_hi = float(p_hi_idx.min()) if len(p_hi_idx) else float(qpp.index.max())
+            ymin = min(p_low - 10, 0)
+            ymax = min(max(p_hi + 30, 50), 700)
+            ax.set_ylim(ymin, ymax)
+    handles = [plt.Line2D([0], [0], color=quarter_colors[q], linewidth=2.0,
+                          label=f"Quarter {q} ({(q-1)*15:02d}--{q*15:02d} min)")
+               for q in (1, 2, 3, 4)]
+    fig.suptitle(rf"Aggregate DA supply curves by quarter within critical hours ({tech_label}, Oct--Dec 2025)",
+                 fontsize=12, y=0.99)
+    fig.legend(handles=handles, loc="upper center", ncol=4, frameon=False,
+               fontsize=9, bbox_to_anchor=(0.5, 0.955))
+    fig.tight_layout(rect=[0, 0, 1, 0.92])
+    for ext in ("pdf", "png"):
+        fig.savefig(f"{out_stem}.{ext}", bbox_inches="tight", dpi=120 if ext == "png" else None)
+    plt.close(fig)
+    print(f"  saved {out_stem}.pdf")
 
 
 def write_offer_diagnostic_table(diag, tech, out_path):
@@ -329,6 +393,11 @@ def main():
     plot_bid_curves(build_per_hour_supply_curves(ccgt),
                      "CCGT", str(FIGDIR / "fig_per_firm_bid_curves"))
 
+    # Quarter-within-hour comparison (CCGT, critical hours)
+    print("CCGT per-quarter curves (granularity exploitation)...")
+    plot_quarter_curves(build_per_quarter_curves(ccgt),
+                         "CCGT", str(FIGDIR / "fig_per_firm_bid_curves_quarters_ccgt"))
+
     # CCGT offer-rate diagnostic (per-unit, averaged within firm-hour-class)
     diag, per_unit = build_offer_diagnostics(ccgt)
     print("CCGT mean per-unit offer rates by firm x hour-class:")
@@ -338,15 +407,19 @@ def main():
     write_offer_diagnostic_table(diag, "CCGT",
                                  TABDIR / "tab_per_firm_offer_rate.tex")
 
-    # Appendix figures: one per tech in TECHS_APPENDIX
+    # Appendix figures: per-hour AND per-quarter for each tech
     for tech in TECHS_APPENDIX:
         sub = df[df["tech_group"] == tech].copy()
         if sub.empty or sub.groupby(["firm", "hour"]).ngroups < 4:
             print(f"skipping {tech}: not enough data")
             continue
-        print(f"{tech} curves (appendix)...")
-        stem = FIGDIR / f"fig_per_firm_bid_curves_{tech.lower().replace(' ', '_')}"
-        plot_bid_curves(build_per_hour_supply_curves(sub), tech, str(stem))
+        slug = tech.lower().replace(" ", "_")
+        print(f"{tech} curves (appendix, per-hour)...")
+        plot_bid_curves(build_per_hour_supply_curves(sub), tech,
+                         str(FIGDIR / f"fig_per_firm_bid_curves_{slug}"))
+        print(f"{tech} curves (appendix, per-quarter)...")
+        plot_quarter_curves(build_per_quarter_curves(sub), tech,
+                             str(FIGDIR / f"fig_per_firm_bid_curves_quarters_{slug}"))
 
     print("building bid-shape detail table (CCGT)...")
     agg = build_table(df)

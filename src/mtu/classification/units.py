@@ -368,6 +368,15 @@ def firm_unit_panel(
     df["parent"] = df["owner_agent"].apply(lambda o: parent_of(o, scheme=scheme))
     df["share"] = df["ownership_pct"].fillna(100.0) / 100.0
     df["tech_group"] = df["technology"].map(TECH_GROUPS).fillna("Other")
+    # Description-based override: some hybrid PV+battery and wind+battery
+    # UOs carry the OMIE classification of the dominant resource (Solar PV
+    # or Wind) even though physically they mix technologies. Reclassify
+    # those so single-tech figures and stratifications do not pool them.
+    desc = df["description"].astype(str).str.upper()
+    is_hybrid_storage = desc.str.contains(r"\bHIB\b|HIBRID") & desc.str.contains("BAT")
+    is_hybrid = desc.str.contains(r"\bHIB\b|HIBRID") & ~is_hybrid_storage
+    df.loc[is_hybrid_storage, "tech_group"] = "Hybrid_RES_storage"
+    df.loc[is_hybrid & (df["tech_group"] != "Hybrid_RES_storage"), "tech_group"] = "Hybrid_RES"
     df["tech_strategic_role"] = df["tech_group"].map(_classify_strategic_role)
 
     keep = df[df["parent"].notna()].copy()
