@@ -1,9 +1,14 @@
-\begin{thebibliography}{7}
+\begin{thebibliography}{11}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Abadie(2005)]{abadie2005}
+Alberto Abadie.
+\newblock Semiparametric difference-in-differences estimators.
+\newblock \emph{The Review of Economic Studies}, 72\penalty0 (1):\penalty0 1--19, 2005.
 
 \bibitem[Allaz and Vila(1993)]{allaz_vila_1993}
 Blaise Allaz and Jean-Luc Vila.
@@ -20,6 +25,11 @@ Cl\'ement de~Chaisemartin and Xavier D'Haultf\oe~uille.
 \newblock Two-way fixed effects estimators with heterogeneous treatment effects.
 \newblock \emph{American Economic Review}, 110\penalty0 (9):\penalty0 2964--96, 2020.
 
+\bibitem[Heckman et~al.(1997)Heckman, Ichimura, and Todd]{heckman1997}
+James~J. Heckman, Hidehiko Ichimura, and Petra~E. Todd.
+\newblock Matching as an econometric evaluation estimator: Evidence from evaluating a job training programme.
+\newblock \emph{The Review of Economic Studies}, 64\penalty0 (4):\penalty0 605--654, 1997.
+
 \bibitem[Horta\c{c}su and Puller(2008)]{hortacsu_puller_2008}
 Ali Horta\c{c}su and Steven~L. Puller.
 \newblock Understanding strategic bidding in multi-unit auctions: a case study of the texas electricity spot market.
@@ -34,6 +44,16 @@ Koichiro Ito and Mar Reguant.
 Erin~T. Mansur.
 \newblock Measuring welfare in restructured electricity markets.
 \newblock \emph{Review of Economics and Statistics}, 90\penalty0 (2):\penalty0 369--386, 2008.
+
+\bibitem[Sant'Anna(2025)]{santanna2025covariates}
+Pedro H.~C. Sant'Anna.
+\newblock Causal inference using difference-in-differences, lecture 5: How covariates can make your did more plausible.
+\newblock Emory University, January 2025, 2025.
+
+\bibitem[Sant'Anna and Zhao(2020)]{santannaZhao2020}
+Pedro H.~C. Sant'Anna and Jun Zhao.
+\newblock Doubly robust difference-in-differences estimators.
+\newblock \emph{Journal of Econometrics}, 219\penalty0 (1):\penalty0 101--122, 2020.
 
 \bibitem[Wolak(2003)]{wolak_2003}
 Frank~A. Wolak.

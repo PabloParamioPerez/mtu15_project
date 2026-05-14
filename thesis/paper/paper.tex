@@ -67,6 +67,7 @@ IDA  & Intraday auctions: sequence of (European) auctions held after the day-ahe
 MTU  & Market time unit: size of the time interval at which bids are submitted and prices clear. \\
 REE  & Red Eléctrica de España, the Spanish transmission-system operator. \\
 OMIE & Operador del Mercado Ibérico de Energía, the market operator for the Spanish and Portuguese wholesale electricity markets. \\
+TTF & Title Transfer Facility, the Dutch virtual gas hub and reference price for European gas. \\
 \bottomrule
 \end{tabular}
 \renewcommand{\arraystretch}{1.0}
@@ -188,9 +189,27 @@ ALSO WE SHOULD DISCUSS THAT THE TREATMENT IN OUR IDENTIFICATION IS AT THE HOUR L
 
 HOWEVER, WE SHOULD THINK IF THIS IS THE BEST WAY TO PRESENT IT, MAYBE IT IS BETTER TO TALK ABOUT "EXPOSURE" TO THE TREATMENT ACROSS TIME OR SOMETHING LIKE THAT!! TO THINK ABOUT IT
 
-\subsection{Parallel-trends discussion}
+\subsection{Parallel-trends discussion}\label{sec:data:pta}
 
 IMPORTANT THING HERE IS TO DISCUSS IT FOR EACH OF THE OUTCOMES AND TO TALK ABOUT CONDITIONAL PARALLEL TREND WITH RENEWABLE CAPACITY CONTROLS!
+
+GAS PRICES CAN AFFECT DIFFERENTLY CRITICAL AND FLAT HOURS, BUT WE SEE THAT GAS IS PIVOTAL IN THE SAME WAY FOR BOTH HOUR CLASSES, SO IT IS NOT A CONCERN FOR IDENTIFICATION. 
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Marginal-technology composition by hour-class, October--December 2025 (post-MTU15-DA).} MW-weighted share of bid tranches within $\pm 0.5$~EUR/MWh of the DA Spanish clearing price.}
+\label{tab:marg_tech_post}
+\input{tables/tab_marginal_tech_by_hour_post}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Marginal-technology composition by hour-class, October--December 2024 (pre-MTU15-DA).}}
+\label{tab:marg_tech_pre}
+\input{tables/tab_marginal_tech_by_hour_pre}
+\end{table}
+
+\textit{Reading} (\textbf{supportive}). CCGT sets the price with nearly identical frequency in critical and flat hours in both windows (35.1\% vs 34.6\% post-reform; 27.6\% vs 28.1\% pre-reform), so a TTF shock propagates into both hour-classes through the same channel. The only large asymmetry is on pumped storage --- the mechanism the paper is about --- and a smaller wind gap motivates including wind generation as a conditional-PT control.
 
 
 % =====================================================================
@@ -299,6 +318,76 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 
 \textit{Reading} (\textbf{supportive}). In IDA, all four pivotal firms (not just Naturgy as in DA) show monotone Q1--Q4 dispersion in critical hours: Q1 offers the most MW, Q4 the least, at prices near clearing. The flat-hour falsification holds for every firm. IDA is where pivotal firms actively reposition $q_2$, and the granularity exploitation pattern is sharper here than in the day-ahead.
 
+\subsection{Demand-side and storage bidding: who exploits granularity}\label{sec:bid_evidence:demand_storage}
+
+Mirror of the per-firm supply-side analysis on the buy side and on pumped-storage discharge. EUPHEMIA stepwise aggregation (OMIE convention; \texttt{docs/omie/euphemia\_functioning\_1812.pdf}, slide 7): demand orders are sorted price-descending and cumulated, so the resulting curve slopes downward in $(Q, P)$-space. We focus on pump-storage charge bids (tech-group \texttt{Pump\_load}) as the headline because pump-storage is the textbook arbitrage tool --- the technology where the strategic-granularity story predicts the sharpest within-day price discrimination.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_demand_curves_pump_load.pdf}
+\caption{\textbf{Aggregate DA demand curves by pivotal firm and clock-hour, pump-storage charge bids, October--December 2025.} Each step is the EUPHEMIA aggregation of buy tranches at each integer-rounded limit price, cumulated price-descending and normalised by $N_{\text{dates}} \times 4$ periods per clock-hour. Critical hours red, midday green, flat hours blue.}
+\label{fig:per_firm_demand_curves_pump_load}
+\end{figure}
+
+\textit{Reading} (\textbf{mixed}). Iberdrola and Endesa show clear hour-of-day discrimination: midday (green) curves shifted right of flat (blue) curves, both shifted right of critical (red). Both firms charge more pump-storage volume at higher willingness-to-pay during midday, consistent with absorbing cheap solar output, and shrink their charge volumes in critical hours when the marginal value of selling exceeds the storage round-trip return. Naturgy shows no hour-class discrimination --- the three lines overlap. EDP-Spain has only a small pump-storage book and bids near zero EUR/MWh.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_demand_curves_quarters_pump_load.pdf}
+\caption{\textbf{Aggregate DA demand curves by quarter within critical hours, pump-storage charge bids, October--December 2025.} Same construction restricted to critical hours; one curve per 15-min quarter.}
+\label{fig:per_firm_demand_curves_quarters_pump_load}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_demand_curves_quarters_pump_load_flat.pdf}
+\caption{\textbf{Aggregate DA demand curves by quarter within flat hours, pump-storage charge bids, October--December 2025.} Falsification mirror of Figure~\ref{fig:per_firm_demand_curves_quarters_pump_load}.}
+\label{fig:per_firm_demand_curves_quarters_pump_load_flat}
+\end{figure}
+
+\textit{Reading} (\textbf{supportive of null}). The four quarter curves overlap almost exactly for every firm in both critical and flat hours: pump-storage operators do not differentiate their charge bids across the 15-min quarters of a clock-hour. The within-hour granularity available since MTU15-DA is unused on this margin --- even Iberdrola and Endesa, who discriminate strongly at the clock-hour level, replicate identical bids across the four quarters. This pins the within-hour granularity-exploitation effect to the supply side (pivotal dispatchable units), not to demand-side or storage charging strategy.
+
+Compact grids covering all demand-side technologies (\texttt{Pump\_load}, \texttt{Retailer}, \texttt{Direct\_consumer}) are in Appendix~\ref{app:demand_grid}; the storage-discharge mirror (\texttt{Hydro\_pump}, \texttt{Hybrid\_RES\_storage}) is in Appendix~\ref{app:storage_discharge_grid}.
+
+\subsection{Operational vs strategic use of MTU15 granularity}\label{sec:bid_evidence:operational_vs_strategic}
+
+TWO CHANNELS BY WHICH A FIRM CAN ``USE'' WITHIN-HOUR GRANULARITY (SEE §\ref{sec:intro}):
+\begin{itemize}
+   \item OPERATIONAL: TRACK PHYSICAL VARIATION OF OWN PRODUCTION ACROSS QUARTERS (WIND / SOLAR FORECAST UPDATES, RAMPING). BID QUANTITY VARIES; BID PRICE STAYS AT MARGINAL COST.
+   \item STRATEGIC: RE-PRICE ACROSS QUARTERS TO EXTRACT RENTS FROM WITHIN-HOUR DEMAND SWINGS. BID PRICE VARIES IN A DEMAND-CORRELATED WAY.
+\end{itemize}
+
+THE WITHIN-HOUR QUARTER-DISSIMILARITY TEST IN APPENDIX~\ref{app:quarter_dissim} (FRACTION OF (FIRM, UNIT, DATE, HOUR) CELLS WHERE THE FOUR 15-MIN QUARTERS' BIDS ARE NOT BIT-IDENTICAL) DOES NOT SEPARATE THESE TWO CHANNELS. THE CRITICAL--FLAT ASYMMETRY DOES: STRATEGIC RE-PRICING REQUIRES SYSTEMATIC WITHIN-HOUR DEMAND VARIATION (CRITICAL HOURS BY OUR DEFINITION) AND SHOULD BE ABSENT WHEN SUCH VARIATION IS LOW (FLAT HOURS). OPERATIONAL REFINEMENT IS DRIVEN BY OWN-PRODUCTION VARIABILITY, WHICH IS NOT TIED TO HOUR-CLASS.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Critical--flat asymmetry of the quarter-dissimilarity flag, October--December 2025.} Percentage of (firm, unit, date, hour) cells with $D > 0$ in critical vs flat hours, and the gap. Strategic re-pricing implies a positive critical--flat gap; operational refinement implies a near-zero gap.}
+\label{tab:operational_strategic_asym}
+\begin{tabular}{l l l r r r}
+\toprule
+Channel & Tech & Firm & Critical & Flat & Crit $-$ Flat \\
+\midrule
+Strategic       & CCGT      & GN & 24.5 &  0.0 & $+24.5$ \\
+Strategic       & CCGT      & IB &  5.8 &  3.9 & $+1.9$ \\
+\addlinespace
+Operational     & Wind      & IB & 97.2 & 97.3 & $-0.1$ \\
+Operational     & Wind      & GN & 92.7 & 92.6 & $+0.1$ \\
+Operational     & Wind      & HC & 93.7 & 93.8 & $-0.1$ \\
+Operational     & Solar PV  & GN & 15.9 &  0.0 & $+15.9$ \\
+Operational     & Retailer  & GE & 76.5 & 76.3 & $+0.2$ \\
+Operational     & Retailer  & IB & 40.9 & 40.2 & $+0.7$ \\
+Operational     & Direct\_consumer & IB & 96.0 & 95.3 & $+0.7$ \\
+\addlinespace
+Mechanical      & Pump\_load   & IB &  3.2 &  5.5 & $-2.3$ \\
+Mechanical      & Pump\_load   & GE &  0.0 &  0.0 & $0.0$ \\
+Mechanical      & Hydro\_pump  & IB &  0.4 &  0.0 & $+0.4$ \\
+Mechanical      & Hydro\_pump  & GE &  0.0 &  0.0 & $0.0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textit{Reading} (\textbf{supportive}). Only Naturgy CCGT shows the strategic signature (large positive crit$-$flat gap). Renewables (Wind, Solar PV) and pivotal-firm retail demand vary across quarters in essentially every cell, but symmetrically across hour-classes --- consistent with operational forecast / consumption refinement, not market-power exploitation. Pump-storage is genuinely mechanical on both margins. The within-hour strategic-exploitation channel of MTU15 is therefore narrow: pivotal dispatchable thermal in hours with material within-hour demand variation.
+
 % =====================================================================
 \section{Main empirical results}\label{sec:results}
 % =====================================================================
@@ -312,34 +401,35 @@ MECHANISM: UNDER THE HIGHER-GRANULARITY REGIME, A PIVOTAL DOMINANT FIRM IN A CRI
 \end{equation}
 with firm fixed effects $\gamma_f$, day-of-week fixed effects $\delta_{\mathrm{DOW}(d)}$, and cluster-robust standard errors by date. The sample restricts to the same-calendar-month windows October--December 2024 (pre) and October--December 2025 (post), so the March 2025 intraday reform is held constant. Critical hours are 05:00--09:00 and 16:00--23:00; flat hours are 01:00--04:00. Pivotal firms are those with non-trivial price-setting capacity in critical hours (Iberdrola, Endesa, Naturgy, EDP-Spain, EDP-Portugal); non-pivotal firms (Repsol, Engie Espa\~na, TotalEnergies, Moeve) serve as a negative control.
 
-\begin{table}[H]
-\centering
-\caption{\textbf{B1 -- Within-day DiD on $q_2$ (intraday upward adjustment).} Estimates of Equation~\ref{eq:B1}. Significance: $^{*}$ $p<0.05$, $^{**}$ $p<0.01$, $^{***}$ $p<0.001$.}
-\label{tab:B1_main}
-\input{tables/tab_B1_main}
-\end{table}
-
-\textit{Reading} (\textbf{supportive}). $\beta_3 = +3.87$~MWh per unit-clock-hour for pivotal firms and $-4.74$ for the non-pivotal placebo, both significant at the 0.1\% level. The sign reverses across firm classes, which the placebo prediction requires.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\textwidth]{figures/fig_tech_stratified_beta3.pdf}
-\caption{\textbf{B1 -- $\beta_3$ by technology, pivotal sample.} Equation~\ref{eq:B1} restricted by \texttt{tech\_group}; 95\% cluster-robust CIs.}
-\label{fig:tech_beta3}
-\end{figure}
-
-\textit{Reading} (\textbf{mixed}). Positive $\beta_3$ concentrates in the strategically dispatchable techs (CCGT $+15.2$, Coal $+69$, Hydro\_pump $+16.2$); Wind and Solar PV both show the predicted null. Hydro is mildly negative against a positive prediction, consistent with reservoir water-value optimisation rather than within-hour strategy. Nuclear is large with very wide error bars and few units --- neither sharply contradicts the mechanism nor cleanly supports it.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig_q2_samecal_trajectory.pdf}
-\caption{\textbf{$q_2$ monthly mean by firm and hour-class.} Red: critical (05:00--09:00, 16:00--23:00); blue: flat (01:00--04:00). Dashed line: October 2025 reform.}
-\label{fig:q2_trajectory}
-\end{figure}
-
-\textit{Reading} (\textbf{supportive}). The pivotal-firm panels show the critical line tracking above the flat line after October 2025, while the non-pivotal panels show the two lines collapsing together. The pre-reform trends are visually parallel in both blocks.
-
-The full table of $\beta_3$ stratified by technology (with the non-pivotal placebo column) is reported in Appendix~\ref{app:B1_tech}. The per-firm decomposition of $\beta_3$ jointly on $q_2$ and on day-ahead cleared volume (the withholding outcome) is in Appendix~\ref{app:per_firm}. A supporting analysis on the day-ahead $\to$ intraday price wedge is in Appendix~\ref{app:wedge}; the wedge is a noisy outcome under the post-blackout \textit{operaci\'on reforzada} regulatory overlay and is not informative on its own.
+% DiD OUTPUT HIDDEN -- uncomment to re-enable
+% \begin{table}[H]
+% \centering
+% \caption{\textbf{B1 -- Within-day DiD on $q_2$ (intraday upward adjustment).} Estimates of Equation~\ref{eq:B1}. Significance: $^{*}$ $p<0.05$, $^{**}$ $p<0.01$, $^{***}$ $p<0.001$.}
+% \label{tab:B1_main}
+% \input{tables/tab_B1_main}
+% \end{table}
+%
+% \textit{Reading} (\textbf{supportive}). $\beta_3 = +3.87$~MWh per unit-clock-hour for pivotal firms and $-4.74$ for the non-pivotal placebo, both significant at the 0.1\% level. The sign reverses across firm classes, which the placebo prediction requires.
+%
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.85\textwidth]{figures/fig_tech_stratified_beta3.pdf}
+% \caption{\textbf{B1 -- $\beta_3$ by technology, pivotal sample.} Equation~\ref{eq:B1} restricted by \texttt{tech\_group}; 95\% cluster-robust CIs.}
+% \label{fig:tech_beta3}
+% \end{figure}
+%
+% \textit{Reading} (\textbf{mixed}). Positive $\beta_3$ concentrates in the strategically dispatchable techs (CCGT $+15.2$, Coal $+69$, Hydro\_pump $+16.2$); Wind and Solar PV both show the predicted null. Hydro is mildly negative against a positive prediction, consistent with reservoir water-value optimisation rather than within-hour strategy. Nuclear is large with very wide error bars and few units --- neither sharply contradicts the mechanism nor cleanly supports it.
+%
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.95\textwidth]{figures/fig_q2_samecal_trajectory.pdf}
+% \caption{\textbf{$q_2$ monthly mean by firm and hour-class.} Red: critical (05:00--09:00, 16:00--23:00); blue: flat (01:00--04:00). Dashed line: October 2025 reform.}
+% \label{fig:q2_trajectory}
+% \end{figure}
+%
+% \textit{Reading} (\textbf{supportive}). The pivotal-firm panels show the critical line tracking above the flat line after October 2025, while the non-pivotal panels show the two lines collapsing together. The pre-reform trends are visually parallel in both blocks.
+%
+% The full table of $\beta_3$ stratified by technology (with the non-pivotal placebo column) is reported in Appendix~\ref{app:B1_tech}. The per-firm decomposition of $\beta_3$ jointly on $q_2$ and on day-ahead cleared volume (the withholding outcome) is in Appendix~\ref{app:per_firm}. A supporting analysis on the day-ahead $\to$ intraday price wedge is in Appendix~\ref{app:wedge}; the wedge is a noisy outcome under the post-blackout \textit{operaci\'on reforzada} regulatory overlay and is not informative on its own.
 
 \subsection{Parallel trends discussion}\label{sec:results:pta}
 
@@ -376,14 +466,15 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 
 \subsection{Same-cal-month vs full-window comparisons}\label{app:window}
 
-\begin{table}[H]
-\centering
-\caption{\textbf{B5 -- $\beta_3$ across sensitivities, pivotal firms on $q_2$.} Each row re-estimates Equation~\ref{eq:B1} under one variation: critical-hours definition (B5.1), firm partition (B5.2), window (B5.3/B5.5), sample exclusions (B5.4), DST transition days (B5.6/B5.7).}
-\label{tab:B5_robustness}
-\input{tables/tab_B5_robustness}
-\end{table}
-
-\textit{Reading} (\textbf{supportive}). $\beta_3$ stays in the $+3.4$ to $+6.3$~MWh range across critical-hours definitions, firm partitions, window choices, and DST handling, with $p < 0.001$ throughout. The only sub-window where the sign flips is the 50-day CEST-only segment, which is small and confounded by daylight saving.
+% DiD OUTPUT HIDDEN -- uncomment to re-enable
+% \begin{table}[H]
+% \centering
+% \caption{\textbf{B5 -- $\beta_3$ across sensitivities, pivotal firms on $q_2$.} Each row re-estimates Equation~\ref{eq:B1} under one variation: critical-hours definition (B5.1), firm partition (B5.2), window (B5.3/B5.5), sample exclusions (B5.4), DST transition days (B5.6/B5.7).}
+% \label{tab:B5_robustness}
+% \input{tables/tab_B5_robustness}
+% \end{table}
+%
+% \textit{Reading} (\textbf{supportive}). $\beta_3$ stays in the $+3.4$ to $+6.3$~MWh range across critical-hours definitions, firm partitions, window choices, and DST handling, with $p < 0.001$ throughout. The only sub-window where the sign flips is the 50-day CEST-only segment, which is small and confounded by daylight saving.
 
 \subsection{$\beta_3$ stratified by technology}\label{app:B1_tech}
 
@@ -391,14 +482,15 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 % dispatchable (CCGT, Coal, Hydro, Hydro_pump), 0 for must-run (Nuclear)
 % and price-taker (Wind, Solar PV, Biomass).
 
-\begin{table}[H]
-\centering
-\caption{\textbf{B1 -- $\beta_3$ by technology, pivotal sample.} Equation~\ref{eq:B1} restricted by \texttt{tech\_group}.}
-\label{tab:B1_tech}
-\resizebox{\textwidth}{!}{\input{tables/tab_B1_tech_stratified}}
-\end{table}
-
-\textit{Reading} (\textbf{mixed}). Same picture as Figure~\ref{fig:tech_beta3} in numeric form: dispatchable carry the result, Wind and Solar PV are null, Nuclear is large but extremely noisy. Hydro pushes against the directional prediction, in line with reservoir water-value optimisation rather than within-hour strategy.
+% DiD OUTPUT HIDDEN -- uncomment to re-enable
+% \begin{table}[H]
+% \centering
+% \caption{\textbf{B1 -- $\beta_3$ by technology, pivotal sample.} Equation~\ref{eq:B1} restricted by \texttt{tech\_group}.}
+% \label{tab:B1_tech}
+% \resizebox{\textwidth}{!}{\input{tables/tab_B1_tech_stratified}}
+% \end{table}
+%
+% \textit{Reading} (\textbf{mixed}). Same picture as Figure~\ref{fig:tech_beta3} in numeric form: dispatchable carry the result, Wind and Solar PV are null, Nuclear is large but extremely noisy. Hydro pushes against the directional prediction, in line with reservoir water-value optimisation rather than within-hour strategy.
 
 \subsection{Per-firm decomposition: $q_2$ and day-ahead cleared MWh}\label{app:per_firm}
 
@@ -407,14 +499,15 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 % pattern; Endesa shows positive IDA without DA withholding; EDP-Spain
 % weak on both. EDP-PT has no pibci entries.
 
-\begin{table}[H]
-\centering
-\caption{\textbf{Per-firm $\beta_3$ on $q_2$ and DA cleared MWh.}}
-\label{tab:per_firm}
-\input{tables/tab_per_firm_q2_da}
-\end{table}
-
-\textit{Reading} (\textbf{mixed}). Iberdrola and Naturgy show the joint pattern predicted by the mechanism (negative DA, positive IDA). Endesa adds in IDA without DA withholding, and EDP-Spain is weak on both sides --- the mechanism is not uniform across pivotal firms. EDP-Portugal lacks \texttt{pibci} data so only the DA side is identified for that firm.
+% DiD OUTPUT HIDDEN -- uncomment to re-enable
+% \begin{table}[H]
+% \centering
+% \caption{\textbf{Per-firm $\beta_3$ on $q_2$ and DA cleared MWh.}}
+% \label{tab:per_firm}
+% \input{tables/tab_per_firm_q2_da}
+% \end{table}
+%
+% \textit{Reading} (\textbf{mixed}). Iberdrola and Naturgy show the joint pattern predicted by the mechanism (negative DA, positive IDA). Endesa adds in IDA without DA withholding, and EDP-Spain is weak on both sides --- the mechanism is not uniform across pivotal firms. EDP-Portugal lacks \texttt{pibci} data so only the DA side is identified for that firm.
 
 \subsection{DA $\to$ IDA price wedge (supporting outcome)}\label{app:wedge}
 
@@ -423,14 +516,15 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 % cal-month restriction holds reforzada constant. Full-window spec needs
 % reforzada × critical interaction.
 
-\begin{table}[H]
-\centering
-\caption{\textbf{B2 -- Within-day DiD on the DA-IDA price wedge.} Outcome in EUR/MWh.}
-\label{tab:B2_wedge}
-\input{tables/tab_B2_wedge}
-\end{table}
-
-\textit{Reading} (\textbf{problematic}). Under same-calendar-month restriction the within-day wedge expands modestly post-reform, but once the reforzada $\times$ critical interaction is included in the full-window spec the reform's own coefficient turns large and negative. The wedge is not informative without controlling for the regulatory overlay, so we cannot use it as a clean supporting outcome.
+% DiD OUTPUT HIDDEN -- uncomment to re-enable
+% \begin{table}[H]
+% \centering
+% \caption{\textbf{B2 -- Within-day DiD on the DA-IDA price wedge.} Outcome in EUR/MWh.}
+% \label{tab:B2_wedge}
+% \input{tables/tab_B2_wedge}
+% \end{table}
+%
+% \textit{Reading} (\textbf{problematic}). Under same-calendar-month restriction the within-day wedge expands modestly post-reform, but once the reforzada $\times$ critical interaction is included in the full-window spec the reform's own coefficient turns large and negative. The wedge is not informative without controlling for the regulatory overlay, so we cannot use it as a clean supporting outcome.
 
 \subsection{Operational vs strategic decomposition (PIBCA vs PHF)}\label{app:operational}
 
@@ -494,16 +588,95 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 
 \textit{Reading} (\textbf{mixed}). CCGT and Hydro carry the bid-shape variation across hours: Iberdrola, Naturgy and EDP-Spain show clear spread of red curves on those columns. Within-hour quarter dispersion is concentrated in Naturgy CCGT and Endesa Hydro --- the rest of the (firm, tech) cells produce overlapping Q1--Q4 curves. Nuclear, Wind and Solar PV are flat across hours and quarters, as expected of must-run and price-taker technologies. Empty cells reflect firms with no units of that tech under the primary-owner allocation (Endesa wind via Enel Green Power is registered separately; Naturgy and EDP-Spain hold no nuclear).
 
+\subsection{Per-firm demand-side bid curves, all technologies (DA)}\label{app:demand_grid}
+
+Buy bids only (downward-sloping demand curves). Columns: \texttt{Pump\_load} (pumped-storage charge), \texttt{Retailer}, \texttt{Direct\_consumer}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_demand_grid_per_hour.pdf}
+\caption{\textbf{Aggregate DA demand curves by firm and demand-side tech-group, October--December 2025, by hour-class.} Rows: pivotal firms. Columns: buy-side tech-groups. Y-band fixed per tech to the strategically informative range; empty panels indicate firms with no units of that tech (or, for Retailer at IB/GE/Naturgy, bids placed exclusively at the price cap so no activity falls inside the band).}
+\label{fig:demand_grid_per_hour}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_demand_grid_per_quarter.pdf}
+\caption{\textbf{Aggregate DA demand curves by quarter within critical hours, October--December 2025, by firm and demand-side tech-group.}}
+\label{fig:demand_grid_per_quarter}
+\end{figure}
+
+\textit{Reading} (\textbf{mixed}). At the clock-hour level, \texttt{Pump\_load} shows clear hour-class discrimination for IB, GE and GN (midday-green curves shifted right of flat-blue, both right of critical-red). The Retailer column is empty for IB, GE and Naturgy because their retail buy bids are placed entirely at the price cap --- they treat retail as a quantity-securing instrument, not a price signal; only EDP-Spain bids strategically. \texttt{Direct\_consumer} books are small and concentrated near the cap. At the quarter-within-hour level, every (firm $\times$ tech) cell collapses to a single curve: Q1--Q4 overlap. Within-hour granularity is unused on the demand side.
+
+\subsection{Per-firm storage-discharge supply curves (DA)}\label{app:storage_discharge_grid}
+
+Sell bids only (upward-sloping supply curves). Columns: \texttt{Hydro\_pump} (pumped-storage discharge) and \texttt{Hybrid\_RES\_storage}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/fig_storage_discharge_grid_per_hour.pdf}
+\caption{\textbf{Aggregate DA storage-discharge supply curves by firm and tech-group, October--December 2025, by hour-class.} Rows: pivotal firms. Columns: sell-side storage tech-groups.}
+\label{fig:storage_discharge_grid_per_hour}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/fig_storage_discharge_grid_per_quarter.pdf}
+\caption{\textbf{Aggregate DA storage-discharge supply curves by quarter within critical hours, October--December 2025, by firm and tech-group.}}
+\label{fig:storage_discharge_grid_per_quarter}
+\end{figure}
+
+\textit{Reading} (\textbf{mixed}). \texttt{Hydro\_pump} discharge curves separate by hour-class for Iberdrola and Endesa (consistent with discharging more in critical hours when prices are highest); Naturgy is small and concentrated; EDP-Spain has no \texttt{Hydro\_pump}. \texttt{Hybrid\_RES\_storage} sell-side books are very small (IB-only with meaningful volume) and bid near zero EUR/MWh. As on the demand side, within-hour quarter dispersion is absent across all (firm $\times$ tech) cells.
+
+\subsection{Within-hour quarter dissimilarity test}\label{app:quarter_dissim}
+
+Falsification test for the aggregated Q1--Q4 plots: a perfect overlap in the cross-cell average could mask cell-level variation if its direction is idiosyncratic. For each (firm, unit, date, hour) cell, we compute the L1 area between the cumulative bid curves of each pair of quarters (1-D Wasserstein-style; integration on the union of bid-price points, weighted by tranche quantity). $D = \max_{i<j} W_1(Q_i, Q_j)$. A cell is ``flagged'' if $D > 10^{-6}$ MWh$\cdot$EUR/MWh --- any departure from bit-identical replication across the four quarters.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Quarter-by-quarter bid dissimilarity, October--December 2025.} For each (firm, unit, date, hour) cell with all four 15-min quarters present, $D$ is the maximum pairwise L1 area between cumulative bid curves. Flag = fraction of cells with $D > 0$.}
+\label{tab:quarter_dissim}
+\input{tables/tab_quarter_dissimilarity}
+\end{table}
+
+\textit{Reading} (\textbf{mixed}). Pump-storage is genuinely mechanical: \texttt{Pump\_load} and \texttt{Hydro\_pump} flag $\le 5.5\%$ across all firms and hour-classes, confirming the within-hour null in §\ref{sec:bid_evidence:demand_storage}. Naturgy CCGT flags 24.5\% in critical vs 0.0\% in flat, matching the visual Q1--Q4 separation in Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt}. By contrast \texttt{Wind} and \texttt{Solar PV} flag $\ge 92\%$ for IB, GN and HC --- bids vary across the four quarters in almost every cell, though for Wind the magnitudes are small (median $D \le 2.6$), consistent with quarter-by-quarter automated forecast updates rather than strategic re-pricing. \texttt{Retailer} flags 41\%, 76\% and 22\% for IB, GE and GN with Endesa's median $D = 11.2$: pivotal firms do vary their retail demand bids across quarters in ways the aggregated demand-curve plot of §\ref{app:demand_grid} does not display. Endesa Hydro stands out on the supply side with 56\% / 47\% flag rates.
+
 \subsection{Pre-trend diagnostic}\label{app:pretrends}
+
+The parallel-trends assumption requires $\mathbb{E}[Y_t(0) - Y_0(0) \mid \text{crit}] = \mathbb{E}[Y_t(0) - Y_0(0) \mid \text{flat}]$ in the pre-reform window: the time-evolution of the counterfactual outcome should be the same for critical and flat hours. The visual diagnostic below plots, for each outcome, the cumulative deviation of the monthly mean from its January-2024 baseline in critical hours (red) and flat hours (blue). Two lines that overlap pre-reform support the assumption.
+
+\subsubsection{Outcome 1: $q_2$ (intraday upward repositioning)}\label{app:pretrends:q2}
+
+OJO, MOEVE SHOWS A HUGE CHANGE IN BEHAVIOUR AFTER THE ID15 REFORM!! THE REST SEEM NICE!!
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig_pretrends_q2_monthly.pdf}
-\caption{\textbf{Per-firm monthly (critical $-$ flat) $q_2$ differential, Jan 2024 -- Dec 2025.} Canonical hour set. Red dashed: MTU15-DA reform. Grey dotted: MTU15-IDA. EDP-PT omitted (no PIBCI entries).}
+\caption{\textbf{Per-firm evolution of monthly $q_2$ relative to Jan-2024 baseline, by hour-class, Jan 2024 -- Dec 2025.} Each panel plots, for one firm, the cumulative deviation of monthly mean $q_2$ from its January-2024 value in critical hours (red) and flat hours (blue). Parallel-trends test: the two lines should track each other pre-reform. Red dashed: MTU15-DA reform. Grey dotted: MTU15-IDA. EDP-PT omitted (no PIBCI entries).}
 \label{fig:pretrends_q2_monthly}
 \end{figure}
 
-\textit{Reading} (\textbf{mixed}). No clear pre-trend in either block, but month-to-month noise is large and the headline $\beta_3 \approx +3.87$ sits within this noise band. The DiD identification leans on averaging across day-clusters within the same-cal-month window rather than on any single month.
+OJO, ID15 IS VERY IMPORTANT FOR WIND!! I SHOULD THINK ABOUT HOW IT AFFECTS!!
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig_pretrends_q2_monthly_by_tech.pdf}
+\caption{\textbf{Per-technology evolution of monthly $q_2$ relative to Jan-2024 baseline, by hour-class, Jan 2024 -- Dec 2025.} Same construction as Figure~\ref{fig:pretrends_q2_monthly} but grouped by \texttt{tech\_group} instead of parent. Sample restricted to pivotal $+$ non-pivotal firms. Solar PV has no flat-hour observations by construction (no generation at 1--3 AM); Coal sample is small.}
+\label{fig:pretrends_q2_monthly_by_tech}
+\end{figure}
+
+\textit{Reading} (\textbf{mixed}). For most firms the red and blue lines track each other pre-reform, suggesting parallel trends are plausible at the firm level. The exception is Moeve, whose flat-hour series shifts down sharply at MTU15-IDA (Mar 2025) and stays below baseline thereafter, while the critical-hour series stays near zero --- a structural break in flat-hour behaviour that is concentrated in this single non-pivotal firm. By technology, CCGT and Hydro pre-trends look reasonable; Wind, Nuclear and Hydro-RES also co-move pre-reform. The headline $\beta_3 \approx +3.87$ sits inside the month-to-month noise band, so the DiD identification leans on averaging across day-clusters within the same-cal-month window rather than on any single month.
+
+\subsubsection{Outcome 2: clearing prices (IDA and DA)}\label{app:pretrends:price}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_pretrends_price_monthly.pdf}
+\caption{\textbf{Evolution of monthly mean Spanish clearing price relative to Jan-2024 baseline, by hour-class, Jan 2024 -- Dec 2025.} Left: arithmetic mean across the three IDA auction sessions covering each (date, clock-hour). Middle: only the last (final) IDA session covering each slot. Right: day-ahead clearing price. All three average across the MTU15 periods that map to the same clock-hour before averaging within (month, hour-class). Red dashed: MTU15-DA reform. Grey dotted: MTU15-IDA.}
+\label{fig:pretrends_price_monthly}
+\end{figure}
+
+\textit{Reading} (\textbf{supportive}). All three markets tell the same story. Pre-MTU15-IDA, the critical and flat lines track each other tightly through the seasonal cycle (down to $-60$ EUR/MWh in spring 2024, up to $+45$ by Feb 2025): the crit-flat price spread is stable, parallel trends look strong. After MTU15-IDA (Mar 2025) the lines diverge: flat-hour prices rise $+30$ to $+40$ above baseline while critical-hour prices stay near zero, compressing the peak-flat spread by 30--40 EUR/MWh on average. This is consistent with the strategic-granularity story --- the reform lets dispatchable units re-price into critical hours, pulling those clearing prices down relative to flat hours where there is no analogous opportunity. The fact that the pattern is essentially identical in DA and IDA reflects the arbitrage-linked nature of the sequential markets: the DA-to-IDA wedge is small (Appendix~\ref{app:wedge}). The mean-of-3-sessions and final-session-only IDA variants are visually indistinguishable.
 
 \subsection{Time placebos}\label{app:time_placebos}
 
@@ -543,23 +716,24 @@ The full table of $\beta_3$ stratified by technology (with the non-pivotal place
 \end{multline}
 where $X_{dh} = (\text{wind}_{dh},\,\text{solar}_{dh},\,\text{demand}_{dh})$ in GW.
 
-\begin{table}[H]
-\centering
-\caption{\textbf{Triple-difference on $q_2$.} Equation~\ref{eq:ddd}; pivotal and non-pivotal firms pooled. SE clustered by date.}
-\label{tab:firm_ddd}
-\input{tables/tab_firm_ddd}
-\end{table}
-
-\textit{Reading} (\textbf{supportive}). $\beta_{123} \approx +8.6$~MWh (SE $\approx 1.4$) across all four specifications, with $p < 0.001$. The covariates and clock-hour fixed effects move the coefficient by less than 0.02~MWh, so the result does not rely on the day-level controls.
-
-\begin{table}[H]
-\centering
-\caption{\textbf{Time-placebo $\beta_3$ on $q_2$.} Equation~\ref{eq:B1} re-estimated over windows not crossing the October 2025 reform. P1/P2 are within-regime placebos; P3 crosses the June 2024 intraday reform.}
-\label{tab:B1_time_placebos}
-\resizebox{\textwidth}{!}{\input{tables/tab_B1_time_placebos}}
-\end{table}
-
-\textit{Reading} (\textbf{supportive}). P1 (within-2024) and P2 (within-2025 pre-MTU15-DA) give $\beta_3$ statistically indistinguishable from zero in the pivotal sample. P3, which crosses the June 2024 intraday reform, picks up a negative coefficient consistent with that earlier structural shift, not the October 2025 reform.
+% DiD OUTPUT HIDDEN -- uncomment to re-enable
+% \begin{table}[H]
+% \centering
+% \caption{\textbf{Triple-difference on $q_2$.} Equation~\ref{eq:ddd}; pivotal and non-pivotal firms pooled. SE clustered by date.}
+% \label{tab:firm_ddd}
+% \input{tables/tab_firm_ddd}
+% \end{table}
+%
+% \textit{Reading} (\textbf{supportive}). $\beta_{123} \approx +8.6$~MWh (SE $\approx 1.4$) across all four specifications, with $p < 0.001$. The covariates and clock-hour fixed effects move the coefficient by less than 0.02~MWh, so the result does not rely on the day-level controls.
+%
+% \begin{table}[H]
+% \centering
+% \caption{\textbf{Time-placebo $\beta_3$ on $q_2$.} Equation~\ref{eq:B1} re-estimated over windows not crossing the October 2025 reform. P1/P2 are within-regime placebos; P3 crosses the June 2024 intraday reform.}
+% \label{tab:B1_time_placebos}
+% \resizebox{\textwidth}{!}{\input{tables/tab_B1_time_placebos}}
+% \end{table}
+%
+% \textit{Reading} (\textbf{supportive}). P1 (within-2024) and P2 (within-2025 pre-MTU15-DA) give $\beta_3$ statistically indistinguishable from zero in the pivotal sample. P3, which crosses the June 2024 intraday reform, picks up a negative coefficient consistent with that earlier structural shift, not the October 2025 reform.
 
 
 % =====================================================================

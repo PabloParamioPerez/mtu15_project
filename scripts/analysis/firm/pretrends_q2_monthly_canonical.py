@@ -115,35 +115,48 @@ def pivot_diff(df):
 
 
 def plot_pretrends(wide):
-    pivotal_firms = ["IB", "GE", "GN", "HC", "EDP-PT"]
-    nonpivotal_firms = ["Repsol", "Engie", "TotalEnergies", "Moeve"]
-
-    fig, axes = plt.subplots(2, 1, figsize=(11, 7), sharex=True)
-    for ax, group, title in [
-        (axes[0], pivotal_firms,    "Pivotal firms (treatment block)"),
-        (axes[1], nonpivotal_firms, "Non-pivotal firms (placebo block)"),
-    ]:
-        for firm in group:
-            sub = wide[wide["parent"] == firm].sort_values("year_month")
-            if len(sub) == 0:
-                continue
-            ax.plot(sub["year_month"], sub["diff"], marker="o", linewidth=1.5,
-                    markersize=4, label=FIRM_DISPLAY.get(firm, firm))
-        ax.axvline(REFORM, color="red", linestyle="--", linewidth=1.2,
-                   label="MTU15-DA (Oct 2025)" if ax is axes[0] else None)
-        ax.axvline(MTU15_IDA, color="gray", linestyle=":", linewidth=1.0,
-                   label="MTU15-IDA (Mar 2025)" if ax is axes[0] else None)
-        ax.axhline(0, color="black", linewidth=0.6)
-        ax.set_title(title, fontsize=11)
-        ax.set_ylabel("Critical $-$ flat $q_2$ mean (MWh per cell)")
+    """One panel per firm. Each panel shows the EVOLUTION of monthly
+    mean q_2 in critical hours (red) and in flat hours (blue),
+    normalised to the first observation of each series so each line
+    starts at 0. Parallel-trends visual test: the two lines should
+    move together pre-reform (i.e., E[Y_t(0) - Y_0(0) | crit] =
+    E[Y_t(0) - Y_0(0) | flat])."""
+    firms_to_plot = ["IB", "GE", "GN", "HC",
+                     "Repsol", "Engie", "TotalEnergies", "Moeve"]
+    fig, axes = plt.subplots(2, 4, figsize=(15, 6), sharex=True)
+    for ax, firm in zip(axes.flatten(), firms_to_plot):
+        sub = wide[wide["parent"] == firm].sort_values("year_month").copy()
+        if len(sub) > 0:
+            crit_base = sub["critical"].iloc[0]
+            flat_base = sub["flat"].iloc[0]
+            sub["crit_dev"] = sub["critical"] - crit_base
+            sub["flat_dev"] = sub["flat"] - flat_base
+            ax.plot(sub["year_month"], sub["crit_dev"], marker="o",
+                    color="C3", linewidth=1.4, markersize=3.5, label="Critical")
+            ax.plot(sub["year_month"], sub["flat_dev"], marker="o",
+                    color="C0", linewidth=1.4, markersize=3.5, label="Flat")
+        ax.axvline(REFORM, color="red", linestyle="--", linewidth=1.0)
+        ax.axvline(MTU15_IDA, color="gray", linestyle=":", linewidth=0.9)
+        ax.axhline(0, color="black", linewidth=0.5)
+        ax.set_title(FIRM_DISPLAY.get(firm, firm), fontsize=10)
         ax.grid(alpha=0.3)
-        ax.legend(loc="upper left", ncol=3, fontsize=8, frameon=False)
-        ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
+        ax.tick_params(labelsize=7)
+        ax.xaxis.set_major_locator(mdates.MonthLocator(interval=3))
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
-    axes[1].set_xlabel("Month")
-    fig.suptitle(r"Pre-trend diagnostic: monthly (critical $-$ flat) $q_2$ differential by firm",
-                 fontsize=12, y=0.99)
-    fig.tight_layout(rect=[0, 0, 1, 0.96])
+        for lbl in ax.get_xticklabels():
+            lbl.set_rotation(45)
+            lbl.set_ha("right")
+    axes[0, 0].legend(loc="upper left", fontsize=8, frameon=False)
+    # Block annotations
+    for ax in axes[0]:
+        ax.annotate("Pivotal", xy=(0.02, 0.92), xycoords="axes fraction",
+                     fontsize=8, color="C3", fontweight="bold")
+    for ax in axes[1]:
+        ax.annotate("Non-pivotal", xy=(0.02, 0.92), xycoords="axes fraction",
+                     fontsize=8, color="gray", fontweight="bold")
+    fig.suptitle(r"Pre-trend diagnostic: evolution of monthly $q_2$ relative to baseline (Jan 2024), by firm and hour-class (red dashed = Oct 2025 reform; dotted grey = Mar 2025 MTU15-IDA)",
+                 fontsize=11, y=1.00)
+    fig.tight_layout(rect=[0, 0, 1, 0.95])
     out = FIGDIR / "fig_pretrends_q2_monthly"
     for ext in ("pdf", "png"):
         fig.savefig(f"{out}.{ext}", bbox_inches="tight", dpi=130 if ext == "png" else None)
