@@ -301,32 +301,7 @@ Claim-status semantics:
 | Wounded | Survives in narrowed form; cite with caveat |
 | Dead | Retracted or contradicted; do not cite as positive result |
 
----
-
-## OVB-robustness discipline (regression claims only)
-
-Before promoting any regression-based claim to alive:
-
-1. **Sparse-FE baseline** (regime / calendar FE only)
-2. **Augmented exogenous spec** (predetermined-relative-to-Y controls: weather / RES generation, calendar / hour FE, infrastructure capacity, regulatory regime indicators)
-3. **Compare β across specs**: stable in sign and ≥ 50 % magnitude → OVB-robust. Sign flip or magnitude collapse → wound or kill.
-4. **Document** sparse-vs-augmented β + p-values in the ledger row.
-
-Bad-control critique: a control jointly determined with **Y** introduces simultaneity bias. A control correlated only with another regressor X is multicollinearity, not simultaneity. See `CLAUDE.md` § Good controls vs bad controls for project-specific examples (S8 demotion, F11 caveat update, F5 robustness check).
-
----
-
-## Seasonality + weather discipline (cross-regime claims)
-
-Spanish electricity has huge seasonal + weather variation (wind 5×, solar 10×, temperature 30 %+). Reform regimes span different calendar windows:
-
-- pre-IDA: 78 months, all seasons
-- 3-sess: 2024-06 → 2024-12
-- ISP15-win: 2024-12 → 2025-03 (winter)
-- DA60 / ID15: 2025-04 → 2025-09 (summer / early-fall)
-- DA15 / ID15: 2025-10 → 2026-01 (fall / early-winter)
-
-**Minimum acceptable**: same-calendar-month comparison (restrict pre-period to the same calendar months as post). **Preferred**: calendar-month FE + Spanish wind + solar VRE controls (ENTSO-E A75 by tech).
+Methodological protocols for regression-based claims (OVB-robustness, good vs bad controls, seasonality + weather controls for cross-regime claims) live in [`CLAUDE.md`](CLAUDE.md) under the respective sections.
 
 ---
 
