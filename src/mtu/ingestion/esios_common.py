@@ -69,6 +69,7 @@ ARCHIVES = {
     "ree_balancing_bids":   181,   # mFRR bid-level (2022-05-24 → 2024-12-10), DAILY chunks
     "liquicierresrs":       203,   # aFRR settlement (post-ISP15 format, 2024-11-22 → now)
     "curvas_ofertas_afrr":  234,   # aFRR offer curves (2024-11-20 → now), DAILY chunks, .xls payload
+    "indisponibilidades":   105,   # generation/consumption-unit outages, snapshot per day, .xls payload
 }
 
 USER_AGENT = "mtu15-thesis-esios-sync/1.0"

@@ -1,218 +1,335 @@
-# MTU15 Project: Spanish Electricity Market Data Pipeline
+# MTU15 Project — Spanish electricity market: granularity reforms 2024–2025
 
-Master thesis project on the Spanish electricity market reform that changed the Market Time Unit (MTU) from hourly to 15-minute trading. Builds a reproducible data pipeline for OMIE (market operator) and ESIOS/REE (system operator) data to study the effect of the reform on price formation, quantities, and balancing.
+Master's thesis (CEMFI, 2026) on the Spanish wholesale electricity market reforms that progressively reduced the **Market Time Unit** (MTU) from 60 to 15 minutes across three sequential stages, and the **Imbalance Settlement Period** (ISP) on the same day. Builds a fully reproducible data pipeline for OMIE (market operator), ESIOS / REE (system operator), and ENTSO-E (pan-European TSO data) to study how dominant firms exploit within-hour granularity to extract rents.
+
+The empirical strategy is a **within-day difference-in-differences** comparing critical hours (05:00–09:00, 16:00–23:00 — high systematic within-hour demand variation) against flat hours (01:00–04:00 — low variation), across firms partitioned by CNMC's dominant-operator classification.
+
+---
+
+## Quick orientation
+
+| Where to look | What you'll find |
+|---|---|
+| [`thesis/paper/paper.tex`](thesis/paper/paper.tex) → [`paper.pdf`](thesis/paper/paper.pdf) | Single-file thesis paper (the deliverable). Sections, not chapters. |
+| [`CLAUDE.md`](CLAUDE.md) | Canonical project rules: data layers, claim-status discipline, OVB protocol, file conventions. |
+| [`CLAIMS_LEDGER.md`](CLAIMS_LEDGER.md) | Single source of truth for empirical claims (alive / wounded / dead). One row per claim. |
+| [`notebooks/memos/`](notebooks/memos/) | Research diary, modelling-track memos, audit trail, identification-history appendix. |
+| [`notebooks/memos/RESEARCH_DIARY.md`](notebooks/memos/RESEARCH_DIARY.md) | Append-only chronological log of decisions and claim changes. |
+| [`notebooks/memos/_esios_archive_catalog.md`](notebooks/memos/_esios_archive_catalog.md) | ESIOS API archive triage memo (which archives we ingest and why). |
+| [`data/external/esios_indicator_catalog.yaml`](data/external/esios_indicator_catalog.yaml) | 139 curated ESIOS indicators with per-indicator native granularity. |
+
+Run `uv run pytest` for the test suite; `uv run python scripts/pipelines/.../00_*.py` for any pipeline step. All pipeline scripts are idempotent.
 
 ---
 
 ## Reform timeline
 
-| Event | Date |
-|---|---|
-| ISP / imbalance settlement | December 2024 |
-| Intraday markets (auctions + continuous) | 19 March 2025 |
-| Day-ahead market | 1 October 2025 |
+| Reform | Date | What changed |
+|---|---|---|
+| **ISP15** | 2024-12-01 (effective 2024-12-09) | Imbalance settlement period changed from 60 min to 15 min |
+| **MTU15-IDA** | 2025-03-19 | Intraday markets (3 auctions + continuous XBID) switched from MTU60 to MTU15 |
+| **MTU15-DA** | 2025-10-01 | Day-ahead market switched from MTU60 to MTU15 |
+
+These three dates appear as constants `ISP15_REFORM`, `INTRADAY_REFORM`, `DAY_AHEAD_REFORM` throughout the codebase.
 
 ---
 
 ## Data sources
 
-### OMIE (market operator)
+Three sources, kept strictly separate at the data layer (see `CLAUDE.md` § Source separation rule).
+
+### OMIE — Iberian market operator
 
 #### Day-ahead market
 
 | Family | Description | Coverage | Spec |
 |---|---|---|---|
-| `marginalpdbc` | Clearing prices | 2018-01-01 – 2026-04-11 | §5.1.1.1 |
-| `pdbc` | Programs by unit | 2018-02, 2023-12 – 2026-01-08 | §5.1.2.1 |
-| `pdbce` | Programs by firm | — | §5.1.2.2 |
-| `curva_pbc` | Aggregate supply/demand curves | 2018-01-01 – 2026-04-08 | §5.1.3.1 |
-| `cab` | Matched offer headers | 2017-01-01 – 2026-01-09 | §5.1.4.1 |
-| `det` | Matched offer detail (price/qty per period) | 2018-01-01 – 2026-01-09 | §5.1.4.2 |
-| `capacidad_inter_pbc` | Interconnection capacity post-clearing | — | §5.1.6.1 |
-| `capacidad_inter_pvp` | Interconnection capacity post-restrictions | — | §5.1.6.2 |
+| `marginalpdbc` | Clearing prices | 2018-01-01 – present | §5.1.1.1 |
+| `pdbc` | Final programs by unit (auction-cleared only) | 2018 – present | §5.1.2.1 |
+| `pdbce` | Final programs by firm | 2018 – present | §5.1.2.2 |
+| `pdbf` | PDBC + bilateral-contract executions (`offer_type=4`) | 2018 – present | §5.1.2.3 |
+| `curva_pbc` | Aggregate supply / demand curves | 2018 – present | §5.1.3.1 |
+| `cab` | Offer headers | 2017 – present | §5.1.4.1 |
+| `det` | Offer details (price / quantity tranches) | 2018 – present | §5.1.4.2 |
+| `capacidad_inter_pbc` | Interconnection capacity post-PBC | 2018 – present | §5.1.6.1 |
+| `capacidad_inter_pvp` | Interconnection capacity post-restrictions | 2018 – present | §5.1.6.2 |
 
 #### Intraday auctions
 
 | Family | Description | Coverage | Spec |
 |---|---|---|---|
-| `marginalpibc` | Clearing prices by session | 2017-12-31 – 2026-04-09 | §5.2.1.1 |
-| `pibca` | Accumulated programs by unit | 2019-02-28 – 2025-01-14 | §5.2.2.1 |
-| `pibci` | Incremental programs by unit | 2019-02-28 – 2026-01-02 | §5.2.2.2 |
-| `pibcie` | Incremental programs by firm | — | §5.2.2.3 |
-| `curva_pibc` | Aggregate supply/demand curves | 2018-01-01 – 2026-04-08 | §5.2.3.1 |
-| `icab` | Matched offer headers | 2018-01-01 – 2026-01-10 | §5.2.4.1 |
-| `idet` | Matched offer detail (price/qty per period) | 2018-01-01 – 2026-01-10 | §5.2.4.2 |
-| `osanulaintra` | Cancelled periods (SO) | sparse (event-driven) | §5.2.6.1 |
-| `omanulaintra` | Cancelled periods (MO) | sparse (event-driven) | §5.2.6.2 |
+| `marginalpibc` | Clearing prices by session | 2017 – present | §5.2.1.1 |
+| `pibca` | Accumulated programs by unit | 2019 – present | §5.2.2.1 |
+| `pibci` | Programs by unit and session | 2019 – present | §5.2.2.2 |
+| `pibcie` | Programs by firm and session | 2019 – present | §5.2.2.3 |
+| `phf` | Final hourly program by unit and session (OS-established) | 2019 – present | §5.2.2.4 |
+| `curva_pibc` | Aggregate supply / demand curves | 2018 – present | §5.2.3.1 |
+| `icab` / `idet` | Offer headers / details | 2018 – present | §5.2.4.1–2 |
+| `osanulaintra` / `omanulaintra` | Cancelled offers (SO / MO) | sparse | §5.2.6 |
 
-#### Intraday continuous
+#### Intraday continuous (XBID)
 
 | Family | Description | Coverage | Spec |
 |---|---|---|---|
-| `precios_pibcic` | Prices per period | incomplete | §5.3.1.1 |
-| `precios_pibcic_ronda` | Prices per round | 2018-06-13 – 2026-04-09 | §5.3.1.2 |
-| `pibcac` | Accumulated programs by unit | 2018-06-13 – 2025-03-31 | §5.3.2.1 |
-| `pibcic` | Incremental programs by unit | 2018-06-13 – 2026-01-10 | §5.3.2.2 |
-| `pibcice` | Incremental programs by firm | — | §5.3.2.3 |
-| `trades` | XBID matched transactions | 2018-06-13 – 2026-01-13 | §5.3.2.7 |
-| `orders` | XBID limit orders | 2018-06-13 – 2026-01-13 | §5.3.3.1 |
+| `precios_pibcic` / `precios_pibcic_ronda` | Continuous-market prices | 2018-06 – present | §5.3.1 |
+| `pibcac` | Accumulated programs by unit | 2018-06 – present | §5.3.2.1 |
+| `pibcic` / `pibcice` | Programs by unit / firm and round | 2018-06 – present | §5.3.2.2–3 |
+| `phfc` | Final hourly program by unit and round (OS-established) | 2018-06 – present | §5.3.2.4 |
+| `trades` | XBID matched transactions | 2018-06 – present | §5.3.2.7 |
+| `orders` | XBID limit orders | 2018-06 – present (90-day delay) | §5.3.3.1 |
 
-### ESIOS / REE (system operator)
+OMIE file specification: `docs/omie/ficherosomie137.pdf` (v1.37, 2025-09-30).
 
-| Family | Description | Coverage |
+### ESIOS — REE (Spanish TSO)
+
+Two endpoint families on the ESIOS API (`https://api.esios.ree.es`), with `ESIOS_TOKEN` from `.env`:
+
+**Indicators** (`/indicators/{id}`) — 2,018 system-wide time series. We curate **139 indicators** in [`data/external/esios_indicator_catalog.yaml`](data/external/esios_indicator_catalog.yaml), tagged with their native granularity (15-min / hour / day / month) and grouped into priority tiers:
+
+- **Tier A** — fuel / CO₂ prices, renewable forecasts, demand actuals / forecasts (controls for parallel-trends regressions)
+- **Tier B** — DA + IDA clearing prices (sanity-check against OMIE), 13 PVPC quarter-hour components, demand program stages
+- **Tier D** — reserve market prices: aFRR / mFRR / RR, RPA, Gestión de Desvíos, technical-restrictions Fase I & II
+- **Tier E** — reserve market volumes, cross-border balancing flows, SRAD demand response
+
+**Archives** (`/archives/{id}`) — daily/monthly file dumps per archive ID. Currently ingested:
+
+| Family | Archive ID | Granularity | Coverage | Format |
+|---|---:|---|---|---|
+| `liquicierre` | 17 | per-BSP × concept × ISP | 2015-01 → 2024-12 | XML |
+| `liquicierresrs` | 203 | per-BSP × concept × ISP (post-ISP15 format) | 2024-11 → present | XML |
+| `liquicomun_c5` | 11 | settlement bundle (181 concept families) | 2015 → present | XML |
+| `balancing_bids` | 181 | aggregate mFRR bid stack | 2022-05 → 2024-12 (archive retired post-ISP15) | XML |
+| `curvas_ofertas_afrr` | 234 | aggregate aFRR offer curves | 2024-11 → present | XLS |
+| `totalrp48preccierre` | 28 | RT2 (reforzada) redispatch closing | 2015 → present | XML |
+| `indisponibilidades` | 105 | per-unit outage snapshots (UF and UP) | 2018 – present (monthly snapshots) | XLS |
+| `GenerationUnits`, `ProgrammingUnits`, `BalanceResponsibleParties`, `EntitledParticipants` | 110, 111, 112, 113 | master-data references | one-shot dump | JSON |
+
+Archive triage memo: [`notebooks/memos/_esios_archive_catalog.md`](notebooks/memos/_esios_archive_catalog.md).
+
+### ENTSO-E — pan-European TSO data
+
+| Code | Description | Used for |
 |---|---|---|
-| `restricciones` | Technical constraints | — |
-| `rampas` | Ramp limitations | — |
-| `desvios` | Imbalance settlement | — |
+| A65 | System total load | Demand-class controls |
+| A72 | Reservoir filling | Hydro water-value covariate |
+| A73 | Actual generation per type | Renewable-share computation |
+| A75 | Actual generation per unit | Per-unit tech composition (post-MTU15-DA) |
+
+Spain control-area EIC: `10YES-REE------0`. Token in `.env` as `ENTSOE_TOKEN`.
 
 ---
 
 ## Pipeline structure
 
-### OMIE
+All pipelines follow the same three-stage convention:
 
 ```
-scripts/pipelines/omie/
-  00_download_{family}.py    # Download raw daily files from OMIE
-  00_sync_{family}_zips.py   # Download and extract monthly ZIP archives
-  10_parse_{family}.py       # Parse raw files → per-file parquet
-  20_build_{family}_all.py   # Build consolidated parquet
+scripts/pipelines/{omie,esios,entsoe}/{family}/
+  00_sync_<family>.py        # download raw files (idempotent)
+  10_parse_<family>.py       # raw → per-file parquet
+  20_build_<family>_all.py   # consolidate into <family>_all.parquet
 ```
 
-Families published only as monthly ZIPs (`cab`, `det`, `icab`, `idet`, `orders`, `trades`, `pibca`, `pibci`, `pibcac`, `pibcic`, `pdbc`) use `00_sync_*_zips.py` only. `orders` files are subject to a 90-day confidentiality window; months within 90 days of today return HTTP 404. Families with both a daily endpoint and historical ZIPs (`curva_pbc`, `curva_pibc`, `precios_pibcic`, `precios_pibcic_ronda`, `marginalpdbc`, `marginalpibc`, `omanulaintra`, `osanulaintra`) have both scripts.
+### OMIE pipelines
 
-`det` files have two fixed-width layouts: pre-reform (57-char lines, before 2025-03-19) and post-reform (60-char lines); the parser detects the format automatically. `icab` files have two layouts: pre-reform (195-char) and post-reform (94-char). `idet` files have two layouts: pre-reform (76-char) and post-reform (60-char). All parsers detect the format automatically from the first line length. Filename suffix encodes the session number (1–6 pre-2024-06-14, 1–3 after). `trades` files use an 11-column CSV (semicolon-separated) with a single `Momento casación` timestamp field; when a trade is matched at exactly 00:00:00 the time component is omitted by OMIE and the parser treats it as midnight.
-
-### ESIOS
-
-```
-scripts/pipelines/esios/
-  00_download_indicator.py   # Download indicator time series (one JSON per day)
-```
-
----
-
-## Running the pipeline
-
-### OMIE
+Many OMIE families publish both as **daily files** (recent) and **monthly ZIPs** (historical), reflected in the script naming:
 
 ```bash
 # Historical bulk sync (monthly ZIPs)
-uv run scripts/pipelines/omie/00_sync_{family}_zips.py --start-month 2019-01 --end-month 2025-03
+uv run scripts/pipelines/omie/{family}/00_sync_{family}_zips.py --start-month 2019-01 --end-month 2025-12
 
-# Recent daily files
-uv run scripts/pipelines/omie/00_download_{family}.py --recent-days 7
+# Recent daily files (90-day window or fewer; trades has a 90-day confidentiality lag)
+uv run scripts/pipelines/omie/{family}/00_download_{family}.py --recent-days 7
 
-# Parse
-uv run scripts/pipelines/omie/10_parse_{family}.py
-
-# Build consolidated parquet
-uv run scripts/pipelines/omie/20_build_{family}_all.py
+# Parse and build
+uv run scripts/pipelines/omie/{family}/10_parse_{family}.py
+uv run scripts/pipelines/omie/{family}/20_build_{family}_all.py
 ```
 
-### ESIOS
+`det` / `icab` / `idet` parsers automatically detect pre- vs. post-MTU15-IDA file layouts (different fixed-width column widths). See `src/mtu/parsing/` for parser source.
+
+### ESIOS pipelines
+
+```
+scripts/pipelines/esios/
+├── 00_download_indicator.py              # token-aware /indicators workhorse
+├── indicators/
+│   ├── 00_batch_sync.py                  # YAML-driven batch driver over the 139-indicator catalog
+│   ├── 10_parse_indicators.py            # JSON → per-indicator parquet
+│   └── 20_build_indicators_all.py        # consolidate to indicators_all.parquet
+├── liquidaciones/                        # liquicierre + liquicierresrs + liquicomun_c5
+├── reservas/                             # curvas_ofertas_afrr + balancing_bids
+├── restricciones/                        # totalrp48preccierre
+└── indisponibilidades/                   # archive id=105 (outage snapshots)
+```
+
+Each sub-family has its own `00_sync_*.py`, `10_parse_*.py`, `20_build_*all.py`. The batch driver `indicators/00_batch_sync.py` reads `data/external/esios_indicator_catalog.yaml` and requests each indicator at its **native** granularity (15-min for `Quince minutos`, hourly for `Hora`, etc.) — 88 of 139 indicators are natively 15-min.
+
+S3-redirect quirk: ESIOS issues HTTP 307 redirects to pre-signed S3 URLs for large payloads; re-sending the `x-api-key` on the S3 leg invalidates the AWS signature. The shared helper `src/mtu/ingestion/esios_common.py` follows the redirect without auth headers.
+
+WAF behaviour: bot-detection is IP-scoped. Fast requests (< 0.1 s gap) trigger persistent 403 from a single IP. Use `--sleep 0.5` (or higher); switch IP if blocked.
+
+### ENTSO-E pipelines
 
 ```bash
-# Requires ESIOS_TOKEN env var (request from consultasios@ree.es)
-ESIOS_TOKEN=<token> uv run scripts/pipelines/esios/00_download_indicator.py \
-  --indicator-id <id> --start-date 2024-01-01 --end-date 2025-03-31
+# Bulk pull for a calendar year
+ENTSOE_TOKEN=<token> uv run scripts/pipelines/entsoe/{family}/00_sync_{family}.py --year 2024
 ```
-
-All stages are idempotent — safe to rerun.
 
 ---
 
 ## Repository layout
 
-The project is organised by *purpose* at the top level. Each directory has a single responsibility.
+The project is organised by **purpose**. Each top-level directory has a single responsibility.
 
 ```
 mtu15_project/
-├── data/                      # DATA ONLY (never analytical outputs)
-│   ├── raw/{omie,esios,entsoe}/         # verbatim source files (symlink to SSD)
-│   ├── processed/{omie,esios,entsoe}/   # canonical Parquet, one per family (symlink)
-│   ├── derived/panels/                  # analysis-ready panels
-│   ├── derived/attic/                   # retired derived datasets
-│   ├── interim/                         # parsing intermediates
-│   ├── metadata/                        # download manifests, ingestion logs
-│   └── external/                        # reference tables (unit codes, BSP lists)
+├── data/                                  # DATA ONLY — never analytical outputs
+│   ├── raw/{omie,esios,entsoe}/           # verbatim source files (symlinks to external SSD)
+│   ├── processed/{omie,esios,entsoe}/     # canonical parquet, one per family (symlinks)
+│   ├── derived/
+│   │   ├── panels/                        # analysis-ready panels (multi-source merges)
+│   │   └── attic/                         # retired derived datasets
+│   ├── interim/                           # parsing intermediates
+│   ├── metadata/                          # download manifests, ingestion logs
+│   └── external/                          # reference tables (unit codes, BSP lists, esios_indicator_catalog.yaml)
 │
-├── results/                   # ALL ANALYTICAL OUTPUTS (code-dependent products)
-│   ├── regressions/                     # CSVs from regression scripts
-│   ├── robustness/                      # robustness-check tables
-│   ├── summaries/                       # human-readable run summaries
-│   ├── tables/                          # tables for thesis/presentation
-│   └── attic/
+├── results/                               # ANALYTICAL OUTPUTS (code-dependent products of analysis scripts)
+│   ├── regressions/{system,firm,bid,balancing,regulatory,descriptive}/
+│   └── attic/                             # retired analytical outputs from pre-pivot framings
 │
-├── figures/                   # ALL FIGURES
-│   ├── thesis/                          # final figures referenced by the thesis text
-│   ├── presentation/                    # presentation-specific figures
-│   ├── working/                         # WIP figures from analysis
-│   └── attic/
+├── figures/                               # ALL FIGURES (canonical location)
+│   ├── thesis/                            # figures referenced by paper.tex (via \graphicspath)
+│   ├── presentation/                      # workshop / defense-only figures
+│   ├── working/                           # WIP figures during analysis
+│   └── attic/                             # retired figures
 │
 ├── scripts/
-│   ├── pipelines/{omie,esios,entsoe}/   # 00_download → 10_parse → 20_build
-│   ├── analysis/
-│   │   ├── system/                      # system-level friction (S5/S6/B6/B7/S7/S8)
-│   │   ├── firm/                        # firm-level strategic conduct (critical-vs-flat DiD, B9/B12-B14, F12/F15/F16, pdbf bilateral)
-│   │   ├── bid/                         # bid-shape and granularity tests (B14 critical_vs_flat_bidshape; B1, B2, B8)
-│   │   ├── regulatory/                  # RT2 + CNMC enforcement
-│   │   ├── balancing/                   # aFRR/mFRR/nuclear-availability
-│   │   ├── modelling/, panels/, attic/  # mechanism-candidate models, panel builders, retired pre-pivot work (incl. lerner/, synthetic/)
-│   ├── admin/                           # audit, inspection, forensic scripts
-│   └── stata/                           # Stata .do files
+│   ├── pipelines/{omie,esios,entsoe}/     # numbered: 00_sync → 10_parse → 20_build
+│   ├── analysis/{system,firm,bid,regulatory,balancing,modelling,panels,attic}/
+│   ├── admin/                             # one-off audits, inspects, forensic scripts
+│   └── stata/                             # Stata .do files
 │
 ├── src/mtu/
-│   ├── parsing/                         # one module per data family
-│   ├── transform/                       # period normalisation, shared transforms
-│   ├── validation/                      # post-parse checks
-│   └── ingestion/                       # shared HTTP/auth/retry helpers
+│   ├── parsing/                           # one module per data family (or per market for OMIE)
+│   ├── transform/                         # period normalisation, shared transforms
+│   ├── validation/                        # post-parse checks
+│   ├── ingestion/                         # shared HTTP / auth / retry helpers (entsoe_common, esios_common)
+│   └── classification/                    # firm-unit-tech panel builders
 │
-├── notebooks/                 # exploratory notebooks (not thesis output)
-│   ├── eda/                             # numbered EDA notebooks
-│   ├── memos/                           # research diary, modelling track, audits
-│   └── attic/                           # superseded exploratory work
+├── notebooks/
+│   ├── eda/                               # numbered EDA notebooks
+│   ├── memos/                             # research diary, modelling track, audit trail (markdown only)
+│   └── attic/                             # superseded exploratory work
 │
-├── thesis/                    # WRITING ONLY (output = single paper, not multi-chapter)
-│   ├── paper/                           # the thesis paper (June 2026)
-│   │   ├── paper.tex                    # single .tex with \section{} blocks
-│   │   └── references.bib
-│   ├── model/                           # reserved for new structural model when written
-│   ├── narratives/                      # presentation narratives, planning docs
-│   ├── presentations/
-│   │   ├── workshop_february_2026/      # first thesis-progress presentation
-│   │   └── workshop_may_2026/           # second thesis-progress presentation
-│   └── _archive/                        # historical framings (do NOT cite as current)
-│       └── proposal_workshop_may2026.md # May 5 2026 framing
+├── thesis/
+│   ├── paper/                             # paper.tex + tables/, references.bib, paper.pdf
+│   ├── model/                             # reserved for new structural model (not yet written)
+│   ├── narratives/                        # presentation narratives, planning docs
+│   └── presentations/
+│       ├── workshop_february_2026/
+│       └── workshop_may_2026/
 │
-├── docs/                      # external reference materials (operator specs, regulation, papers)
-├── tests/                     # pytest suite
-├── logs/                      # runtime logs
-├── attic/                     # project-level retired material
-└── renv/, .Rprofile, renv.lock          # R environment (kept for future phases; not currently used)
+├── docs/                                  # external reference material (gitignored)
+│   ├── omie/                              # OMIE platform specs + press releases
+│   ├── esios/                             # ESIOS docs
+│   ├── entsoe/                            # ENTSO-E standards
+│   ├── regulation/{eu,spain}/             # CNMC resolutions, REE operational guides, EU regulations
+│   ├── references/                        # academic papers
+│   └── notes/                             # research notes (includes SPANISH_MARKET_STRUCTURE.md)
+│
+├── tests/                                 # pytest suite
+├── logs/                                  # runtime logs
+├── attic/                                 # project-level retired material
+├── CLAUDE.md                              # canonical project rules
+├── CLAIMS_LEDGER.md                       # claim status registry
+└── README.md                              # this file
 ```
 
 ---
 
-## Memo map (`notebooks/memos/`)
+## Data layers
 
-For thesis-current findings, consult these canonical memos. Earlier per-firm memos are SUPPORTING / SUPERSEDED — kept as historical record.
+| Layer | Purpose | Modify? |
+|---|---|---|
+| **raw** | Verbatim source files | Never |
+| **processed** | Canonical parquet, one per family, all raw rows preserved with `source_file` snapshot identity | Only via 10_parse / 20_build |
+| **derived** | Analysis-ready panels and cross-source merges | Only via `scripts/analysis/` |
+| **results** | Regression CSVs, summary tables, run reports | Generated by `scripts/analysis/`; do not edit by hand |
 
-| Cluster | Canonical memo |
-|---|---|
-| **Identification design** | `_critical_hours_calibration.md`, `_pivotality_by_firm_critical_hours.md`, `_structural_dominance_audit.md`, `_parallel_trends_diagnostic.md` |
-| **Bid-shape mechanism evidence** | `_per_firm_hourly_bidshape.md`, `_per_firm_pre_vs_post_mtu15da.md`, `_per_firm_competitive_zone_bidshape.md`, `_quarter_price_vs_qty_decomposition.md`, `_operational_strategic_decomposition.md` |
-| **Theoretical model** | `_within_market_granularity_model.md` |
-| **Reference / context** | `_modelling_track.md`, `_identification_target.md`, `_euphemia_order_types_check.md` |
-| **Audit trail** | `RESEARCH_DIARY.md`, `RESEARCH_LOG.md`, `_audits.md` |
+**Source separation rule**: never mix sources in a single processed parquet without an explicit `source` column. If ESIOS content lives under `entsoe/` (or vice versa) it is a bug.
 
-For the formal claim status of each empirical finding, see `CLAIMS_LEDGER.md`. For the thesis paper itself (drafting in progress, June 2026), see `thesis/paper/paper.tex`.
+**Source-overlap policy**: OMIE programmes (`pdbc`, `pdbce`, `pibci`, `pibcic`, `phf`, `phfc`) cover the same conceptual ground as ESIOS `p48cierre` / `totalp48*` / `totalpdbf`. We use the OMIE versions (finer granularity, longer history) and skip the ESIOS duplicates. ENTSO-E A75 covers ESIOS `REE_ActualGen_*`; we use ENTSO-E.
 
 ---
 
-## Data design principles
+## Python / uv workflow
 
-- **Raw layer**: verbatim source files, never modified
-- **Processed layer**: canonical parquet, one per family, preserving all raw rows and snapshot identity (`source_file`)
-- **Derived layer**: reconciliation and collapsed views (`data/derived/panels/`), clearly marked, never substitutes for canonical tables
-- **Analytical outputs are NOT data**: regression CSVs, summary tables, run reports go in `results/`, not in `data/`. Code-dependent products are kept separate from canonical datasets
+- All scripts run with `uv run`; never `pip` or raw `python`
+- Dependencies declared in `pyproject.toml` / `uv.lock`
+- Lint: `uv run ruff check .`
+- Type-check: `uv run mypy src/`
+- Test: `uv run pytest`
+
+`.env` (gitignored) holds `ESIOS_TOKEN`, `ENTSOE_TOKEN`. Never commit credentials.
+
+---
+
+## Reading the empirical work
+
+Each script and active notebook carries a 4-line STATUS block:
+
+```python
+# STATUS: ALIVE | WOUNDED | DEAD-KEPT-AS-RECORD
+# LAST-AUDIT: YYYY-MM-DD
+# FEEDS: <claim-IDs from CLAIMS_LEDGER, comma-separated>
+# CLAIM: <one-line summary>
+```
+
+Discipline cycle when a claim's status changes (see `CLAUDE.md` § Claim-status discipline):
+
+1. Update the row in `CLAIMS_LEDGER.md` (status, `Date_changed`, reason — never delete)
+2. Update the producing script's STATUS header
+3. Update the consuming notebook's synthesis cell (strikethrough dead claims, do not delete)
+4. Append a dated line to `notebooks/memos/RESEARCH_DIARY.md`
+
+Claim-status semantics:
+
+| Status | Meaning |
+|---|---|
+| Alive | Passed all documented robustness checks; safe to cite |
+| Wounded | Survives in narrowed form; cite with caveat |
+| Dead | Retracted or contradicted; do not cite as positive result |
+
+---
+
+## OVB-robustness discipline (regression claims only)
+
+Before promoting any regression-based claim to alive:
+
+1. **Sparse-FE baseline** (regime / calendar FE only)
+2. **Augmented exogenous spec** (predetermined-relative-to-Y controls: weather / RES generation, calendar / hour FE, infrastructure capacity, regulatory regime indicators)
+3. **Compare β across specs**: stable in sign and ≥ 50 % magnitude → OVB-robust. Sign flip or magnitude collapse → wound or kill.
+4. **Document** sparse-vs-augmented β + p-values in the ledger row.
+
+Bad-control critique: a control jointly determined with **Y** introduces simultaneity bias. A control correlated only with another regressor X is multicollinearity, not simultaneity. See `CLAUDE.md` § Good controls vs bad controls for project-specific examples (S8 demotion, F11 caveat update, F5 robustness check).
+
+---
+
+## Seasonality + weather discipline (cross-regime claims)
+
+Spanish electricity has huge seasonal + weather variation (wind 5×, solar 10×, temperature 30 %+). Reform regimes span different calendar windows:
+
+- pre-IDA: 78 months, all seasons
+- 3-sess: 2024-06 → 2024-12
+- ISP15-win: 2024-12 → 2025-03 (winter)
+- DA60 / ID15: 2025-04 → 2025-09 (summer / early-fall)
+- DA15 / ID15: 2025-10 → 2026-01 (fall / early-winter)
+
+**Minimum acceptable**: same-calendar-month comparison (restrict pre-period to the same calendar months as post). **Preferred**: calendar-month FE + Spanish wind + solar VRE controls (ENTSO-E A75 by tech).
+
+---
+
+## Contact
+
+Pablo Paramio — `mochilarojaverde@gmail.com`. Master's thesis advisor: Pedro Mira (CEMFI). Deadline: mid-June 2026.

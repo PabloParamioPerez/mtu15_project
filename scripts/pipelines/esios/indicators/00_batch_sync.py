@@ -67,7 +67,13 @@ def resolve_end_date(end: str) -> str:
 
 def select_indicators(catalog: dict, tiers: list[str] | None,
                        family: str | None, indicator_id: int | None) -> list[dict]:
-    """Flatten the YAML catalog into one indicator-level list with parent metadata."""
+    """Flatten the YAML catalog into one indicator-level list with parent metadata.
+
+    Carries per-indicator `time_trunc` (set by the catalog from the probed
+    native granularity) so the driver requests each series at its native
+    resolution: 15-min for "Quince/Cinco/Diez minutos" series, hourly for
+    "Hora", daily for "Día", monthly for "Mes".
+    """
     out = []
     for fam in catalog.get("tiers", []):
         if family and fam.get("name") != family:
@@ -81,6 +87,7 @@ def select_indicators(catalog: dict, tiers: list[str] | None,
                 "name": ind.get("name"),
                 "family": fam.get("name"),
                 "priority": fam.get("priority"),
+                "time_trunc": ind.get("time_trunc"),   # per-indicator override
             }
             if indicator_id is not None and row["id"] != indicator_id:
                 continue
@@ -90,6 +97,8 @@ def select_indicators(catalog: dict, tiers: list[str] | None,
 
 def run_one(ind: dict, *, start: str, end: str, sleep: float,
             time_trunc: str | None, chunk: str, dry_run: bool) -> int:
+    # Per-indicator override beats the global default
+    effective_trunc = ind.get("time_trunc") or time_trunc
     cmd = [
         "uv", "run", str(DOWNLOADER),
         "--indicator-id", str(ind["id"]),
@@ -98,9 +107,9 @@ def run_one(ind: dict, *, start: str, end: str, sleep: float,
         "--sleep", str(sleep),
         "--chunk", chunk,
     ]
-    if time_trunc:
-        cmd += ["--time-trunc", time_trunc]
-    print(f"\n→ {ind['family']:35s}  id={ind['id']:>5}  {ind['name']}")
+    if effective_trunc:
+        cmd += ["--time-trunc", effective_trunc]
+    print(f"\n→ {ind['family']:35s}  id={ind['id']:>5}  trunc={effective_trunc:<16}  {ind['name']}")
     print(f"   {' '.join(cmd)}")
     if dry_run:
         return 0

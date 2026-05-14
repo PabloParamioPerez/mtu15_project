@@ -172,12 +172,26 @@ def summarise(cells, eps=1e-6):
 
 
 def write_tex(g, out_path):
-    """Long table: side x tech x firm x hour_class -> n, flag%, median d."""
+    """Long table: side x tech x firm x hour_class -> n, flag%, median d.
+    Emits a `longtable` so it auto-breaks across pages (58+ rows)."""
     lines = [
-        r"\begin{tabular}{l l l l r r r}",
+        r"\small",
+        r"\begin{longtable}{@{}l l l l r r r@{}}",
+        r"\caption{\textbf{Quarter-by-quarter bid dissimilarity, October--December 2025.} For each (firm, unit, date, hour) cell with all four 15-min quarters present, $D$ is the maximum pairwise L1 area between cumulative bid curves. Flag = fraction of cells with $D > 0$.}\label{tab:quarter_dissim}\\",
         r"\toprule",
         r"Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ \\",
         r"\midrule",
+        r"\endfirsthead",
+        r"\multicolumn{7}{l}{\emph{(continued from previous page)}} \\",
+        r"\toprule",
+        r"Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ \\",
+        r"\midrule",
+        r"\endhead",
+        r"\midrule",
+        r"\multicolumn{7}{r}{\emph{continued on next page}} \\",
+        r"\endfoot",
+        r"\bottomrule",
+        r"\endlastfoot",
     ]
     last_side = None
     last_tech = None
@@ -190,14 +204,12 @@ def write_tex(g, out_path):
             lines.append(r"\addlinespace")
         side_disp = side if side != last_side else ""
         tech_disp = tech if r["tech_group"] != last_tech else ""
-        firm_disp = r["firm"] if (r["tech_group"] != last_tech or side != last_side
-                                   or last_tech is None) else r["firm"]
         last_side = side; last_tech = r["tech_group"]
         lines.append(
             f"{side_disp} & {tech_disp} & {r['firm']} & {r['hour_class'].capitalize()} & "
             f"{int(r['n_cells']):,} & {100*r['frac_flagged']:.1f} & {r['median_d']:.2f} \\\\"
         )
-    lines += [r"\bottomrule", r"\end{tabular}"]
+    lines += [r"\end{longtable}", r"\normalsize"]
     Path(out_path).write_text("\n".join(lines) + "\n")
     print(f"  saved {out_path}")
 

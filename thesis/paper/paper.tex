@@ -6,10 +6,12 @@
 
 \usepackage{amsmath, amssymb, amsthm, mathtools}
 \usepackage{graphicx, booktabs, subcaption, tikz, float}
+\graphicspath{{../../figures/thesis/}}
 \usepackage{array, makecell}
 \providecommand{\sym}[1]{\ensuremath{^{#1}}} % esttab significance markers
 \usepackage{xcolor}
 \usepackage{colortbl}
+\usepackage{longtable}
 \usepackage[round]{natbib}
 \usepackage[hidelinks]{hyperref}
 \usepackage{geometry}
@@ -149,7 +151,7 @@ OJO, IF WE INTRODUCE THE 11:00-15:00 PERIOD IN THE CONTROL, WE ARE MIXING THE OP
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_seasonal_critical_hours.pdf}
+\includegraphics[width=0.95\textwidth]{fig_seasonal_critical_hours.pdf}
 \caption{\textbf{Hourly load and DA price by season, Spain 2025.} Blue: demand; red: DA clearing price. Red bands: critical hours (05:00--09:00, 16:00--23:00); blue bands: flat hours (01:00--04:00).}
 \label{fig:seasonal}
 \end{figure}
@@ -158,7 +160,7 @@ OJO, IF WE INTRODUCE THE 11:00-15:00 PERIOD IN THE CONTROL, WE ARE MIXING THE OP
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_seasonal_vre.pdf}
+\includegraphics[width=0.95\textwidth]{fig_seasonal_vre.pdf}
 \caption{\textbf{Hourly wind and solar production by season, Spain 2025.} Red bands: critical hours; blue bands: flat hours.}
 \label{fig:vre_seasonal}
 \end{figure}
@@ -197,19 +199,19 @@ GAS PRICES CAN AFFECT DIFFERENTLY CRITICAL AND FLAT HOURS, BUT WE SEE THAT GAS I
 
 \begin{table}[H]
 \centering
-\caption{\textbf{Marginal-technology composition by hour-class, October--December 2025 (post-MTU15-DA).} MW-weighted share of bid tranches within $\pm 0.5$~EUR/MWh of the DA Spanish clearing price.}
+\caption{\textbf{Price-setting technology by hour-class, October--December 2025 (post-MTU15-DA).} For each (date, period) the price-setting technology is the one whose accepted sell tranche has the highest bid price (i.e., the tranche that determines the uniform clearing price). Table reports the share of (date, period) cells in each hour-class where each technology is the price-setter.}
 \label{tab:marg_tech_post}
 \input{tables/tab_marginal_tech_by_hour_post}
 \end{table}
 
 \begin{table}[H]
 \centering
-\caption{\textbf{Marginal-technology composition by hour-class, October--December 2024 (pre-MTU15-DA).}}
+\caption{\textbf{Price-setting technology by hour-class, October--December 2024 (pre-MTU15-DA).} Same construction as Table~\ref{tab:marg_tech_post}.}
 \label{tab:marg_tech_pre}
 \input{tables/tab_marginal_tech_by_hour_pre}
 \end{table}
 
-\textit{Reading} (\textbf{supportive}). CCGT sets the price with nearly identical frequency in critical and flat hours in both windows (35.1\% vs 34.6\% post-reform; 27.6\% vs 28.1\% pre-reform), so a TTF shock propagates into both hour-classes through the same channel. The only large asymmetry is on pumped storage --- the mechanism the paper is about --- and a smaller wind gap motivates including wind generation as a conditional-PT control.
+\textit{Reading} (\textbf{supportive}). Hydro is the dominant price-setter in both hour-classes ($\sim$58\% of periods post-reform), reflecting reservoir water-value sitting at the merit-order edge. CCGT sets the price in 9.1\% of critical-hour periods vs 9.0\% of flat-hour periods post-reform --- a 0.2~pp critical--flat gap, essentially symmetric. A TTF (gas-price) shock therefore propagates into both hour-classes through the same channel and at the same intensity; an asymmetric gas confound on the critical--flat clearing-price spread would have required CCGT to set the price disproportionately in one class, which we do not observe. Hydro\_pump's critical--flat gap is $+5.4$~pp (19.0\% vs 13.7\%) post-reform; this is consistent with regular storage arbitrage (charge during low-price midday/flat hours, discharge into the evening peak) and is not, on its own, evidence of MTU15-induced strategic behaviour. (Coverage caveat: $\sim$36\% of critical-hour periods have their clearing price set by a unit not present in our generation-unit panel \texttt{lista\_unidades.csv} --- e.g.\ Portuguese-zone generation units, demand-side buy bids that set the clearing, or block-order/interconnection bids without a single unit code --- and are excluded from the table. \emph{Bilateral contracts do not enter EUPHEMIA}: per the OMIE file specification (\texttt{ficherosomie137.pdf}, §5.1.2.1, §5.1.2.3), bilateral-contract executions are reported separately by the unit owners \emph{after} clearing and merged into the final daily program (PDBF, \texttt{offer\_type=4}), so they cannot set the auction price. The patterns above describe the remaining matched majority of periods.)
 
 
 % =====================================================================
@@ -252,16 +254,7 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_strategic_types.pdf}
-\caption{\textbf{Per-firm DA bid behaviour, critical vs flat hours.} Top-4 CCGT operators, October--December 2025. Panel~A: number of price-quantity steps per 15-minute period. Panel~B: share of bids identical across all four quarters of the same hour. Panels~C--D: highest and lowest priced step.}
-\label{fig:per_firm_strategic_types}
-\end{figure}
-
-\textit{Reading} (\textbf{supportive}). Two distinct strategic patterns appear. Iberdrola enriches the bid ladder in critical hours (more steps) but keeps the four quarters of each hour nearly identical. Naturgy keeps the ladder shallow and varies bids strongly across quarters.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves.pdf}
+\includegraphics[width=0.95\textwidth]{fig_per_firm_bid_curves.pdf}
 \caption{\textbf{Aggregate DA supply curves by pivotal firm and clock-hour, CCGT, October--December 2025.} EUPHEMIA aggregation (public description, sec.~7.1) per (firm, hour): pool sell tranches, sort ascending by price, cumulate, normalise by $N_{\text{dates}} \times 4$ quarters. Red: 11 critical hours; green: 4 midday hours (11:00--14:00, dropped from the DiD); blue: 3 flat hours. Submission rates by hour-class in Table~\ref{tab:per_firm_offer_rate}; Hydro analogue in Appendix~\ref{app:supply_curves_other_tech}.}
 \label{fig:per_firm_bid_curves}
 \end{figure}
@@ -279,16 +272,20 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_quarters_ccgt.pdf}
-\caption{\textbf{Aggregate DA supply curves by quarter within critical hours, CCGT.} EUPHEMIA aggregation per (firm, quarter) over the 11 critical hours and all days in October--December 2025. Y-axis zoomed to 50--200 EUR/MWh, the clearing-relevant band. One curve per quarter.}
-\label{fig:per_firm_bid_curves_quarters_ccgt}
-\end{figure}
-
-\begin{figure}[H]
+\begin{subfigure}[t]{0.49\textwidth}
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_quarters_ccgt_flat.pdf}
-\caption{\textbf{Aggregate DA supply curves by quarter within flat hours, CCGT.} Same construction as Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt}, restricted to the three flat hours (01:00--04:00). Same axis scales.}
+\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt.pdf}
+\caption{Critical hours (05:00--09:00, 16:00--23:00)}
+\label{fig:per_firm_bid_curves_quarters_ccgt}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt_flat.pdf}
+\caption{Flat hours (01:00--04:00) --- falsification}
 \label{fig:per_firm_bid_curves_quarters_ccgt_flat}
+\end{subfigure}
+\caption{\textbf{Aggregate DA supply curves by quarter, CCGT.} EUPHEMIA aggregation per (firm, quarter) over October--December 2025. Y-axis zoomed to 50--200 EUR/MWh, the clearing-relevant band. One curve per quarter. The left panel restricts to the 11 critical hours; the right panel to the 3 flat hours and serves as a falsification check.}
+\label{fig:per_firm_bid_curves_quarters_ccgt_pair}
 \end{figure}
 
 \textit{Reading} (\textbf{supportive}). In critical hours Naturgy shows visible quarter dispersion in the 1{,}500--2{,}800 MW band (Q1 below Q4 in the body of the curve); in flat hours the four quarters of Naturgy --- and of every other firm --- collapse onto a single curve. Granularity differentiation is hour-class-specific: it appears only where within-hour demand variation gives it economic content. This is the falsification check the within-day design requires.
@@ -297,23 +294,27 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_ida.pdf}
+\includegraphics[width=0.95\textwidth]{fig_per_firm_bid_curves_ida.pdf}
 \caption{\textbf{Aggregate IDA supply curves by pivotal firm and clock-hour, CCGT.} Same construction as Figure~\ref{fig:per_firm_bid_curves} on ICAB+IDET data, pooled across the 3 IDA sessions per day; normalisation $N_{\text{dates}} \times 4 \times 3$.}
 \label{fig:per_firm_bid_curves_ida_main}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_quarters_ccgt_ida.pdf}
-\caption{\textbf{Aggregate IDA supply curves by quarter within critical hours, CCGT.} Same construction as Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt}.}
-\label{fig:per_firm_bid_curves_quarters_ccgt_ida_main}
-\end{figure}
-
-\begin{figure}[H]
+\begin{subfigure}[t]{0.49\textwidth}
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_bid_curves_quarters_ccgt_ida_flat.pdf}
-\caption{\textbf{Aggregate IDA supply curves by quarter within flat hours, CCGT.} Same construction as Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt_flat}.}
+\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt_ida.pdf}
+\caption{Critical hours (05:00--09:00, 16:00--23:00)}
+\label{fig:per_firm_bid_curves_quarters_ccgt_ida_main}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt_ida_flat.pdf}
+\caption{Flat hours (01:00--04:00) --- falsification}
 \label{fig:per_firm_bid_curves_quarters_ccgt_ida_flat_main}
+\end{subfigure}
+\caption{\textbf{Aggregate IDA supply curves by quarter, CCGT.} Same construction as Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt_pair} on ICAB+IDET data, pooled across the 3 IDA sessions per day. Left panel: critical hours; right panel: flat hours (falsification).}
+\label{fig:per_firm_bid_curves_quarters_ccgt_ida_pair}
 \end{figure}
 
 \textit{Reading} (\textbf{supportive}). In IDA, all four pivotal firms (not just Naturgy as in DA) show monotone Q1--Q4 dispersion in critical hours: Q1 offers the most MW, Q4 the least, at prices near clearing. The flat-hour falsification holds for every firm. IDA is where pivotal firms actively reposition $q_2$, and the granularity exploitation pattern is sharper here than in the day-ahead.
@@ -324,7 +325,7 @@ Mirror of the per-firm supply-side analysis on the buy side and on pumped-storag
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_demand_curves_pump_load.pdf}
+\includegraphics[width=0.95\textwidth]{fig_per_firm_demand_curves_pump_load.pdf}
 \caption{\textbf{Aggregate DA demand curves by pivotal firm and clock-hour, pump-storage charge bids, October--December 2025.} Each step is the EUPHEMIA aggregation of buy tranches at each integer-rounded limit price, cumulated price-descending and normalised by $N_{\text{dates}} \times 4$ periods per clock-hour. Critical hours red, midday green, flat hours blue.}
 \label{fig:per_firm_demand_curves_pump_load}
 \end{figure}
@@ -333,21 +334,52 @@ Mirror of the per-firm supply-side analysis on the buy side and on pumped-storag
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_demand_curves_quarters_pump_load.pdf}
-\caption{\textbf{Aggregate DA demand curves by quarter within critical hours, pump-storage charge bids, October--December 2025.} Same construction restricted to critical hours; one curve per 15-min quarter.}
-\label{fig:per_firm_demand_curves_quarters_pump_load}
-\end{figure}
-
-\begin{figure}[H]
+\begin{subfigure}[t]{0.49\textwidth}
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_per_firm_demand_curves_quarters_pump_load_flat.pdf}
-\caption{\textbf{Aggregate DA demand curves by quarter within flat hours, pump-storage charge bids, October--December 2025.} Falsification mirror of Figure~\ref{fig:per_firm_demand_curves_quarters_pump_load}.}
+\includegraphics[width=\textwidth]{fig_per_firm_demand_curves_quarters_pump_load.pdf}
+\caption{Critical hours (05:00--09:00, 16:00--23:00)}
+\label{fig:per_firm_demand_curves_quarters_pump_load}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_demand_curves_quarters_pump_load_flat.pdf}
+\caption{Flat hours (01:00--04:00) --- falsification}
 \label{fig:per_firm_demand_curves_quarters_pump_load_flat}
+\end{subfigure}
+\caption{\textbf{Aggregate DA demand curves by quarter, pump-storage charge bids, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_demand_curves_pump_load}; one curve per 15-min quarter. Left panel: critical hours; right panel: flat hours (falsification).}
+\label{fig:per_firm_demand_curves_quarters_pump_load_pair}
 \end{figure}
 
 \textit{Reading} (\textbf{supportive of null}). The four quarter curves overlap almost exactly for every firm in both critical and flat hours: pump-storage operators do not differentiate their charge bids across the 15-min quarters of a clock-hour. The within-hour granularity available since MTU15-DA is unused on this margin --- even Iberdrola and Endesa, who discriminate strongly at the clock-hour level, replicate identical bids across the four quarters. This pins the within-hour granularity-exploitation effect to the supply side (pivotal dispatchable units), not to demand-side or storage charging strategy.
 
-Compact grids covering all demand-side technologies (\texttt{Pump\_load}, \texttt{Retailer}, \texttt{Direct\_consumer}) are in Appendix~\ref{app:demand_grid}; the storage-discharge mirror (\texttt{Hydro\_pump}, \texttt{Hybrid\_RES\_storage}) is in Appendix~\ref{app:storage_discharge_grid}.
+\paragraph{IDA mirror.} The same construction applied to the intraday auction (ICAB + IDET, pooled across the 3 daily IDA sessions) is shown in Figures~\ref{fig:per_firm_demand_curves_pump_load_ida}--\ref{fig:per_firm_demand_curves_quarters_pump_load_ida_pair}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{fig_per_firm_demand_curves_pump_load_ida.pdf}
+\caption{\textbf{Aggregate IDA demand curves by pivotal firm and clock-hour, pump-storage charge bids, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_demand_curves_pump_load} on ICAB+IDET data, pooled across the 3 IDA sessions per day; normalisation $N_{\text{dates}} \times 4 \times 3$.}
+\label{fig:per_firm_demand_curves_pump_load_ida}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_demand_curves_quarters_pump_load_ida.pdf}
+\caption{Critical hours (05:00--09:00, 16:00--23:00)}
+\label{fig:per_firm_demand_curves_quarters_pump_load_ida}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_demand_curves_quarters_pump_load_ida_flat.pdf}
+\caption{Flat hours (01:00--04:00) --- falsification}
+\label{fig:per_firm_demand_curves_quarters_pump_load_ida_flat}
+\end{subfigure}
+\caption{\textbf{Aggregate IDA demand curves by quarter, pump-storage charge bids, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_demand_curves_quarters_pump_load_pair} on ICAB+IDET data, pooled across the 3 IDA sessions per day. Left panel: critical hours; right panel: flat hours (falsification).}
+\label{fig:per_firm_demand_curves_quarters_pump_load_ida_pair}
+\end{figure}
+
+Compact grids covering all demand-side technologies (\texttt{Pump\_load}, \texttt{Retailer}, \texttt{Direct\_consumer}) are in Appendix~\ref{app:demand_grid} (DA) and Appendix~\ref{app:demand_grid_ida} (IDA); the storage-discharge mirror (\texttt{Hydro\_pump}, \texttt{Hybrid\_RES\_storage}) is in Appendix~\ref{app:storage_discharge_grid} (DA) and Appendix~\ref{app:storage_discharge_grid_ida} (IDA).
 
 \subsection{Operational vs strategic use of MTU15 granularity}\label{sec:bid_evidence:operational_vs_strategic}
 
@@ -361,7 +393,7 @@ THE WITHIN-HOUR QUARTER-DISSIMILARITY TEST IN APPENDIX~\ref{app:quarter_dissim} 
 
 \begin{table}[H]
 \centering
-\caption{\textbf{Critical--flat asymmetry of the quarter-dissimilarity flag, October--December 2025.} Percentage of (firm, unit, date, hour) cells with $D > 0$ in critical vs flat hours, and the gap. Strategic re-pricing implies a positive critical--flat gap; operational refinement implies a near-zero gap.}
+\caption{\textbf{Critical--flat asymmetry of the within-hour bid-curve dissimilarity, October--December 2025.} Each row stratifies the dissimilarity statistic $D = \max_{i<j} W_1(\mu_i, \mu_j)$ over the four 15-min quarters of a clock-hour: $D$ is the L1 area between cumulative bid curves of any pair of quarters --- a 1-D Wasserstein-1 (Earth Mover's Distance, \citealp{vallender1973}) on the bid measure, defined in Equation~\ref{eq:wasserstein}. Entries report the percentage of (firm, unit, date, hour) cells with $D > 0$ in critical vs flat hours, and the gap. Strategic re-pricing should appear as a positive critical--flat gap; operational refinement (e.g. wind/solar forecast updates) as a near-zero gap.}
 \label{tab:operational_strategic_asym}
 \begin{tabular}{l l l r r r}
 \toprule
@@ -422,7 +454,7 @@ with firm fixed effects $\gamma_f$, day-of-week fixed effects $\delta_{\mathrm{D
 %
 % \begin{figure}[H]
 % \centering
-% \includegraphics[width=0.95\textwidth]{figures/fig_q2_samecal_trajectory.pdf}
+% \includegraphics[width=0.95\textwidth]{fig_q2_samecal_trajectory.pdf}
 % \caption{\textbf{$q_2$ monthly mean by firm and hour-class.} Red: critical (05:00--09:00, 16:00--23:00); blue: flat (01:00--04:00). Dashed line: October 2025 reform.}
 % \label{fig:q2_trajectory}
 % \end{figure}
@@ -551,14 +583,14 @@ with firm fixed effects $\gamma_f$, day-of-week fixed effects $\delta_{\mathrm{D
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/fig_bid_curves_grid_per_hour_ida.pdf}
+\includegraphics[width=\textwidth]{fig_bid_curves_grid_per_hour_ida.pdf}
 \caption{\textbf{Aggregate IDA supply curves by firm and technology, by hour-class.} Compact grid analogue of Figure~\ref{fig:bid_curves_grid_per_hour} on IDA data.}
 \label{fig:bid_curves_grid_per_hour_ida}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/fig_bid_curves_grid_per_quarter_ida.pdf}
+\includegraphics[width=\textwidth]{fig_bid_curves_grid_per_quarter_ida.pdf}
 \caption{\textbf{Aggregate IDA supply curves by quarter within critical hours, by firm and technology.}}
 \label{fig:bid_curves_grid_per_quarter_ida}
 \end{figure}
@@ -574,14 +606,14 @@ with firm fixed effects $\gamma_f$, day-of-week fixed effects $\delta_{\mathrm{D
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/fig_bid_curves_grid_per_hour.pdf}
+\includegraphics[width=\textwidth]{fig_bid_curves_grid_per_hour.pdf}
 \caption{\textbf{Aggregate DA supply curves by firm and technology, October--December 2025, by hour-class.} Same construction as Figure~\ref{fig:per_firm_bid_curves}. Adaptive y-axis per panel: focus on the 80th percentile of quantity-weighted price.}
 \label{fig:bid_curves_grid_per_hour}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/fig_bid_curves_grid_per_quarter.pdf}
+\includegraphics[width=\textwidth]{fig_bid_curves_grid_per_quarter.pdf}
 \caption{\textbf{Aggregate DA supply curves by firm and technology, October--December 2025, by quarter within critical hours.} Same construction as Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt}. Y-axis clamped to 50--200 EUR/MWh; x-axis zoomed to the corresponding cumulative-quantity range.}
 \label{fig:bid_curves_grid_per_quarter}
 \end{figure}
@@ -594,14 +626,14 @@ Buy bids only (downward-sloping demand curves). Columns: \texttt{Pump\_load} (pu
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/fig_demand_grid_per_hour.pdf}
+\includegraphics[width=\textwidth]{fig_demand_grid_per_hour.pdf}
 \caption{\textbf{Aggregate DA demand curves by firm and demand-side tech-group, October--December 2025, by hour-class.} Rows: pivotal firms. Columns: buy-side tech-groups. Y-band fixed per tech to the strategically informative range; empty panels indicate firms with no units of that tech (or, for Retailer at IB/GE/Naturgy, bids placed exclusively at the price cap so no activity falls inside the band).}
 \label{fig:demand_grid_per_hour}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/fig_demand_grid_per_quarter.pdf}
+\includegraphics[width=\textwidth]{fig_demand_grid_per_quarter.pdf}
 \caption{\textbf{Aggregate DA demand curves by quarter within critical hours, October--December 2025, by firm and demand-side tech-group.}}
 \label{fig:demand_grid_per_quarter}
 \end{figure}
@@ -614,30 +646,81 @@ Sell bids only (upward-sloping supply curves). Columns: \texttt{Hydro\_pump} (pu
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{figures/fig_storage_discharge_grid_per_hour.pdf}
+\includegraphics[width=0.7\textwidth]{fig_storage_discharge_grid_per_hour.pdf}
 \caption{\textbf{Aggregate DA storage-discharge supply curves by firm and tech-group, October--December 2025, by hour-class.} Rows: pivotal firms. Columns: sell-side storage tech-groups.}
 \label{fig:storage_discharge_grid_per_hour}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{figures/fig_storage_discharge_grid_per_quarter.pdf}
+\includegraphics[width=0.7\textwidth]{fig_storage_discharge_grid_per_quarter.pdf}
 \caption{\textbf{Aggregate DA storage-discharge supply curves by quarter within critical hours, October--December 2025, by firm and tech-group.}}
 \label{fig:storage_discharge_grid_per_quarter}
 \end{figure}
 
 \textit{Reading} (\textbf{mixed}). \texttt{Hydro\_pump} discharge curves separate by hour-class for Iberdrola and Endesa (consistent with discharging more in critical hours when prices are highest); Naturgy is small and concentrated; EDP-Spain has no \texttt{Hydro\_pump}. \texttt{Hybrid\_RES\_storage} sell-side books are very small (IB-only with meaningful volume) and bid near zero EUR/MWh. As on the demand side, within-hour quarter dispersion is absent across all (firm $\times$ tech) cells.
 
+\subsection{Per-firm demand-side bid curves, all technologies (IDA)}\label{app:demand_grid_ida}
+
+IDA mirror of Appendix~\ref{app:demand_grid}. Same construction on ICAB+IDET data, pooled across the 3 IDA sessions per day.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig_demand_grid_per_hour_ida.pdf}
+\caption{\textbf{Aggregate IDA demand curves by firm and demand-side tech-group, October--December 2025, by hour-class.}}
+\label{fig:demand_grid_per_hour_ida}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig_demand_grid_per_quarter_ida.pdf}
+\caption{\textbf{Aggregate IDA demand curves by quarter within critical hours, October--December 2025, by firm and demand-side tech-group.}}
+\label{fig:demand_grid_per_quarter_ida}
+\end{figure}
+
+\subsection{Per-firm storage-discharge supply curves (IDA)}\label{app:storage_discharge_grid_ida}
+
+IDA mirror of Appendix~\ref{app:storage_discharge_grid}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{fig_storage_discharge_grid_per_hour_ida.pdf}
+\caption{\textbf{Aggregate IDA storage-discharge supply curves by firm and tech-group, October--December 2025, by hour-class.}}
+\label{fig:storage_discharge_grid_per_hour_ida}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{fig_storage_discharge_grid_per_quarter_ida.pdf}
+\caption{\textbf{Aggregate IDA storage-discharge supply curves by quarter within critical hours, October--December 2025, by firm and tech-group.}}
+\label{fig:storage_discharge_grid_per_quarter_ida}
+\end{figure}
+
 \subsection{Within-hour quarter dissimilarity test}\label{app:quarter_dissim}
 
-Falsification test for the aggregated Q1--Q4 plots: a perfect overlap in the cross-cell average could mask cell-level variation if its direction is idiosyncratic. For each (firm, unit, date, hour) cell, we compute the L1 area between the cumulative bid curves of each pair of quarters (1-D Wasserstein-style; integration on the union of bid-price points, weighted by tranche quantity). $D = \max_{i<j} W_1(Q_i, Q_j)$. A cell is ``flagged'' if $D > 10^{-6}$ MWh$\cdot$EUR/MWh --- any departure from bit-identical replication across the four quarters.
+Falsification test for the aggregated Q1--Q4 plots: a perfect overlap in the cross-cell average could mask cell-level variation if its direction is idiosyncratic. The diagnostic operates at the (firm, unit, date, hour) cell level, before any aggregation.
 
-\begin{table}[H]
-\centering
-\caption{\textbf{Quarter-by-quarter bid dissimilarity, October--December 2025.} For each (firm, unit, date, hour) cell with all four 15-min quarters present, $D$ is the maximum pairwise L1 area between cumulative bid curves. Flag = fraction of cells with $D > 0$.}
-\label{tab:quarter_dissim}
+\paragraph{Construction.} Each quarter's bid in a cell is a discrete measure on the price axis: each tranche $(p_k, q_k)$ contributes a point mass $q_k$ MWh at price $p_k$ EUR/MWh, after integer-rounding the price. Let $\mu_i$ denote the bid measure for quarter $i \in \{1,2,3,4\}$, with cumulative distribution
+\[
+   F_i(p) \;=\; \sum_{k:\,p_k \leq p} q_k,
+\]
+which is exactly the bid-curve step function plotted in §\ref{sec:bid_evidence:perfirm}: at price $p$ on the y-axis, $F_i(p)$ is the cumulative MWh offered up to that price.
+
+\paragraph{Dissimilarity between two quarters.} For an ordered pair $(i, j)$, we compute the L1 area between the cumulative bid curves over the union of all bid prices present in either quarter:
+\begin{equation}\label{eq:wasserstein}
+   W_1(\mu_i,\mu_j) \;=\; \int_{p_{\min}}^{p_{\max}} \bigl| F_i(p) - F_j(p) \bigr|\, dp \;=\; \sum_{k=1}^{K-1} \bigl| F_i(p_{(k)}) - F_j(p_{(k)}) \bigr|\cdot \bigl( p_{(k+1)} - p_{(k)} \bigr),
+\end{equation}
+where $\{p_{(1)} < p_{(2)} < \dots < p_{(K)}\}$ is the sorted union of distinct bid prices from both quarters and $[p_{\min}, p_{\max}] = [p_{(1)}, p_{(K)}]$ is the resulting integration domain. Computation handles the union grid in $O(K \log K)$ via a sort/merge of the two ordered price lists; see \texttt{scripts/analysis/bid/quarter\_dissimilarity\_ot.py}.
+
+\paragraph{Wasserstein interpretation.} Equation~\ref{eq:wasserstein} is the closed-form expression of the 1-D Wasserstein-1 distance (Earth Mover's Distance) for probability measures on $\mathbb{R}$: $W_1(\mu, \nu) = \int |F_\mu - F_\nu|$ \citep{vallender1973}. Strictly, the equality requires the two measures to share total mass. In our setting, two quarters may submit slightly different total volumes ($\sum_k q_{i,k} \neq \sum_k q_{j,k}$), in which case Equation~\ref{eq:wasserstein} is the natural \emph{unbalanced} extension --- the L1 area between two non-decreasing step functions over the observed price range. This still captures (i) horizontal shifts of the curve (price re-pricing), (ii) vertical shifts (quantity re-allocation), and (iii) total-volume changes, in a single non-negative number. Magnitudes (in MWh$\cdot$EUR/MWh) are not directly interpretable, but the metric serves the role we need: \textbf{$W_1 = 0$ iff the two bid multisets are identical}, and $W_1 > 0$ iff there is any difference.
+
+\paragraph{Per-cell statistic and flag.} For each cell with all four quarters present we compute the maximum pairwise dissimilarity:
+\[
+   D \;=\; \max_{1 \leq i < j \leq 4} W_1(\mu_i, \mu_j).
+\]
+A cell is ``flagged'' if $D > 10^{-6}$ MWh$\cdot$EUR/MWh --- equivalent to ``the four quarters are not bit-identical''.
+
 \input{tables/tab_quarter_dissimilarity}
-\end{table}
 
 \textit{Reading} (\textbf{mixed}). Pump-storage is genuinely mechanical: \texttt{Pump\_load} and \texttt{Hydro\_pump} flag $\le 5.5\%$ across all firms and hour-classes, confirming the within-hour null in §\ref{sec:bid_evidence:demand_storage}. Naturgy CCGT flags 24.5\% in critical vs 0.0\% in flat, matching the visual Q1--Q4 separation in Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt}. By contrast \texttt{Wind} and \texttt{Solar PV} flag $\ge 92\%$ for IB, GN and HC --- bids vary across the four quarters in almost every cell, though for Wind the magnitudes are small (median $D \le 2.6$), consistent with quarter-by-quarter automated forecast updates rather than strategic re-pricing. \texttt{Retailer} flags 41\%, 76\% and 22\% for IB, GE and GN with Endesa's median $D = 11.2$: pivotal firms do vary their retail demand bids across quarters in ways the aggregated demand-curve plot of §\ref{app:demand_grid} does not display. Endesa Hydro stands out on the supply side with 56\% / 47\% flag rates.
 
@@ -651,7 +734,7 @@ OJO, MOEVE SHOWS A HUGE CHANGE IN BEHAVIOUR AFTER THE ID15 REFORM!! THE REST SEE
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_pretrends_q2_monthly.pdf}
+\includegraphics[width=0.95\textwidth]{fig_pretrends_q2_monthly.pdf}
 \caption{\textbf{Per-firm evolution of monthly $q_2$ relative to Jan-2024 baseline, by hour-class, Jan 2024 -- Dec 2025.} Each panel plots, for one firm, the cumulative deviation of monthly mean $q_2$ from its January-2024 value in critical hours (red) and flat hours (blue). Parallel-trends test: the two lines should track each other pre-reform. Red dashed: MTU15-DA reform. Grey dotted: MTU15-IDA. EDP-PT omitted (no PIBCI entries).}
 \label{fig:pretrends_q2_monthly}
 \end{figure}
@@ -660,7 +743,7 @@ OJO, ID15 IS VERY IMPORTANT FOR WIND!! I SHOULD THINK ABOUT HOW IT AFFECTS!!
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{figures/fig_pretrends_q2_monthly_by_tech.pdf}
+\includegraphics[width=0.95\textwidth]{fig_pretrends_q2_monthly_by_tech.pdf}
 \caption{\textbf{Per-technology evolution of monthly $q_2$ relative to Jan-2024 baseline, by hour-class, Jan 2024 -- Dec 2025.} Same construction as Figure~\ref{fig:pretrends_q2_monthly} but grouped by \texttt{tech\_group} instead of parent. Sample restricted to pivotal $+$ non-pivotal firms. Solar PV has no flat-hour observations by construction (no generation at 1--3 AM); Coal sample is small.}
 \label{fig:pretrends_q2_monthly_by_tech}
 \end{figure}
@@ -671,7 +754,7 @@ OJO, ID15 IS VERY IMPORTANT FOR WIND!! I SHOULD THINK ABOUT HOW IT AFFECTS!!
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/fig_pretrends_price_monthly.pdf}
+\includegraphics[width=\textwidth]{fig_pretrends_price_monthly.pdf}
 \caption{\textbf{Evolution of monthly mean Spanish clearing price relative to Jan-2024 baseline, by hour-class, Jan 2024 -- Dec 2025.} Left: arithmetic mean across the three IDA auction sessions covering each (date, clock-hour). Middle: only the last (final) IDA session covering each slot. Right: day-ahead clearing price. All three average across the MTU15 periods that map to the same clock-hour before averaging within (month, hour-class). Red dashed: MTU15-DA reform. Grey dotted: MTU15-IDA.}
 \label{fig:pretrends_price_monthly}
 \end{figure}

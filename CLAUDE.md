@@ -34,24 +34,25 @@ The project is organised by purpose at the top level. Each top-level directory h
 - `data/interim/`, `data/metadata/`, `data/external/` — intermediate parsing, manifests, reference tables
 
 **Analytical outputs (code-dependent products):**
-- `results/regressions/{system,firm,bid,balancing,regulatory,modelling,descriptive}/` — regression CSVs subdirectorized by topic, mirroring `scripts/analysis/`. New analyses should write to the matching topic subfolder. `firm/` is further split into `firm/{critical_hours,pdbf,b9,other}/` since it would otherwise be too dense. (Restructured 2026-05-04.)
-- `results/tables/` — tables for thesis/presentation (currently empty post-2026-05-04 cleanup; the pre-pivot tables are in `results/attic/tables/`)
-- `results/attic/{regressions,robustness,summaries,tables}/` — retired analytical outputs from pre-pivot framing (Lerner work, dead claims, old workshop tables)
+- `results/regressions/{system,firm,bid,balancing,regulatory,descriptive}/` — regression CSVs subdirectorized by topic, mirroring `scripts/analysis/`. New analyses should write to the matching topic subfolder. `firm/` is further split into `firm/{critical_hours_thesis,pdbf,b9,other}/` since it would otherwise be too dense. (Restructured 2026-05-04; further cleanup 2026-05-14 — `results/{robustness,summaries,tables}/` removed at the top level; `results/attic/{regressions,robustness,summaries,tables}/` retain the pre-pivot artefacts.)
+- Thesis-grade LaTeX tables live under `thesis/paper/tables/` (force-added under the paper); historical tables in `results/attic/tables/`.
 
 **Figures:**
-- `figures/thesis/` — final figures referenced by the thesis text (currently empty; the pre-pivot workshop figures are in `figures/attic/`)
+- `figures/thesis/` — final figures referenced by the thesis text. `paper.tex` resolves them via `\graphicspath{{../../figures/thesis/}}` so the canonical figures location and the paper's relative-include syntax stay decoupled. (Consolidated 2026-05-14: 94 figures migrated here from the historical `thesis/paper/figures/`.)
 - `figures/presentation/` — presentation-specific figures
 - `figures/working/` — work-in-progress figures from analysis
 - `figures/attic/` — retired figures from pre-pivot framings
 
 **Writing:**
-The thesis output is a single academic paper (`thesis/paper.tex`, sections not chapters). Drafting hasn't started yet.
-- `thesis/proposal.md` — master thesis proposal
-- `thesis/paper.tex` (and `paper.pdf`) — the paper itself, when drafting begins. Single LaTeX file with `\section{}` blocks (intro, data, model, results, conclusion). If sections grow large, split via `\input{}` into a `thesis/sections/` subfolder.
-- `thesis/model/` — directory reserved for the new structural model when written (the pre-pivot `model.tex` was deleted 2026-05-04 since its asymmetric-granularity framing was superseded by the within-day DiD design and within-market granularity model).
+The thesis output is a single academic paper (`thesis/paper/paper.tex`, sections not chapters). Drafting is active (currently ~37 pages including appendices).
+- `thesis/paper/paper.tex` (and `paper.pdf`) — single LaTeX file with `\section{}` blocks (intro, theoretical model, data + identification, bidding-behaviour evidence, main results, appendices). `\input{tables/<name>.tex}` for tables.
+- `thesis/paper/tables/` — auto-generated LaTeX tables consumed by `paper.tex`.
+- `thesis/paper/references.bib` — bibliography.
+- `thesis/model/` — directory reserved for a separate structural-model write-up if it grows out of the paper (the pre-pivot `model.tex` was deleted 2026-05-04 since its asymmetric-granularity framing was superseded by the within-day DiD design and within-market granularity model).
 - `thesis/narratives/` — presentation narratives, planning documents
 - `thesis/presentations/workshop_february_2026/` — first thesis-progress presentation
-- `thesis/presentations/workshop_may_2026/` — second thesis-progress presentation (the headline pivot; current reference)
+- `thesis/presentations/workshop_may_2026/` — second thesis-progress presentation (the headline pivot)
+- `thesis/_archive/` — historical framings (do NOT cite as current); includes the May 2026 proposal-workshop framing.
 
 **Notebooks (exploration, not thesis output):**
 - `notebooks/eda/` — numbered exploratory data-analysis notebooks
@@ -107,6 +108,25 @@ Active families (each has a parser in `src/mtu/parsing/` and a full `00/10/20` p
 
 **Parser sharing:** `capacidad_inter_pbc` and `capacidad_inter_pvp` share one parser module (`capacidad_inter.py`), dispatched via `file_family` argument. All other families have their own module.
 
+### ESIOS data families
+
+Active ESIOS families (each has a parser in `src/mtu/parsing/esios/` and a full `00/10/20` pipeline under `scripts/pipelines/esios/`):
+
+| Family | Endpoint | Granularity | Coverage | Notes |
+|---|---|---|---|---|
+| `liquicierre` | Archive 17 | per-BSP × concept × ISP (15-min) | 2015-01 → 2024-12 | Pre-ISP15 settlement detail (legacy XML schema) |
+| `liquicierresrs` | Archive 203 | per-BSP × concept × ISP (15-min) | 2024-11 → present | Post-ISP15 settlement detail; concatenated with `liquicierre` into `liquicierre_all.parquet` |
+| `liquicomun_c5` | Archive 11 | system-aggregate × concept × ISP | 2015 → present | Settlement bundle, 181 concept families |
+| `curvas_ofertas_afrr` | Archive 234 | aggregate aFRR offer curves | 2024-11 → present | XLS payload |
+| `balancing_bids` | Archive 181 | aggregate mFRR bid stack | 2022-05 → 2024-12 | **Archive retired post-ISP15**; ID returns empty for 2024-12-11 → present |
+| `totalrp48preccierre` | Archive 28 | RT2 redispatch (closing) | 2015 → present | "Operación reforzada" |
+| `indisponibilidades` | Archive 105 | per-unit outage snapshots (UF and UP) | 2018 → present (monthly snapshots) | XLS payload, forward-looking |
+| `indicators` | `/indicators/{id}` | varies (15-min / hour / day / month — see catalog YAML) | varies | 139 curated indicators; long-format `indicators_all.parquet` |
+
+Indicator-pipeline driver: `scripts/pipelines/esios/indicators/00_batch_sync.py` reads `data/external/esios_indicator_catalog.yaml` and requests each indicator at its **native** granularity (88 of 139 are natively 15-min).
+
+S3-redirect handling and WAF behaviour are documented in `src/mtu/ingestion/esios_common.py` and the triage memo at `notebooks/memos/_esios_archive_catalog.md`.
+
 Before adding or changing a parser, read at least one neighbouring family's parser first.
 
 ## Reform dates (frequently referenced)
@@ -136,14 +156,30 @@ Three sources, kept strictly separate at the data layer:
   at `data/processed/entsoe/`. Spain control area = `10YES-REE------0`.
   See `src/mtu/ingestion/entsoe_common.py`.
 - **ESIOS (REE)** — Spanish national operator data (settlement detail,
-  technical-restrictions prices, aFRR offers, unit outages). Public
-  archive endpoint `https://api.esios.ree.es/archives/{id}/download`
-  served WITHOUT authentication. Per-subject (per-BRP) archives require
-  market-participant role registration we do not have. Downloaded via
-  `scripts/pipelines/esios/*/00_sync_*.py`. Raw at `data/raw/esios/`,
-  processed at `data/processed/esios/`. See
-  `src/mtu/ingestion/esios_common.py` and `data/raw/esios/README.md`
-  for the source map and tier ordering.
+  technical-restrictions prices, aFRR offers, unit outages, reserve-market
+  prices and volumes, fuel/CO₂ prices, renewable forecasts). Two endpoint
+  families on `https://api.esios.ree.es`:
+  - `/archives/{id}` — daily/monthly file dumps. Some are publicly served
+    without auth; richer ones require `ESIOS_TOKEN` from `.env`. Ingested
+    families: `liquicierre` (id 17), `liquicierresrs` (id 203),
+    `liquicomun_c5` (id 11), `curvas_ofertas_afrr` (id 234),
+    `totalrp48preccierre` (id 28), `indisponibilidades` (id 105), plus
+    master-data archives 110–113 (UF / UP / BRP / Participant chain).
+    `balancing_bids` (id 181) is **retired post-ISP15** (returns empty
+    payloads after 2024-12-10) — use `curvas_ofertas_afrr` instead.
+  - `/indicators/{id}` — 2,018 system-wide time series. We curate 139 of
+    them at `data/external/esios_indicator_catalog.yaml` with per-indicator
+    `time_trunc` (88 are natively 15-min, 42 hourly, 7 daily, 2 monthly).
+    Backfill via `scripts/pipelines/esios/indicators/00_batch_sync.py`.
+  Per-subject (per-BRP) archives `EF_*_sujetoEIC` remain gated behind
+  market-participant role registration we do not have.
+  Downloaded via `scripts/pipelines/esios/*/00_sync_*.py`. Raw at
+  `data/raw/esios/`, processed at `data/processed/esios/`. S3-redirect
+  quirk: large archives respond with HTTP 307 to a pre-signed S3 URL;
+  re-sending `x-api-key` invalidates the AWS signature, so the shared
+  helper follows the redirect without auth headers. See
+  `src/mtu/ingestion/esios_common.py`, `data/raw/esios/README.md`, and
+  the triage memo at `notebooks/memos/_esios_archive_catalog.md`.
 
 **Source separation rule.** Never mix sources within a single processed
 parquet without an explicit `source` column. If you find ESIOS-sourced

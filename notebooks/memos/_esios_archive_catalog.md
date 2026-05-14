@@ -175,7 +175,7 @@ Recommendation: per-BSP **assignment** detail in `liquicierre` is sufficient for
 
 ### Phase 2 — Extend per-BSP raw archives
 
-- `balancing_bids` (id 181) backfill 2024-12-11 → today (~540 days). Note: this is aggregate, not per-BSP, but still useful for total mFRR bid stack.
+- ~~`balancing_bids` (id 181) backfill 2024-12-11 → today~~ — **retired at ISP15 reform**: a 520-day sweep on 2026-05-15 returned `empty` for every day in the post-2024-12-10 window. Use `curvas_ofertas_afrr` (id 234, aFRR) and `liquicierresrs` (id 203, per-BSP settlement) for post-ISP15 reserves data.
 - `liquicierresrs` (id 203) backfill 2026-02 → today (~120 days).
 - `curvas_ofertas_afrr` (id 234) appears current (latest = 2026-04-26).
 
@@ -209,3 +209,41 @@ ESIOS bot-detection is sensitive — 0.05s gap from a single IP triggered persis
 - v2 Accept header (`application/json; application/vnd.esios-api-v2+json`)
 
 User has access to a backup token (girlfriend's) if primary gets banned.
+
+## ESIOS API endpoint inventory (received from user, 2026-05-15)
+
+Full official catalog of named endpoints. Two main resource families are
+relevant to our work; the rest is content/widgets that we do not use.
+
+**Archive resource family** — what we lean on most:
+- `/archives` — list all archives
+- `/archives?date_type=datos&start_date=…&end_date=…` — list by date
+- `/archives?taxonomy_terms[]=…` — list by taxonomy filter
+- `/archives/{id}` — archive metadata
+- `/archives/{id}/download?start_date=…&end_date=…` — payload (this is what `fetch_archive` calls)
+- `/archive_json/{id}` — JSON-typed archives (a different content path; not used yet)
+- `/archive_json/?taxonomy_terms[]=…` — list JSON archives by taxonomy
+
+**Indicator resource family** — what `/indicators` workhorse covers:
+- `/indicators` — list all indicators
+- `/indicators?taxonomy_terms[]=…` — list by taxonomy
+- `/indicators?text=…` — search by name
+- `/indicators/{id}` — indicator metadata (no values)
+- `/indicators/{id}?start_date=…&end_date=…` — values for one indicator
+- `/indicators/{id}?geo_ids[]=…` — values filtered by geo
+- `/indicators/{id}?geo_agg=sum|avg&time_agg=sum|avg&time_trunc=hour|day|month` — pre-aggregation server-side
+- `/indicators/{id}?grouped=geo_id|day|hour|month|year|five_minutes|ten_minutes|fifteen_minutes` — pre-grouping server-side
+- Disaggregated and composited variants exist (for derived calc indicators)
+- `/offers/{indicator_id}` — offer-side indicators with a datetime filter
+- `/contents_indicators?text=…` — joint search across contents + indicators
+
+**Other endpoint families** (not in scope for the thesis):
+- `/auctions` — explicit cross-border auctions (we don't model these)
+- `/maps`, `/documentations`, `/glossaries`, `/news`, `/static_pages`, `/umms` — content
+- `/widgets` (v1 deprecated; v2 active) — UI widget data
+- `/cached_widget_v2/datetime` — widget cache key
+- `/news?sticky=true|false&order=…` — news filtering
+
+**Useful patterns we might still adopt:**
+- `geo_agg=sum&time_agg=sum&time_trunc=month` on per-indicator calls would reduce 8-yr hourly indicator downloads from ~70K rows to ~100 rows per indicator with server-side aggregation — useful for Tier-A pulls when only monthly aggregates are needed.
+- `text=` indicator search would let us auto-discover indicators by Spanish keyword (e.g. `text=reserva+secundaria+precio`) without hand-curating the catalog.

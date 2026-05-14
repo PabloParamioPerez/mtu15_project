@@ -1,7 +1,20 @@
-\begin{tabular}{l l l l r r r}
+\small
+\begin{longtable}{@{}l l l l r r r@{}}
+\caption{\textbf{Quarter-by-quarter bid dissimilarity, October--December 2025.} For each (firm, unit, date, hour) cell with all four 15-min quarters present, $D$ is the maximum pairwise L1 area between cumulative bid curves. Flag = fraction of cells with $D > 0$.}\label{tab:quarter_dissim}\\
 \toprule
 Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ \\
 \midrule
+\endfirsthead
+\multicolumn{7}{l}{\emph{(continued from previous page)}} \\
+\toprule
+Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ \\
+\midrule
+\endhead
+\midrule
+\multicolumn{7}{r}{\emph{continued on next page}} \\
+\endfoot
+\bottomrule
+\endlastfoot
 Supply & CCGT & IB & Critical & 7,831 & 5.8 & 0.00 \\
  &  & IB & Flat & 2,139 & 3.9 & 0.00 \\
  &  & GE & Critical & 5,195 & 1.8 & 0.00 \\
@@ -67,5 +80,5 @@ Demand & Pump\_load & IB & Critical & 2,558 & 3.2 & 0.00 \\
  &  & IB & Flat & 276 & 95.3 & 0.30 \\
  &  & HC & Critical & 1,612 & 15.6 & 0.00 \\
  &  & HC & Flat & 441 & 12.2 & 0.00 \\
-\bottomrule
-\end{tabular}
+\end{longtable}
+\normalsize

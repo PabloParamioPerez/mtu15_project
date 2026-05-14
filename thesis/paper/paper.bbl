@@ -1,4 +1,4 @@
-\begin{thebibliography}{11}
+\begin{thebibliography}{12}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -54,6 +54,11 @@ Pedro H.~C. Sant'Anna.
 Pedro H.~C. Sant'Anna and Jun Zhao.
 \newblock Doubly robust difference-in-differences estimators.
 \newblock \emph{Journal of Econometrics}, 219\penalty0 (1):\penalty0 101--122, 2020.
+
+\bibitem[Vallender(1973)]{vallender1973}
+S.~S. Vallender.
+\newblock Calculation of the {W}asserstein distance between probability distributions on the line.
+\newblock \emph{Theory of Probability \& Its Applications}, 18\penalty0 (4):\penalty0 784--786, 1973.
 
 \bibitem[Wolak(2003)]{wolak_2003}
 Frank~A. Wolak.
