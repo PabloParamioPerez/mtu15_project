@@ -34,6 +34,10 @@ data/**
 !data/external/esios_reference/
 !data/external/esios_reference/*.csv
 !data/external/esios_reference/README.md
+!data/external/esios_indicator_catalog.yaml
+!data/external/esios_master/
+!data/external/esios_master/*.json
+!data/external/esios_master/*.txt
 !data/metadata/.gitkeep
 data/metadata/*.csv
 # ESIOS folder documentation (not the bulk data)

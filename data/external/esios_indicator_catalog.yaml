@@ -1,0 +1,278 @@
+# ESIOS /indicators curated catalog for the MTU15 / ISP15 thesis.
+#
+# 109 indicators across 4 priority tiers, intended as a backfill 2018-01-01 → today
+# via scripts/pipelines/esios/00_download_indicator.py.
+#
+# Source: 2,018-indicator catalog at https://api.esios.ree.es/indicators (token required).
+# Catalog dump at /tmp/esios_catalog_full.json from 2026-05-15 exploration.
+#
+# Per the project plan (~/.claude/plans/dazzling-churning-seal.md), this YAML drives
+# scripts/pipelines/esios/indicators/00_batch_sync.py.
+
+version: 1
+created: 2026-05-15
+
+# Default ingestion parameters per indicator (can be overridden per-entry).
+defaults:
+  start_date: "2018-01-01"
+  end_date: "today"
+  time_trunc: "hour"
+
+tiers:
+
+  # =====================================================================
+  # Tier A — controls and TTF/CO2 defense (25 indicators)
+  # =====================================================================
+
+  - name: "fuel_prices_ttf_co2_proxy"
+    description: "REE reference fuel and CO2 prices (TNP context, proxy for TTF/EUA)"
+    priority: A
+    indicators:
+      - {id: 1391, slug: "co2_pco2d",         name: "Precio derechos emisión CO2 (PCO2D)"}
+      - {id: 1940, slug: "fuel_gas_natural",  name: "Precio Gas Natural TNP"}
+      - {id: 1933, slug: "fuel_diesel_oil",   name: "Precio diesel oil TNP"}
+      - {id: 1934, slug: "fuel_fuel_03",      name: "Precio fuel 0.3% TNP"}
+      - {id: 1935, slug: "fuel_fuel_073",     name: "Precio fuel 0.73% TNP"}
+      - {id: 1936, slug: "fuel_carbon",       name: "Precio carbón Baleares"}
+      - {id: 1938, slug: "fuel_gasoleo",      name: "Precio gasoleo TNP"}
+      - {id: 1939, slug: "fuel_fuel_1",       name: "Precio fuel 1% TNP"}
+
+  - name: "renewable_forecasts"
+    description: "Wind/solar forecast horizons for conditional parallel-trends controls"
+    priority: A
+    indicators:
+      - {id: 541,   slug: "wind_forecast_pen",    name: "Previsión producción eólica peninsular"}
+      - {id: 542,   slug: "solar_pv_forecast",    name: "Generación prevista Solar PV"}
+      - {id: 543,   slug: "solar_thermal_forecast", name: "Generación prevista Solar térmica"}
+      - {id: 1777,  slug: "wind_forecast_d1",     name: "Previsión D+1 eólica"}
+      - {id: 1778,  slug: "wind_forecast_h3",     name: "Previsión intradiaria H+3 eólica"}
+      - {id: 10034, slug: "solar_forecast_combined", name: "Generación prevista Solar combinada"}
+      - {id: 10358, slug: "wind_pv_forecast_d1",  name: "Previsión D+1 eólica + PV"}
+      - {id: 10359, slug: "wind_pv_forecast_h3",  name: "Previsión H+3 eólica + PV"}
+      - {id: 10249, slug: "residual_demand_forecast", name: "Previsión demanda residual"}
+
+  - name: "demand_actual_forecast"
+    description: "Demand realised and forecast horizons"
+    priority: A
+    indicators:
+      - {id: 460,   slug: "demand_forecast_daily_pen",  name: "Previsión diaria demanda peninsular"}
+      - {id: 461,   slug: "demand_forecast_monthly_pen", name: "Previsión mensual demanda peninsular"}
+      - {id: 544,   slug: "demand_forecast",            name: "Demanda prevista"}
+      - {id: 603,   slug: "demand_forecast_weekly_pen", name: "Previsión semanal demanda peninsular"}
+      - {id: 1192,  slug: "demand_barras_central",      name: "Demanda en barras de central"}
+      - {id: 1293,  slug: "demand_real",                name: "Demanda real"}
+      - {id: 1742,  slug: "demand_real_snp",            name: "Demanda Real SNP"}
+      - {id: 1775,  slug: "demand_forecast_d1",         name: "Previsión D+1 demanda"}
+      - {id: 1776,  slug: "demand_forecast_h3",         name: "Previsión intradiaria H+3 demanda"}
+      - {id: 2052,  slug: "demand_real_forecast_nat",   name: "Demanda real prevista nacional"}
+
+  # =====================================================================
+  # Tier B — clearing prices and PVPC component decomposition (22)
+  # =====================================================================
+
+  - name: "market_clearing_prices_sanity"
+    description: "DA + IDA session prices (sanity-check against OMIE; spot-pull only, not full backfill)"
+    priority: B_spotcheck
+    indicators:
+      - {id: 600,  slug: "price_da_spot",     name: "Precio mercado SPOT Diario"}
+      - {id: 612,  slug: "price_ida_s1",      name: "Precio Intradiario Sesión 1"}
+      - {id: 613,  slug: "price_ida_s2",      name: "Precio Intradiario Sesión 2"}
+      - {id: 614,  slug: "price_ida_s3",      name: "Precio Intradiario Sesión 3"}
+      - {id: 615,  slug: "price_ida_s4",      name: "Precio Intradiario Sesión 4"}
+      - {id: 616,  slug: "price_ida_s5",      name: "Precio Intradiario Sesión 5"}
+      - {id: 617,  slug: "price_ida_s6",      name: "Precio Intradiario Sesión 6"}
+      - {id: 618,  slug: "price_ida_s7",      name: "Precio Intradiario Sesión 7"}
+    # Spot-check only: 1 day around 2025-10-15 to verify ESIOS matches OMIE.
+    # Once verified, DO NOT backfill — OMIE marginalpdbc / marginalpibc are authoritative.
+
+  - name: "pvpc_unified_components"
+    description: "Quarter-hour unified PVPC price decomposition (mercado diario, restricciones, IDA, RPA, banda secundaria, desvíos, pagos capacidad, final)"
+    priority: B
+    indicators:
+      - {id: 805, slug: "pvpc_qh_mercado_diario",       name: "PVPC QH componente mercado diario"}
+      - {id: 806, slug: "pvpc_qh_restricciones_pbf",    name: "PVPC QH componente restricciones PBF"}
+      - {id: 807, slug: "pvpc_qh_restricciones_rt",     name: "PVPC QH componente restricciones tiempo real"}
+      - {id: 808, slug: "pvpc_qh_mercado_intradiario",  name: "PVPC QH componente mercado intradiario"}
+      - {id: 809, slug: "pvpc_qh_restricciones_ida",    name: "PVPC QH componente restricciones intradiario"}
+      - {id: 810, slug: "pvpc_qh_rpa",                  name: "PVPC QH componente RPA"}
+      - {id: 811, slug: "pvpc_qh_banda_secundaria",     name: "PVPC QH componente banda secundaria"}
+      - {id: 812, slug: "pvpc_qh_desvios",              name: "PVPC QH componente desvíos"}
+      - {id: 813, slug: "pvpc_qh_saldo_desvios",        name: "PVPC QH componente saldo desvíos"}
+      - {id: 814, slug: "pvpc_qh_pagos_capacidad",      name: "PVPC QH componente pagos capacidad"}
+      - {id: 815, slug: "pvpc_qh_saldo_po146",          name: "PVPC QH componente saldo P.O.14.6"}
+      - {id: 816, slug: "pvpc_qh_fallo_nominacion_upg", name: "PVPC QH componente fallo nominación UPG"}
+      - {id: 817, slug: "pvpc_qh_final",                name: "PVPC QH precio final"}
+
+  - name: "demand_program_stages_total"
+    description: "Total demand by program stage (PBF / PVP / PHF1-7 / PHFC / P48)"
+    priority: B
+    indicators:
+      - {id: 10141, slug: "demand_pbf_total",  name: "Demanda programada PBF total"}
+      - {id: 10142, slug: "demand_pvp_total",  name: "Demanda programada PVP total"}
+      - {id: 10143, slug: "demand_phf1_total", name: "Demanda programada PHF1 total"}
+      - {id: 10144, slug: "demand_phf2_total", name: "Demanda programada PHF2 total"}
+      - {id: 10145, slug: "demand_phf3_total", name: "Demanda programada PHF3 total"}
+      - {id: 10146, slug: "demand_phf4_total", name: "Demanda programada PHF4 total"}
+      - {id: 10147, slug: "demand_phf5_total", name: "Demanda programada PHF5 total"}
+      - {id: 10148, slug: "demand_phf6_total", name: "Demanda programada PHF6 total"}
+      - {id: 10149, slug: "demand_phf7_total", name: "Demanda programada PHF7 total"}
+      - {id: 10279, slug: "demand_phfc_total", name: "Demanda programada PHFC total"}
+      - {id: 10027, slug: "demand_p48_total",  name: "Demanda programada P48 total"}
+      - {id: 462,   slug: "potencia_indisp_pbf",  name: "Potencia indisponible generación en PBF"}
+      - {id: 463,   slug: "potencia_indisp_cierre", name: "Potencia indisponible generación en cierre"}
+
+  # =====================================================================
+  # Tier D — reserve market PRICES (34)
+  # =====================================================================
+
+  - name: "afrr_prices"
+    description: "aFRR (regulación secundaria) reservation and energy prices"
+    priority: D
+    indicators:
+      - {id: 634,   slug: "afrr_reserve_price_down",  name: "Precio reserva aFRR a bajar"}
+      - {id: 2130,  slug: "afrr_reserve_price_up",    name: "Precio reserva aFRR a subir"}
+      - {id: 682,   slug: "afrr_energy_price_up",     name: "Precio energía aFRR a subir"}
+      - {id: 683,   slug: "afrr_energy_price_down",   name: "Precio energía aFRR a bajar"}
+      - {id: 10388, slug: "afrr_reserve_weighted_up", name: "Precio medio ponderado reserva aFRR subir"}
+      - {id: 10463, slug: "afrr_reserve_weighted_down", name: "Precio medio ponderado reserva aFRR bajar"}
+
+  - name: "mfrr_prices"
+    description: "mFRR (regulación terciaria) marginal prices, activación programada"
+    priority: D
+    indicators:
+      - {id: 676, slug: "mfrr_price_down_ap", name: "Precio marginal terciaria a bajar AP"}
+      - {id: 677, slug: "mfrr_price_up_ap",   name: "Precio marginal terciaria a subir AP"}
+
+  - name: "rr_prices"
+    description: "Replacement Reserves (energías de balance RR) prices"
+    priority: D
+    indicators:
+      - {id: 1782, slug: "rr_energy_price", name: "Precio energías de balance RR"}
+
+  - name: "rpa_prices"
+    description: "RPA (Reserva de Potencia Adicional) ramping-reserve prices"
+    priority: D
+    indicators:
+      - {id: 628, slug: "rpa_price_up", name: "Precio Reserva potencia adicional a subir"}
+
+  - name: "imbalance_settlement_prices"
+    description: "Gestión Desvíos and imbalance settlement prices"
+    priority: D
+    indicators:
+      - {id: 668, slug: "gd_price_up",       name: "Precio Gestión Desvíos subir"}
+      - {id: 669, slug: "gd_price_down",     name: "Precio Gestión Desvíos bajar"}
+      - {id: 686, slug: "imb_price_cobro_up",  name: "Precio cobro desvíos a subir"}
+      - {id: 687, slug: "imb_price_pago_down", name: "Precio pago desvíos a bajar"}
+      - {id: 763, slug: "imb_price_med_up",    name: "Precio desvíos medidos a subir"}
+      - {id: 764, slug: "imb_price_med_down",  name: "Precio desvíos medidos a bajar"}
+      - {id: 765, slug: "imb_price_delta_up",  name: "Precio desvío vs marginal diario subir"}
+      - {id: 766, slug: "imb_price_delta_down", name: "Precio desvío vs marginal diario bajar"}
+
+  - name: "tech_restrictions_prices"
+    description: "Restricciones técnicas Phase I/II prices (reforzada confound)"
+    priority: D
+    indicators:
+      - {id: 705, slug: "rt_fase1_price_up",   name: "Precio medio restricciones Fase I subir"}
+      - {id: 706, slug: "rt_fase1_price_down", name: "Precio medio restricciones Fase I bajar"}
+      - {id: 707, slug: "rt_fase2_price_up",   name: "Precio medio restricciones Fase II subir"}
+      - {id: 708, slug: "rt_fase2_price_down", name: "Precio medio restricciones Fase II bajar"}
+
+  # =====================================================================
+  # Tier E — reserve market VOLUMES (50)
+  # =====================================================================
+
+  - name: "afrr_volumes"
+    description: "aFRR (secundaria) requirements, assignments, activations"
+    priority: E
+    indicators:
+      - {id: 630,   slug: "afrr_req_up",       name: "Requerimientos reserva aFRR subir"}
+      - {id: 631,   slug: "afrr_req_down",     name: "Requerimientos reserva aFRR bajar"}
+      - {id: 632,   slug: "afrr_assign_up",    name: "Asignación reserva aFRR subir"}
+      - {id: 633,   slug: "afrr_assign_down",  name: "Asignación reserva aFRR bajar"}
+      - {id: 680,   slug: "afrr_energy_act_up",   name: "Energía activada aFRR subir SEPE"}
+      - {id: 681,   slug: "afrr_energy_act_down", name: "Energía activada aFRR bajar SEPE"}
+      - {id: 10056, slug: "afrr_energy_abs",      name: "Volumen absoluto energía utilizada aFRR"}
+      - {id: 10252, slug: "afrr_energy_net",      name: "Volumen neto energía utilizada aFRR"}
+      - {id: 10323, slug: "afrr_balance_up",      name: "Energía de balance a subir"}
+      - {id: 10324, slug: "afrr_balance_down",    name: "Energía de balance a bajar"}
+
+  - name: "mfrr_volumes"
+    description: "mFRR (terciaria) requirements, assignments — both AP (programada) and AD (directa)"
+    priority: E
+    indicators:
+      - {id: 672,  slug: "mfrr_req_up",      name: "Necesidad terciaria subir"}
+      - {id: 673,  slug: "mfrr_req_down",    name: "Necesidad terciaria bajar"}
+      - {id: 674,  slug: "mfrr_assign_down_ap", name: "Asignación mFRR programada bajar"}
+      - {id: 675,  slug: "mfrr_assign_up_ap",   name: "Asignación mFRR programada subir"}
+      - {id: 716,  slug: "mfrr_cobro_ap",    name: "Derechos cobro energías mFRR"}
+      - {id: 717,  slug: "mfrr_pago_ap",     name: "Obligaciones pago energías mFRR"}
+      - {id: 1788, slug: "mfrr_req_up_v2",   name: "Requerimientos reserva mFRR subir"}
+      - {id: 1789, slug: "mfrr_req_down_v2", name: "Requerimientos reserva mFRR bajar"}
+      - {id: 1883, slug: "mfrr_assign_down_ad_qh1", name: "Asignación directa mFRR bajar AD QH1"}
+      - {id: 1884, slug: "mfrr_assign_up_ad_qh0",   name: "Asignación directa mFRR subir AD QH0"}
+      - {id: 1885, slug: "mfrr_assign_down_ad_qh0", name: "Asignación directa mFRR bajar AD QH0"}
+      - {id: 1886, slug: "mfrr_assign_up_ad_qh1",   name: "Asignación directa mFRR subir AD QH1"}
+      - {id: 1891, slug: "mfrr_cubierta_down_ap",   name: "Necesidad cubierta mFRR bajar AP"}
+      - {id: 1892, slug: "mfrr_cubierta_up_ap",     name: "Necesidad cubierta mFRR subir AP"}
+      - {id: 1893, slug: "mfrr_cubierta_down_ad",   name: "Necesidad cubierta mFRR bajar AD"}
+      - {id: 1894, slug: "mfrr_cubierta_up_ad",     name: "Necesidad cubierta mFRR subir AD"}
+
+  - name: "rr_volumes"
+    description: "RR (reposición / reserva de sustitución) requirements + assignments"
+    priority: E
+    indicators:
+      - {id: 666,  slug: "rr_cubierta_up",   name: "Necesidades cubiertas RR subir"}
+      - {id: 667,  slug: "rr_cubierta_down", name: "Necesidades cubiertas RR bajar"}
+      - {id: 714,  slug: "rr_cobro",         name: "Derechos cobro RR"}
+      - {id: 715,  slug: "rr_pago",          name: "Obligaciones pago RR"}
+      - {id: 1783, slug: "rr_assign_up_see", name: "Asignación a subir RR SEE"}
+      - {id: 1784, slug: "rr_assign_down_see", name: "Asignación a bajar RR SEE"}
+      - {id: 1787, slug: "rr_inelastica_solicitada", name: "Necesidad inelástica solicitada RR"}
+
+  - name: "gestion_desvios_volumes"
+    description: "Gestión Desvíos requirements"
+    priority: E
+    indicators:
+      - {id: 664, slug: "gd_req_up",   name: "Requerimientos Gestión Desvíos subir"}
+      - {id: 665, slug: "gd_req_down", name: "Requerimientos Gestión Desvíos bajar"}
+
+  - name: "rpa_volumes"
+    description: "RPA (ramping reserve) requirements and assignments"
+    priority: E
+    indicators:
+      - {id: 626, slug: "rpa_req_up",    name: "Requerimientos RPA subir"}
+      - {id: 627, slug: "rpa_assign_up", name: "Asignación RPA subir"}
+
+  - name: "imbalance_volumes"
+    description: "Aggregate imbalance volumes"
+    priority: E
+    indicators:
+      - {id: 762,  slug: "imb_energy_net",    name: "Energía neta de balance"}
+      - {id: 767,  slug: "imb_excedente_def", name: "Exceso/déficit desvíos medidos"}
+      - {id: 1338, slug: "imb_vol_neto",      name: "Volumen neto desvíos generación-demanda"}
+
+  - name: "demand_response_volumes"
+    description: "Servicio Respuesta Activa Demanda (SRAD)"
+    priority: E
+    indicators:
+      - {id: 1929, slug: "srad_potencia_activada", name: "Potencia activada SRAD"}
+      - {id: 1931, slug: "srad_energia_asignada",  name: "Energía asignada SRAD"}
+
+  - name: "crossborder_balance_flows"
+    description: "Cross-border balancing market flows SEE↔FR↔PT"
+    priority: E
+    indicators:
+      - {id: 535, slug: "xb_balance_fr_import", name: "Balance transfronterizo FR importación"}
+      - {id: 536, slug: "xb_balance_fr_export", name: "Balance transfronterizo FR exportación"}
+      - {id: 539, slug: "xb_balance_pt_import", name: "Balance transfronterizo PT importación"}
+      - {id: 540, slug: "xb_balance_pt_export", name: "Balance transfronterizo PT exportación"}
+      - {id: 688, slug: "xb_offer_see_import",  name: "Energía ofertas SEE importación"}
+      - {id: 689, slug: "xb_offer_see_export",  name: "Energía ofertas SEE exportación"}
+      - {id: 690, slug: "xb_offer_fr_import_see",  name: "Ofertas FR importación activadas SEE"}
+      - {id: 691, slug: "xb_offer_pt_import_see",  name: "Ofertas PT importación activadas SEE"}
+      - {id: 692, slug: "xb_offer_fr_export_see",  name: "Ofertas FR exportación activadas SEE"}
+      - {id: 693, slug: "xb_offer_pt_export_see",  name: "Ofertas PT exportación activadas SEE"}
+      - {id: 694, slug: "xb_offer_see_import_fr",  name: "Ofertas SEE importación activadas FR"}
+      - {id: 695, slug: "xb_offer_see_import_pt",  name: "Ofertas SEE importación activadas PT"}
+      - {id: 696, slug: "xb_offer_see_export_fr",  name: "Ofertas SEE exportación activadas FR"}
+      - {id: 697, slug: "xb_offer_see_export_pt",  name: "Ofertas SEE exportación activadas PT"}

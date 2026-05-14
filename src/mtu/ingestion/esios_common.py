@@ -141,6 +141,12 @@ def fetch_archive(
     """Download an archive payload (ZIP or single file) from ESIOS.
 
     Returns `(body, status)` where status is "ok" or "empty".
+
+    Handles the ESIOS S3-redirect quirk: large archives respond with HTTP 307
+    pointing to a pre-signed S3 URL with AWS4-HMAC-SHA256 signature.
+    Re-sending the API key on that redirect leg invalidates the AWS signature
+    (returns 403 SignatureDoesNotMatch). We follow the redirect manually with
+    a plain `requests.get` (no auth headers).
     """
     url = archive_url(archive_id)
     params = {
@@ -153,14 +159,35 @@ def fetch_archive(
 
     for attempt in range(1, max_retries + 1):
         try:
-            r = session.get(url, params=params, timeout=timeout)
+            # allow_redirects=False so we can manually re-fetch without auth headers
+            r = session.get(url, params=params, timeout=timeout, allow_redirects=False)
         except requests.RequestException as e:
             last_err = f"request error: {e}"
             _backoff(attempt, max_retries, last_err)
             continue
 
+        # 307 redirect to S3 — fetch Location *without* re-sending the API key
+        if r.status_code in (301, 302, 303, 307, 308):
+            location = r.headers.get("Location") or r.headers.get("location")
+            if not location:
+                raise RuntimeError(f"redirect without Location header (HTTP {r.status_code})")
+            try:
+                r2 = requests.get(location, timeout=timeout)  # no session, no auth headers
+            except requests.RequestException as e:
+                last_err = f"S3 follow-up error: {e}"
+                _backoff(attempt, max_retries, last_err)
+                continue
+            if r2.status_code == 200:
+                if len(r2.content) < 200:
+                    return r2.content, "empty"
+                return r2.content, "ok"
+            if r2.status_code == 404:
+                return r2.content, "empty"
+            r2.raise_for_status()
+            raise RuntimeError(f"S3 unexpected HTTP {r2.status_code}: {r2.text[:300]}")
+
         if r.status_code == 200:
-            # ESIOS returns 200 with very small body when empty
+            # ESIOS sometimes returns 200 directly (no redirect) for small payloads
             if len(r.content) < 200:
                 return r.content, "empty"
             return r.content, "ok"

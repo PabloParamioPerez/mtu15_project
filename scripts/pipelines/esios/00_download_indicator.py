@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -22,14 +23,22 @@ DEMO_TOKEN = "96c56fcd69dd5c29f569ab3ea9298b37151a1ee488a1830d353babad3ec90fd7"
 
 def get_token() -> str:
     token = os.environ.get("ESIOS_TOKEN", "").strip()
-    if not token:
-        print("[WARN] ESIOS_TOKEN not set; using demo key (may be rate-limited)")
-        return DEMO_TOKEN
-    return token
+    if token:
+        return token
+    # Fallback: read directly from project .env (gitignored)
+    env_path = PROJECT_ROOT / ".env"
+    if env_path.exists():
+        for line in env_path.read_text().splitlines():
+            if line.startswith("ESIOS_TOKEN="):
+                token = line.split("=", 1)[1].strip()
+                if token:
+                    return token
+    print("[WARN] ESIOS_TOKEN not set; using demo key (may be rate-limited)")
+    return DEMO_TOKEN
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Download ESIOS indicator time series (one JSON per day)")
+    p = argparse.ArgumentParser(description="Download ESIOS indicator time series (one JSON per chunk)")
     p.add_argument("--indicator-id", required=True, type=int, help="ESIOS indicator ID")
     p.add_argument("--start-date", required=True, help="YYYY-MM-DD")
     p.add_argument("--end-date", required=True, help="YYYY-MM-DD")
@@ -38,7 +47,21 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional time aggregation: hour, fifteen_minutes, ten_minutes, five_minutes, day, month",
     )
+    p.add_argument(
+        "--chunk",
+        choices=("day", "month"),
+        default="month",
+        help="Chunk granularity: 'day' = 1 JSON per day (24 values each for hourly), "
+        "'month' = 1 JSON per calendar month (~720 values each for hourly). "
+        "Default 'month' minimises API calls and respects ESIOS rate limits.",
+    )
     p.add_argument("--timeout", type=int, default=60)
+    p.add_argument(
+        "--sleep",
+        type=float,
+        default=2.0,
+        help="Seconds to wait between requests (anti-WAF rate limit). Default 2.0",
+    )
     return p.parse_args()
 
 
@@ -49,9 +72,25 @@ def dates_range(start: date, end: date):
         cur += timedelta(days=1)
 
 
-def build_url(indicator_id: int, d: date, time_trunc: str | None) -> str:
-    start = f"{d.isoformat()}T00:00:00"
-    end = f"{d.isoformat()}T23:59:59"
+def month_chunks(start: date, end: date):
+    """Yield (chunk_start, chunk_end) date pairs, one per calendar month, clipped to [start, end]."""
+    cur = date(start.year, start.month, 1)
+    while cur <= end:
+        # End of this month
+        if cur.month == 12:
+            nxt = date(cur.year + 1, 1, 1)
+        else:
+            nxt = date(cur.year, cur.month + 1, 1)
+        month_end = nxt - timedelta(days=1)
+        c_start = max(cur, start)
+        c_end = min(month_end, end)
+        yield c_start, c_end
+        cur = nxt
+
+
+def build_url(indicator_id: int, d0: date, d1: date, time_trunc: str | None) -> str:
+    start = f"{d0.isoformat()}T00:00:00"
+    end = f"{d1.isoformat()}T23:59:59"
     url = f"{BASE_URL}/indicators/{indicator_id}?start_date={start}&end_date={end}"
     if time_trunc:
         url += f"&time_trunc={time_trunc}"
@@ -94,9 +133,11 @@ def main() -> None:
     session = requests.Session()
     session.headers.update(
         {
-            "Accept": "application/json; application/vnd.esios-api-v1+json",
+            "Accept": "application/json; application/vnd.esios-api-v2+json",
             "Content-Type": "application/json",
+            "Host": "api.esios.ree.es",
             "x-api-key": token,
+            "User-Agent": "mtu15-research/0.1 (CEMFI master thesis; contact mochilarojaverde@gmail.com)",
         }
     )
 
@@ -104,16 +145,26 @@ def main() -> None:
     already_present = 0
     errors = 0
 
+    chunk_iter = (
+        [(d, d) for d in dates_range(start_date, end_date)]
+        if args.chunk == "day"
+        else list(month_chunks(start_date, end_date))
+    )
+
     print(
         f"Downloading ESIOS indicator {args.indicator_id} from {start_date} to {end_date}"
-        + (f" (time_trunc={args.time_trunc})" if args.time_trunc else "")
+        f" (chunk={args.chunk}, {len(chunk_iter)} chunks)"
+        + (f", time_trunc={args.time_trunc}" if args.time_trunc else "")
     )
     print(f"Raw dir: {raw_dir}\n")
 
-    for d in dates_range(start_date, end_date):
-        fname = f"indicator_{args.indicator_id}_{d.strftime('%Y%m%d')}.json"
+    for d0, d1 in chunk_iter:
+        if args.chunk == "day":
+            fname = f"indicator_{args.indicator_id}_{d0.strftime('%Y%m%d')}.json"
+        else:
+            fname = f"indicator_{args.indicator_id}_{d0.strftime('%Y%m')}.json"
         out_path = raw_dir / fname
-        url = build_url(args.indicator_id, d, args.time_trunc)
+        url = build_url(args.indicator_id, d0, d1, args.time_trunc)
 
         if out_path.exists():
             print(f"[SKIP exists] {fname}")
@@ -140,11 +191,15 @@ def main() -> None:
             continue
 
         out_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-        append_manifest_row(manifest_csv, out_path, url, args.indicator_id, d)
+        append_manifest_row(manifest_csv, out_path, url, args.indicator_id, d0)
 
         n_values = len(data.get("indicator", {}).get("values", []))
-        print(f"[DOWNLOADED] {fname} ({n_values} values)")
+        print(f"[DOWNLOADED] {fname} ({n_values} values, {d0} → {d1})")
         downloaded += 1
+
+        # Rate-limit (anti-WAF). Default 2 seconds between calls.
+        if args.sleep > 0:
+            time.sleep(args.sleep)
 
     print(f"\nDone. downloaded={downloaded}, already_present={already_present}, errors={errors}")
 
