@@ -213,18 +213,6 @@ GAS PRICES CAN AFFECT DIFFERENTLY CRITICAL AND FLAT HOURS, BUT WE SEE THAT GAS I
 
 \textit{Reading} (\textbf{supportive}). Hydro is the dominant price-setter in both hour-classes ($\sim$58\% of periods post-reform), reflecting reservoir water-value sitting at the merit-order edge. CCGT sets the price in 9.1\% of critical-hour periods vs 9.0\% of flat-hour periods post-reform --- a 0.2~pp critical--flat gap, essentially symmetric. A TTF (gas-price) shock therefore propagates into both hour-classes through the same channel and at the same intensity; an asymmetric gas confound on the critical--flat clearing-price spread would have required CCGT to set the price disproportionately in one class, which we do not observe. Hydro\_pump's critical--flat gap is $+5.4$~pp (19.0\% vs 13.7\%) post-reform; this is consistent with regular storage arbitrage (charge during low-price midday/flat hours, discharge into the evening peak) and is not, on its own, evidence of MTU15-induced strategic behaviour. (Coverage caveat: $\sim$36\% of critical-hour periods have their clearing price set by a unit not present in our generation-unit panel \texttt{lista\_unidades.csv} --- e.g.\ Portuguese-zone generation units, demand-side buy bids that set the clearing, or block-order/interconnection bids without a single unit code --- and are excluded from the table. \emph{Bilateral contracts do not enter EUPHEMIA}: per the OMIE file specification (\texttt{ficherosomie137.pdf}, §5.1.2.1, §5.1.2.3), bilateral-contract executions are reported separately by the unit owners \emph{after} clearing and merged into the final daily program (PDBF, \texttt{offer\_type=4}), so they cannot set the auction price. The patterns above describe the remaining matched majority of periods.)
 
-\paragraph{Operación reforzada as a non-collinear regulatory overlay.} A separate identification concern is that REE has held a continuous \emph{operación reforzada} stance since the 28 April 2025 Iberian blackout: a real-time technical-restrictions regime (PO-3.x cascade, PO-7.4 zonal reactive market from June 2025) that activates additional reserves at the unit level and can lift the day-ahead--to-intraday wedge. Two facts pin down its non-collinearity with the MTU15-DA reform:
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{fig_reforzada_intensity.pdf}
-\caption{\textbf{Reforzada / RT2 intensity, January 2024 -- May 2026.} Top panel: monthly average of absolute energy assigned via real-time technical restrictions (ESIOS indicator 10052). Bottom panel: monthly average of additional reserve needs identified in real time (ESIOS indicator 1880; coverage from 2021-05). Dashed vertical lines mark, in order, ISP15 (2024-12-09), MTU15-IDA (2025-03-19), the Iberian blackout (2025-04-28) and MTU15-DA (2025-10-01).}
-\label{fig:reforzada_intensity}
-\end{figure}
-
-\textit{Reading} (\textbf{supportive}). RT2 activation steps up sharply at the blackout and then \emph{remains continuously high} through both the DA60/ID15 regime (April--September 2025) and the post-MTU15-DA window (October 2025 onward). It is therefore a regime change that begins five months before MTU15-DA and persists across it: $D_{\text{MTU15-DA}}$ and $D_{\text{reforzada}}$ are not collinear in panels including the 2025-03-19 to 2025-04-27 sub-window (post-MTU15-IDA, pre-reforzada). Within-day DiD with calendar-month FE in the post-reforzada window absorbs the level of reforzada activation; differences in MTU15-DA exposure across critical-vs-flat hours within a calendar month identify the reform effect cleanly.
-
-
 % =====================================================================
 \section{Bidding-behavior evidence of the mechanism}\label{sec:bid_evidence}
 % =====================================================================
@@ -558,6 +546,17 @@ with firm fixed effects $\gamma_f$, day-of-week fixed effects $\delta_{\mathrm{D
 % price. Confounded by post-blackout reforzada (Apr-Sep 2025); same-
 % cal-month restriction holds reforzada constant. Full-window spec needs
 % reforzada × critical interaction.
+
+\paragraph{Operación reforzada as a non-collinear regulatory overlay.} REE has held a continuous \emph{operación reforzada} stance since the 28 April 2025 Iberian blackout: a real-time technical-restrictions regime (PO-3.x cascade, PO-7.4 zonal reactive market from June 2025) that activates additional reserves at the unit level and can lift the day-ahead--to-intraday wedge. Figure~\ref{fig:reforzada_intensity} shows the time profile.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{fig_reforzada_intensity.pdf}
+\caption{\textbf{Reforzada / RT2 intensity, January 2024 -- May 2026.} Top panel: monthly average of absolute energy assigned via real-time technical restrictions (ESIOS indicator 10052). Bottom panel: monthly average of additional reserve needs identified in real time (ESIOS indicator 1880; coverage from 2021-05). Dashed vertical lines mark, in order, ISP15 (2024-12-09), MTU15-IDA (2025-03-19), the Iberian blackout (2025-04-28) and MTU15-DA (2025-10-01).}
+\label{fig:reforzada_intensity}
+\end{figure}
+
+\textit{Reading}. RT2 activation steps up sharply at the blackout and then \emph{remains continuously high} through both the DA60/ID15 regime (April--September 2025) and the post-MTU15-DA window (October 2025 onward). It is therefore a regime change that begins five months before MTU15-DA and persists across it: $D_{\text{MTU15-DA}}$ and $D_{\text{reforzada}}$ are not collinear in panels including the 2025-03-19 to 2025-04-27 sub-window (post-MTU15-IDA, pre-reforzada). Within-day DiD with calendar-month FE in the post-reforzada window absorbs the level of reforzada activation; differences in MTU15-DA exposure across critical-vs-flat hours within a calendar month identify the reform effect cleanly.
 
 % DiD OUTPUT HIDDEN -- uncomment to re-enable
 % \begin{table}[H]
