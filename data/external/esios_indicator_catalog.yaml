@@ -177,6 +177,45 @@ tiers:
       - {id: 707, slug: "rt_fase2_price_up",   name: "Precio medio restricciones Fase II subir", time_trunc: "fifteen_minutes", native: "Quince minutos"}
       - {id: 708, slug: "rt_fase2_price_down", name: "Precio medio restricciones Fase II bajar", time_trunc: "fifteen_minutes", native: "Quince minutos"}
 
+  - name: "tech_restrictions_volumes_daily_fase1"
+    description: "Restricciones técnicas Phase I (day-ahead) volumes by zone — Subir/Bajar per RSI/SCB/SCA/CT/RTD"
+    priority: D
+    indicators:
+      - {id: 2352,  slug: "rt_d_fase1_up_rsi",   name: "Energía RT diario Fase I Subir RSI",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2353,  slug: "rt_d_fase1_down_rsi", name: "Energía RT diario Fase I Bajar RSI",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10518, slug: "rt_d_fase1_abs_rsi",  name: "Energía RT diario Fase I Absoluto RSI", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1790,  slug: "rt_d_fase1_up_scb",   name: "Energía RT diario Fase I Subir SCB",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1791,  slug: "rt_d_fase1_down_scb", name: "Energía RT diario Fase I Bajar SCB",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1792,  slug: "rt_d_fase1_up_sca",   name: "Energía RT diario Fase I Subir SCA",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1793,  slug: "rt_d_fase1_down_sca", name: "Energía RT diario Fase I Bajar SCA",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1794,  slug: "rt_d_fase1_up_ct",    name: "Energía RT diario Fase I Subir CT",   time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1795,  slug: "rt_d_fase1_down_ct",  name: "Energía RT diario Fase I Bajar CT",   time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1796,  slug: "rt_d_fase1_up_rtd",   name: "Energía RT diario Fase I Subir RTD",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1797,  slug: "rt_d_fase1_down_rtd", name: "Energía RT diario Fase I Bajar RTD",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+
+  - name: "tech_restrictions_volumes_realtime"
+    description: "Restricciones técnicas en Tiempo Real (RT2 / 'operación reforzada') volumes — by category and zone"
+    priority: D
+    indicators:
+      - {id: 10052, slug: "rt_rt_abs_total",   name: "Volumen absoluto energía RT en tiempo real", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10253, slug: "rt_rt_net_total",   name: "Volumen neto energía RT en tiempo real",     time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1812,  slug: "rt_rt_up_otros",    name: "Energía RT en tiempo real Subir Otros",      time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1813,  slug: "rt_rt_down_otros",  name: "Energía RT en tiempo real Bajar Otros",      time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1814,  slug: "rt_rt_up_rsi",      name: "Energía RT en tiempo real Subir RSI",        time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1815,  slug: "rt_rt_down_rsi",    name: "Energía RT en tiempo real Bajar RSI",        time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10368, slug: "rt_rt_abs_scb",     name: "Energía RT en tiempo real Absoluto SCB",     time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10369, slug: "rt_rt_abs_sca",     name: "Energía RT en tiempo real Absoluto SCA",     time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10370, slug: "rt_rt_abs_ct",      name: "Energía RT en tiempo real Absoluto CT",      time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10371, slug: "rt_rt_abs_rtd",     name: "Energía RT en tiempo real Absoluto RTD",     time_trunc: "fifteen_minutes", native: "Quince minutos"}
+
+  - name: "realtime_additional_reserve_reforzada"
+    description: "Real-time additional reserve — operational signal of 'operación reforzada' (post-blackout reinforced operation, PO-3 cascade)"
+    priority: D
+    indicators:
+      - {id: 1880, slug: "reforzada_needs_rt",    name: "Necesidades de reserva adicional en Tiempo Real", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1881, slug: "reforzada_programmed_rt", name: "Reserva adicional programada en Tiempo Real",   time_trunc: "hour", native: "Hora"}
+      - {id: 711,  slug: "rpa_cost_up",            name: "Coste de Reserva de Potencia Adicional a Subir", time_trunc: "hour", native: "Hora"}
+
   # =====================================================================
   # Tier E — reserve market VOLUMES (50)
   # =====================================================================
@@ -255,8 +294,19 @@ tiers:
     description: "Servicio Respuesta Activa Demanda (SRAD)"
     priority: E
     indicators:
-      - {id: 1929, slug: "srad_potencia_activada", name: "Potencia activada SRAD", time_trunc: "fifteen_minutes", native: "Quince minutos"}
-      - {id: 1931, slug: "srad_energia_asignada",  name: "Energía asignada SRAD", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1929, slug: "srad_potencia_activada",     name: "Potencia activada SRAD",                                 time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1931, slug: "srad_energia_asignada",      name: "Energía asignada SRAD",                                  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1932, slug: "srad_derechos_cobro",        name: "Derechos de cobro activación SRAD",                       time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10412, slug: "srad_precio_activacion",    name: "Precio medio ponderado activación SRAD",                  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+
+  - name: "renewable_curtailment_rt"
+    description: "Energía renovable no integrable por restricciones técnicas en tiempo real (curtailment volumes)"
+    priority: E
+    indicators:
+      - {id: 2200, slug: "vre_curtail_rt_rsi",   name: "Energía renovable no integrable RT2 RSI",        time_trunc: "month", native: "Mes"}
+      - {id: 2201, slug: "vre_curtail_rt_balance", name: "Energía renovable no integrable RT2 Balance",  time_trunc: "month", native: "Mes"}
+      - {id: 2202, slug: "vre_curtail_rt_total", name: "Energía renovable no integrable RT2 Total",      time_trunc: "month", native: "Mes"}
+      - {id: 2276, slug: "vre_curtail_rt_total_v2", name: "Energía renovable no integrable RT2 Total (alt)", time_trunc: "month", native: "Mes"}
 
   - name: "crossborder_balance_flows"
     description: "Cross-border balancing market flows SEE↔FR↔PT"

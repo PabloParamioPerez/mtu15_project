@@ -106,3 +106,6 @@ renv/python/
 *.out
 *.toc
 .claude/
+
+# Overnight sync summary text files
+logs/overnight_summary_*.txt
