@@ -105,6 +105,9 @@ renv/python/
 *.synctex.gz
 *.out
 *.toc
+*.bbl
+*.blg
+*.DS_Store
 .claude/
 
 # Overnight sync summary text files
