@@ -19,12 +19,16 @@ import matplotlib.pyplot as plt
 REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "src"))
 from mtu.classification.units import firm_unit_panel  # noqa: E402
+from mtu.analysis.clearing_prices import overlay_clearing_prices  # noqa: E402
+
+WINDOW = ("2025-10-01", "2026-01-01")
+MARKET = "ida"
 
 ICAB = REPO / "data" / "processed" / "omie" / "mercado_intradiario_subastas" / "ofertas" / "icab_all.parquet"
 IDET = REPO / "data" / "processed" / "omie" / "mercado_intradiario_subastas" / "ofertas" / "idet_all.parquet"
 UNITS_CSV = REPO / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 
-FIGDIR = REPO / "thesis" / "paper" / "figures"
+FIGDIR = REPO / "figures" / "thesis"
 
 CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)
 FLAT_HOURS = (1, 2, 3)
@@ -197,6 +201,7 @@ def plot_per_firm_curves(curves, tech_label, out_stem, side):
         ax.set_ylabel("Bid price (EUR/MWh)")
         ax.grid(alpha=0.3)
         _set_panel_limits(ax, panel, TECH_YLIM.get(tech_label))
+        overlay_clearing_prices(ax, MARKET, *WINDOW, mode="per_hour")
     handles = [plt.Line2D([0], [0], color=CLASS_COLOR[hc], linewidth=2.0,
                           alpha=0.7, label=CLASS_LABEL[hc])
                for hc in ("critical", "midday", "flat")]
@@ -228,6 +233,8 @@ def plot_per_firm_quarter_curves(curves, tech_label, out_stem, side, hour_class_
         ax.set_ylabel("Bid price (EUR/MWh)")
         ax.grid(alpha=0.3)
         _set_panel_limits(ax, panel, ylim if ylim is not None else TECH_YLIM.get(tech_label))
+        overlay_clearing_prices(ax, MARKET, *WINDOW, mode="per_quarter",
+                                hour_class=hour_class_label)
     handles = [plt.Line2D([0], [0], color=quarter_colors[q], linewidth=2.0,
                           label=f"Quarter {q} ({(q-1)*15:02d}--{q*15:02d} min)")
                for q in (1, 2, 3, 4)]
@@ -280,6 +287,12 @@ def plot_compact_grid(df, techs, out_stem, mode, side_label):
                         if len(s):
                             ax.step(s["cum_qty_per_cell"], s["price"], where="post",
                                     color=key[1], linewidth=key[2], alpha=key[3])
+                    overlay_clearing_prices(
+                        ax, MARKET, *WINDOW,
+                        mode=("per_hour" if mode == "per_hour" else "per_quarter"),
+                        hour_class=(None if mode == "per_hour" else "critical"),
+                        annotate=False,
+                    )
             if placeholder is not None:
                 _blank_panel(ax, placeholder)
             else:

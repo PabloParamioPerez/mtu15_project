@@ -20,12 +20,15 @@ import matplotlib.pyplot as plt
 REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "src"))
 from mtu.classification.units import firm_unit_panel  # noqa: E402
+from mtu.analysis.clearing_prices import overlay_clearing_prices  # noqa: E402
+
+WINDOW = ("2025-10-01", "2026-01-01")
 
 DET = REPO / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "det_all.parquet"
 CAB = REPO / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "cab_all.parquet"
 UNITS_CSV = REPO / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 
-FIGDIR = REPO / "thesis" / "paper" / "figures"
+FIGDIR = REPO / "figures" / "thesis"
 TABDIR = REPO / "thesis" / "paper" / "tables"
 
 CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)
@@ -65,6 +68,8 @@ PIVOTAL_FIRMS = list(FIRM_DISPLAY.keys())
 # Order to draw curves so the lightest-density class is on top
 DRAW_ORDER = ("critical", "midday", "flat")
 TECHS_APPENDIX = ("Hydro", "Nuclear", "Wind", "Solar PV", "Coal")
+
+
 
 
 def load_tranches(techs=None):
@@ -215,7 +220,8 @@ def build_per_quarter_curves(df, hour_class="critical"):
     return pd.concat(out, ignore_index=True)
 
 
-def plot_quarter_curves(curves, tech_label, out_stem, ylim=None, suptitle=None):
+def plot_quarter_curves(curves, tech_label, out_stem, ylim=None, suptitle=None,
+                        hour_class: str = "critical"):
     fig, axes = plt.subplots(2, 2, figsize=(11, 7.5))
     firms_to_plot = ["IB", "GE", "GN", "HC"]
     quarter_colors = {1: "#1f77b4", 2: "#2ca02c", 3: "#ff7f0e", 4: "#d62728"}
@@ -251,6 +257,9 @@ def plot_quarter_curves(curves, tech_label, out_stem, ylim=None, suptitle=None):
             ymin = min(p_low - 10, 0)
             ymax = min(max(p_hi + 30, 50), 700)
             ax.set_ylim(ymin, ymax)
+        # Overlay: mean DA clearing price across this hour-class
+        overlay_clearing_prices(ax, "da", *WINDOW, mode="per_quarter",
+                                hour_class=hour_class)
     handles = [plt.Line2D([0], [0], color=quarter_colors[q], linewidth=2.0,
                           label=f"Quarter {q} ({(q-1)*15:02d}--{q*15:02d} min)")
                for q in (1, 2, 3, 4)]
@@ -305,6 +314,9 @@ def plot_compact_grid_per_hour(df, techs, out_stem):
                         x_hi = float(in_band["cum_qty_per_period"].max())
                         buf = max(20.0, 0.05 * (x_hi - x_lo))
                         ax.set_xlim(max(0, x_lo - buf), x_hi + buf)
+                # Overlay clearing-price horizontals (skip silently if out of range)
+                overlay_clearing_prices(ax, "da", *WINDOW,
+                                        mode="per_hour", annotate=False)
             ax.grid(alpha=0.3)
             ax.tick_params(labelsize=7)
             if i == 0:
@@ -327,7 +339,7 @@ def plot_compact_grid_per_hour(df, techs, out_stem):
     print(f"  saved {out_stem}.pdf")
 
 
-def plot_compact_grid_per_quarter(df, techs, out_stem):
+def plot_compact_grid_per_quarter(df, techs, out_stem, hour_class: str = "critical"):
     """Same compact grid but for the 4-quarter view within critical hours.
     Y-range fixed per tech via TECH_YLIM, x-range per-panel."""
     firms = ["IB", "GE", "GN", "HC"]
@@ -362,6 +374,10 @@ def plot_compact_grid_per_quarter(df, techs, out_stem):
                         x_hi = float(in_band["cum_qty_per_cell"].max())
                         buf = max(20.0, 0.05 * (x_hi - x_lo))
                         ax.set_xlim(max(0, x_lo - buf), x_hi + buf)
+                # Overlay mean DA clearing price for this hour-class
+                overlay_clearing_prices(ax, "da", *WINDOW,
+                                        mode="per_quarter",
+                                        hour_class=hour_class, annotate=False)
             ax.grid(alpha=0.3)
             ax.tick_params(labelsize=7)
             if i == 0:
@@ -439,6 +455,8 @@ def plot_bid_curves(curves, tech_label, out_stem):
             ymin = min(p_low - 10, 0)
             ymax = min(max(p_hi + 30, 50), 700)
             ax.set_ylim(ymin, ymax)
+        # Overlay: mean DA clearing price per hour-class (via shared module)
+        overlay_clearing_prices(ax, "da", *WINDOW, mode="per_hour")
     handles = [plt.Line2D([0], [0], color=CLASS_COLOR[hc], linewidth=2.0,
                           alpha=0.7, label=CLASS_LABEL[hc])
                for hc in ("critical", "midday", "flat")]
@@ -542,7 +560,7 @@ def main():
     print("CCGT per-quarter curves (critical hours, granularity exploitation)...")
     plot_quarter_curves(build_per_quarter_curves(ccgt, hour_class="critical"),
                          "CCGT", str(FIGDIR / "fig_per_firm_bid_curves_quarters_ccgt"),
-                         ylim=(50, 200))
+                         ylim=(50, 200), hour_class="critical")
     # Same plot restricted to FLAT hours -- falsification: if quarter
     # dispersion is strategic, it should be absent (or much smaller)
     # in flat hours where granularity has no economic content.
@@ -550,7 +568,7 @@ def main():
     plot_quarter_curves(build_per_quarter_curves(ccgt, hour_class="flat"),
                          "CCGT",
                          str(FIGDIR / "fig_per_firm_bid_curves_quarters_ccgt_flat"),
-                         ylim=(50, 200),
+                         ylim=(50, 200), hour_class="flat",
                          suptitle=r"Aggregate DA supply curves by quarter within flat hours (CCGT, Oct--Dec 2025)")
 
     # CCGT offer-rate diagnostic (per-unit, averaged within firm-hour-class)
@@ -574,7 +592,8 @@ def main():
                          str(FIGDIR / f"fig_per_firm_bid_curves_{slug}"))
         print(f"{tech} curves (appendix, per-quarter)...")
         plot_quarter_curves(build_per_quarter_curves(sub), tech,
-                             str(FIGDIR / f"fig_per_firm_bid_curves_quarters_{slug}"))
+                             str(FIGDIR / f"fig_per_firm_bid_curves_quarters_{slug}"),
+                             hour_class="critical")
 
     # Consolidated compact grids for the appendix: rows = firms, cols = techs
     techs_grid = ["CCGT", "Hydro", "Nuclear", "Wind", "Solar PV"]
@@ -583,7 +602,7 @@ def main():
                                 str(FIGDIR / "fig_bid_curves_grid_per_hour"))
     print("compact grid: per-quarter, all techs...")
     plot_compact_grid_per_quarter(df, techs_grid,
-                                    str(FIGDIR / "fig_bid_curves_grid_per_quarter"))
+                                    str(FIGDIR / "fig_bid_curves_grid_per_quarter"), hour_class="critical")
 
     print("building bid-shape detail table (CCGT)...")
     agg = build_table(df)

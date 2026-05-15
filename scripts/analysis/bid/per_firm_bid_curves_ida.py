@@ -18,12 +18,16 @@ import matplotlib.pyplot as plt
 REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "src"))
 from mtu.classification.units import firm_unit_panel  # noqa: E402
+from mtu.analysis.clearing_prices import overlay_clearing_prices  # noqa: E402
+
+WINDOW = ("2025-10-01", "2026-01-01")
 
 ICAB = REPO / "data" / "processed" / "omie" / "mercado_intradiario_subastas" / "ofertas" / "icab_all.parquet"
 IDET = REPO / "data" / "processed" / "omie" / "mercado_intradiario_subastas" / "ofertas" / "idet_all.parquet"
+MARGINALPIBC = REPO / "data" / "processed" / "omie" / "mercado_intradiario_subastas" / "precios" / "marginalpibc_all.parquet"
 UNITS_CSV = REPO / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 
-FIGDIR = REPO / "thesis" / "paper" / "figures"
+FIGDIR = REPO / "figures" / "thesis"
 
 CRITICAL_HOURS = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)
 FLAT_HOURS = (1, 2, 3)
@@ -55,6 +59,46 @@ FIRM_DISPLAY = {
 PIVOTAL_FIRMS = list(FIRM_DISPLAY.keys())
 DRAW_ORDER = ("critical", "midday", "flat")
 TECHS_GRID = ("CCGT", "Hydro", "Nuclear", "Wind", "Solar PV")
+
+
+def compute_clearing_prices_ida(start_date: str = WINDOW[0],
+                                end_date: str = WINDOW[1]) -> dict:
+    """Mean IDA clearing price (€/MWh) over the analysis window, pooled
+    across the 3 IDA sessions, by hour-class. Returns dict for use by
+    `_draw_clearing_line()` overlay."""
+    con = duckdb.connect()
+    df = con.execute(f"""
+        SELECT
+          (CAST(((period - 1) / 4) AS INT)) AS hour,
+          AVG(price_es_eur_mwh) AS mean_price
+        FROM '{MARGINALPIBC}'
+        WHERE date::DATE >= DATE '{start_date}' AND date::DATE < DATE '{end_date}'
+          AND price_es_eur_mwh IS NOT NULL
+        GROUP BY 1
+    """).df()
+    out = {}
+    for hc, hours in (("critical", CRITICAL_HOURS),
+                      ("midday",   MIDDAY_HOURS),
+                      ("flat",     FLAT_HOURS)):
+        sub = df[df["hour"].isin(hours)]
+        out[hc] = float(sub["mean_price"].mean()) if len(sub) else float("nan")
+    return out
+
+
+def _draw_clearing_line(ax, y_value, color, label=None, alpha=0.85):
+    """Horizontal dashed line at the mean clearing price IF in y-axis range."""
+    if y_value is None or not np.isfinite(y_value):
+        return False
+    ymin, ymax = ax.get_ylim()
+    if y_value < ymin or y_value > ymax:
+        return False
+    ax.axhline(y_value, color=color, linestyle="--",
+               linewidth=1.0, alpha=alpha, zorder=10)
+    if label:
+        ax.text(ax.get_xlim()[1], y_value, f" {label}: {y_value:.0f}",
+                va="bottom", ha="right", fontsize=7, color=color,
+                alpha=alpha, zorder=11)
+    return True
 
 
 def load_tranches(techs=None):
@@ -186,6 +230,7 @@ def plot_bid_curves(curves, tech_label, out_stem):
             ymin = min(p_low - 10, 0)
             ymax = min(max(p_hi + 30, 50), 700)
             ax.set_ylim(ymin, ymax)
+        overlay_clearing_prices(ax, "ida", *WINDOW, mode="per_hour")
     handles = [plt.Line2D([0], [0], color=CLASS_COLOR[hc], linewidth=2.0,
                           alpha=0.7, label=CLASS_LABEL[hc])
                for hc in ("critical", "midday", "flat")]
@@ -201,7 +246,8 @@ def plot_bid_curves(curves, tech_label, out_stem):
     print(f"  saved {out_stem}.pdf")
 
 
-def plot_quarter_curves(curves, tech_label, out_stem, ylim=None, suptitle=None):
+def plot_quarter_curves(curves, tech_label, out_stem, ylim=None, suptitle=None,
+                        hour_class: str = "critical"):
     fig, axes = plt.subplots(2, 2, figsize=(11, 7.5))
     firms_to_plot = ["IB", "GE", "GN", "HC"]
     quarter_colors = {1: "#1f77b4", 2: "#2ca02c", 3: "#ff7f0e", 4: "#d62728"}
@@ -225,6 +271,8 @@ def plot_quarter_curves(curves, tech_label, out_stem, ylim=None, suptitle=None):
                 x_hi = float(in_band["cum_qty_per_cell"].max())
                 buf = max(50.0, 0.05 * (x_hi - x_lo))
                 ax.set_xlim(max(0, x_lo - buf), x_hi + buf)
+        overlay_clearing_prices(ax, "ida", *WINDOW, mode="per_quarter",
+                                hour_class=hour_class)
     handles = [plt.Line2D([0], [0], color=quarter_colors[q], linewidth=2.0,
                           label=f"Quarter {q} ({(q-1)*15:02d}--{q*15:02d} min)")
                for q in (1, 2, 3, 4)]
@@ -275,6 +323,7 @@ def plot_compact_grid_per_hour(df, techs, out_stem):
                         x_hi = float(in_band["cum_qty_per_period"].max())
                         buf = max(20.0, 0.05 * (x_hi - x_lo))
                         ax.set_xlim(max(0, x_lo - buf), x_hi + buf)
+                overlay_clearing_prices(ax, "ida", *WINDOW, mode="per_hour", annotate=False)
             ax.grid(alpha=0.3)
             ax.tick_params(labelsize=7)
             if i == 0:
@@ -330,6 +379,8 @@ def plot_compact_grid_per_quarter(df, techs, out_stem, hour_class="critical"):
                         x_hi = float(in_band["cum_qty_per_cell"].max())
                         buf = max(20.0, 0.05 * (x_hi - x_lo))
                         ax.set_xlim(max(0, x_lo - buf), x_hi + buf)
+                overlay_clearing_prices(ax, "ida", *WINDOW, mode="per_quarter",
+                                        hour_class=hour_class, annotate=False)
             ax.grid(alpha=0.3)
             ax.tick_params(labelsize=7)
             if i == 0:
@@ -377,6 +428,7 @@ def main():
                          "CCGT",
                          str(FIGDIR / "fig_per_firm_bid_curves_quarters_ccgt_ida_flat"),
                          ylim=(50, 200),
+                         hour_class="flat",
                          suptitle=r"Aggregate IDA supply curves by quarter within flat hours (CCGT, Oct--Dec 2025)")
 
     # Compact grids: per-hour and per-quarter (critical) for all techs
