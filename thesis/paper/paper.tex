@@ -268,56 +268,11 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 \input{tables/tab_quarter_dissimilarity_pricesetter_main}
 \end{table}
 
-\textit{Reading} (\textbf{wounded}). The headline aggregate-sample number (Naturgy CCGT critical 24.5\% flagged) survives the kernel-weighted lens at $D_w / D = 0.02$ --- i.e.\ Naturgy's broad quarter-dispersion is concentrated at the bid-curve extremes, not in the strategic window around clearing. The two price-setter restrictions sharpen this further. Under \emph{Strict PS}, only 35 of $\sim$15{,}000 Naturgy CCGT critical cells survive --- the unit is rarely on the margin --- but in those cells 34\% are flagged with $D_w = 1712$ and ratio 0.012. Real quarter-shaping happens, but only when the unit is actually setting the price, and the shape variation still sits in the tail. Iberdrola and EDP-Spain have zero flagged cells under \emph{Strict PS} for CCGT. The \emph{Frequent PS} panel drops Iberdrola and Naturgy entirely from CCGT --- their CCGT units fall below the $1\%$ price-setter threshold, confirming CCGT is rarely on the marginal margin for either firm in the window. The within-hour granularity-exploitation mechanism through CCGT is therefore narrow: it operates on Naturgy's price-setting cells in scarcity hours, and even there the variation is at the bid-curve tail rather than near the clearing margin. The mechanism may operate more cleanly in the IDA market --- see Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt_ida_pair}. Full per-tech 3-panel results in Appendix~\ref{app:quarter_dissim}.
+\textit{Reading} (\textbf{wounded}). The headline aggregate-sample number (Naturgy CCGT critical 24.5\% flagged) survives the kernel-weighted lens at $D_w / D = 0.02$ --- i.e.\ Naturgy's broad quarter-dispersion is concentrated at the bid-curve extremes, not in the strategic window around clearing. The two price-setter restrictions sharpen this further. Under \emph{Strict PS}, only 35 of $\sim$15{,}000 Naturgy CCGT critical cells survive --- the unit is rarely on the margin --- but in those cells 34\% are flagged with $D_w = 1712$ and ratio 0.012. Real quarter-shaping happens, but only when the unit is actually setting the price, and the shape variation still sits in the tail. Iberdrola and EDP-Spain have zero flagged cells under \emph{Strict PS} for CCGT. The \emph{Frequent PS} panel drops Iberdrola and Naturgy entirely from CCGT --- their CCGT units fall below the $1\%$ price-setter threshold, confirming CCGT is rarely on the marginal margin for either firm in the window. The within-hour granularity-exploitation mechanism through CCGT is therefore narrow: it operates on Naturgy's price-setting cells in scarcity hours, and even there the variation is at the bid-curve tail rather than near the clearing margin. The mechanism may operate more cleanly in the IDA market --- see \texttt{provisional.tex} §3 for the IDA analogue and §1 for the pre-vs-post-blackout test. Full per-tech 3-panel results in Appendix~\ref{app:quarter_dissim}.
 
-\begin{figure}[H]
-\centering
-\begin{subfigure}[t]{0.49\textwidth}
-\centering
-\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt.pdf}
-\caption{Critical hours (05:00--09:00, 16:00--23:00)}
-\label{fig:per_firm_bid_curves_quarters_ccgt}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.49\textwidth}
-\centering
-\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt_flat.pdf}
-\caption{Flat hours (01:00--04:00) --- falsification}
-\label{fig:per_firm_bid_curves_quarters_ccgt_flat}
-\end{subfigure}
-\caption{\textbf{Aggregate DA supply curves by quarter, CCGT.} EUPHEMIA aggregation per (firm, quarter) over October--December 2025. Y-axis zoomed to 50--200 EUR/MWh, the clearing-relevant band. One curve per quarter. The left panel restricts to the 11 critical hours; the right panel to the 3 flat hours and serves as a falsification check.}
-\label{fig:per_firm_bid_curves_quarters_ccgt_pair}
-\end{figure}
-
-\textit{Reading} (\textbf{supportive}). In critical hours Naturgy shows visible quarter dispersion in the 1{,}500--2{,}800 MW band (Q1 below Q4 in the body of the curve); in flat hours the four quarters of Naturgy --- and of every other firm --- collapse onto a single curve. Granularity differentiation is hour-class-specific: it appears only where within-hour demand variation gives it economic content. This is the falsification check the within-day design requires. \emph{Caveat on visual flatness}: aggregating across $\sim$92 dates per (firm, hour, quarter) cell smooths day-specific variation. The kernel-weighted quarter-dissimilarity test in Table~\ref{tab:per_firm_bid_shape}, computed at (firm, unit, date, hour) granularity, does not suffer from this flattening and is the right quantitative complement.
-
-\paragraph{IDA mirror.} The same construction applied to the intraday auction (ICAB + IDET, pooled across the 3 daily IDA sessions) is shown in Figures~\ref{fig:per_firm_bid_curves_ida_main}--\ref{fig:per_firm_bid_curves_quarters_ccgt_ida_flat_main}.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{fig_per_firm_bid_curves_ida.pdf}
-\caption{\textbf{Aggregate IDA supply curves by pivotal firm and clock-hour, CCGT.} Same construction as Figure~\ref{fig:per_firm_bid_curves} on ICAB+IDET data, pooled across the 3 IDA sessions per day; normalisation $N_{\text{dates}} \times 4 \times 3$.}
-\label{fig:per_firm_bid_curves_ida_main}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\begin{subfigure}[t]{0.49\textwidth}
-\centering
-\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt_ida.pdf}
-\caption{Critical hours (05:00--09:00, 16:00--23:00)}
-\label{fig:per_firm_bid_curves_quarters_ccgt_ida_main}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.49\textwidth}
-\centering
-\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt_ida_flat.pdf}
-\caption{Flat hours (01:00--04:00) --- falsification}
-\label{fig:per_firm_bid_curves_quarters_ccgt_ida_flat_main}
-\end{subfigure}
-\caption{\textbf{Aggregate IDA supply curves by quarter, CCGT.} Same construction as Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt_pair} on ICAB+IDET data, pooled across the 3 IDA sessions per day. Left panel: critical hours; right panel: flat hours (falsification).}
-\label{fig:per_firm_bid_curves_quarters_ccgt_ida_pair}
-\end{figure}
-
-\textit{Reading} (\textbf{supportive}). In IDA, all four pivotal firms (not just Naturgy as in DA) show monotone Q1--Q4 dispersion in critical hours: Q1 offers the most MW, Q4 the least, at prices near clearing. The flat-hour falsification holds for every firm. IDA is where pivotal firms actively reposition $q_2$, and the granularity exploitation pattern is sharper here than in the day-ahead. The aggregate-window visualisation in this figure averages over $\sim$92 dates and so smooths daily shocks; see Table~\ref{tab:per_firm_bid_shape} for the per-cell kernel-weighted dissimilarity test that operates day-by-day, and Appendix~\ref{app:price_setter_days} for two illustrative single-day decompositions on a high-demand and a flat day.
+% Per-quarter DA + IDA CCGT bid curves moved to provisional.tex §2 + §3
+% (aggregate-window visuals are smoothed; the kernel-weighted dissimilarity
+% in Table~\ref{tab:per_firm_bid_shape} is the right quantitative test).
 
 \subsection{Demand-side and storage bidding: who exploits granularity}\label{sec:bid_evidence:demand_storage}
 
@@ -332,93 +287,7 @@ Mirror of the per-firm supply-side analysis on the buy side and on pumped-storag
 
 \textit{Reading} (\textbf{mixed}). Iberdrola and Endesa show clear hour-of-day discrimination: midday (green) curves shifted right of flat (blue) curves, both shifted right of critical (red). Both firms charge more pump-storage volume at higher willingness-to-pay during midday, consistent with absorbing cheap solar output, and shrink their charge volumes in critical hours when the marginal value of selling exceeds the storage round-trip return. Naturgy shows no hour-class discrimination --- the three lines overlap. EDP-Spain has only a small pump-storage book and bids near zero EUR/MWh.
 
-\begin{figure}[H]
-\centering
-\begin{subfigure}[t]{0.49\textwidth}
-\centering
-\includegraphics[width=\textwidth]{fig_per_firm_demand_curves_quarters_pump_load.pdf}
-\caption{Critical hours (05:00--09:00, 16:00--23:00)}
-\label{fig:per_firm_demand_curves_quarters_pump_load}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.49\textwidth}
-\centering
-\includegraphics[width=\textwidth]{fig_per_firm_demand_curves_quarters_pump_load_flat.pdf}
-\caption{Flat hours (01:00--04:00) --- falsification}
-\label{fig:per_firm_demand_curves_quarters_pump_load_flat}
-\end{subfigure}
-\caption{\textbf{Aggregate DA demand curves by quarter, pump-storage charge bids, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_demand_curves_pump_load}; one curve per 15-min quarter. Left panel: critical hours; right panel: flat hours (falsification).}
-\label{fig:per_firm_demand_curves_quarters_pump_load_pair}
-\end{figure}
-
-\textit{Reading} (\textbf{supportive of null}). The four quarter curves overlap almost exactly for every firm in both critical and flat hours: pump-storage operators do not differentiate their charge bids across the 15-min quarters of a clock-hour. The within-hour granularity available since MTU15-DA is unused on this margin --- even Iberdrola and Endesa, who discriminate strongly at the clock-hour level, replicate identical bids across the four quarters. This pins the within-hour granularity-exploitation effect to the supply side (pivotal dispatchable units), not to demand-side or storage charging strategy.
-
-\paragraph{IDA mirror.} The same construction applied to the intraday auction (ICAB + IDET, pooled across the 3 daily IDA sessions) is shown in Figures~\ref{fig:per_firm_demand_curves_pump_load_ida}--\ref{fig:per_firm_demand_curves_quarters_pump_load_ida_pair}.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{fig_per_firm_demand_curves_pump_load_ida.pdf}
-\caption{\textbf{Aggregate IDA demand curves by pivotal firm and clock-hour, pump-storage charge bids, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_demand_curves_pump_load} on ICAB+IDET data, pooled across the 3 IDA sessions per day; normalisation $N_{\text{dates}} \times 4 \times 3$.}
-\label{fig:per_firm_demand_curves_pump_load_ida}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\begin{subfigure}[t]{0.49\textwidth}
-\centering
-\includegraphics[width=\textwidth]{fig_per_firm_demand_curves_quarters_pump_load_ida.pdf}
-\caption{Critical hours (05:00--09:00, 16:00--23:00)}
-\label{fig:per_firm_demand_curves_quarters_pump_load_ida}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.49\textwidth}
-\centering
-\includegraphics[width=\textwidth]{fig_per_firm_demand_curves_quarters_pump_load_ida_flat.pdf}
-\caption{Flat hours (01:00--04:00) --- falsification}
-\label{fig:per_firm_demand_curves_quarters_pump_load_ida_flat}
-\end{subfigure}
-\caption{\textbf{Aggregate IDA demand curves by quarter, pump-storage charge bids, October--December 2025.} Same construction as Figure~\ref{fig:per_firm_demand_curves_quarters_pump_load_pair} on ICAB+IDET data, pooled across the 3 IDA sessions per day. Left panel: critical hours; right panel: flat hours (falsification).}
-\label{fig:per_firm_demand_curves_quarters_pump_load_ida_pair}
-\end{figure}
-
-Compact grids covering all demand-side technologies (\texttt{Pump\_load}, \texttt{Retailer}, \texttt{Direct\_consumer}) are in Appendix~\ref{app:demand_grid} (DA) and Appendix~\ref{app:demand_grid_ida} (IDA); the storage-discharge mirror (\texttt{Hydro\_pump}, \texttt{Hybrid\_RES\_storage}) is in Appendix~\ref{app:storage_discharge_grid} (DA) and Appendix~\ref{app:storage_discharge_grid_ida} (IDA).
-
-\subsection{Operational vs strategic use of MTU15 granularity}\label{sec:bid_evidence:operational_vs_strategic}
-
-TWO CHANNELS BY WHICH A FIRM CAN ``USE'' WITHIN-HOUR GRANULARITY (SEE §\ref{sec:intro}):
-\begin{itemize}
-   \item OPERATIONAL: TRACK PHYSICAL VARIATION OF OWN PRODUCTION ACROSS QUARTERS (WIND / SOLAR FORECAST UPDATES, RAMPING). BID QUANTITY VARIES; BID PRICE STAYS AT MARGINAL COST.
-   \item STRATEGIC: RE-PRICE ACROSS QUARTERS TO EXTRACT RENTS FROM WITHIN-HOUR DEMAND SWINGS. BID PRICE VARIES IN A DEMAND-CORRELATED WAY.
-\end{itemize}
-
-THE WITHIN-HOUR QUARTER-DISSIMILARITY TEST IN APPENDIX~\ref{app:quarter_dissim} (FRACTION OF (FIRM, UNIT, DATE, HOUR) CELLS WHERE THE FOUR 15-MIN QUARTERS' BIDS ARE NOT BIT-IDENTICAL) DOES NOT SEPARATE THESE TWO CHANNELS. THE CRITICAL--FLAT ASYMMETRY DOES: STRATEGIC RE-PRICING REQUIRES SYSTEMATIC WITHIN-HOUR DEMAND VARIATION (CRITICAL HOURS BY OUR DEFINITION) AND SHOULD BE ABSENT WHEN SUCH VARIATION IS LOW (FLAT HOURS). OPERATIONAL REFINEMENT IS DRIVEN BY OWN-PRODUCTION VARIABILITY, WHICH IS NOT TIED TO HOUR-CLASS.
-
-\begin{table}[H]
-\centering
-\caption{\textbf{Critical--flat asymmetry of the within-hour bid-curve dissimilarity, October--December 2025.} Each row stratifies the dissimilarity statistic $D = \max_{i<j} W_1(\mu_i, \mu_j)$ over the four 15-min quarters of a clock-hour: $D$ is the L1 area between cumulative bid curves of any pair of quarters --- a 1-D Wasserstein-1 (Earth Mover's Distance, \citealp{vallender1973}) on the bid measure, defined in Equation~\ref{eq:wasserstein}. Entries report the percentage of (firm, unit, date, hour) cells with $D > 0$ in critical vs flat hours, and the gap. Strategic re-pricing should appear as a positive critical--flat gap; operational refinement (e.g. wind/solar forecast updates) as a near-zero gap.}
-\label{tab:operational_strategic_asym}
-\begin{tabular}{l l l r r r}
-\toprule
-Channel & Tech & Firm & Critical & Flat & Crit $-$ Flat \\
-\midrule
-Strategic       & CCGT      & GN & 24.5 &  0.0 & $+24.5$ \\
-Strategic       & CCGT      & IB &  5.8 &  3.9 & $+1.9$ \\
-\addlinespace
-Operational     & Wind      & IB & 97.2 & 97.3 & $-0.1$ \\
-Operational     & Wind      & GN & 92.7 & 92.6 & $+0.1$ \\
-Operational     & Wind      & HC & 93.7 & 93.8 & $-0.1$ \\
-Operational     & Solar PV  & GN & 15.9 &  0.0 & $+15.9$ \\
-Operational     & Retailer  & GE & 76.5 & 76.3 & $+0.2$ \\
-Operational     & Retailer  & IB & 40.9 & 40.2 & $+0.7$ \\
-Operational     & Direct\_consumer & IB & 96.0 & 95.3 & $+0.7$ \\
-\addlinespace
-Mechanical      & Pump\_load   & IB &  3.2 &  5.5 & $-2.3$ \\
-Mechanical      & Pump\_load   & GE &  0.0 &  0.0 & $0.0$ \\
-Mechanical      & Hydro\_pump  & IB &  0.4 &  0.0 & $+0.4$ \\
-Mechanical      & Hydro\_pump  & GE &  0.0 &  0.0 & $0.0$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textit{Reading} (\textbf{supportive}). Only Naturgy CCGT shows the strategic signature (large positive crit$-$flat gap). Renewables (Wind, Solar PV) and pivotal-firm retail demand vary across quarters in essentially every cell, but symmetrically across hour-classes --- consistent with operational forecast / consumption refinement, not market-power exploitation. Pump-storage is genuinely mechanical on both margins. The within-hour strategic-exploitation channel of MTU15 is therefore narrow: pivotal dispatchable thermal in hours with material within-hour demand variation.
+\textit{Reading} (\textbf{supportive of null}). The within-hour granularity available since MTU15-DA is unused on this charge-side margin: pump-storage operators replicate identical bids across the four quarters of a clock-hour. This pins the within-hour granularity-exploitation effect to the supply side (pivotal dispatchable units), not to demand-side or storage charging strategy. Per-quarter visuals (DA + IDA pairs) and the IDA clock-hour analogue are in \texttt{provisional.tex} §4. Compact grids covering all demand-side technologies (\texttt{Pump\_load}, \texttt{Retailer}, \texttt{Direct\_consumer}) are in Appendix~\ref{app:demand_grid} (DA) and Appendix~\ref{app:demand_grid_ida} (IDA); the storage-discharge mirror (\texttt{Hydro\_pump}, \texttt{Hybrid\_RES\_storage}) is in Appendix~\ref{app:storage_discharge_grid} (DA) and Appendix~\ref{app:storage_discharge_grid_ida} (IDA).
 
 % =====================================================================
 \section{Main empirical results}\label{sec:results}
@@ -625,7 +494,7 @@ with firm fixed effects $\gamma_f$, day-of-week fixed effects $\delta_{\mathrm{D
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig_bid_curves_grid_per_quarter.pdf}
-\caption{\textbf{Aggregate DA supply curves by firm and technology, October--December 2025, by quarter within critical hours.} Same construction as Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt}. Y-axis clamped to 50--200 EUR/MWh; x-axis zoomed to the corresponding cumulative-quantity range.}
+\caption{\textbf{Aggregate DA supply curves by firm and technology, October--December 2025, by quarter within critical hours.} Same construction as the DA quarter-pair figure (now in \texttt{provisional.tex} §2). Y-axis clamped to 50--200 EUR/MWh; x-axis zoomed to the corresponding cumulative-quantity range.}
 \label{fig:bid_curves_grid_per_quarter}
 \end{figure}
 
@@ -733,7 +602,7 @@ A cell is ``flagged'' if $D > 10^{-6}$ MWh$\cdot$EUR/MWh --- equivalent to ``the
 
 \input{tables/tab_quarter_dissimilarity_pricesetter}
 
-\textit{Reading} (\textbf{mixed}). Pump-storage is genuinely mechanical: \texttt{Pump\_load} and \texttt{Hydro\_pump} flag $\le 5.5\%$ across all firms and hour-classes, confirming the within-hour null in §\ref{sec:bid_evidence:demand_storage}. Naturgy CCGT flags 24.5\% in critical vs 0.0\% in flat, matching the visual Q1--Q4 separation in Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt}. By contrast \texttt{Wind} and \texttt{Solar PV} flag $\ge 92\%$ for IB, GN and HC --- bids vary across the four quarters in almost every cell, though for Wind the magnitudes are small (median $D \le 2.6$), consistent with quarter-by-quarter automated forecast updates rather than strategic re-pricing. \texttt{Retailer} flags 41\%, 76\% and 22\% for IB, GE and GN with Endesa's median $D = 11.2$: pivotal firms do vary their retail demand bids across quarters in ways the aggregated demand-curve plot of §\ref{app:demand_grid} does not display. Endesa Hydro stands out on the supply side with 56\% / 47\% flag rates.
+\textit{Reading} (\textbf{mixed}). Pump-storage is genuinely mechanical: \texttt{Pump\_load} and \texttt{Hydro\_pump} flag $\le 5.5\%$ across all firms and hour-classes, confirming the within-hour null in §\ref{sec:bid_evidence:demand_storage}. Naturgy CCGT flags 24.5\% in critical vs 0.0\% in flat, matching the visual Q1--Q4 separation seen in \texttt{provisional.tex} §2. By contrast \texttt{Wind} and \texttt{Solar PV} flag $\ge 92\%$ for IB, GN and HC --- bids vary across the four quarters in almost every cell, though for Wind the magnitudes are small (median $D \le 2.6$), consistent with quarter-by-quarter automated forecast updates rather than strategic re-pricing. \texttt{Retailer} flags 41\%, 76\% and 22\% for IB, GE and GN with Endesa's median $D = 11.2$: pivotal firms do vary their retail demand bids across quarters in ways the aggregated demand-curve plot of §\ref{app:demand_grid} does not display. Endesa Hydro stands out on the supply side with 56\% / 47\% flag rates.
 
 \paragraph{Kernel-weighted dissimilarity ($D_w$).} A second column $D_w$ in Table~\ref{tab:quarter_dissim} reports the same L1 area under an Epanechnikov-kernel weight centred at the period's mean DA clearing price, with bandwidth $h = 20$~EUR/MWh:
 \[

@@ -1,0 +1,196 @@
+\documentclass[11pt,a4paper]{article}
+
+% Provisional/scratch companion to paper.tex. Holds figures and tables that
+% may belong in the final thesis but are currently not load-bearing for the
+% headline (within-day DiD on q_2). Each block is captioned with its
+% provisional status so the reader knows it's exploratory.
+
+\PassOptionsToPackage{table}{xcolor}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{graphicx, booktabs, subcaption, tikz, float}
+\graphicspath{{../../figures/thesis/}}
+\usepackage{array, makecell}
+\usepackage{xcolor}
+\usepackage{longtable}
+\usepackage[hidelinks]{hyperref}
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf}
+
+\title{Provisional figures and tables\\[3pt]\large MTU15 thesis (companion to paper.tex)}
+\author{Pablo Paramio}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\noindent\emph{This file is exploratory scratch space. None of these objects is currently cited from \texttt{paper.tex}. They are kept here for inspection and decision-making — promote to the main paper if the empirical content is load-bearing, otherwise leave here or move to \texttt{attic/}.}
+
+\tableofcontents
+
+% =====================================================================
+\section{IDA pre/post-blackout near-clearing dissimilarity}\label{sec:prov:ida_pre_post}
+% =====================================================================
+
+New empirical test (2026-05-16). For each \texttt{(firm, unit, date, hour)} cell of CCGT IDA bids, compute the kernel-weighted within-hour quarter dissimilarity $D_w$ (Epanechnikov kernel, $h = 20$~EUR/MWh, centred on the hour-mean IDA clearing price). Compare two regimes that hold the MTU15-IDA clock constant:
+
+\begin{itemize}
+   \item \textbf{Pre-blackout}: 2025-03-19 $\to$ 2025-04-27 (40 days; post-MTU15-IDA, reforzada-free).
+   \item \textbf{Post-blackout}: 2025-04-28 $\to$ 2025-09-30 (155 days; reforzada active throughout).
+\end{itemize}
+
+The hypothesis being tested: under reforzada, REE forces CCGT dispatch via post-clearing intervention, so the marginal-bid leverage on the clearing price is reduced and within-hour granularity exploitation should weaken (pre $>$ post). The data reject this prediction.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{IDA quarter-dissimilarity, pre vs post-blackout, CCGT.} Percentage of (firm, unit, date, hour) cells with $D_w > 0$ (i.e., quarters differ within the $\pm 20$~EUR/MWh band around hour-mean IDA clearing price). \emph{Pre-blackout}: 2025-03-19 $\to$ 2025-04-27 (40 days, MTU15-IDA active, reforzada-free). \emph{Post-blackout}: 2025-04-28 $\to$ 2025-09-30 (155 days, reforzada active).}
+\label{tab:ida_pre_post}
+\begin{tabular}{l r r r r r r}
+\toprule
+& \multicolumn{3}{c}{Pre-blackout} & \multicolumn{3}{c}{Post-blackout} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Firm & Critical & Flat & Crit$-$Flat & Critical & Flat & Crit$-$Flat \\
+\midrule
+IB &  9.4 &  7.0 & $+2.4$        & 18.6 &  6.2 & $+12.4$ \\
+GE & 12.4 &  8.1 & $+4.3$        & 36.1 & 21.4 & $+14.7$ \\
+GN & 29.6 &  9.2 & $\mathbf{+20.4}$ & 50.3 & 36.2 & $+14.1$ \\
+HC & 27.9 & 20.0 & $+7.9$        & 32.3 & 20.3 & $+12.0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textit{Reading.} (i) Pre-blackout, only Naturgy shows a clean critical-vs-flat strategic gap; the other three are noisy. (ii) Post-blackout, all four firms show a $+12$ to $+15$ percentage-point gap — granularity exploitation broadens. (iii) The directional prediction (pre $>$ post) is rejected for every firm. (iv) Flat-hour rates post-blackout are non-trivial (6--36\%), which the kernel-weighted falsification ought to keep at zero if all variation were strategic; the elevated flat-hour baseline is itself a reforzada signature (overnight CCGT commitments creating quarter-level operational adjustments).
+
+A coherent alternative narrative: reforzada \emph{amplifies} the inframarginal volume on a forced-up CCGT (because REE pays Pmin out of merit at the unit's own price-of-restrictions offer), so a higher DA / IDA clearing price is worth proportionally more on the forced block. The strategic incentive to push the clearing price via within-hour bid shaping rises, not falls.
+
+\paragraph{Source data.} \texttt{scripts/analysis/bid/quarter\_dissimilarity\_ida.py}; outputs at \texttt{results/regressions/bid/quarter\_dissimilarity\_ida/}.
+
+
+% =====================================================================
+\section{Per-quarter CCGT bid curves (DA)}\label{sec:prov:da_quarters_ccgt}
+% =====================================================================
+
+The within-hour quarter dispersion is the visual companion to Table 5 of the main paper. The aggregate construction (averaging across $\sim$92 dates per cell) smooths day-specific variation and tends to hide the strategic shaping; the kernel-weighted dissimilarity in the main paper is the right quantitative complement.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt.pdf}
+\caption{Critical hours (05:00--09:00, 16:00--23:00)}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt_flat.pdf}
+\caption{Flat hours (01:00--04:00) --- falsification}
+\end{subfigure}
+\caption{Aggregate DA supply curves by quarter, CCGT, Oct--Dec 2025. Aggregated across $\sim$92 dates per (firm, hour, quarter) cell; day-specific quarter dispersion is smoothed in this visual.}
+\end{figure}
+
+
+% =====================================================================
+\section{Per-firm CCGT bid curves and per-quarter pairs (IDA)}\label{sec:prov:ida_ccgt}
+% =====================================================================
+
+The IDA analogues of the main-text DA figures. The IDA empirical pattern in the post-MTU15-DA window matches the DA pattern: dispersion is concentrated in Naturgy and visible only in critical hours.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{fig_per_firm_bid_curves_ida.pdf}
+\caption{Aggregate IDA supply curves by pivotal firm and clock-hour, CCGT, Oct--Dec 2025.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt_ida.pdf}
+\caption{Critical hours (05:00--09:00, 16:00--23:00)}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt_ida_flat.pdf}
+\caption{Flat hours (01:00--04:00)}
+\end{subfigure}
+\caption{Aggregate IDA supply curves by quarter, CCGT, Oct--Dec 2025.}
+\end{figure}
+
+
+% =====================================================================
+\section{Per-quarter pump-storage demand curves (DA + IDA)}\label{sec:prov:pump_storage_quarters}
+% =====================================================================
+
+Per the main-text Reading, pump-storage operators do not differentiate charge bids across the 4 quarters of a clock-hour --- the within-hour granularity is unused on this margin. Visuals retained here in case future scrutiny needs them.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_demand_curves_quarters_pump_load.pdf}
+\caption{DA, critical hours}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_demand_curves_quarters_pump_load_flat.pdf}
+\caption{DA, flat hours}
+\end{subfigure}
+\caption{Aggregate DA demand curves by quarter, pump-storage charge bids, Oct--Dec 2025.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{fig_per_firm_demand_curves_pump_load_ida.pdf}
+\caption{Aggregate IDA demand curves by pivotal firm and clock-hour, pump-storage charge bids, Oct--Dec 2025.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_demand_curves_quarters_pump_load_ida.pdf}
+\caption{IDA, critical hours}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_demand_curves_quarters_pump_load_ida_flat.pdf}
+\caption{IDA, flat hours}
+\end{subfigure}
+\caption{Aggregate IDA demand curves by quarter, pump-storage charge bids, Oct--Dec 2025.}
+\end{figure}
+
+
+% =====================================================================
+\section{Operational vs strategic decomposition (provisional)}\label{sec:prov:operational_strategic}
+% =====================================================================
+
+The original main-paper Table 6 reported a critical--flat asymmetry of the within-hour bid-curve dissimilarity flag, with the interpretation ``only Naturgy CCGT shows the strategic signature''. The IDA pre/post-blackout analysis above complicates this: under reforzada, all four firms show the strategic signature in IDA, not just Naturgy. The current main-paper framing is regime-specific to the DA Oct--Dec 2025 window. Until we have a unified read, the table is held here.
+
+\begin{table}[H]
+\centering
+\caption{Original DA Oct--Dec 2025 critical--flat asymmetry table. Naturgy CCGT shows the strategic signature; renewables and retailer demand vary symmetrically across hour-classes (consistent with operational refinement); pump-storage is mechanical. Compare with the IDA pre/post-blackout finding in §\ref{sec:prov:ida_pre_post}.}
+\label{tab:prov:operational_strategic_asym}
+\begin{tabular}{l l l r r r}
+\toprule
+Channel & Tech & Firm & Critical & Flat & Crit $-$ Flat \\
+\midrule
+Strategic       & CCGT      & GN & 24.5 &  0.0 & $+24.5$ \\
+Strategic       & CCGT      & IB &  5.8 &  3.9 & $+1.9$ \\
+\addlinespace
+Operational     & Wind      & IB & 97.2 & 97.3 & $-0.1$ \\
+Operational     & Wind      & GN & 92.7 & 92.6 & $+0.1$ \\
+Operational     & Wind      & HC & 93.7 & 93.8 & $-0.1$ \\
+Operational     & Solar PV  & GN & 15.9 &  0.0 & $+15.9$ \\
+Operational     & Retailer  & GE & 76.5 & 76.3 & $+0.2$ \\
+Operational     & Retailer  & IB & 40.9 & 40.2 & $+0.7$ \\
+Operational     & Direct\_consumer & IB & 96.0 & 95.3 & $+0.7$ \\
+\addlinespace
+Mechanical      & Pump\_load   & IB &  3.2 &  5.5 & $-2.3$ \\
+Mechanical      & Pump\_load   & GE &  0.0 &  0.0 & $0.0$ \\
+Mechanical      & Hydro\_pump  & IB &  0.4 &  0.0 & $+0.4$ \\
+Mechanical      & Hydro\_pump  & GE &  0.0 &  0.0 & $0.0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}
