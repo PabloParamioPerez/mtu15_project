@@ -284,24 +284,37 @@ def write_tex_full(g, out_path):
         side_disp = side if side != last_side else ""
         tech_disp = tech if r["tech_group"] != last_tech else ""
         last_side = side; last_tech = r["tech_group"]
-        dw = r.get("median_dw", float("nan"))
-        rt = r.get("median_ratio", float("nan"))
-        dw_str = "--" if pd.isna(dw) else f"{dw:.2f}"
-        rt_str = "--" if pd.isna(rt) else f"{rt:.2f}"
         lines.append(
             f"{side_disp} & {tech_disp} & {r['firm']} & {r['hour_class'].capitalize()} & "
-            f"{int(r['n_cells']):,} & {100*r['frac_flagged']:.1f} & {r['median_d']:.2f} & "
-            f"{dw_str} & {rt_str} \\\\"
+            f"{int(r['n_cells']):,} & {_fmt_pct(r['frac_flagged'])} & "
+            f"{_fmt_num(r['median_d'])} & "
+            f"{_fmt_num(r.get('median_dw', float('nan')))} & "
+            f"{_fmt_num(r.get('median_ratio', float('nan')))} \\\\"
         )
     lines += [r"\end{longtable}", r"\normalsize"]
     Path(out_path).write_text("\n".join(lines) + "\n")
     print(f"  saved {out_path}")
 
 
+def _fmt_pct(v: float) -> str:
+    """Format a [0, 1] fraction as a percentage; preserve sub-1% precision."""
+    if pd.isna(v):
+        return "--"
+    pct = 100.0 * v
+    if pct == 0:
+        return "0"
+    if pct < 1.0:
+        return f"{pct:.2f}"
+    return f"{pct:.1f}"
+
+
+def _fmt_num(v: float, places: int = 2) -> str:
+    return "--" if pd.isna(v) else f"{v:.{places}f}"
+
+
 def write_tex_main(g, out_path):
     """Main-text table: CCGT only, 4 firms x 2 hour-classes = 8 rows."""
     sub = g[g["tech_group"] == "CCGT"].copy()
-    # Sort by firm in pivotal order, critical first then flat
     firm_order = {f: i for i, f in enumerate(PIVOTAL)}
     sub["f_ord"] = sub["firm"].map(firm_order)
     sub["h_ord"] = sub["hour_class"].map({"critical": 0, "flat": 1})
@@ -316,13 +329,11 @@ def write_tex_main(g, out_path):
     for _, r in sub.iterrows():
         firm_disp = r["firm"] if r["firm"] != last_firm else ""
         last_firm = r["firm"]
-        dw = r.get("median_dw", float("nan"))
-        rt = r.get("median_ratio", float("nan"))
-        dw_str = "--" if pd.isna(dw) else f"{dw:.2f}"
-        rt_str = "--" if pd.isna(rt) else f"{rt:.2f}"
         lines.append(
             f"{firm_disp} & {r['hour_class'].capitalize()} & {int(r['n_cells']):,} & "
-            f"{100*r['frac_flagged']:.1f} & {r['median_d']:.2f} & {dw_str} & {rt_str} \\\\"
+            f"{_fmt_pct(r['frac_flagged'])} & {_fmt_num(r['median_d'])} & "
+            f"{_fmt_num(r.get('median_dw', float('nan')))} & "
+            f"{_fmt_num(r.get('median_ratio', float('nan')))} \\\\"
         )
     lines += [r"\bottomrule", r"\end{tabular}"]
     Path(out_path).write_text("\n".join(lines) + "\n")
