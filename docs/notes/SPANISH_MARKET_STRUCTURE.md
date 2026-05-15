@@ -161,7 +161,7 @@ The DA simple-bid count is wider than IDA (DA bids may have more tranches per pe
 - `icab`, `idet` — bid headers + details by session (Spec §5.2.4)
 - `curva_pibc` — aggregate supply/demand curves (Spec §5.2.3.1)
 
-**Important:** PIBCA `assigned_power_mw` is signed natively (range −99,999.9 to +99,999.9) per Spec §5.2.2.1 — no offer_type-based sign-flipping needed. Simple SUM gives net IDA position change. (See `notebooks/memos/_modelling_track.md` for why this matters in our q₂ definition.)
+**Important:** PIBCA `assigned_power_mw` is signed natively (range −99,999.9 to +99,999.9) per Spec §5.2.2.1 — no offer_type-based sign-flipping needed. Simple SUM gives net IDA position change.
 
 **How many PHFs per delivery day.** One PHF per IDA session: **3 PHFs in the SIDC era** (post-2024-06-14), **6 PHFs in the MIBEL era** (pre-2024-06-14). Each session's PHF covers exactly the periods its IDA covered: SIDC PHF(s=1) and PHF(s=2) cover periods 1–96 (full day); PHF(s=3) covers only periods 49–96 (afternoon). For any given `(unit, period)`, the **latest PHF (max `session_number`) is the post-IDA dispatch target** — i.e. the firm program after all auction clearings and REE post-IDA RT have been applied to that period. It is still revised downstream by the continuous market (→ PHFC) and by real-time RT (→ P48), so the operating reality at delivery is P48; but for studying IDA-level conduct, max-session PHF is the right object.
 
@@ -181,9 +181,9 @@ After each IDA session, REE applies further security/rebalance modifications and
 
 So PIBCA is the **post-IDA accumulated LEVEL program**, RT-free by spec (`flag_redespacho ≡ 0`); PIBCI is the per-session **INCREMENTAL change** in cleared MW; PHF is PIBCA after REE's post-IDA RT is applied. PIBCA and PHF are both levels — PIBCI is incremental and would NOT be apples-to-apples with PHF.
 
-**Project operational measure.** In our scripts, **post-IDA REE intervention magnitude per unit-period = PHF.assigned_power_mw − PIBCA.assigned_power_mw** at the same session, taking the maximum-session row per `(unit, period)` (both files are indexed by `session_number`). Because the subtraction is LEVEL minus LEVEL at the same checkpoint, it isolates the post-IDA RT for the periods covered by that session. PIBCI (incremental) is **not** used in this difference — substituting it would mix incremental MW into a level subtraction. This is the cleanest available proxy for REE's post-IDA intervention without per-unit ESIOS subscription data. See `scripts/analysis/regulatory/rt2_post_blackout_channel.py` and the verification result in `results/summaries/HEAVY_RUN_SUMMARY.md` showing this measure has a publishing-convention discontinuity at MTU15-DA that ESIOS aggregate data does not show.
+**Project operational measure.** In our scripts, **post-IDA REE intervention magnitude per unit-period = PHF.assigned_power_mw − PIBCA.assigned_power_mw** at the same session, taking the maximum-session row per `(unit, period)` (both files are indexed by `session_number`). Because the subtraction is LEVEL minus LEVEL at the same checkpoint, it isolates the post-IDA RT for the periods covered by that session. PIBCI (incremental) is **not** used in this difference — substituting it would mix incremental MW into a level subtraction. This is the cleanest available proxy for REE's post-IDA intervention without per-unit ESIOS subscription data.
 
-**Data-source note.** RT2 (post-IDA REE intervention) is **computed manually from OMIE files** — there is no equivalent ENTSO-E series. ENTSO-E A86/A87 give system imbalance prices and volumes but not the post-IDA RT decomposition. ESIOS `totalrp48preccierre` has the redispatch breakdown by `tipo_redespacho` code (5x = pre-IDA Fase 1+2, 6x/7x = post-IDA / real-time) but at aggregate level only; per-unit ESIOS RT data is in subscription-gated `EF_*_sujetoEIC` archives we do not have access to. So the OMIE `PHF − PIBCA` arithmetic is the only public route to per-unit post-IDA RT for Spain. **Validation**: `q₂_RT2 = PHF − PIBCA` is ≈0 in pre-IDA → DA60/ID15 but jumps to **+13,639 MWh per firm-day in DA15/ID15** (q₂ definition audit, 2026-04-29) — captures REE's post-blackout "operación reforzada" forcing CCGT/nuclear up, an external regulatory shock we know happened. The measure picks it up cleanly, supporting that PHF − PIBCA is doing what the spec implies.
+**Data-source note.** RT2 (post-IDA REE intervention) is **computed manually from OMIE files** — there is no equivalent ENTSO-E series. ENTSO-E A86/A87 give system imbalance prices and volumes but not the post-IDA RT decomposition. ESIOS `totalrp48preccierre` has the redispatch breakdown by `tipo_redespacho` code (5x = pre-IDA Fase 1+2, 6x/7x = post-IDA / real-time) but at aggregate level only; per-unit ESIOS RT data is in subscription-gated `EF_*_sujetoEIC` archives we do not have access to. So the OMIE `PHF − PIBCA` arithmetic is the only public route to per-unit post-IDA RT for Spain. The 2026-05-15 ESIOS-indicator expansion adds zonal RT volumes (`tech_restrictions_volumes_realtime` family — ids 10052, 10253, 1812–1815, 10368–10371) and reforzada needs (id 1880) at system-aggregate level, complementing the per-unit `PHF − PIBCA` measure.
 
 ---
 
@@ -224,7 +224,7 @@ For any given `(unit, period)` the **latest round's PHFC (max `round_number`) is
 - `orders` — XBID limit orders (Spec §5.3.3.1)
 - `trades` — XBID matched transactions (Spec §5.3.2.7)
 
-**Project note (PIBCICE codes):** PIBCICE uses `grupo_short` for the Big-4 short codes ("GE", "IB", "GN", "HC"), while PIBCIE uses `grupo_empresarial`. This was discovered the hard way during the heavy run of 2026-04-29 — see `notebooks/memos/RESEARCH_DIARY.md`.
+**Project note (PIBCICE codes):** PIBCICE uses `grupo_short` for the Big-4 short codes ("GE", "IB", "GN", "HC"), while PIBCIE uses `grupo_empresarial`. Most analysis code maps the two via `data/external/omie_reference/lista_agentes.csv`.
 
 ---
 
@@ -284,10 +284,10 @@ Balance services
 - **Settlement:** marginal price computed in each control cycle
 - **BSP requirements:** ≥ 100 MW habilitated for aFRR (combined up + down)
 - **Data files (ESIOS):**
-  - `liquicierre` — per-BSP closing settlement (since 2015)
-  - `liquicierresrs` — per-BSP secondary-reserve closing settlement (since 2024-11)
-  - `curvas_ofertas_afrr` — aFRR bid curves (since 2024-11)
-  - `balancing_bids` — generic balancing bids
+  - `liquicierre` — per-BSP closing settlement, **legacy schema** (2015 → 2024-12). Concept codes `RMRSP` / `RMRSN` in **MAW** unit-tag (reserve *capacity* assigned per ISP).
+  - `liquicierresrs` — per-BSP closing settlement, **post-ISP15 schema** (2024-11-22 → present). Concept codes `EnAcSuTo` / `EnAcBaTo` in **MWH** (reserve *energy* activated). Concatenated with `liquicierre` into a single `liquicierre_all.parquet`. ⚠ **Schema break**: the two regimes measure different objects (capacity vs energy) on different time bases — cross-regime analyses must use shares, not levels.
+  - `curvas_ofertas_afrr` — aFRR bid curves (since 2024-11-20). Aggregate, not per-BSP.
+  - ~~`balancing_bids`~~ — aggregate mFRR bid stack 2022-05 → 2024-12-10. **Archive retired at ISP15**: requests after 2024-12-10 return empty. Use `curvas_ofertas_afrr` for the post-ISP15 reserves-bid picture.
 
 ### 7.3 mFRR — Regulación Terciaria (REE guide §6.3)
 
@@ -354,7 +354,7 @@ The **asymmetric-granularity window** is the period where ISP = 15 min but at le
 | **2025-04-28** | Iberian blackout | System-wide blackout; REE adopts "operación reforzada" | `20260319_cnmc_informe_apagon.pdf` |
 | **2025-10-01** | MTU15-DA | Day-ahead market clock 60 → 15 min | `20250228_cnmc_mtu15.pdf` |
 
-These four reform dates appear as constants in `src/mtu/notebook_utils.py` and define the five regimes used throughout the project.
+These reform dates define the five regimes used throughout the project; the canonical constants live in `CLAUDE.md` (§ Reform dates) and in the analysis scripts directly.
 
 ---
 
@@ -377,6 +377,32 @@ These four reform dates appear as constants in `src/mtu/notebook_utils.py` and d
 - The boundary-symmetry comparison (Layer A and B should match between pre-IDA and DA15/ID15; Layer C should match between 3-sess and DA15/ID15) requires both symmetric regimes to have enough power individually. Pre-IDA is long; DA15/ID15 is short.
 - Bid-revision and bid-shape tests can be run within any regime (intra-regime) or across regimes (inter-regime). The economically interesting hypothesis is whether bid behaviour responds to the *clock structure*, which is an inter-regime test; intra-regime descriptive tests baseline that.
 - Ito-Reguant-style strategic-conduct tests (Big-4 q₂ on regime × Big-4 interaction) need cross-regime variation; they are **not** regime-agnostic — they rely on regime contrast as the source of identifying variation.
+
+---
+
+### ESIOS data assets — what we have at each layer
+
+For quick orientation when looking for a Spanish-side time series for a given layer:
+
+| Layer | ESIOS source | Granularity | Coverage | Note |
+|---|---|---|---|---|
+| DA prices | indicator 600 (`/indicators`) | 15-min native | 2018+ | Identity-matched with OMIE `marginalpdbc`; OMIE is authoritative |
+| IDA prices | indicators 612–618 | 15-min / hour | 2018+ | Sessions 1–3 only post-2024-06; OMIE `marginalpibc` is authoritative |
+| Reserve prices (aFRR / mFRR / RR / RPA) | indicators 634, 2130, 676, 677, 1782, 628, … | 15-min native (most) | 2018+ | `data/external/esios_indicator_catalog.yaml` Tier D family `*_prices` |
+| Reserve volumes | indicators 630–633, 672–675, 666–667, 1788–1789, 1883–1894 | 15-min / hour | 2018+ | Tier E families `afrr_volumes`, `mfrr_volumes`, `rr_volumes` |
+| **Per-BSP** aFRR settlement | archive 17 + 203 → `liquicierre_all.parquet` | per-BSP × concept × ISP | 2015-01 → 2026-02 | The **only** per-BSP / disaggregated reserves source. 53M rows, 34 BSPs. **Schema break at ISP15** (see §7.2). |
+| RT2 (tech-restrictions) prices | indicators 705–708 | 15-min native | 2018+ | Fase I/II up/down |
+| RT2 volumes | indicators 1812–1815, 10052, 10253, 10368–10371; daily Fase I 2352, 2353, 10518, 1790–1797 | 15-min native | 2018+ | Tier D `tech_restrictions_volumes_realtime` + `…_daily_fase1` |
+| Reforzada operational signal | indicator 1880 (needs RT), 1881 (programmed RT) | 15-min / hour | 2021-05+ | The cleanest summary measure of post-blackout reforzada intensity |
+| PVPC unified retail price | indicators 805–817 | 15-min native | 2018+ | 13 components; final price in id 817; see notebook 16 §F |
+| BSP / UF / UP / BRP master data | archives 110 / 111 / 112 / 113 | one-shot dumps | snapshot | 6,472 UFs + 3,782 UPs + 739 BRPs. Stored at `data/external/esios_master/*.json`. |
+| Outages (unit unavailability) | archive 105 → `indisponibilidades_all.parquet` | per-unit snapshot | 2018+ monthly | Per-UF and per-UP, forward-looking up to 3 yrs |
+| Fuel / CO₂ prices | indicators 1391, 1940, 1933–1939 | day / month | 2018+ | Controls for the gas-price-shock defense |
+| Renewable forecasts | indicators 541, 542, 543, 1777, 1778, 10034, 10358, 10359, 10249 | 15-min / hour | 2018+ | Mix of native granularities; see catalog YAML |
+| Demand actual + forecast | indicators 460, 544, 1192, 1293, 1742, 1775, 1776, 2052, 603 | 5-min / 15-min / hour | 2018+ | Cross-validation for ENTSO-E A65 |
+| RT2 redispatch by `tipo_redespacho` | archive 28 → `totalrp48preccierre_all.parquet` | system-aggregate × ISP | 2015+ | Per-zone (RZ / SCB / SCA / CT / RTD) per phase; complements per-unit `PHF − PIBCA` |
+
+The full catalog (169 indicators across Tiers A / B / D / E) is at `data/external/esios_indicator_catalog.yaml`. The archive triage memo is `notebooks/memos/_esios_archive_catalog.md`.
 
 ---
 
@@ -439,7 +465,7 @@ The operational fingerprint of reforzada in any Spanish electricity dataset:
 
 ### Reforzada as an independent regime variable
 
-Operación reforzada is a regime shift orthogonal to the MTU15 reform sequence. The 2025-03-19 → 2025-04-27 sub-window (~6 weeks post-MTU15-IDA but pre-blackout) is the only period where the post-MTU15-IDA market clock co-exists with reforzada-free operation; from 2025-05-01 onward the two regimes overlap. Empirical work that confounds the MTU15 clock-symmetry reform with reforzada in this period will mis-attribute effects across the two — the appropriate treatment is a separate `D_reforzada` indicator or a blackout-split of DA60/ID15. (Project-side identification design lives in `notebooks/memos/_modelling_track.md` and `thesis/proposal.md`; this section documents the regulatory and operational facts only.)
+Operación reforzada is a regime shift orthogonal to the MTU15 reform sequence. The 2025-03-19 → 2025-04-27 sub-window (~6 weeks post-MTU15-IDA but pre-blackout) is the only period where the post-MTU15-IDA market clock co-exists with reforzada-free operation; from 2025-05-01 onward the two regimes overlap. Empirical work that confounds the MTU15 clock-symmetry reform with reforzada in this period will mis-attribute effects across the two — the appropriate treatment is a separate `D_reforzada` indicator or a blackout-split of DA60/ID15. The visual evidence for non-collinearity is `figures/thesis/fig_reforzada_intensity.pdf`, embedded in the paper at Appendix §A.4.
 
 ### Relevant P.O. references
 
