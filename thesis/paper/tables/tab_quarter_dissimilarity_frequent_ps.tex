@@ -1,0 +1,48 @@
+\small
+\begin{longtable}{@{}l l l l r r r r r@{}}
+\caption{\textbf{Quarter-by-quarter bid dissimilarity, October--December 2025.} For each (firm, unit, date, hour) cell with all four 15-min quarters present, $D$ is the maximum pairwise L1 area between cumulative bid curves over the full price range. $D_w$ is the same L1 area weighted by an Epanechnikov kernel ($h = 20$ EUR/MWh) centered at the period's mean clearing price, isolating bid variation around the strategically-relevant window. Flag = fraction of cells with $D > 0$. The ratio column reports the per-cell median of $D_w/D$ among flagged cells: values near 1 indicate variation concentrated near the clearing price (strategic); values close to 0 indicate variation at the extremes (price-cap padding, not strategic).}\label{tab:quarter_dissim}\\
+\toprule
+Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & median ratio \\
+\midrule
+\endfirsthead
+\multicolumn{9}{l}{\emph{(continued from previous page)}} \\
+\toprule
+Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & median ratio \\
+\midrule
+\endhead
+\midrule
+\multicolumn{9}{r}{\emph{continued on next page}} \\
+\endfoot
+\bottomrule
+\endlastfoot
+Supply & CCGT & GE & Critical & 1,958 & 0.15 & 11704.00 & 38.35 & 0.01 \\
+ &  & GE & Flat & 534 & 0 & -- & -- & -- \\
+ &  & HC & Critical & 2,013 & 0.05 & 131300.10 & 1504.81 & 0.01 \\
+ &  & HC & Flat & 549 & 0.55 & 390.00 & 0.00 & 0.00 \\
+\addlinespace
+ & Hydro & IB & Critical & 4,048 & 2.4 & 115.31 & 2.67 & 0.05 \\
+ &  & IB & Flat & 1,104 & 0.27 & 41059.21 & 2906.67 & 0.07 \\
+ &  & GE & Critical & 1,679 & 77.7 & 32.45 & 1.70 & 0.24 \\
+ &  & GE & Flat & 477 & 64.2 & 2.30 & 1.40 & 0.23 \\
+ &  & GN & Critical & 1,012 & 0 & -- & -- & -- \\
+ &  & GN & Flat & 276 & 0.36 & 16.00 & 2.67 & 0.17 \\
+\addlinespace
+ & Hydro\_pump & IB & Critical & 1,001 & 0.40 & 6158.34 & 2.67 & 0.07 \\
+ &  & IB & Flat & 273 & 0 & -- & -- & -- \\
+ &  & GE & Critical & 1,979 & 0.05 & 1956.50 & 206.80 & 0.11 \\
+ &  & GE & Flat & 320 & 0 & -- & -- & -- \\
+\addlinespace
+ & Wind & IB & Critical & 468 & 98.9 & 2.70 & 0.00 & 0.00 \\
+ &  & IB & Flat & 131 & 98.5 & 2.48 & 0.00 & 0.00 \\
+ &  & GN & Critical & 3,027 & 96.2 & 0.20 & 0.00 & 0.00 \\
+ &  & GN & Flat & 826 & 96.7 & 0.06 & 0.00 & 0.00 \\
+ &  & HC & Critical & 3,990 & 93.7 & 3.10 & 0.00 & 0.00 \\
+ &  & HC & Flat & 1,081 & 93.8 & 3.10 & 0.00 & 0.00 \\
+\addlinespace
+ & Solar PV & IB & Critical & 808 & 99.9 & 8.20 & 8.20 & 1.00 \\
+ &  & GE & Critical & 23 & 0 & -- & -- & -- \\
+ &  & GN & Critical & 99 & 26.3 & 0.10 & 0.10 & 1.00 \\
+ &  & GN & Flat & 12 & 0 & -- & -- & -- \\
+ &  & HC & Critical & 325 & 100.0 & 42.12 & 0.00 & 0.00 \\
+\end{longtable}
+\normalsize

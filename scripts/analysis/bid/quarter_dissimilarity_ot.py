@@ -453,6 +453,108 @@ def _sorted(g):
     return g
 
 
+def write_tex_combined_full(panels: dict, out_path: Path):
+    """Appendix-grade 3-panel longtable: all techs/firms/hour-classes,
+    with one panel per sample version (Full / Strict PS / Frequent PS)
+    stacked vertically.
+
+    `panels` is a dict mapping a display label → the corresponding summary
+    DataFrame.
+    """
+    lines = [
+        r"\small",
+        r"\begin{longtable}{@{}l l l l r r r r r r@{}}",
+        r"\caption{\textbf{Quarter-by-quarter bid dissimilarity, October--December 2025 --- three-panel sample comparison.} "
+        r"$D$ = max pairwise L1 area between quarter bid curves (Wasserstein-style); $D_w$ = Epanechnikov-weighted ($h = 20$ EUR/MWh) on the strategic band around the cell's hour-average DA clearing price; ratio $= D_w/D$ on flagged cells. Three sample versions: \emph{Full sample} (all bidding cells); \emph{Strict PS} (cells where the unit was the rank-1 price-setter in $\ge 1$ of the 4 quarters of the hour); \emph{Frequent PS} (cells whose unit price-sets in $\ge 1$\% of all (date, period) cells in the window). Last column flags within-hour heterogeneity in the clearing price (std $> 5$ EUR/MWh).}\label{tab:quarter_dissim}\\",
+        r"\toprule",
+        r"Panel & Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & ratio \\",
+        r"\midrule",
+        r"\endfirsthead",
+        r"\multicolumn{10}{l}{\emph{(continued from previous page)}} \\",
+        r"\toprule",
+        r"Panel & Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & ratio \\",
+        r"\midrule",
+        r"\endhead",
+        r"\midrule",
+        r"\multicolumn{10}{r}{\emph{continued on next page}} \\",
+        r"\endfoot",
+        r"\bottomrule",
+        r"\endlastfoot",
+    ]
+    for panel_label, g in panels.items():
+        last_side = None
+        last_tech = None
+        last_panel = None
+        for _, r in g.iterrows():
+            side = TECH_CATEGORY.get(r["tech_group"], "")
+            tech = r["tech_group"].replace("_", r"\_")
+            if last_panel != panel_label:
+                lines.append(r"\midrule")
+                last_panel = panel_label; last_side = None; last_tech = None
+            elif last_side is not None and last_side != side:
+                lines.append(r"\midrule")
+            elif last_tech is not None and last_tech != r["tech_group"]:
+                lines.append(r"\addlinespace")
+            panel_disp = panel_label if panel_label != last_panel else ""
+            side_disp = side if side != last_side else ""
+            tech_disp = tech if r["tech_group"] != last_tech else ""
+            last_side = side; last_tech = r["tech_group"]
+            lines.append(
+                f"{panel_disp} & {side_disp} & {tech_disp} & {r['firm']} & "
+                f"{r['hour_class'].capitalize()} & {int(r['n_cells']):,} & "
+                f"{_fmt_pct(r['frac_flagged'])} & {_fmt_num(r['median_d'])} & "
+                f"{_fmt_num(r.get('median_dw', float('nan')))} & "
+                f"{_fmt_num(r.get('median_ratio', float('nan')))} \\\\"
+            )
+    lines += [r"\end{longtable}", r"\normalsize"]
+    Path(out_path).write_text("\n".join(lines) + "\n")
+    print(f"  saved {out_path}")
+
+
+def write_tex_combined_main(panels: dict, out_path: Path):
+    """Combined main-text Table 5: three vertically-stacked panels for CCGT.
+
+    `panels` is a dict mapping a display label → the corresponding summary
+    DataFrame (e.g. {"Full sample": g_full, "Strict PS": g_strict,
+    "Frequent PS": g_freq}). Each panel is filtered to CCGT rows and shows
+    firm × hour-class breakdown.
+    """
+    firm_order = {f: i for i, f in enumerate(PIVOTAL)}
+    lines = [
+        r"\begin{tabular}{@{}l l r r r r r r@{}}",
+        r"\toprule",
+        r"Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & "
+        r"median ratio & \% high-$\sigma_{p}$ \\",
+        r"\midrule",
+    ]
+    last_panel_label = None
+    for label, g in panels.items():
+        sub = g[g["tech_group"] == "CCGT"].copy()
+        sub["f_ord"] = sub["firm"].map(firm_order)
+        sub["h_ord"] = sub["hour_class"].map({"critical": 0, "flat": 1})
+        sub = sub.sort_values(["f_ord", "h_ord"]).drop(columns=["f_ord", "h_ord"])
+        if last_panel_label is not None:
+            lines.append(r"\midrule")
+        lines.append(
+            r"\multicolumn{8}{l}{\textit{" + label + r"}} \\"
+        )
+        last_firm = None
+        for _, r in sub.iterrows():
+            firm_disp = r["firm"] if r["firm"] != last_firm else ""
+            last_firm = r["firm"]
+            lines.append(
+                f"{firm_disp} & {r['hour_class'].capitalize()} & "
+                f"{int(r['n_cells']):,} & {_fmt_pct(r['frac_flagged'])} & "
+                f"{_fmt_num(r['median_d'])} & {_fmt_num(r.get('median_dw', float('nan')))} & "
+                f"{_fmt_num(r.get('median_ratio', float('nan')))} & "
+                f"{_fmt_pct(r.get('frac_high_std', float('nan')))} \\\\"
+            )
+        last_panel_label = label
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    Path(out_path).write_text("\n".join(lines) + "\n")
+    print(f"  saved {out_path}")
+
+
 def main():
     print("loading tranches (Oct-Dec 2025, pivotal firms, 4 techs)...")
     df = load_tranches()
@@ -495,6 +597,17 @@ def main():
     g_freq.to_csv(OUTDIR / "quarter_dissimilarity_summary_frequent_ps_2025Q4.csv", index=False)
     write_tex_full(g_freq, TABDIR / "tab_quarter_dissimilarity_frequent_ps.tex")
     write_tex_main(g_freq, TABDIR / "tab_quarter_dissimilarity_main_frequent_ps.tex")
+
+    # Combined main table: CCGT, 3 panels stacked (Full / Strict PS / Frequent PS).
+    write_tex_combined_main(
+        {"Full sample": g_full, "Strict PS": g_strict, "Frequent PS": g_freq},
+        TABDIR / "tab_quarter_dissimilarity_pricesetter_main.tex",
+    )
+    # Appendix companion: same 3 panels, all techs, all firms, longtable.
+    write_tex_combined_full(
+        {"Full sample": g_full, "Strict PS": g_strict, "Frequent PS": g_freq},
+        TABDIR / "tab_quarter_dissimilarity_pricesetter.tex",
+    )
 
 
 if __name__ == "__main__":

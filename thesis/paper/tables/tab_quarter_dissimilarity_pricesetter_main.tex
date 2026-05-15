@@ -1,15 +1,30 @@
-\begin{tabular}{@{}l l r r r | r r r r | r r r r@{}}
+\begin{tabular}{@{}l l r r r r r r@{}}
 \toprule
-  &  & \multicolumn{3}{c|}{Full sample} & \multicolumn{4}{c|}{Strict price-setter only} & \multicolumn{4}{c}{Frequent price-setter only ($\geq 1\%$)} \\
-Firm & Hour-class & N & \%flag & med $D_w$ & N & \%flag & med $D_w$ & ratio & N & \%flag & med $D_w$ & ratio \\
+Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & median ratio & \% high-$\sigma_{p}$ \\
 \midrule
-IB & Critical & 7,831 & 5.8 & 0.00 & 67 & 0 & -- & -- & -- & -- & -- & -- \\
- & Flat & 2,139 & 3.9 & 0.00 & 10 & 0 & -- & -- & -- & -- & -- & -- \\
-GE & Critical & 5,195 & 1.8 & 91.42 & 96 & 0 & -- & -- & 1,958 & 0.15 & 38.35 & 0.01 \\
- & Flat & 1,413 & 0 & -- & 19 & 0 & -- & -- & 534 & 0 & -- & -- \\
-GN & Critical & 14,930 & 24.5 & 1890.67 & 35 & 34.3 & 1711.71 & 0.01 & -- & -- & -- & -- \\
- & Flat & 4,065 & 0.05 & 457.33 & 5 & 0 & -- & -- & -- & -- & -- & -- \\
-HC & Critical & 2,013 & 0.05 & 1504.81 & 60 & 0 & -- & -- & 2,013 & 0.05 & 1504.81 & 0.01 \\
- & Flat & 549 & 0.55 & 0.00 & 6 & 0 & -- & -- & 549 & 0.55 & 0.00 & 0.00 \\
+\multicolumn{8}{l}{\textit{Full sample}} \\
+IB & Critical & 7,831 & 5.8 & 20909.20 & 0.00 & 0.00 & 35.9 \\
+ & Flat & 2,139 & 3.9 & 2865.34 & 0.00 & 0.00 & 7.2 \\
+GE & Critical & 5,195 & 1.8 & 1897.23 & 91.42 & 0.00 & 34.7 \\
+ & Flat & 1,413 & 0 & -- & -- & -- & 6.9 \\
+GN & Critical & 14,930 & 24.5 & 137174.84 & 1890.67 & 0.02 & 36.3 \\
+ & Flat & 4,065 & 0.05 & 21745.80 & 457.33 & 0.01 & 7.2 \\
+HC & Critical & 2,013 & 0.05 & 131300.10 & 1504.81 & 0.01 & 36.5 \\
+ & Flat & 549 & 0.55 & 390.00 & 0.00 & 0.00 & 7.3 \\
+\midrule
+\multicolumn{8}{l}{\textit{Strict PS}} \\
+IB & Critical & 58 & 0 & -- & -- & -- & 34.5 \\
+ & Flat & 9 & 0 & -- & -- & -- & 0 \\
+GE & Critical & 93 & 0 & -- & -- & -- & 32.3 \\
+ & Flat & 18 & 0 & -- & -- & -- & 0 \\
+GN & Critical & 22 & 31.8 & 178254.67 & 1769.75 & 0.02 & 9.1 \\
+ & Flat & 5 & 0 & -- & -- & -- & 0 \\
+HC & Critical & 34 & 0 & -- & -- & -- & 29.4 \\
+\midrule
+\multicolumn{8}{l}{\textit{Frequent PS}} \\
+GE & Critical & 1,958 & 0.15 & 11704.00 & 38.35 & 0.01 & 36.1 \\
+ & Flat & 534 & 0 & -- & -- & -- & 6.7 \\
+HC & Critical & 2,013 & 0.05 & 131300.10 & 1504.81 & 0.01 & 36.5 \\
+ & Flat & 549 & 0.55 & 390.00 & 0.00 & 0.00 & 7.3 \\
 \bottomrule
 \end{tabular}
