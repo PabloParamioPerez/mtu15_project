@@ -180,16 +180,19 @@ def hour_class(h):
 
 
 def load_hourly_clearing(window=("2025-10-01", "2026-01-01")):
-    """Mean DA clearing price (EUR/MWh) per (date, hour) over the window.
+    """Per (date, hour): mean DA clearing price + std across the 4 quarters.
 
-    Each cell in the dissimilarity loop sees one (date, hour) — average
-    across the 4 quarters of that hour is the natural kernel center
-    (a single price per cell, not 4)."""
+    The kernel center is the hour-average; the std flags hours where the
+    4 quarters' clearing prices are heterogeneous enough that a single-
+    center kernel is a poor representation of the strategic price band.
+    """
     con = duckdb.connect()
     df = con.execute(f"""
         SELECT date::DATE AS date,
                ((period - 1) / 4)::INT AS hour,
-               AVG(price_es_eur_mwh) AS p_clear
+               AVG(price_es_eur_mwh) AS p_clear,
+               STDDEV_SAMP(price_es_eur_mwh) AS p_clear_std,
+               COUNT(*) AS n_qtrs
         FROM '{MARGINALPDBC}'
         WHERE date::DATE >= DATE '{window[0]}' AND date::DATE < DATE '{window[1]}'
           AND price_es_eur_mwh IS NOT NULL
@@ -198,11 +201,86 @@ def load_hourly_clearing(window=("2025-10-01", "2026-01-01")):
     return df
 
 
-def compute(df, clearing: pd.DataFrame):
-    """Returns per-cell dissimilarity table with both unweighted and
-    kernel-weighted L1 area (max pairwise across the 6 quarter pairs)."""
-    # Map (date, hour) -> clearing price for fast lookup
-    cl_map = {(row.date, row.hour): row.p_clear for row in clearing.itertuples()}
+def load_price_setters(window=("2025-10-01", "2026-01-01"), eps: float = 0.01):
+    """For each (date, period), identify the price-setting unit using the
+    same rank-1 / gap ≤ EPS rule as `scripts/analysis/firm/marginal_tech_by_hour.py`.
+
+    Returns: DataFrame [date, period, unit_code, gap_to_clear] with one row
+    per (date, period) — the unit whose highest-accepted sell tranche set
+    the clearing price for that 15-min period.
+    """
+    con = duckdb.connect()
+    con.execute("PRAGMA threads=4")
+    con.execute("SET memory_limit='10GB'")
+    sql = f"""
+    WITH prices AS (
+        SELECT date::DATE AS d, period, price_es_eur_mwh AS p_clear
+        FROM '{MARGINALPDBC}'
+        WHERE date::DATE >= DATE '{window[0]}' AND date::DATE < DATE '{window[1]}'
+          AND price_es_eur_mwh IS NOT NULL
+    ),
+    cab AS (
+        SELECT date::DATE AS d, offer_code, version, unit_code,
+               ROW_NUMBER() OVER (PARTITION BY date::DATE, offer_code, unit_code
+                                  ORDER BY version DESC) AS rn
+        FROM '{CAB}'
+        WHERE buy_sell = 'V'
+          AND date::DATE >= DATE '{window[0]}' AND date::DATE < DATE '{window[1]}'
+    ),
+    cab_l AS (SELECT * FROM cab WHERE rn = 1),
+    det AS (
+        SELECT date::DATE AS d, offer_code, version, period, price_eur_mwh AS p_bid
+        FROM '{DET}'
+        WHERE date::DATE >= DATE '{window[0]}' AND date::DATE < DATE '{window[1]}'
+          AND price_eur_mwh IS NOT NULL AND quantity_mw > 0
+    ),
+    accepted AS (
+        SELECT pr.d, pr.period, c.unit_code, d.p_bid, pr.p_clear,
+               RANK() OVER (PARTITION BY pr.d, pr.period ORDER BY d.p_bid DESC) AS rk
+        FROM prices pr
+        JOIN det d   ON d.d = pr.d AND d.period = pr.period
+        JOIN cab_l c ON c.d = d.d AND c.offer_code = d.offer_code AND c.version = d.version
+        WHERE d.p_bid <= pr.p_clear
+    )
+    SELECT d AS date, period, unit_code,
+           (p_clear - p_bid) AS gap_to_clear
+    FROM accepted
+    WHERE rk = 1 AND (p_clear - p_bid) <= {eps}
+    """
+    return con.execute(sql).df()
+
+
+def compute(df, clearing: pd.DataFrame, price_setters: pd.DataFrame,
+            frequent_pct: float = 1.0):
+    """Returns per-cell dissimilarity table.
+
+    Columns:
+      - d_max, d_mean: max / mean unweighted pairwise L1 across 6 quarter pairs
+      - d_max_w, d_mean_w: same with Epanechnikov-weighted L1, kernel centered
+        on hour-average DA clearing price
+      - p_clear: hour-average clearing price
+      - p_clear_std: std across the 4 quarters' clearing prices (high std →
+        the single-center kernel is a poor representation of the strategic band)
+      - is_ps_in_hour (bool): the unit was the price-setter in ≥1 of the 4
+        quarters of this hour (strict per-cell restriction)
+      - is_frequent_ps_unit (bool): the unit appears as a price-setter in
+        ≥`frequent_pct`% of the (date, period) cells in the window
+    """
+    cl_map = {(row.date, row.hour): (row.p_clear, row.p_clear_std)
+              for row in clearing.itertuples()}
+
+    # (date, period) -> price-setting unit
+    ps_map: dict[tuple[pd.Timestamp, int], str] = {}
+    for r in price_setters.itertuples():
+        ps_map[(r.date, int(r.period))] = r.unit_code
+    # unit -> frequency of price-setting (as fraction of total periods)
+    n_total_periods = price_setters[["date", "period"]].drop_duplicates().shape[0]
+    unit_ps_freq = price_setters.groupby("unit_code").size() / max(n_total_periods, 1)
+    freq_set = set(unit_ps_freq[unit_ps_freq >= frequent_pct / 100.0].index)
+    print(f"  price-setter map: {len(ps_map):,} (date, period) -> unit")
+    print(f"  unique price-setting units: {price_setters['unit_code'].nunique()}")
+    print(f"  frequent (≥{frequent_pct}% of periods) units: {len(freq_set)}")
+
     out = []
     grp_cols = ["firm", "tech_group", "unit_code", "date", "hour"]
     for keys, g in df.groupby(grp_cols, sort=False):
@@ -210,19 +288,35 @@ def compute(df, clearing: pd.DataFrame):
         d_max, d_mean = cell_dissimilarity(per_q)
         if np.isnan(d_max):
             continue
-        p_clear = cl_map.get((keys[3], keys[4]))
-        if p_clear is None:
+        p_info = cl_map.get((keys[3], keys[4]))
+        if p_info is None:
             d_max_w, d_mean_w = np.nan, np.nan
+            p_clear, p_clear_std = np.nan, np.nan
         else:
+            p_clear, p_clear_std = p_info
             d_max_w, d_mean_w = cell_dissimilarity(per_q, kernel_center=float(p_clear))
-        out.append((*keys, d_max, d_mean, d_max_w, d_mean_w, p_clear))
+        # Strict price-setter flag: this unit set the price in ≥1 of the
+        # four periods making up this (date, hour) cell.
+        hour_idx = int(keys[4])
+        date_v = keys[3]
+        unit_v = keys[2]
+        is_ps_in_hour = any(
+            ps_map.get((date_v, hour_idx * 4 + q)) == unit_v
+            for q in (1, 2, 3, 4)
+        )
+        is_frequent_ps_unit = unit_v in freq_set
+        out.append((*keys, d_max, d_mean, d_max_w, d_mean_w,
+                    p_clear, p_clear_std,
+                    is_ps_in_hour, is_frequent_ps_unit))
     cells = pd.DataFrame(out, columns=grp_cols + [
-        "d_max", "d_mean", "d_max_w", "d_mean_w", "p_clear"])
+        "d_max", "d_mean", "d_max_w", "d_mean_w",
+        "p_clear", "p_clear_std",
+        "is_ps_in_hour", "is_frequent_ps_unit"])
     cells["hour_class"] = cells["hour"].apply(hour_class)
     return cells
 
 
-def summarise(cells, eps=1e-6):
+def summarise(cells, eps=1e-6, std_threshold: float = 5.0):
     """Aggregate per (tech_group, firm, hour_class).
 
     `frac_flagged` is the unweighted flag rate (D > eps). The median $D$,
@@ -231,14 +325,20 @@ def summarise(cells, eps=1e-6):
     directly comparable. Ratio = D_w / D per cell: high means within-cell
     variation sits near the clearing price (strategic); low means it
     sits at the extremes (price-cap padding, not strategic).
+
+    `frac_high_std` is the fraction of cells where the 4 quarters' clearing
+    prices have std > `std_threshold` EUR/MWh — flagging hours where the
+    single-center kernel is a poor representation of "the strategic band".
     """
     cells = cells[cells["hour_class"].isin(("critical", "flat"))].copy()
     cells["flagged"] = (cells["d_max"] > eps).astype(int)
+    cells["high_std"] = (cells["p_clear_std"].fillna(0) > std_threshold).astype(int)
     flagged = cells[cells["flagged"] == 1].copy()
     flagged["ratio"] = flagged["d_max_w"] / flagged["d_max"].replace(0, np.nan)
     overall = cells.groupby(["tech_group", "firm", "hour_class"]).agg(
         n_cells=("d_max", "size"),
         frac_flagged=("flagged", "mean"),
+        frac_high_std=("high_std", "mean"),
     ).reset_index()
     g_flag = flagged.groupby(["tech_group", "firm", "hour_class"]).agg(
         median_d=("d_max", "median"),
@@ -320,9 +420,9 @@ def write_tex_main(g, out_path):
     sub["h_ord"] = sub["hour_class"].map({"critical": 0, "flat": 1})
     sub = sub.sort_values(["f_ord", "h_ord"]).drop(columns=["f_ord", "h_ord"])
     lines = [
-        r"\begin{tabular}{@{}l l r r r r r@{}}",
+        r"\begin{tabular}{@{}l l r r r r r r@{}}",
         r"\toprule",
-        r"Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & median ratio \\",
+        r"Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & median ratio & \% high-$\sigma_{p}$ \\",
         r"\midrule",
     ]
     last_firm = None
@@ -333,11 +433,24 @@ def write_tex_main(g, out_path):
             f"{firm_disp} & {r['hour_class'].capitalize()} & {int(r['n_cells']):,} & "
             f"{_fmt_pct(r['frac_flagged'])} & {_fmt_num(r['median_d'])} & "
             f"{_fmt_num(r.get('median_dw', float('nan')))} & "
-            f"{_fmt_num(r.get('median_ratio', float('nan')))} \\\\"
+            f"{_fmt_num(r.get('median_ratio', float('nan')))} & "
+            f"{_fmt_pct(r.get('frac_high_std', float('nan')))} \\\\"
         )
     lines += [r"\bottomrule", r"\end{tabular}"]
     Path(out_path).write_text("\n".join(lines) + "\n")
     print(f"  saved {out_path}")
+
+
+def _sorted(g):
+    """Apply canonical tech / firm / hour-class ordering."""
+    tech_order = {t: i for i, t in enumerate(TECHS)}
+    firm_order = {f: i for i, f in enumerate(PIVOTAL)}
+    g = g.copy()
+    g["t_ord"] = g["tech_group"].map(tech_order)
+    g["f_ord"] = g["firm"].map(firm_order)
+    g["h_ord"] = g["hour_class"].map({"critical": 0, "flat": 1})
+    g = g.sort_values(["t_ord", "f_ord", "h_ord"]).drop(columns=["t_ord", "f_ord", "h_ord"])
+    return g
 
 
 def main():
@@ -346,27 +459,42 @@ def main():
     print(f"  {len(df):,} tranches, {df['unit_code'].nunique()} units")
     print(f"  techs: {df['tech_group'].value_counts().to_dict()}")
 
-    print("\nloading hourly DA clearing prices for kernel centers...")
+    print("\nloading hourly DA clearing prices for kernel centers + within-hour std...")
     clearing = load_hourly_clearing()
     print(f"  {len(clearing):,} (date, hour) cells")
 
-    print("\ncomputing per-cell L1 area between quarter pairs (unweighted + Epanechnikov-weighted)...")
-    cells = compute(df, clearing)
+    print("\nloading per-period price-setting units (rank-1, gap ≤ 0.01 EUR/MWh)...")
+    price_setters = load_price_setters()
+    print(f"  {len(price_setters):,} (date, period) → price-setter rows")
+
+    print("\ncomputing per-cell L1 area between quarter pairs + price-setter flags...")
+    cells = compute(df, clearing, price_setters, frequent_pct=1.0)
     print(f"  {len(cells):,} (firm,unit,date,hour) cells with all 4 quarters present")
+    print(f"  strict price-setter cells:    {cells['is_ps_in_hour'].sum():,}")
+    print(f"  frequent price-setter cells:  {cells['is_frequent_ps_unit'].sum():,}")
     cells.to_csv(OUTDIR / "quarter_dissimilarity_cells_2025Q4.csv", index=False)
 
-    print("\nsummary by (tech, firm, hour-class):")
-    g = summarise(cells)
-    tech_order = {t: i for i, t in enumerate(TECHS)}
-    firm_order = {f: i for i, f in enumerate(PIVOTAL)}
-    g["t_ord"] = g["tech_group"].map(tech_order)
-    g["f_ord"] = g["firm"].map(firm_order)
-    g["h_ord"] = g["hour_class"].map({"critical": 0, "flat": 1})
-    g = g.sort_values(["t_ord", "f_ord", "h_ord"]).drop(columns=["t_ord", "f_ord", "h_ord"])
-    print(g.to_string(index=False))
-    g.to_csv(OUTDIR / "quarter_dissimilarity_summary_2025Q4.csv", index=False)
-    write_tex_full(g, TABDIR / "tab_quarter_dissimilarity.tex")
-    write_tex_main(g, TABDIR / "tab_quarter_dissimilarity_main.tex")
+    # Three summaries: full sample, strict per-cell PS, frequent-PS unit
+    print("\n=== summary: FULL sample (all bidding cells) ===")
+    g_full = _sorted(summarise(cells))
+    print(g_full.to_string(index=False))
+    g_full.to_csv(OUTDIR / "quarter_dissimilarity_summary_full_2025Q4.csv", index=False)
+    write_tex_full(g_full, TABDIR / "tab_quarter_dissimilarity.tex")
+    write_tex_main(g_full, TABDIR / "tab_quarter_dissimilarity_main.tex")
+
+    print("\n=== summary: STRICT — cells where THIS unit was price-setter in ≥1 quarter ===")
+    g_strict = _sorted(summarise(cells[cells["is_ps_in_hour"]]))
+    print(g_strict.to_string(index=False))
+    g_strict.to_csv(OUTDIR / "quarter_dissimilarity_summary_strict_ps_2025Q4.csv", index=False)
+    write_tex_full(g_strict, TABDIR / "tab_quarter_dissimilarity_strict_ps.tex")
+    write_tex_main(g_strict, TABDIR / "tab_quarter_dissimilarity_main_strict_ps.tex")
+
+    print("\n=== summary: FREQUENT — cells of units that are price-setter in ≥1% of all periods ===")
+    g_freq = _sorted(summarise(cells[cells["is_frequent_ps_unit"]]))
+    print(g_freq.to_string(index=False))
+    g_freq.to_csv(OUTDIR / "quarter_dissimilarity_summary_frequent_ps_2025Q4.csv", index=False)
+    write_tex_full(g_freq, TABDIR / "tab_quarter_dissimilarity_frequent_ps.tex")
+    write_tex_main(g_freq, TABDIR / "tab_quarter_dissimilarity_main_frequent_ps.tex")
 
 
 if __name__ == "__main__":
