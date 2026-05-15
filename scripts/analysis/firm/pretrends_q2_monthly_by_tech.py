@@ -28,10 +28,10 @@ UNITS_CSV = REPO / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 
 OUTDIR = REPO / "results" / "regressions" / "firm" / "parallel_trends"
 OUTDIR.mkdir(parents=True, exist_ok=True)
-FIGDIR = REPO / "thesis" / "paper" / "figures"
+FIGDIR = REPO / "figures" / "thesis"
 
 START = "2024-01-01"
-END   = "2026-01-01"
+END   = "2026-03-01"
 REFORM = pd.Timestamp("2025-10-01")
 MTU15_IDA = pd.Timestamp("2025-03-19")
 
