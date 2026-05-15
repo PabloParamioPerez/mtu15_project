@@ -49,14 +49,13 @@ The thesis output is a single academic paper (`thesis/paper/paper.tex`, sections
 - `thesis/paper/tables/` — auto-generated LaTeX tables consumed by `paper.tex`.
 - `thesis/paper/references.bib` — bibliography.
 - `thesis/model/` — directory reserved for a separate structural-model write-up if it grows out of the paper (the pre-pivot `model.tex` was deleted 2026-05-04 since its asymmetric-granularity framing was superseded by the within-day DiD design and within-market granularity model).
-- `thesis/narratives/` — presentation narratives, planning documents
 - `thesis/presentations/workshop_february_2026/` — first thesis-progress presentation
 - `thesis/presentations/workshop_may_2026/` — second thesis-progress presentation (the headline pivot)
 - `thesis/_archive/` — historical framings (do NOT cite as current); includes the May 2026 proposal-workshop framing.
 
 **Notebooks (exploration, not thesis output):**
 - `notebooks/eda/` — numbered exploratory data-analysis notebooks
-- `notebooks/memos/` — research diaries, modelling track, audits (markdown only)
+- `notebooks/memos/` — single active memo: `_esios_archive_catalog.md` (ESIOS data dictionary). Older memos archived under `attic/memos_20260516/`.
 - `notebooks/attic/` — superseded exploratory work (renamed from `archive/` 2026-05-04 for consistency with other attics)
 
 **External references:**
@@ -137,7 +136,7 @@ Before adding or changing a parser, read at least one neighbouring family's pars
 These dates appear as constants (`IDA_REFORM`, `INTRADAY_REFORM`, `DAY_AHEAD_REFORM`) in all notebooks and scripts.
 
 ## Exploratory notebooks
-All notebooks live in `notebooks/eda/` and are for exploration only — not thesis output. Run with the `mtu15-project` kernel. Research-memo markdown (modelling track, audits, identification target, research diary) lives in `notebooks/memos/`. See `notebooks/memos/README.md` for the current notebook map and `CLAIMS_LEDGER.md` for the claim each notebook produces.
+All notebooks live in `notebooks/eda/` and are for exploration only — not thesis output. Run with the `.venv/` Python interpreter. Only one memo is actively maintained: `notebooks/memos/_esios_archive_catalog.md` (ESIOS data dictionary). Older memos / claims ledger / research diary / narratives have been moved to `attic/memos_20260516/` as historical reference.
 
 Each active notebook has a cell-1 markdown STATUS block (mirrors the script header convention). Do not duplicate analysis across notebooks; check what is already covered before adding a new section.
 
@@ -217,35 +216,6 @@ ESIOS `REE_ActualGen_` / `REE_AggGenOutput`; we use ENTSO-E.
 - Lint: `uv run ruff check .`
 - Test: `uv run pytest`
 - Type-check: `uv run mypy src/`
-
-## Claim-status discipline
-
-The project tracks empirical claim status in `CLAIMS_LEDGER.md` at the repo root. Open economic-modelling questions live in `notebooks/memos/_modelling_track.md`. Identification provenance and history is frozen in `notebooks/memos/_identification_target.md` (no rewrites; appendix-grade).
-
-**Before running any new analysis, the assistant must answer in writing:**
-
-1. Which claim in `CLAIMS_LEDGER.md` does this strengthen (alive) or potentially kill (wounded)? **OR** which entry in `notebooks/memos/_modelling_track.md` does this advance?
-2. If neither: stop. Do not run.
-3. If yes: estimate runtime + writing-day impact. If total > 0.5 days, stop and ask the user.
-4. Any result that changes a claim's status triggers the discipline cycle:
-   1. Update the row in `CLAIMS_LEDGER.md` (status, `Date_changed`, reason). Do not delete rows.
-   2. Update the producing script's STATUS header (the 4-line block at top).
-   3. Update the consuming notebook's synthesis cell — strikethrough dead claims, do not delete cells.
-   4. Append one dated line to `notebooks/memos/RESEARCH_DIARY.md` (or `notebooks/memos/RESEARCH_LOG.md` for hypothesis-register changes).
-5. Move a script to `scripts/analysis/attic/` only if (a) status is DEAD AND (b) no live notebook imports it. Otherwise leave in place with the `DEAD-KEPT-AS-RECORD` header. Labels are reversible; moves are not in practice.
-
-**Header convention** (one block at top of every script in `scripts/analysis/`):
-
-```
-# STATUS: ALIVE | WOUNDED | DEAD-KEPT-AS-RECORD
-# LAST-AUDIT: YYYY-MM-DD
-# FEEDS: <claim-IDs from CLAIMS_LEDGER, comma-separated>
-# CLAIM: <one-line summary>
-```
-
-For active notebooks in `notebooks/eda/`, the same four fields appear as a markdown cell-1.
-
-**Status meanings.** *Alive* — passed all documented robustness checks; safe to cite. *Wounded* — survives in narrowed form; cite only with caveat. *Dead* — retracted or contradicted; do not cite as positive result, may appear in identification appendix as "attempted but failed".
 
 ## Power-vs-energy discipline (added 2026-05-07)
 

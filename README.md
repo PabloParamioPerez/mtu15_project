@@ -11,12 +11,9 @@ The empirical strategy is a **within-day difference-in-differences** comparing c
 | Where to look | What you'll find |
 |---|---|
 | [`thesis/paper/paper.tex`](thesis/paper/paper.tex) → [`paper.pdf`](thesis/paper/paper.pdf) | Single-file thesis paper (the deliverable). Sections, not chapters. |
-| [`CLAUDE.md`](CLAUDE.md) | Canonical project rules: data layers, claim-status discipline, OVB protocol, file conventions. |
-| [`CLAIMS_LEDGER.md`](CLAIMS_LEDGER.md) | Single source of truth for empirical claims (alive / wounded / dead). One row per claim. |
-| [`notebooks/memos/`](notebooks/memos/) | Research diary, modelling-track memos, audit trail, identification-history appendix. |
-| [`notebooks/memos/RESEARCH_DIARY.md`](notebooks/memos/RESEARCH_DIARY.md) | Append-only chronological log of decisions and claim changes. |
-| [`notebooks/memos/_esios_archive_catalog.md`](notebooks/memos/_esios_archive_catalog.md) | ESIOS API archive triage memo (which archives we ingest and why). |
-| [`data/external/esios_indicator_catalog.yaml`](data/external/esios_indicator_catalog.yaml) | 139 curated ESIOS indicators with per-indicator native granularity. |
+| [`CLAUDE.md`](CLAUDE.md) | Canonical project rules: data layers, OVB / seasonality protocols, file conventions. |
+| [`notebooks/memos/_esios_archive_catalog.md`](notebooks/memos/_esios_archive_catalog.md) | ESIOS API archive triage memo (which archives we ingest and why) — the only memo we actively maintain. |
+| [`data/external/esios_indicator_catalog.yaml`](data/external/esios_indicator_catalog.yaml) | 169 curated ESIOS indicators with per-indicator native granularity. |
 
 Run `uv run pytest` for the test suite; `uv run python scripts/pipelines/.../00_*.py` for any pipeline step. All pipeline scripts are idempotent.
 
@@ -219,13 +216,12 @@ mtu15_project/
 │
 ├── notebooks/
 │   ├── eda/                               # numbered EDA notebooks
-│   ├── memos/                             # research diary, modelling track, audit trail (markdown only)
+│   ├── memos/                             # one memo only: _esios_archive_catalog.md
 │   └── attic/                             # superseded exploratory work
 │
 ├── thesis/
 │   ├── paper/                             # paper.tex + tables/, references.bib, paper.pdf
 │   ├── model/                             # reserved for new structural model (not yet written)
-│   ├── narratives/                        # presentation narratives, planning docs
 │   └── presentations/
 │       ├── workshop_february_2026/
 │       └── workshop_may_2026/
@@ -240,9 +236,8 @@ mtu15_project/
 │
 ├── tests/                                 # pytest suite
 ├── logs/                                  # runtime logs
-├── attic/                                 # project-level retired material
+├── attic/                                 # project-level retired material (incl. moved memos / claims ledger / narratives at memos_20260516/)
 ├── CLAUDE.md                              # canonical project rules
-├── CLAIMS_LEDGER.md                       # claim status registry
 └── README.md                              # this file
 ```
 
@@ -275,33 +270,9 @@ mtu15_project/
 
 ---
 
-## Reading the empirical work
+## Methodological protocols
 
-Each script and active notebook carries a 4-line STATUS block:
-
-```python
-# STATUS: ALIVE | WOUNDED | DEAD-KEPT-AS-RECORD
-# LAST-AUDIT: YYYY-MM-DD
-# FEEDS: <claim-IDs from CLAIMS_LEDGER, comma-separated>
-# CLAIM: <one-line summary>
-```
-
-Discipline cycle when a claim's status changes (see `CLAUDE.md` § Claim-status discipline):
-
-1. Update the row in `CLAIMS_LEDGER.md` (status, `Date_changed`, reason — never delete)
-2. Update the producing script's STATUS header
-3. Update the consuming notebook's synthesis cell (strikethrough dead claims, do not delete)
-4. Append a dated line to `notebooks/memos/RESEARCH_DIARY.md`
-
-Claim-status semantics:
-
-| Status | Meaning |
-|---|---|
-| Alive | Passed all documented robustness checks; safe to cite |
-| Wounded | Survives in narrowed form; cite with caveat |
-| Dead | Retracted or contradicted; do not cite as positive result |
-
-Methodological protocols for regression-based claims (OVB-robustness, good vs bad controls, seasonality + weather controls for cross-regime claims) live in [`CLAUDE.md`](CLAUDE.md) under the respective sections.
+OVB-robustness, good-vs-bad controls, and seasonality + weather controls for cross-regime claims live in [`CLAUDE.md`](CLAUDE.md) under the respective sections.
 
 ---
 
