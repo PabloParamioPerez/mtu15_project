@@ -262,12 +262,12 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 
 \begin{table}[H]
 \centering
-\caption{\textbf{Per-firm DA bid-shape detail, October--December 2025.} Mean number of tranches, median tranche price, total quantity offered, and the share of clock-hours in which all four 15-min quarters carry an identical bid (mechanical-repeat rate).}
+\caption{\textbf{Within-hour quarter dissimilarity, CCGT only, October--December 2025.} For each (firm, unit, date, hour) cell with all four 15-min quarters present, $D$ is the maximum pairwise L1 area between the cumulative bid curves over the full price range (the standard 1-D Wasserstein-style distance). $D_w$ is the same L1 area weighted by an Epanechnikov kernel ($h = 20$~EUR/MWh) centred at the period's mean clearing price --- it isolates bid variation around the strategically-relevant window and downweights mass differences at the price cap. \% flagged = fraction of cells with $D > 0$. The ``median ratio'' column is the per-cell median of $D_w / D$ among flagged cells: values near 1 indicate variation concentrated near clearing (strategic); values close to 0 indicate variation at the extremes (price-cap padding, not strategic).}
 \label{tab:per_firm_bid_shape}
-\resizebox{\textwidth}{!}{\input{tables/tab_per_firm_bid_shape_detail}}
+\input{tables/tab_quarter_dissimilarity_main}
 \end{table}
 
-\textit{Reading} (\textbf{supportive}). Ladder enrichment in critical hours is clear in Iberdrola (9.7 vs 4.4 tranches), Naturgy (6.3 vs 1.3) and EDP-Spain (5.8 vs 3.7). The mechanical-repeat rate drops in critical hours for Naturgy (0.81 vs 1.00) and EDP-Portugal (0.07 vs 0.27): they are the firms varying their bids across the four quarters of an hour. The higher flat-hour median prices are mechanical --- low overnight demand pushes units into precautionary, near-cap bids regardless of strategy.
+\textit{Reading} (\textbf{supportive}). Naturgy is the standout: 24.5\% of critical-hour CCGT cells are flagged ($D > 0$) vs 0.0\% in flat hours, and the kernel-weighted median $D_w = 1418$ is two orders of magnitude larger than the next pivotal firm. The median ratio $D_w / D$ for Naturgy critical is 0.02, near zero, indicating most of the dissimilarity sits at the bid-curve extremes (price-cap padding) rather than near the clearing price. Iberdrola critical flags 5.8\% with both $D$ and $D_w$ near zero --- shape variation exists but is small and not concentrated in the strategic band. The within-hour granularity-exploitation evidence in critical hours is therefore narrow and largely Naturgy-driven; for the other firms, what little quarter variation exists lives at the price-cap tail rather than the strategic margin. The full per-tech panel (supply + demand sides, all firms) is in Appendix~\ref{app:quarter_dissim}.
 
 \begin{figure}[H]
 \centering
@@ -287,7 +287,7 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 \label{fig:per_firm_bid_curves_quarters_ccgt_pair}
 \end{figure}
 
-\textit{Reading} (\textbf{supportive}). In critical hours Naturgy shows visible quarter dispersion in the 1{,}500--2{,}800 MW band (Q1 below Q4 in the body of the curve); in flat hours the four quarters of Naturgy --- and of every other firm --- collapse onto a single curve. Granularity differentiation is hour-class-specific: it appears only where within-hour demand variation gives it economic content. This is the falsification check the within-day design requires.
+\textit{Reading} (\textbf{supportive}). In critical hours Naturgy shows visible quarter dispersion in the 1{,}500--2{,}800 MW band (Q1 below Q4 in the body of the curve); in flat hours the four quarters of Naturgy --- and of every other firm --- collapse onto a single curve. Granularity differentiation is hour-class-specific: it appears only where within-hour demand variation gives it economic content. This is the falsification check the within-day design requires. \emph{Caveat on visual flatness}: aggregating across $\sim$92 dates per (firm, hour, quarter) cell smooths day-specific variation. The kernel-weighted quarter-dissimilarity test in Table~\ref{tab:per_firm_bid_shape}, computed at (firm, unit, date, hour) granularity, does not suffer from this flattening and is the right quantitative complement.
 
 \paragraph{IDA mirror.} The same construction applied to the intraday auction (ICAB + IDET, pooled across the 3 daily IDA sessions) is shown in Figures~\ref{fig:per_firm_bid_curves_ida_main}--\ref{fig:per_firm_bid_curves_quarters_ccgt_ida_flat_main}.
 
@@ -316,7 +316,7 @@ TotalEnergies          & 0.000 & 0.000 & 0.000 \\
 \label{fig:per_firm_bid_curves_quarters_ccgt_ida_pair}
 \end{figure}
 
-\textit{Reading} (\textbf{supportive}). In IDA, all four pivotal firms (not just Naturgy as in DA) show monotone Q1--Q4 dispersion in critical hours: Q1 offers the most MW, Q4 the least, at prices near clearing. The flat-hour falsification holds for every firm. IDA is where pivotal firms actively reposition $q_2$, and the granularity exploitation pattern is sharper here than in the day-ahead.
+\textit{Reading} (\textbf{supportive}). In IDA, all four pivotal firms (not just Naturgy as in DA) show monotone Q1--Q4 dispersion in critical hours: Q1 offers the most MW, Q4 the least, at prices near clearing. The flat-hour falsification holds for every firm. IDA is where pivotal firms actively reposition $q_2$, and the granularity exploitation pattern is sharper here than in the day-ahead. The aggregate-window visualisation in this figure averages over $\sim$92 dates and so smooths daily shocks; see Table~\ref{tab:per_firm_bid_shape} for the per-cell kernel-weighted dissimilarity test that operates day-by-day, and Appendix~\ref{app:price_setter_days} for two illustrative single-day decompositions on a high-demand and a flat day.
 
 \subsection{Demand-side and storage bidding: who exploits granularity}\label{sec:bid_evidence:demand_storage}
 
@@ -733,6 +733,33 @@ A cell is ``flagged'' if $D > 10^{-6}$ MWh$\cdot$EUR/MWh --- equivalent to ``the
 \input{tables/tab_quarter_dissimilarity}
 
 \textit{Reading} (\textbf{mixed}). Pump-storage is genuinely mechanical: \texttt{Pump\_load} and \texttt{Hydro\_pump} flag $\le 5.5\%$ across all firms and hour-classes, confirming the within-hour null in §\ref{sec:bid_evidence:demand_storage}. Naturgy CCGT flags 24.5\% in critical vs 0.0\% in flat, matching the visual Q1--Q4 separation in Figure~\ref{fig:per_firm_bid_curves_quarters_ccgt}. By contrast \texttt{Wind} and \texttt{Solar PV} flag $\ge 92\%$ for IB, GN and HC --- bids vary across the four quarters in almost every cell, though for Wind the magnitudes are small (median $D \le 2.6$), consistent with quarter-by-quarter automated forecast updates rather than strategic re-pricing. \texttt{Retailer} flags 41\%, 76\% and 22\% for IB, GE and GN with Endesa's median $D = 11.2$: pivotal firms do vary their retail demand bids across quarters in ways the aggregated demand-curve plot of §\ref{app:demand_grid} does not display. Endesa Hydro stands out on the supply side with 56\% / 47\% flag rates.
+
+\paragraph{Kernel-weighted dissimilarity ($D_w$).} A second column $D_w$ in Table~\ref{tab:quarter_dissim} reports the same L1 area under an Epanechnikov-kernel weight centred at the period's mean DA clearing price, with bandwidth $h = 20$~EUR/MWh:
+\[
+   D_w \;=\; \max_{i<j}\;\int \bigl|F_i(p) - F_j(p)\bigr| \cdot K_h(p - \bar p_{\text{clear}}) \, dp,
+   \qquad K_h(u) = \tfrac{3}{4h}\bigl(1 - (u/h)^2\bigr)_+.
+\]
+The kernel has compact support on $[\bar p_{\text{clear}} - h, \bar p_{\text{clear}} + h]$, so $D_w$ only counts bid differences inside the "strategically-relevant" band where bid-shading plausibly affects clearing. Mass differences at the price cap (4{,}000 EUR/MWh) contribute zero to $D_w$ but contribute to the unweighted $D$. Comparing the two columns sharpens interpretation: a high $D$ with a low ratio $D_w / D$ means the within-quarter variation lives at the extremes (price-cap padding, not strategic); a high $D$ with a ratio near 1 means the variation is concentrated around clearing (strategic re-pricing).
+
+\subsection{Price-setting unit on illustrative days}\label{app:price_setter_days}
+
+The aggregate quarter-curves in §\ref{sec:bid_evidence:perfirm} average over $\sim$92 dates and so smooth daily shocks. The kernel-weighted $D_w$ partially addresses this by operating at the (firm, unit, date, hour) cell, but it still aggregates across days for its summary statistics. As a visual complement, this subsection plots the \emph{price-setting unit's} full bid ladder per quarter for two single days: one high-demand winter weekday and one low-demand flat Sunday.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{fig_price_setter_high_demand.pdf}
+\caption{\textbf{Price-setting unit on a high-demand winter day (Thu 4 Dec 2025, hour 20:00--21:00).} The unit identified as the price-setter (highest accepted sell tranche within 0.5~EUR/MWh of the period's DA clearing price) is MUEL --- a Naturgy CCGT block --- in two of the four quarters. Each panel shows the unit's full bid ladder for that quarter; the red dotted line marks the period's clearing price.}
+\label{fig:price_setter_high_demand}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{fig_price_setter_flat_day.pdf}
+\caption{\textbf{Price-setting unit on a flat low-demand Sunday (Sun 26 Oct 2025, hour 20:00--21:00).} The same construction. Even on a flat day the four price-setting tranches differ visibly across quarters --- but the unit identity itself rotates more freely (no concentrated quarter-by-quarter shaping by one focal unit).}
+\label{fig:price_setter_flat_day}
+\end{figure}
+
+\textit{Reading} (\textbf{supportive}). On the high-demand day, the same Naturgy CCGT (MUEL) sets the price in two adjacent quarters with a small upward step between them --- the kind of micro-arbitrage the within-day model predicts. On the flat Sunday the price-setting unit itself rotates across the four quarters, and the bid ladders look more like four independent units bidding around a similar marginal cost rather than one unit shaping its ladder. These two examples illustrate the per-cell variation that the aggregate plots compress into a single smoothed line. A systematic per-day quarter-dissimilarity sweep is the next natural extension; we leave it for the appendix of a future version.
 
 \subsection{Pre-trend diagnostic}\label{app:pretrends}
 

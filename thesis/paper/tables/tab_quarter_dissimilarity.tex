@@ -1,84 +1,84 @@
 \small
-\begin{longtable}{@{}l l l l r r r@{}}
-\caption{\textbf{Quarter-by-quarter bid dissimilarity, October--December 2025.} For each (firm, unit, date, hour) cell with all four 15-min quarters present, $D$ is the maximum pairwise L1 area between cumulative bid curves. Flag = fraction of cells with $D > 0$.}\label{tab:quarter_dissim}\\
+\begin{longtable}{@{}l l l l r r r r r@{}}
+\caption{\textbf{Quarter-by-quarter bid dissimilarity, October--December 2025.} For each (firm, unit, date, hour) cell with all four 15-min quarters present, $D$ is the maximum pairwise L1 area between cumulative bid curves over the full price range. $D_w$ is the same L1 area weighted by an Epanechnikov kernel ($h = 20$ EUR/MWh) centered at the period's mean clearing price, isolating bid variation around the strategically-relevant window. Flag = fraction of cells with $D > 0$. The ratio column reports the per-cell median of $D_w/D$ among flagged cells: values near 1 indicate variation concentrated near the clearing price (strategic); values close to 0 indicate variation at the extremes (price-cap padding, not strategic).}\label{tab:quarter_dissim}\\
 \toprule
-Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ \\
+Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & median ratio \\
 \midrule
 \endfirsthead
-\multicolumn{7}{l}{\emph{(continued from previous page)}} \\
+\multicolumn{9}{l}{\emph{(continued from previous page)}} \\
 \toprule
-Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ \\
+Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & median ratio \\
 \midrule
 \endhead
 \midrule
-\multicolumn{7}{r}{\emph{continued on next page}} \\
+\multicolumn{9}{r}{\emph{continued on next page}} \\
 \endfoot
 \bottomrule
 \endlastfoot
-Supply & CCGT & IB & Critical & 7,831 & 5.8 & 0.00 \\
- &  & IB & Flat & 2,139 & 3.9 & 0.00 \\
- &  & GE & Critical & 5,195 & 1.8 & 0.00 \\
- &  & GE & Flat & 1,413 & 0.0 & 0.00 \\
- &  & GN & Critical & 14,930 & 24.5 & 0.00 \\
- &  & GN & Flat & 4,065 & 0.0 & 0.00 \\
- &  & HC & Critical & 2,013 & 0.0 & 0.00 \\
- &  & HC & Flat & 549 & 0.5 & 0.00 \\
+Supply & CCGT & IB & Critical & 7,831 & 5.8 & 0.00 & 0.00 & 0.00 \\
+ &  & IB & Flat & 2,139 & 3.9 & 0.00 & 0.00 & 0.00 \\
+ &  & GE & Critical & 5,195 & 1.8 & 0.00 & 91.42 & 0.00 \\
+ &  & GE & Flat & 1,413 & 0.0 & 0.00 & -- & -- \\
+ &  & GN & Critical & 14,930 & 24.5 & 0.00 & 1890.67 & 0.02 \\
+ &  & GN & Flat & 4,065 & 0.0 & 0.00 & 457.33 & 0.01 \\
+ &  & HC & Critical & 2,013 & 0.0 & 0.00 & 1504.81 & 0.01 \\
+ &  & HC & Flat & 549 & 0.5 & 0.00 & 0.00 & 0.00 \\
 \addlinespace
- & Hydro & IB & Critical & 6,072 & 2.1 & 0.00 \\
- &  & IB & Flat & 1,656 & 0.3 & 0.00 \\
- &  & GE & Critical & 5,552 & 56.4 & 0.80 \\
- &  & GE & Flat & 1,488 & 47.3 & 0.00 \\
- &  & GN & Critical & 2,993 & 0.0 & 0.00 \\
- &  & GN & Flat & 810 & 0.1 & 0.00 \\
- &  & HC & Critical & 847 & 0.0 & 0.00 \\
- &  & HC & Flat & 231 & 0.0 & 0.00 \\
+ & Hydro & IB & Critical & 6,072 & 2.1 & 0.00 & 0.00 & 0.00 \\
+ &  & IB & Flat & 1,656 & 0.3 & 0.00 & 2816.00 & 0.07 \\
+ &  & GE & Critical & 5,552 & 56.4 & 0.80 & 1.50 & 1.00 \\
+ &  & GE & Flat & 1,488 & 47.3 & 0.00 & 1.30 & 1.00 \\
+ &  & GN & Critical & 2,993 & 0.0 & 0.00 & 2.67 & 0.17 \\
+ &  & GN & Flat & 810 & 0.1 & 0.00 & 2.67 & 0.17 \\
+ &  & HC & Critical & 847 & 0.0 & 0.00 & -- & -- \\
+ &  & HC & Flat & 231 & 0.0 & 0.00 & -- & -- \\
 \addlinespace
- & Hydro\_pump & IB & Critical & 1,001 & 0.4 & 0.00 \\
- &  & IB & Flat & 273 & 0.0 & 0.00 \\
- &  & GE & Critical & 2,670 & 0.0 & 0.00 \\
- &  & GE & Flat & 372 & 0.0 & 0.00 \\
- &  & GN & Critical & 1,006 & 0.0 & 0.00 \\
- &  & GN & Flat & 276 & 0.0 & 0.00 \\
+ & Hydro\_pump & IB & Critical & 1,001 & 0.4 & 0.00 & 2.67 & 0.07 \\
+ &  & IB & Flat & 273 & 0.0 & 0.00 & -- & -- \\
+ &  & GE & Critical & 2,670 & 0.0 & 0.00 & 206.80 & 0.11 \\
+ &  & GE & Flat & 372 & 0.0 & 0.00 & -- & -- \\
+ &  & GN & Critical & 1,006 & 0.0 & 0.00 & -- & -- \\
+ &  & GN & Flat & 276 & 0.0 & 0.00 & -- & -- \\
 \addlinespace
- & Nuclear & IB & Critical & 2,907 & 31.9 & 0.00 \\
- &  & IB & Flat & 800 & 31.6 & 0.00 \\
- &  & GE & Critical & 2,473 & 4.0 & 0.00 \\
- &  & GE & Flat & 672 & 1.9 & 0.00 \\
+ & Nuclear & IB & Critical & 2,907 & 31.9 & 0.00 & 205.70 & 1.00 \\
+ &  & IB & Flat & 800 & 31.6 & 0.00 & 119.80 & 1.00 \\
+ &  & GE & Critical & 2,473 & 4.0 & 0.00 & 600.00 & 0.01 \\
+ &  & GE & Flat & 672 & 1.9 & 0.00 & 194.67 & 0.46 \\
 \addlinespace
- & Wind & IB & Critical & 4,539 & 97.2 & 1.00 \\
- &  & IB & Flat & 1,283 & 97.3 & 1.00 \\
- &  & GN & Critical & 4,152 & 92.7 & 0.13 \\
- &  & GN & Flat & 1,159 & 92.6 & 0.10 \\
- &  & HC & Critical & 3,990 & 93.7 & 2.60 \\
- &  & HC & Flat & 1,081 & 93.8 & 2.60 \\
+ & Wind & IB & Critical & 4,539 & 97.2 & 1.00 & 0.80 & 1.00 \\
+ &  & IB & Flat & 1,283 & 97.3 & 1.00 & 0.80 & 1.00 \\
+ &  & GN & Critical & 4,152 & 92.7 & 0.13 & 0.00 & 0.00 \\
+ &  & GN & Flat & 1,159 & 92.6 & 0.10 & 0.00 & 0.00 \\
+ &  & HC & Critical & 3,990 & 93.7 & 2.60 & 0.00 & 0.00 \\
+ &  & HC & Flat & 1,081 & 93.8 & 2.60 & 0.00 & 0.00 \\
 \addlinespace
- & Solar PV & IB & Critical & 960 & 99.5 & 7.80 \\
- &  & GE & Critical & 64 & 3.1 & 0.00 \\
- &  & GN & Critical & 1,594 & 15.9 & 0.00 \\
- &  & GN & Flat & 411 & 0.0 & 0.00 \\
- &  & HC & Critical & 325 & 100.0 & 42.12 \\
+ & Solar PV & IB & Critical & 960 & 99.5 & 7.80 & 7.90 & 1.00 \\
+ &  & GE & Critical & 64 & 3.1 & 0.00 & 0.10 & 1.00 \\
+ &  & GN & Critical & 1,594 & 15.9 & 0.00 & 12.40 & 1.00 \\
+ &  & GN & Flat & 411 & 0.0 & 0.00 & -- & -- \\
+ &  & HC & Critical & 325 & 100.0 & 42.12 & 0.00 & 0.00 \\
 \midrule
-Demand & Pump\_load & IB & Critical & 2,558 & 3.2 & 0.00 \\
- &  & IB & Flat & 866 & 5.5 & 0.00 \\
- &  & GE & Critical & 1,370 & 0.0 & 0.00 \\
- &  & GE & Flat & 617 & 0.0 & 0.00 \\
- &  & GN & Critical & 1,010 & 0.0 & 0.00 \\
- &  & GN & Flat & 276 & 0.0 & 0.00 \\
- &  & HC & Critical & 946 & 0.0 & 0.00 \\
- &  & HC & Flat & 261 & 0.0 & 0.00 \\
+Demand & Pump\_load & IB & Critical & 2,558 & 3.2 & 0.00 & 153.06 & 0.51 \\
+ &  & IB & Flat & 866 & 5.5 & 0.00 & 95.41 & 0.79 \\
+ &  & GE & Critical & 1,370 & 0.0 & 0.00 & -- & -- \\
+ &  & GE & Flat & 617 & 0.0 & 0.00 & -- & -- \\
+ &  & GN & Critical & 1,010 & 0.0 & 0.00 & -- & -- \\
+ &  & GN & Flat & 276 & 0.0 & 0.00 & -- & -- \\
+ &  & HC & Critical & 946 & 0.0 & 0.00 & -- & -- \\
+ &  & HC & Flat & 261 & 0.0 & 0.00 & -- & -- \\
 \addlinespace
- & Retailer & IB & Critical & 3,423 & 40.9 & 0.00 \\
- &  & IB & Flat & 923 & 40.2 & 0.00 \\
- &  & GE & Critical & 3,971 & 76.5 & 11.20 \\
- &  & GE & Flat & 1,083 & 76.3 & 8.90 \\
- &  & GN & Critical & 4,048 & 22.0 & 0.00 \\
- &  & GN & Flat & 1,104 & 15.8 & 0.00 \\
- &  & HC & Critical & 1,100 & 0.5 & 0.00 \\
- &  & HC & Flat & 300 & 0.0 & 0.00 \\
+ & Retailer & IB & Critical & 3,423 & 40.9 & 0.00 & 33.60 & 1.00 \\
+ &  & IB & Flat & 923 & 40.2 & 0.00 & 22.40 & 1.00 \\
+ &  & GE & Critical & 3,971 & 76.5 & 11.20 & 26.40 & 1.00 \\
+ &  & GE & Flat & 1,083 & 76.3 & 8.90 & 22.65 & 1.00 \\
+ &  & GN & Critical & 4,048 & 22.0 & 0.00 & 0.20 & 1.00 \\
+ &  & GN & Flat & 1,104 & 15.8 & 0.00 & 0.10 & 1.00 \\
+ &  & HC & Critical & 1,100 & 0.5 & 0.00 & 0.00 & 0.00 \\
+ &  & HC & Flat & 300 & 0.0 & 0.00 & -- & -- \\
 \addlinespace
- & Direct\_consumer & IB & Critical & 1,012 & 95.9 & 0.30 \\
- &  & IB & Flat & 276 & 95.3 & 0.30 \\
- &  & HC & Critical & 1,612 & 15.6 & 0.00 \\
- &  & HC & Flat & 441 & 12.2 & 0.00 \\
+ & Direct\_consumer & IB & Critical & 1,012 & 95.9 & 0.30 & 0.30 & 1.00 \\
+ &  & IB & Flat & 276 & 95.3 & 0.30 & 0.30 & 1.00 \\
+ &  & HC & Critical & 1,612 & 15.6 & 0.00 & 0.10 & 1.00 \\
+ &  & HC & Flat & 441 & 12.2 & 0.00 & 0.10 & 1.00 \\
 \end{longtable}
 \normalsize

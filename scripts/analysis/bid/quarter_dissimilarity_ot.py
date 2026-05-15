@@ -30,10 +30,16 @@ from mtu.classification.units import firm_unit_panel  # noqa: E402
 
 DET = REPO / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "det_all.parquet"
 CAB = REPO / "data" / "processed" / "omie" / "mercado_diario" / "ofertas" / "cab_all.parquet"
+MARGINALPDBC = REPO / "data" / "processed" / "omie" / "mercado_diario" / "precios" / "marginalpdbc_all.parquet"
 UNITS_CSV = REPO / "data" / "external" / "omie_reference" / "lista_unidades.csv"
 OUTDIR = REPO / "results" / "regressions" / "bid" / "quarter_dissimilarity"
 OUTDIR.mkdir(parents=True, exist_ok=True)
 TABDIR = REPO / "thesis" / "paper" / "tables"
+
+# Kernel for "strategic-zone" weighting. Epanechnikov, compact support, no
+# leakage to the price-cap mass. Bandwidth tuned to ~20 EUR/MWh, the width
+# of the band around clearing where bid-shading is plausibly strategic.
+KERNEL_BANDWIDTH = 20.0
 
 CRIT = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)
 FLAT = (1, 2, 3)
@@ -91,11 +97,29 @@ def load_tranches(window=("2025-10-01", "2026-01-01")):
     return pd.concat(rows, ignore_index=True)
 
 
-def l1_between_bid_curves(prices_i, qtys_i, prices_j, qtys_j):
-    """Exact L1 area between two cumulative bid curves, handling the
-    union-of-prices integration domain. Each input is a sequence of
-    (price, quantity) tranches; the cumulative curve at price p is
-    sum of q for tranches with p_tranche <= p."""
+def _epanechnikov_integral_unit(p, center, h):
+    """Indefinite integral of the unit-amplitude Epanechnikov kernel
+    K(p) = max(0, 1 - ((p - center) / h)**2), evaluated at price p.
+    K has MAX VALUE 1 at the center (not a normalized density), so the
+    weighted L1 has the same units as the unweighted L1 and
+    `D_w / D <= 1` always."""
+    u = np.clip((p - center) / h, -1.0, 1.0)
+    return h * (u - u ** 3 / 3.0)
+
+
+def l1_between_bid_curves(prices_i, qtys_i, prices_j, qtys_j,
+                          kernel_center: float | None = None,
+                          kernel_h: float = KERNEL_BANDWIDTH):
+    """Exact L1 area between two cumulative bid curves, optionally
+    weighted by an Epanechnikov kernel centered at `kernel_center` with
+    bandwidth `kernel_h`. When kernel_center is None, the unweighted
+    L1 area is returned (the "raw" 1-D Wasserstein-style flag).
+
+    Each input is a sequence of (price, quantity) tranches; the
+    cumulative curve at price p is sum of q for tranches with
+    p_tranche <= p. Integration domain is the union of all bid prices
+    in the two quarters; the weighted variant integrates over the
+    intersection of that domain with [center - h, center + h]."""
     pi = np.asarray(prices_i, dtype=float); qi = np.asarray(qtys_i, dtype=float)
     pj = np.asarray(prices_j, dtype=float); qj = np.asarray(qtys_j, dtype=float)
     # Sort by price
@@ -103,26 +127,38 @@ def l1_between_bid_curves(prices_i, qtys_i, prices_j, qtys_j):
     oj = np.argsort(pj); pj, qj = pj[oj], qj[oj]
     cum_i = np.cumsum(qi)
     cum_j = np.cumsum(qj)
-    # Union of breakpoints (also include 0 and an upper sentinel)
+    # Union of breakpoints
     grid = np.unique(np.concatenate([pi, pj]))
     if len(grid) < 2:
         return abs(cum_i[-1] - cum_j[-1]) if (len(cum_i) and len(cum_j)) else 0.0
     integral = 0.0
     for k in range(len(grid) - 1):
         p_lo = grid[k]; p_hi = grid[k + 1]
-        # cum_qty at price <= p_lo (note: tranches at p_lo are included)
         ki = np.searchsorted(pi, p_lo, side="right") - 1
         kj = np.searchsorted(pj, p_lo, side="right") - 1
         ci = cum_i[ki] if ki >= 0 else 0.0
         cj = cum_j[kj] if kj >= 0 else 0.0
-        integral += abs(ci - cj) * (p_hi - p_lo)
+        gap = abs(ci - cj)
+        if gap == 0:
+            continue
+        if kernel_center is None:
+            integral += gap * (p_hi - p_lo)
+        else:
+            # Integrate K(p - center) over [p_lo, p_hi] using the
+            # unit-amplitude Epanechnikov kernel (max value 1 at center)
+            w = _epanechnikov_integral_unit(p_hi, kernel_center, kernel_h) \
+                - _epanechnikov_integral_unit(p_lo, kernel_center, kernel_h)
+            integral += gap * w
     return integral
 
 
-def cell_dissimilarity(quarter_to_tranches):
+def cell_dissimilarity(quarter_to_tranches, kernel_center: float | None = None):
     """Given a dict {q: DataFrame(p, q)}, return max and mean L1 area
-    across the 6 pairs of quarters. If fewer than 4 quarters present,
-    returns NaN."""
+    across the 6 pairs of quarters. If kernel_center is provided, the
+    L1 is Epanechnikov-weighted around that price.
+
+    Returns (d_max, d_mean). If fewer than 4 quarters present, returns
+    (NaN, NaN)."""
     if len(quarter_to_tranches) != 4:
         return np.nan, np.nan
     pair_d = []
@@ -130,6 +166,7 @@ def cell_dissimilarity(quarter_to_tranches):
         d = l1_between_bid_curves(
             quarter_to_tranches[qi]["p"].values, quarter_to_tranches[qi]["q"].values,
             quarter_to_tranches[qj]["p"].values, quarter_to_tranches[qj]["q"].values,
+            kernel_center=kernel_center,
         )
         pair_d.append(d)
     return float(np.max(pair_d)), float(np.mean(pair_d))
@@ -142,53 +179,95 @@ def hour_class(h):
     return "other"
 
 
-def compute(df):
-    """Returns per-cell dissimilarity table."""
+def load_hourly_clearing(window=("2025-10-01", "2026-01-01")):
+    """Mean DA clearing price (EUR/MWh) per (date, hour) over the window.
+
+    Each cell in the dissimilarity loop sees one (date, hour) — average
+    across the 4 quarters of that hour is the natural kernel center
+    (a single price per cell, not 4)."""
+    con = duckdb.connect()
+    df = con.execute(f"""
+        SELECT date::DATE AS date,
+               ((period - 1) / 4)::INT AS hour,
+               AVG(price_es_eur_mwh) AS p_clear
+        FROM '{MARGINALPDBC}'
+        WHERE date::DATE >= DATE '{window[0]}' AND date::DATE < DATE '{window[1]}'
+          AND price_es_eur_mwh IS NOT NULL
+        GROUP BY 1, 2
+    """).df()
+    return df
+
+
+def compute(df, clearing: pd.DataFrame):
+    """Returns per-cell dissimilarity table with both unweighted and
+    kernel-weighted L1 area (max pairwise across the 6 quarter pairs)."""
+    # Map (date, hour) -> clearing price for fast lookup
+    cl_map = {(row.date, row.hour): row.p_clear for row in clearing.itertuples()}
     out = []
-    # group by (firm, tech_group, unit_code, date, hour)
     grp_cols = ["firm", "tech_group", "unit_code", "date", "hour"]
     for keys, g in df.groupby(grp_cols, sort=False):
         per_q = {q: sub for q, sub in g.groupby("quarter")}
         d_max, d_mean = cell_dissimilarity(per_q)
         if np.isnan(d_max):
             continue
-        out.append((*keys, d_max, d_mean))
-    cells = pd.DataFrame(out, columns=grp_cols + ["d_max", "d_mean"])
+        p_clear = cl_map.get((keys[3], keys[4]))
+        if p_clear is None:
+            d_max_w, d_mean_w = np.nan, np.nan
+        else:
+            d_max_w, d_mean_w = cell_dissimilarity(per_q, kernel_center=float(p_clear))
+        out.append((*keys, d_max, d_mean, d_max_w, d_mean_w, p_clear))
+    cells = pd.DataFrame(out, columns=grp_cols + [
+        "d_max", "d_mean", "d_max_w", "d_mean_w", "p_clear"])
     cells["hour_class"] = cells["hour"].apply(hour_class)
     return cells
 
 
 def summarise(cells, eps=1e-6):
-    """Aggregate per (tech_group, firm, hour_class)."""
+    """Aggregate per (tech_group, firm, hour_class).
+
+    `frac_flagged` is the unweighted flag rate (D > eps). The median $D$,
+    median $D_w$, and median ratio are all computed on the SAME subset of
+    flagged cells (D > eps), so the unweighted and weighted columns are
+    directly comparable. Ratio = D_w / D per cell: high means within-cell
+    variation sits near the clearing price (strategic); low means it
+    sits at the extremes (price-cap padding, not strategic).
+    """
     cells = cells[cells["hour_class"].isin(("critical", "flat"))].copy()
     cells["flagged"] = (cells["d_max"] > eps).astype(int)
-    g = cells.groupby(["tech_group", "firm", "hour_class"]).agg(
+    flagged = cells[cells["flagged"] == 1].copy()
+    flagged["ratio"] = flagged["d_max_w"] / flagged["d_max"].replace(0, np.nan)
+    overall = cells.groupby(["tech_group", "firm", "hour_class"]).agg(
         n_cells=("d_max", "size"),
         frac_flagged=("flagged", "mean"),
-        median_d=("d_max", "median"),
-        p75_d=("d_max", lambda x: np.percentile(x, 75)),
     ).reset_index()
+    g_flag = flagged.groupby(["tech_group", "firm", "hour_class"]).agg(
+        median_d=("d_max", "median"),
+        median_dw=("d_max_w", "median"),
+        median_ratio=("ratio", "median"),
+    ).reset_index()
+    g = overall.merge(g_flag, on=["tech_group", "firm", "hour_class"], how="left")
     return g
 
 
-def write_tex(g, out_path):
-    """Long table: side x tech x firm x hour_class -> n, flag%, median d.
-    Emits a `longtable` so it auto-breaks across pages (58+ rows)."""
+def write_tex_full(g, out_path):
+    """Appendix-grade longtable: every (tech, firm, hour-class) row.
+    Unweighted + kernel-weighted W1 columns side by side."""
     lines = [
         r"\small",
-        r"\begin{longtable}{@{}l l l l r r r@{}}",
-        r"\caption{\textbf{Quarter-by-quarter bid dissimilarity, October--December 2025.} For each (firm, unit, date, hour) cell with all four 15-min quarters present, $D$ is the maximum pairwise L1 area between cumulative bid curves. Flag = fraction of cells with $D > 0$.}\label{tab:quarter_dissim}\\",
+        r"\begin{longtable}{@{}l l l l r r r r r@{}}",
+        r"\caption{\textbf{Quarter-by-quarter bid dissimilarity, October--December 2025.} "
+        r"For each (firm, unit, date, hour) cell with all four 15-min quarters present, $D$ is the maximum pairwise L1 area between cumulative bid curves over the full price range. $D_w$ is the same L1 area weighted by an Epanechnikov kernel ($h = 20$ EUR/MWh) centered at the period's mean clearing price, isolating bid variation around the strategically-relevant window. Flag = fraction of cells with $D > 0$. The ratio column reports the per-cell median of $D_w/D$ among flagged cells: values near 1 indicate variation concentrated near the clearing price (strategic); values close to 0 indicate variation at the extremes (price-cap padding, not strategic).}\label{tab:quarter_dissim}\\",
         r"\toprule",
-        r"Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ \\",
+        r"Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & median ratio \\",
         r"\midrule",
         r"\endfirsthead",
-        r"\multicolumn{7}{l}{\emph{(continued from previous page)}} \\",
+        r"\multicolumn{9}{l}{\emph{(continued from previous page)}} \\",
         r"\toprule",
-        r"Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ \\",
+        r"Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & median ratio \\",
         r"\midrule",
         r"\endhead",
         r"\midrule",
-        r"\multicolumn{7}{r}{\emph{continued on next page}} \\",
+        r"\multicolumn{9}{r}{\emph{continued on next page}} \\",
         r"\endfoot",
         r"\bottomrule",
         r"\endlastfoot",
@@ -205,11 +284,47 @@ def write_tex(g, out_path):
         side_disp = side if side != last_side else ""
         tech_disp = tech if r["tech_group"] != last_tech else ""
         last_side = side; last_tech = r["tech_group"]
+        dw = r.get("median_dw", float("nan"))
+        rt = r.get("median_ratio", float("nan"))
+        dw_str = "--" if pd.isna(dw) else f"{dw:.2f}"
+        rt_str = "--" if pd.isna(rt) else f"{rt:.2f}"
         lines.append(
             f"{side_disp} & {tech_disp} & {r['firm']} & {r['hour_class'].capitalize()} & "
-            f"{int(r['n_cells']):,} & {100*r['frac_flagged']:.1f} & {r['median_d']:.2f} \\\\"
+            f"{int(r['n_cells']):,} & {100*r['frac_flagged']:.1f} & {r['median_d']:.2f} & "
+            f"{dw_str} & {rt_str} \\\\"
         )
     lines += [r"\end{longtable}", r"\normalsize"]
+    Path(out_path).write_text("\n".join(lines) + "\n")
+    print(f"  saved {out_path}")
+
+
+def write_tex_main(g, out_path):
+    """Main-text table: CCGT only, 4 firms x 2 hour-classes = 8 rows."""
+    sub = g[g["tech_group"] == "CCGT"].copy()
+    # Sort by firm in pivotal order, critical first then flat
+    firm_order = {f: i for i, f in enumerate(PIVOTAL)}
+    sub["f_ord"] = sub["firm"].map(firm_order)
+    sub["h_ord"] = sub["hour_class"].map({"critical": 0, "flat": 1})
+    sub = sub.sort_values(["f_ord", "h_ord"]).drop(columns=["f_ord", "h_ord"])
+    lines = [
+        r"\begin{tabular}{@{}l l r r r r r@{}}",
+        r"\toprule",
+        r"Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & median ratio \\",
+        r"\midrule",
+    ]
+    last_firm = None
+    for _, r in sub.iterrows():
+        firm_disp = r["firm"] if r["firm"] != last_firm else ""
+        last_firm = r["firm"]
+        dw = r.get("median_dw", float("nan"))
+        rt = r.get("median_ratio", float("nan"))
+        dw_str = "--" if pd.isna(dw) else f"{dw:.2f}"
+        rt_str = "--" if pd.isna(rt) else f"{rt:.2f}"
+        lines.append(
+            f"{firm_disp} & {r['hour_class'].capitalize()} & {int(r['n_cells']):,} & "
+            f"{100*r['frac_flagged']:.1f} & {r['median_d']:.2f} & {dw_str} & {rt_str} \\\\"
+        )
+    lines += [r"\bottomrule", r"\end{tabular}"]
     Path(out_path).write_text("\n".join(lines) + "\n")
     print(f"  saved {out_path}")
 
@@ -220,14 +335,17 @@ def main():
     print(f"  {len(df):,} tranches, {df['unit_code'].nunique()} units")
     print(f"  techs: {df['tech_group'].value_counts().to_dict()}")
 
-    print("\ncomputing per-cell L1 area between quarter pairs...")
-    cells = compute(df)
+    print("\nloading hourly DA clearing prices for kernel centers...")
+    clearing = load_hourly_clearing()
+    print(f"  {len(clearing):,} (date, hour) cells")
+
+    print("\ncomputing per-cell L1 area between quarter pairs (unweighted + Epanechnikov-weighted)...")
+    cells = compute(df, clearing)
     print(f"  {len(cells):,} (firm,unit,date,hour) cells with all 4 quarters present")
     cells.to_csv(OUTDIR / "quarter_dissimilarity_cells_2025Q4.csv", index=False)
 
     print("\nsummary by (tech, firm, hour-class):")
     g = summarise(cells)
-    # ordering
     tech_order = {t: i for i, t in enumerate(TECHS)}
     firm_order = {f: i for i, f in enumerate(PIVOTAL)}
     g["t_ord"] = g["tech_group"].map(tech_order)
@@ -236,7 +354,8 @@ def main():
     g = g.sort_values(["t_ord", "f_ord", "h_ord"]).drop(columns=["t_ord", "f_ord", "h_ord"])
     print(g.to_string(index=False))
     g.to_csv(OUTDIR / "quarter_dissimilarity_summary_2025Q4.csv", index=False)
-    write_tex(g, TABDIR / "tab_quarter_dissimilarity.tex")
+    write_tex_full(g, TABDIR / "tab_quarter_dissimilarity.tex")
+    write_tex_main(g, TABDIR / "tab_quarter_dissimilarity_main.tex")
 
 
 if __name__ == "__main__":
