@@ -1,0 +1,4 @@
+window,market,metric,b,se,p,ci_lo,ci_hi
+da15,ida,att_crit,-10.379,4.463,,,
+da15,ida,att_flat, -5.016,4.957,,,
+da15,ida,ddd, -5.364,2.296,0.019, -9.864, -0.863

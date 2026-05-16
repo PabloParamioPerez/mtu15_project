@@ -1,0 +1,27 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{OLS-FE DDD: DA clearing price in IDA15 window. SE clustered at date.}\label{tab:reform_ddd_ida15_da}
+\begin{tabular}{l*{3}{cc}}
+\toprule
+                    &\multicolumn{2}{c}{(1)}     &\multicolumn{2}{c}{(2)}     &\multicolumn{2}{c}{(3)}     \\
+                    &\multicolumn{2}{c}{Sparse}  &\multicolumn{2}{c}{Month FE}&\multicolumn{2}{c}{Date FE} \\
+                    &           b   &          se&           b   &          se&           b   &          se\\
+\midrule
+crit*post*y25 ($\beta_7$, DDD)&      -2.243   &     (3.630)&      -2.243   &     (3.631)&      -2.243   &     (3.628)\\
+crit*post           &     -10.440***&     (1.738)&     -10.440***&     (1.739)&     -10.440***&     (1.738)\\
+crit*y25            &       2.657   &     (2.282)&       2.657   &     (2.284)&       2.657   &     (2.282)\\
+post*y25            &     -27.426***&     (6.459)&     -27.438***&     (6.250)&               &            \\
+crit                &       0.000   &         (.)&       0.000   &         (.)&       0.000   &         (.)\\
+post                &     -34.767***&     (4.266)&      -3.141   &     (6.004)&               &            \\
+y25                 &      45.676***&     (4.598)&      45.670***&     (4.229)&               &            \\
+\midrule
+Observations        &        3934   &            &        3934   &            &        3934   &            \\
+$R^2$               &       0.573   &            &       0.627   &            &       0.874   &            \\
+Clock-hour FE       &         Yes   &            &         Yes   &            &         Yes   &            \\
+DOW FE              &         Yes   &            &         Yes   &            &         Yes   &            \\
+Month FE            &          No   &            &         Yes   &            &         n/a   &            \\
+Date FE             &          No   &            &          No   &            &         Yes   &            \\
+Cluster             &        Date   &            &        Date   &            &        Date   &            \\
+\bottomrule
+\end{tabular}
+\end{table}

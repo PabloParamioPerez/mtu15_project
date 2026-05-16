@@ -1,0 +1,34 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{DDD and DDDD on $q\_2$ (intraday MWh/unit-hour), da15 window.}\label{tab:reform_ddd_firm_q2_da15}
+\begin{tabular}{l*{2}{cc}}
+\toprule
+                    &\multicolumn{2}{c}{(1)}     &\multicolumn{2}{c}{(2)}     \\
+                    &\multicolumn{2}{c}{DDD}     &\multicolumn{2}{c}{DDDD}    \\
+                    &           b   &          se&           b   &          se\\
+\midrule
+crit*post*y25*piv ($\beta_{1234}$, DDDD)&               &            &       18.78   &     (15.82)\\
+crit*post*y25 ($\beta_7$, DDD)&       -1.27** &      (0.64)&      -17.04   &     (15.78)\\
+crit*post*piv       &               &            &      -19.42   &     (15.61)\\
+crit*y25*piv        &               &            &       21.45   &     (19.14)\\
+post*y25*piv        &               &            &       -2.77   &      (2.42)\\
+crit*piv            &               &            &      -21.90   &     (19.30)\\
+post*piv            &               &            &        2.61   &      (2.55)\\
+y25*piv             &               &            &       -4.20***&      (1.11)\\
+crit*post           &        1.79***&      (0.62)&       18.10   &     (15.57)\\
+crit*y25            &       -2.11***&      (0.40)&      -20.12   &     (19.14)\\
+post*y25            &       -2.96***&      (0.71)&       -0.63   &      (0.76)\\
+crit                &        0.00   &         (.)&        0.00   &         (.)\\
+post                &        2.51***&      (0.69)&        0.32   &      (0.91)\\
+y25                 &       -4.30***&      (0.47)&       -0.77   &      (0.78)\\
+\midrule
+Observations        &      408800   &            &      408800   &            \\
+$R^2$               &       0.105   &            &       0.133   &            \\
+Spec                &         DDD   &            &        DDDD   &            \\
+Cluster             &        Date   &            &        Firm   &            \\
+Unit FE             &         Yes   &            &         Yes   &            \\
+Clock-hour FE       &         Yes   &            &         Yes   &            \\
+DOW FE              &         Yes   &            &         Yes   &            \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,27 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{OLS-FE DDD: DA clearing price in DA15 window. SE clustered at date.}\label{tab:reform_ddd_da15_da}
+\begin{tabular}{l*{3}{cc}}
+\toprule
+                    &\multicolumn{2}{c}{(1)}     &\multicolumn{2}{c}{(2)}     &\multicolumn{2}{c}{(3)}     \\
+                    &\multicolumn{2}{c}{Sparse}  &\multicolumn{2}{c}{Month FE}&\multicolumn{2}{c}{Date FE} \\
+                    &           b   &          se&           b   &          se&           b   &          se\\
+\midrule
+crit*post*y25 ($\beta_7$, DDD)&      -0.286   &     (2.915)&      -0.286   &     (2.916)&      -0.286   &     (2.915)\\
+crit*post           &      28.057***&     (2.073)&      28.057***&     (2.074)&      28.057***&     (2.073)\\
+crit*y25            &      -3.529*  &     (1.951)&      -3.529*  &     (1.952)&      -3.529*  &     (1.951)\\
+post*y25            &     -26.523***&     (5.983)&     -26.523***&     (5.335)&               &            \\
+crit                &       0.000   &         (.)&       0.000   &         (.)&       0.000   &         (.)\\
+post                &      11.846***&     (4.112)&       0.000   &         (.)&               &            \\
+y25                 &      -1.662   &     (4.010)&      -1.662   &     (2.947)&               &            \\
+\midrule
+Observations        &       13888   &            &       13888   &            &       13888   &            \\
+$R^2$               &       0.282   &            &       0.416   &            &       0.800   &            \\
+Clock-hour FE       &         Yes   &            &         Yes   &            &         Yes   &            \\
+DOW FE              &         Yes   &            &         Yes   &            &         Yes   &            \\
+Month FE            &          No   &            &         Yes   &            &         n/a   &            \\
+Date FE             &          No   &            &          No   &            &         Yes   &            \\
+Cluster             &        Date   &            &        Date   &            &        Date   &            \\
+\bottomrule
+\end{tabular}
+\end{table}

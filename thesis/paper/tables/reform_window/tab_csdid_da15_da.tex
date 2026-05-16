@@ -1,0 +1,18 @@
+\begin{table}[H]\centering\small
+\caption{DR-DiD on DA clearing price in DA15 window, prices in levels (Sant'Anna--Zhao 2020). 2$\times$2 DiD per hour-class, covariates \texttt{i.dow + i.month}; DDD is the difference of ATTs with joint SE from the influence-function difference.}\label{tab:reform_csdid_da15_da}
+\begin{tabular}{lrr}
+\toprule
+Coefficient & Estimate & SE \\\\
+\midrule
+ATT$_{\text{crit}}$ &  -8.336 & (4.326) \\\\
+ATT$_{\text{flat}}$ &  -2.961 & (4.846) \\\\
+DDD = ATT$_{\text{crit}}$ $-$ ATT$_{\text{flat}}$ &  -5.375 & (2.356) \\\\
+\midrule
+p-value (DDD)        & 0.023 & \\\\
+95\% CI (DDD)        & [ -9.992,  -0.758] & \\\\
+N (dates)            &   584 & \\\\
+Outcome              & DA clearing price & \\\\
+Window               & DA15 (reform = 2025-10-01) & \\\\
+\bottomrule
+\end{tabular}
+\end{table}

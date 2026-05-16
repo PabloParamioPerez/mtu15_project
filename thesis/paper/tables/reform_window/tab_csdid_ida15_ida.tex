@@ -1,0 +1,18 @@
+\begin{table}[H]\centering\small
+\caption{DR-DiD on IDA Session 1 clearing price in IDA15 window, prices in levels (Sant'Anna--Zhao 2020). 2$\times$2 DiD per hour-class, covariates \texttt{i.dow + i.month}; DDD is the difference of ATTs with joint SE from the influence-function difference.}\label{tab:reform_csdid_ida15_ida}
+\begin{tabular}{lrr}
+\toprule
+Coefficient & Estimate & SE \\\\
+\midrule
+ATT$_{\text{crit}}$ & -25.396 & (5.587) \\\\
+ATT$_{\text{flat}}$ & -34.823 & (6.129) \\\\
+DDD = ATT$_{\text{crit}}$ $-$ ATT$_{\text{flat}}$ &   9.427 & (2.949) \\\\
+\midrule
+p-value (DDD)        & 0.001 & \\\\
+95\% CI (DDD)        & [  3.647,  15.207] & \\\\
+N (dates)            &   278 & \\\\
+Outcome              & IDA Session 1 clearing price & \\\\
+Window               & IDA15 (reform = 2025-03-19) & \\\\
+\bottomrule
+\end{tabular}
+\end{table}
