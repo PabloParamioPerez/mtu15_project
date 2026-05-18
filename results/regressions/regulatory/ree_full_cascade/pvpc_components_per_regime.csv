@@ -1,0 +1,61 @@
+regime,component,mean_eur_mwh
+3-sess (Jun-Nov 24),Restricciones PBF (780 PVPC),4.571355060034311
+3-sess (Jun-Nov 24),Restricciones TR (781 PVPC),3.5224895858858094
+3-sess (Jun-Nov 24),Restricciones IDA (783 PVPC),0.0
+3-sess (Jun-Nov 24),Banda secundaria (785 PVPC),2.453825042881647
+3-sess (Jun-Nov 24),Desvíos medidos (786 PVPC),0.6317005635873535
+3-sess (Jun-Nov 24),Saldo desvíos (787 PVPC),0.2402376868414606
+3-sess (Jun-Nov 24),Restricciones tecnicas (10378 PVPC),8.093844645920106
+3-sess (Jun-Nov 24),Restricciones PBF (793 free),4.57135996079393
+3-sess (Jun-Nov 24),Restricciones TR (794 free),3.5224920362656182
+3-sess (Jun-Nov 24),Banda secundaria (798 free),2.1483141386914957
+3-sess (Jun-Nov 24),Desvíos medidos (799 free),0.38384954667973226
+3-sess (Jun-Nov 24),Saldo desvíos (800 free),0.2402376868414606
+ISP15-win (Dec24-Mar25),Restricciones PBF (780 PVPC),4.694155092592606
+ISP15-win (Dec24-Mar25),Restricciones TR (781 PVPC),4.432195216049399
+ISP15-win (Dec24-Mar25),Restricciones IDA (783 PVPC),0.0
+ISP15-win (Dec24-Mar25),Banda secundaria (785 PVPC),3.5495486111111134
+ISP15-win (Dec24-Mar25),Desvíos medidos (786 PVPC),0.8460956790123434
+ISP15-win (Dec24-Mar25),Saldo desvíos (787 PVPC),0.3909297839506177
+ISP15-win (Dec24-Mar25),Restricciones tecnicas (10378 PVPC),9.126350308641989
+ISP15-win (Dec24-Mar25),Restricciones PBF (793 free),4.694155092592606
+ISP15-win (Dec24-Mar25),Restricciones TR (794 free),4.432195216049399
+ISP15-win (Dec24-Mar25),Banda secundaria (798 free),2.464216820987654
+ISP15-win (Dec24-Mar25),Desvíos medidos (799 free),0.4782175925925924
+ISP15-win (Dec24-Mar25),Saldo desvíos (800 free),0.3909297839506177
+DA60/ID15 pre-blk,Restricciones PBF (780 PVPC),11.61736183524505
+DA60/ID15 pre-blk,Restricciones TR (781 PVPC),4.637028154327421
+DA60/ID15 pre-blk,Restricciones IDA (783 PVPC),0.0
+DA60/ID15 pre-blk,Banda secundaria (785 PVPC),2.047632950990619
+DA60/ID15 pre-blk,Desvíos medidos (786 PVPC),0.9999687174139731
+DA60/ID15 pre-blk,Saldo desvíos (787 PVPC),0.24348279457768446
+DA60/ID15 pre-blk,Restricciones tecnicas (10378 PVPC),16.25438998957248
+DA60/ID15 pre-blk,Restricciones PBF (793 free),11.61736183524505
+DA60/ID15 pre-blk,Restricciones TR (794 free),4.637017726798746
+DA60/ID15 pre-blk,Banda secundaria (798 free),2.0176850886339963
+DA60/ID15 pre-blk,Desvíos medidos (799 free),0.5580500521376437
+DA60/ID15 pre-blk,Saldo desvíos (800 free),0.24348279457768446
+DA60/ID15 post-blk,Restricciones PBF (780 PVPC),11.910093482906017
+DA60/ID15 post-blk,Restricciones TR (781 PVPC),3.658918269230764
+DA60/ID15 post-blk,Restricciones IDA (783 PVPC),0.0
+DA60/ID15 post-blk,Banda secundaria (785 PVPC),1.8196768162393187
+DA60/ID15 post-blk,Desvíos medidos (786 PVPC),0.6246661324786318
+DA60/ID15 post-blk,Saldo desvíos (787 PVPC),-0.4216079059829049
+DA60/ID15 post-blk,Restricciones tecnicas (10378 PVPC),15.569011752136769
+DA60/ID15 post-blk,Restricciones PBF (793 free),11.910093482906017
+DA60/ID15 post-blk,Restricciones TR (794 free),3.658918269230764
+DA60/ID15 post-blk,Banda secundaria (798 free),1.5787900641025576
+DA60/ID15 post-blk,Desvíos medidos (799 free),0.3905048076923065
+DA60/ID15 post-blk,Saldo desvíos (800 free),-0.4216079059829049
+DA15/ID15 (Oct-Dec 25),Restricciones PBF (780 PVPC),12.200823902218223
+DA15/ID15 (Oct-Dec 25),Restricciones TR (781 PVPC),2.354445450430062
+DA15/ID15 (Oct-Dec 25),Restricciones IDA (783 PVPC),0.0
+DA15/ID15 (Oct-Dec 25),Banda secundaria (785 PVPC),1.8718243549117226
+DA15/ID15 (Oct-Dec 25),Desvíos medidos (786 PVPC),0.7425939339067438
+DA15/ID15 (Oct-Dec 25),Saldo desvíos (787 PVPC),-0.33775011317338094
+DA15/ID15 (Oct-Dec 25),Restricciones tecnicas (10378 PVPC),14.55526935264827
+DA15/ID15 (Oct-Dec 25),Restricciones PBF (793 free),12.20081937528296
+DA15/ID15 (Oct-Dec 25),Restricciones TR (794 free),2.354445450430062
+DA15/ID15 (Oct-Dec 25),Banda secundaria (798 free),1.8342507922136715
+DA15/ID15 (Oct-Dec 25),Desvíos medidos (799 free),0.286650067904028
+DA15/ID15 (Oct-Dec 25),Saldo desvíos (800 free),-0.33775011317338094

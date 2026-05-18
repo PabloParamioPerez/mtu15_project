@@ -1,0 +1,16 @@
+\begin{table}[H]\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Naive before-after (BA) vs DDD on the within-day (crit$-$flat) spread, EUR/MWh, all four (window, market) cells. BA: within-year (post $-$ pre) on 2025 spread, OLS with \code{i.dow + i.month} calendar controls and date-clustered SE. Placebo BA: same spec on 2024 spread. DDD: 2$\times$2 DiD with both years and same calendar controls (the headline OLS-FE coefficient on $\beta_{\text{post}\times\text{y25}}$). \emph{Seasonal bias} = BA $-$ DDD = what an advisor's naive within-year BA-with-controls attributes to the reform but is really seasonality (identified by the 2024 placebo). Standard errors in parentheses. Stars: $^{*}~0.10,~^{**}~0.05,~^{***}~0.01$.}
+\label{tab:ba_vs_ddd}
+\begin{tabular}{llcccc}
+\toprule
+Window & Outcome & BA 2025 & BA 2024 (placebo) & DDD & Seasonal bias \\
+       &         & (a)     & (b)               & (c) & (a) $-$ (c)   \\
+\midrule
+DA15 & DA price &   25.83*** \scriptsize{( 3.72)} &   26.99*** \scriptsize{( 4.34)} &   -0.17 \scriptsize{( 2.41)} &   26.00 \\
+DA15 & IDA-S1 price &   25.90*** \scriptsize{( 3.79)} &   26.42*** \scriptsize{( 3.99)} &   -2.24 \scriptsize{( 2.33)} &   28.15 \\
+IDA15 & DA price &    2.24 \scriptsize{( 5.30)} &   -8.49*** \scriptsize{( 3.21)} &   -1.74 \scriptsize{( 3.35)} &    3.98 \\
+IDA15 & IDA-S1 price &    6.07 \scriptsize{( 4.91)} &   -7.05** \scriptsize{( 3.25)} &    0.74 \scriptsize{( 3.31)} &    5.33 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,76 @@
+tech,PC,regime,hour_class,coef
+Hydro_pump,PC1,3-sess,Critical,0.0
+Hydro_pump,PC1,3-sess,Flat,-127.15522483348207
+Hydro_pump,PC1,3-sess,Midday,-101.08736654487737
+Hydro_pump,PC1,ISP15-win,Critical,384.1429084230166
+Hydro_pump,PC1,ISP15-win,Flat,299.875585630262
+Hydro_pump,PC1,ISP15-win,Midday,283.0555625289542
+Hydro_pump,PC1,DA60/ID15 pre-blk,Critical,-30.917968481249318
+Hydro_pump,PC1,DA60/ID15 pre-blk,Flat,-151.58007053672588
+Hydro_pump,PC1,DA60/ID15 pre-blk,Midday,-184.30841729429352
+Hydro_pump,PC1,DA60/ID15 post-blk,Critical,-106.97880813340919
+Hydro_pump,PC1,DA60/ID15 post-blk,Flat,-207.46311865367028
+Hydro_pump,PC1,DA60/ID15 post-blk,Midday,-188.58007652293293
+Hydro_pump,PC1,DA15/ID15,Critical,272.423976674347
+Hydro_pump,PC1,DA15/ID15,Flat,204.51699790772435
+Hydro_pump,PC1,DA15/ID15,Midday,303.98909389930145
+Hydro_pump,PC2,3-sess,Critical,0.0
+Hydro_pump,PC2,3-sess,Flat,17.242606363772154
+Hydro_pump,PC2,3-sess,Midday,25.949381829537963
+Hydro_pump,PC2,ISP15-win,Critical,20.528789423648348
+Hydro_pump,PC2,ISP15-win,Flat,46.17767753212985
+Hydro_pump,PC2,ISP15-win,Midday,31.804256799483426
+Hydro_pump,PC2,DA60/ID15 pre-blk,Critical,-42.495267591832146
+Hydro_pump,PC2,DA60/ID15 pre-blk,Flat,-47.80389355699356
+Hydro_pump,PC2,DA60/ID15 pre-blk,Midday,-34.40017050930685
+Hydro_pump,PC2,DA60/ID15 post-blk,Critical,-13.681630262249087
+Hydro_pump,PC2,DA60/ID15 post-blk,Flat,-8.144415851016277
+Hydro_pump,PC2,DA60/ID15 post-blk,Midday,17.394300964482767
+Hydro_pump,PC2,DA15/ID15,Critical,-4.608784882285875
+Hydro_pump,PC2,DA15/ID15,Flat,3.5203185921910745
+Hydro_pump,PC2,DA15/ID15,Midday,10.872498545169798
+Hydro_pump,PC3,3-sess,Critical,0.0
+Hydro_pump,PC3,3-sess,Flat,0.6757609002430831
+Hydro_pump,PC3,3-sess,Midday,6.435214263084173
+Hydro_pump,PC3,ISP15-win,Critical,-46.16035947580443
+Hydro_pump,PC3,ISP15-win,Flat,-50.66749561745022
+Hydro_pump,PC3,ISP15-win,Midday,-35.341035752955435
+Hydro_pump,PC3,DA60/ID15 pre-blk,Critical,-1.1632206743510753
+Hydro_pump,PC3,DA60/ID15 pre-blk,Flat,20.003331795708853
+Hydro_pump,PC3,DA60/ID15 pre-blk,Midday,-17.279613915027216
+Hydro_pump,PC3,DA60/ID15 post-blk,Critical,8.592207395771595
+Hydro_pump,PC3,DA60/ID15 post-blk,Flat,14.470812689963068
+Hydro_pump,PC3,DA60/ID15 post-blk,Midday,8.32368550546574
+Hydro_pump,PC3,DA15/ID15,Critical,-16.617812719270226
+Hydro_pump,PC3,DA15/ID15,Flat,-11.295952329458839
+Hydro_pump,PC3,DA15/ID15,Midday,-3.8718752900919515
+Hydro_pump,PC4,3-sess,Critical,0.0
+Hydro_pump,PC4,3-sess,Flat,3.28823163071646
+Hydro_pump,PC4,3-sess,Midday,3.843042303793955
+Hydro_pump,PC4,ISP15-win,Critical,12.711854882969286
+Hydro_pump,PC4,ISP15-win,Flat,7.978058992859887
+Hydro_pump,PC4,ISP15-win,Midday,7.303346172668082
+Hydro_pump,PC4,DA60/ID15 pre-blk,Critical,-9.082870840295563
+Hydro_pump,PC4,DA60/ID15 pre-blk,Flat,-11.619351866222168
+Hydro_pump,PC4,DA60/ID15 pre-blk,Midday,-23.142886368041985
+Hydro_pump,PC4,DA60/ID15 post-blk,Critical,-9.387080357688207
+Hydro_pump,PC4,DA60/ID15 post-blk,Flat,3.102979546238786
+Hydro_pump,PC4,DA60/ID15 post-blk,Midday,-23.013238920469995
+Hydro_pump,PC4,DA15/ID15,Critical,3.035961746704924
+Hydro_pump,PC4,DA15/ID15,Flat,7.821870223102372
+Hydro_pump,PC4,DA15/ID15,Midday,6.29287659814057
+Hydro_pump,PC5,3-sess,Critical,0.0
+Hydro_pump,PC5,3-sess,Flat,3.815862082729641
+Hydro_pump,PC5,3-sess,Midday,13.345889877472569
+Hydro_pump,PC5,ISP15-win,Critical,-1.0096141873737512
+Hydro_pump,PC5,ISP15-win,Flat,3.253793913883662
+Hydro_pump,PC5,ISP15-win,Midday,7.847117036846334
+Hydro_pump,PC5,DA60/ID15 pre-blk,Critical,-6.436179293848735
+Hydro_pump,PC5,DA60/ID15 pre-blk,Flat,4.8013189708503905
+Hydro_pump,PC5,DA60/ID15 pre-blk,Midday,-7.657475038189096
+Hydro_pump,PC5,DA60/ID15 post-blk,Critical,-30.440923578580673
+Hydro_pump,PC5,DA60/ID15 post-blk,Flat,-24.722856428699288
+Hydro_pump,PC5,DA60/ID15 post-blk,Midday,-28.34102765514704
+Hydro_pump,PC5,DA15/ID15,Critical,-9.141274492583157
+Hydro_pump,PC5,DA15/ID15,Flat,-4.382029605190892
+Hydro_pump,PC5,DA15/ID15,Midday,4.367576834719355

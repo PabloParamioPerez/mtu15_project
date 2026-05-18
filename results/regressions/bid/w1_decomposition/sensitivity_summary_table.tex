@@ -1,0 +1,26 @@
+\begin{table}[H]
+\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{\textbf{$h$-sensitivity of the channel-active percentages, CCGT DA Oct--Dec 2025.} Each cell: \% of (firm, unit, date, hour) cells with the channel active ($\Delta q > 0$ or $\Delta p > 0$) under band half-width $h$ EUR/MWh. The qualitative ranking (GN dominant on $\Delta q$, GE leaning on $\Delta p$, IB/HC negligible, flat hours $\approx 0$) holds across all four $h$ values. The working choice $h=50$ is bolded.}
+\label{tab:dw_h_sensitivity}
+\begin{tabular}{l l c c c c | c c c c}
+\toprule
+ & & \multicolumn{4}{c|}{$\Delta q$-active (\%)} & \multicolumn{4}{c}{$\Delta p$-active (\%)} \\
+\cmidrule(lr){3-6}\cmidrule(lr){7-10}
+Firm & Hour & $h{=}20$ & $\mathbf{h{=}50}$ & $h{=}100$ & $h{=}200$ & $h{=}20$ & $\mathbf{h{=}50}$ & $h{=}100$ & $h{=}200$ \\
+\midrule
+\textbf{GN} & critical & 12.51 & 18.37 & 24.07 & 24.54 & 0.01 & 0.01 & 0.01 & 0.01 \\
+\textbf{GN} & flat & 0.00 & 0.00 & 0.05 & 0.05 & 0.00 & 0.00 & 0.00 & 0.00 \\
+\addlinespace
+GE & critical & 0.46 & 0.33 & 0.27 & 0.27 & 0.69 & 1.56 & 1.64 & 1.64 \\
+GE & flat & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 \\
+\addlinespace
+IB & critical & 0.32 & 1.94 & 4.25 & 5.67 & 0.01 & 0.10 & 0.37 & 2.52 \\
+IB & flat & 0.28 & 1.03 & 2.20 & 2.48 & 0.14 & 0.89 & 1.31 & 1.40 \\
+\addlinespace
+HC & critical & 0.05 & 0.05 & 0.05 & 0.05 & 0.00 & 0.00 & 0.00 & 0.00 \\
+HC & flat & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.18 & 0.55 \\
+\addlinespace
+\bottomrule
+\end{tabular}
+\end{table}

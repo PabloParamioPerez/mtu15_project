@@ -33,7 +33,7 @@ OUTDIR = REPO / "results" / "regressions" / "bid" / "quarter_dissimilarity_ida"
 OUTDIR.mkdir(parents=True, exist_ok=True)
 FIGDIR = REPO / "figures" / "thesis"
 
-KERNEL_BANDWIDTH = 20.0
+KERNEL_BANDWIDTH = 50.0
 
 CRIT = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)
 FLAT = (1, 2, 3)

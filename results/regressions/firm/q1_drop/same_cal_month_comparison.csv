@@ -1,0 +1,19 @@
+comparison,tech,pre_gwh,post_gwh,pct
+Dec,CCGT,1444,244,-83.1
+Dec,Nuclear,1253,2587,106.5
+Dec,Hydro,1016,640,-37.0
+Dec,Hydro_pump,195,247,26.7
+Dec,Wind,732,696,-4.9
+Dec,Solar PV,57,34,-40.4
+Nov,CCGT,637,130,-79.6
+Nov,Nuclear,933,1909,104.6
+Nov,Hydro,509,611,20.0
+Nov,Hydro_pump,182,341,87.4
+Nov,Wind,666,1081,62.3
+Nov,Solar PV,37,100,170.3
+Aug,CCGT,532,360,-32.3
+Aug,Nuclear,1997,2243,12.3
+Aug,Hydro,303,424,39.9
+Aug,Hydro_pump,239,406,69.9
+Aug,Wind,379,449,18.5
+Aug,Solar PV,37,136,267.6

@@ -37,9 +37,12 @@ OUTDIR.mkdir(parents=True, exist_ok=True)
 TABDIR = REPO / "thesis" / "paper" / "tables"
 
 # Kernel for "strategic-zone" weighting. Epanechnikov, compact support, no
-# leakage to the price-cap mass. Bandwidth tuned to ~20 EUR/MWh, the width
-# of the band around clearing where bid-shading is plausibly strategic.
-KERNEL_BANDWIDTH = 20.0
+# leakage to the price-cap mass. Bandwidth set to 50 EUR/MWh: the
+# within-hour DA clearing range in critical hours (Oct-Dec 2025) has
+# P90 = 34.65 and P95 = 43.84 EUR/MWh, so h=50 captures the relevant
+# near-clearing band; the IDA within-hour range is even wider
+# (P75 = 44.5, P90 = 62.2 EUR/MWh) so h=50 is a conservative compromise.
+KERNEL_BANDWIDTH = 50.0
 
 CRIT = (5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22)
 FLAT = (1, 2, 3)
@@ -356,7 +359,7 @@ def write_tex_full(g, out_path):
         r"\small",
         r"\begin{longtable}{@{}l l l l r r r r r@{}}",
         r"\caption{\textbf{Quarter-by-quarter bid dissimilarity, October--December 2025.} "
-        r"For each (firm, unit, date, hour) cell with all four 15-min quarters present, $D$ is the maximum pairwise L1 area between cumulative bid curves over the full price range. $D_w$ is the same L1 area weighted by an Epanechnikov kernel ($h = 20$ EUR/MWh) centered at the period's mean clearing price, isolating bid variation around the strategically-relevant window. Flag = fraction of cells with $D > 0$. The ratio column reports the per-cell median of $D_w/D$ among flagged cells: values near 1 indicate variation concentrated near the clearing price (strategic); values close to 0 indicate variation at the extremes (price-cap padding, not strategic).}\label{tab:quarter_dissim}\\",
+        r"For each (firm, unit, date, hour) cell with all four 15-min quarters present, $D$ is the maximum pairwise L1 area between cumulative bid curves over the full price range. $D_w$ is the same L1 area weighted by an Epanechnikov kernel ($h = 50$ EUR/MWh) centered at the period's mean clearing price, isolating bid variation around the strategically-relevant window. Flag = fraction of cells with $D > 0$. The ratio column reports the per-cell median of $D_w/D$ among flagged cells: values near 1 indicate variation concentrated near the clearing price (strategic); values close to 0 indicate variation at the extremes (price-cap padding, not strategic).}\label{tab:quarter_dissim}\\",
         r"\toprule",
         r"Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & median ratio \\",
         r"\midrule",
@@ -465,7 +468,7 @@ def write_tex_combined_full(panels: dict, out_path: Path):
         r"\small",
         r"\begin{longtable}{@{}l l l l r r r r r r@{}}",
         r"\caption{\textbf{Quarter-by-quarter bid dissimilarity, October--December 2025 --- three-panel sample comparison.} "
-        r"$D$ = max pairwise L1 area between quarter bid curves (Wasserstein-style); $D_w$ = Epanechnikov-weighted ($h = 20$ EUR/MWh) on the strategic band around the cell's hour-average DA clearing price; ratio $= D_w/D$ on flagged cells. Three sample versions: \emph{Full sample} (all bidding cells); \emph{Strict PS} (cells where the unit was the rank-1 price-setter in $\ge 1$ of the 4 quarters of the hour); \emph{Frequent PS} (cells whose unit price-sets in $\ge 1$\% of all (date, period) cells in the window). Last column flags within-hour heterogeneity in the clearing price (std $> 5$ EUR/MWh).}\label{tab:quarter_dissim}\\",
+        r"$D$ = max pairwise L1 area between quarter bid curves (Wasserstein-style); $D_w$ = Epanechnikov-weighted ($h = 50$ EUR/MWh) on the strategic band around the cell's hour-average DA clearing price; ratio $= D_w/D$ on flagged cells. Three sample versions: \emph{Full sample} (all bidding cells); \emph{Strict PS} (cells where the unit was the rank-1 price-setter in $\ge 1$ of the 4 quarters of the hour); \emph{Frequent PS} (cells whose unit price-sets in $\ge 1$\% of all (date, period) cells in the window). Last column flags within-hour heterogeneity in the clearing price (std $> 5$ EUR/MWh).}\label{tab:quarter_dissim}\\",
         r"\toprule",
         r"Panel & Side & Tech & Firm & Hour-class & N cells & \% flagged & median $D$ & median $D_w$ & ratio \\",
         r"\midrule",

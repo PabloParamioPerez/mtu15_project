@@ -1,0 +1,17 @@
+firm,hour_class,n,share_dp_active,share_dq_active,med_dp_if_active,med_dq_if_active
+GE,critical,5195,1.56,0.33,4.56,364.0
+GE,flat,1413,0.0,0.0,,
+GE,midday,1892,0.11,0.0,6.91,
+GE,other,2835,1.8,0.63,4.92,369.5
+GN,critical,14930,0.01,18.37,3.41,146.9
+GN,flat,4065,0.0,0.0,,
+GN,midday,5432,0.0,2.96,,15.0
+GN,other,8156,0.01,6.66,3.77,72.4
+HC,critical,2013,0.0,0.05,,60.0
+HC,flat,549,0.0,0.0,,
+HC,midday,732,0.0,0.0,,
+HC,other,1100,0.0,0.0,,
+IB,critical,7831,0.1,1.94,3.86,70.0
+IB,flat,2139,0.89,1.03,3.08,11.0
+IB,midday,2852,0.0,0.0,,
+IB,other,4283,0.3,2.5,2.0,35.0

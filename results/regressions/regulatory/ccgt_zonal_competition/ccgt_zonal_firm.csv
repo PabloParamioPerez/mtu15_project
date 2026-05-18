@@ -1,0 +1,51 @@
+unit_code,plant,city_region,zone,firm
+ACE3,Aceca 3,Toledo (Centro),Centro,IB
+ACE4,Aceca 4,Toledo (Centro),Centro,GN
+ALG3,Algeciras 3,Cadiz (Sur),Sur,OTHER
+AMBIETA,Amorebieta,Vizcaya (Norte),Norte,OTHER
+ARCOS1,Arcos 1,Cadiz (Sur),Sur,IB
+ARCOS2,Arcos 2,Cadiz (Sur),Sur,IB
+ARCOS3,Arcos 3,Cadiz (Sur),Sur,IB
+ARRU1R,Arrubal 1,La Rioja (Norte),Norte,Moeve
+ARRU2R,Arrubal 2,La Rioja (Norte),Norte,Moeve
+BAHIAB,Bahia Bizkaia,Vizcaya (Norte),Norte,OTHER
+BES3,Besos 3,Barcelona (Cataluna),Cataluna,GE
+BES4,Besos 4,Barcelona (Cataluna),Cataluna,GN
+BES5,Besos 5,Barcelona (Cataluna),Cataluna,GE
+CAMGI10,Campo Gibraltar 10,Cadiz (Sur),Sur,GN
+CAMG20R,Campo Gibraltar 20,Cadiz (Sur),Sur,OTHER
+COL4,Colon 4,Huelva (Sur),Sur,GE
+CTGN1,Cartagena 1,Murcia (Levante),Levante,GN
+CTGN2,Cartagena 2,Murcia (Levante),Levante,GN
+CTGN3,Cartagena 3,Murcia (Levante),Levante,GN
+CTJON1R,Castejon 1,Navarra (Norte),Norte,TotalEnergies
+CTJON2,Castejon 2,Navarra (Norte),Norte,IB
+CTJON3R,Castejon 3,Navarra (Norte),Norte,TotalEnergies
+CTNU,Castelnou,Teruel (Aragon),Aragon,Engie
+CTN3,Castellon 3,Castellon (Levante),Levante,IB
+CTN4,Castellon 4,Castellon (Levante),Levante,IB
+ECT2,Escatron 2,Zaragoza (Aragon),Aragon,OTHER
+ECT3,Escatron 3,Zaragoza (Aragon),Aragon,OTHER
+ESCCC1,Escombreras 1,Cartagena (Levante),Levante,Engie
+ESCCC2,Escombreras 2,Cartagena (Levante),Levante,Engie
+ESCCC3,Escombreras 3,Cartagena (Levante),Levante,Engie
+ESC6,Escombreras 6,Cartagena (Levante),Levante,IB
+MALA1,Malaga 1,Malaga (Sur),Sur,GN
+PALOS1,Palos 1,Huelva (Sur),Sur,GN
+PALOS2,Palos 2,Huelva (Sur),Sur,GN
+PALOS3,Palos 3,Huelva (Sur),Sur,GN
+PBCN1,Puerto Barcelona 1,Barcelona (Cataluna),Cataluna,GN
+PBCN2,Puerto Barcelona 2,Barcelona (Cataluna),Cataluna,GN
+PGR5,As Pontes 5,A Coruna (Galicia),Galicia,GE
+PVENT1,Plana del Vent 1,Tarragona (Cataluna),Cataluna,GN
+PVENT2,Plana del Vent 2,Tarragona (Cataluna),Cataluna,OTHER
+SAGU1,Sagunto 1,Valencia (Levante),Levante,GN
+SAGU2,Sagunto 2,Valencia (Levante),Levante,GN
+SAGU3,Sagunto 3,Valencia (Levante),Levante,GN
+SBO3,Sabon 3,A Coruna (Galicia),Galicia,GN
+SRI4R,Soto Ribera 4,Asturias (Norte),Norte,HC
+SRI5R,Soto Ribera 5,Asturias (Norte),Norte,HC
+SROQ1,San Roque 1,Cadiz (Sur),Sur,GN
+SROQ2,San Roque 2,Cadiz (Sur),Sur,GE
+STC4,Santurce 4,Vizcaya (Norte),Norte,IB
+TAPOWER,Tarragona Power,Tarragona (Cataluna),Cataluna,IB

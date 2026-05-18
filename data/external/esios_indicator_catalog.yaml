@@ -169,13 +169,32 @@ tiers:
       - {id: 766, slug: "imb_price_delta_down", name: "Precio desvío vs marginal diario bajar", time_trunc: "fifteen_minutes", native: "Quince minutos"}
 
   - name: "tech_restrictions_prices"
-    description: "Restricciones técnicas Phase I/II prices (reforzada confound)"
+    description: "Restricciones técnicas Phase I/II prices (reforzada confound). Includes both simple-average (705-708, 722-723) and weighted-average (10326-10341) versions, plus the RT (tiempo real) prices. Matches REE's 'Precios medios ponderados por restricciones al PDBF y tiempo real' published series."
     priority: D
     indicators:
       - {id: 705, slug: "rt_fase1_price_up",   name: "Precio medio restricciones Fase I subir", time_trunc: "fifteen_minutes", native: "Quince minutos"}
       - {id: 706, slug: "rt_fase1_price_down", name: "Precio medio restricciones Fase I bajar", time_trunc: "fifteen_minutes", native: "Quince minutos"}
       - {id: 707, slug: "rt_fase2_price_up",   name: "Precio medio restricciones Fase II subir", time_trunc: "fifteen_minutes", native: "Quince minutos"}
       - {id: 708, slug: "rt_fase2_price_down", name: "Precio medio restricciones Fase II bajar", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 722,   slug: "rt_realtime_price_up",   name: "Precio medio Restricciones Técnicas Seguridad Tiempo Real subir", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 723,   slug: "rt_realtime_price_down", name: "Precio medio Restricciones Técnicas Seguridad Tiempo Real bajar", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10326, slug: "rt_pdbf_wprice_up",       name: "Precio medio ponderado restricciones diario subir",              time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10327, slug: "rt_pdbf_wprice_down",     name: "Precio medio ponderado restricciones diario bajar",              time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10340, slug: "rt_realtime_wprice_up",   name: "Precio medio ponderado RT Tiempo Real subir",                    time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10341, slug: "rt_realtime_wprice_down", name: "Precio medio ponderado RT Tiempo Real bajar",                    time_trunc: "fifteen_minutes", native: "Quince minutos"}
+
+  - name: "tech_restrictions_volumes_headline"
+    description: "Headline RT volumes (Subir/Bajar totals for PDBF Fase I, PDBF Fase II, and Tiempo Real). Matches REE's 'Energía por restricciones al PDBF y en tiempo real' page. Per-zone breakdowns live in the *_fase1 and *_realtime families below."
+    priority: D
+    indicators:
+      - {id: 701,   slug: "rt_d_fase1_up_total",   name: "Energía asignada restricciones diario Fase I subir (total)",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 702,   slug: "rt_d_fase1_down_total", name: "Energía asignada restricciones diario Fase I bajar (total)",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 703,   slug: "rt_d_fase2_up_total",   name: "Energía asignada restricciones diario Fase II subir (total)", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 704,   slug: "rt_d_fase2_down_total", name: "Energía asignada restricciones diario Fase II bajar (total)", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 720,   slug: "rt_rt_up_total",        name: "Energía asignada por restricciones en tiempo real subir (total)", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 721,   slug: "rt_rt_down_total",      name: "Energía asignada por restricciones en tiempo real bajar (total)", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10051, slug: "rt_d_fase1_abs_total",  name: "Energía RT diario Fase I absoluto (total)",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10270, slug: "rt_d_fase2_abs_total",  name: "Energía RT diario Fase II absoluto (total)", time_trunc: "fifteen_minutes", native: "Quince minutos"}
 
   - name: "tech_restrictions_volumes_daily_fase1"
     description: "Restricciones técnicas Phase I (day-ahead) volumes by zone — Subir/Bajar per RSI/SCB/SCA/CT/RTD"
@@ -326,3 +345,138 @@ tiers:
       - {id: 695, slug: "xb_offer_see_import_pt",  name: "Ofertas SEE importación activadas PT", time_trunc: "hour", native: "Hora"}
       - {id: 696, slug: "xb_offer_see_export_fr",  name: "Ofertas SEE exportación activadas FR", time_trunc: "hour", native: "Hora"}
       - {id: 697, slug: "xb_offer_see_export_pt",  name: "Ofertas SEE exportación activadas PT", time_trunc: "hour", native: "Hora"}
+
+  # =====================================================================
+  # Tier F — system-cost indicators (added 2026-05-18 from REE Guía de Proveedor)
+  # =====================================================================
+
+  - name: "system_costs_by_service"
+    description: "Per-service cost / unit-cost-borne-by-demand for each balancing & restrictions service. Per-day or per-15-min totals depending on indicator. Source: REE Guía de Proveedor de Servicios de Ajuste v5.0 (Dec 2024)."
+    priority: F
+    indicators:
+      - {id: 709,  slug: "cost_rt_pdbf",            name: "Coste solucion Restricciones técnicas diario",            time_trunc: "day",             native: "Día"}
+      - {id: 710,  slug: "cost_rt_pdbf_unit",       name: "Coste unitario demanda Restricciones técnicas diario",     time_trunc: "day",             native: "Día"}
+      - {id: 712,  slug: "cost_afrr_reserve_up",    name: "Coste reserva regulación secundaria a subir",              time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2127, slug: "cost_afrr_reserve_dn",    name: "Coste reserva regulación secundaria a bajar",              time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 713,  slug: "cost_afrr_unit",          name: "Coste unitario demanda reserva secundaria",                time_trunc: "day",             native: "Día"}
+      - {id: 899,  slug: "cost_afrr_assign_up",     name: "Coste asignación reserva secundaria subir",                time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2129, slug: "cost_afrr_assign_dn",     name: "Coste asignación reserva secundaria bajar",                time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 724,  slug: "cost_rt_realtime",        name: "Coste proceso Restricciones Técnicas Seguridad TR",        time_trunc: "day",             native: "Día"}
+      - {id: 725,  slug: "cost_rt_realtime_unit",   name: "Coste unitario demanda Restricciones Técnicas Seguridad TR", time_trunc: "day",            native: "Día"}
+      - {id: 1373, slug: "cost_fase1_up",           name: "Coste solucion Restricciones diario Fase I subir",         time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1374, slug: "cost_fase1_dn",           name: "Coste solucion Restricciones diario Fase I bajar",         time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1375, slug: "cost_fase2_up",           name: "Coste solucion Restricciones diario Fase II subir",        time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1376, slug: "cost_fase2_dn",           name: "Coste solucion Restricciones diario Fase II bajar",        time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1723, slug: "cost_rt_realtime_up",     name: "Coste Restricciones Seguridad TR a subir",                 time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1724, slug: "cost_rt_realtime_dn",     name: "Coste Restricciones Seguridad TR a bajar",                 time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1725, slug: "energy_rt_cobro_up",      name: "Energía limitada derechos cobro restricciones TR subir",   time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1726, slug: "energy_rt_cobro_dn",      name: "Energía limitada derechos cobro restricciones TR bajar",   time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 726,  slug: "cost_imb_excess_up",      name: "Coste desvíos medidos de mayor producción",                 time_trunc: "day",             native: "Día"}
+      - {id: 727,  slug: "cost_imb_excess_dn",      name: "Coste desvíos medidos de menor producción",                 time_trunc: "day",             native: "Día"}
+      - {id: 768,  slug: "cost_imb_excess_unit",    name: "Ingreso/Coste unitario demanda excedente/déficit desvíos", time_trunc: "day",             native: "Día"}
+      - {id: 685,  slug: "cost_imb_contrary",       name: "Coste desvíos contrario respecto precio SPOT diario",       time_trunc: "fifteen_minutes", native: "Quince minutos"}
+
+  - name: "tech_restrictions_volumes_realtime_zone_direction"
+    description: "TR (tiempo real) energy assignments per zone × direction (SCB/SCA/CT/RTD/RBI/ASE × subir/bajar). Source: ESIOS 1802-1819."
+    priority: F
+    indicators:
+      - {id: 1802, slug: "rt_rt_up_scb",     name: "Energía RT tiempo real Subir SCB", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1803, slug: "rt_rt_down_scb",   name: "Energía RT tiempo real Bajar SCB", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1804, slug: "rt_rt_up_sca",     name: "Energía RT tiempo real Subir SCA", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1805, slug: "rt_rt_down_sca",   name: "Energía RT tiempo real Bajar SCA", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1806, slug: "rt_rt_up_ct",      name: "Energía RT tiempo real Subir CT",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1807, slug: "rt_rt_down_ct",    name: "Energía RT tiempo real Bajar CT",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1808, slug: "rt_rt_up_rtd",     name: "Energía RT tiempo real Subir RTD", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1809, slug: "rt_rt_down_rtd",   name: "Energía RT tiempo real Bajar RTD", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1816, slug: "rt_rt_up_rbi",     name: "Energía RT tiempo real Subir RBI", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1817, slug: "rt_rt_down_rbi",   name: "Energía RT tiempo real Bajar RBI", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1818, slug: "rt_rt_up_ase",     name: "Energía RT tiempo real Subir ASE", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1819, slug: "rt_rt_down_ase",   name: "Energía RT tiempo real Bajar ASE", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1800, slug: "rt_d_fase1_up_otros",   name: "Energía RT diario Fase I Subir Otros", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 1801, slug: "rt_d_fase1_down_otros", name: "Energía RT diario Fase I Bajar Otros", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10362, slug: "rt_d_fase1_abs_scb_alt", name: "Energía RT diario Fase I Absoluto SCB (alt)",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10363, slug: "rt_d_fase1_abs_sca_alt", name: "Energía RT diario Fase I Absoluto SCA (alt)",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10364, slug: "rt_d_fase1_abs_ct_alt",  name: "Energía RT diario Fase I Absoluto CT (alt)",   time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10365, slug: "rt_d_fase1_abs_rtd_alt", name: "Energía RT diario Fase I Absoluto RTD (alt)",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10367, slug: "rt_d_fase1_abs_otros",   name: "Energía RT diario Fase I Absoluto Otros",      time_trunc: "fifteen_minutes", native: "Quince minutos"}
+
+  - name: "weighted_prices_aux_services"
+    description: "Weighted-average prices for aFRR/RR energy, mFRR programada, RPA reforzada. Match REE's published 'precio medio ponderado' series and CNMC IS/DE/013/24 reporting."
+    priority: F
+    indicators:
+      - {id: 10389, slug: "afrr_energy_wprice_up",   name: "Precio medio ponderado energía aFRR subir",     time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10390, slug: "afrr_energy_wprice_down", name: "Precio medio ponderado energía aFRR bajar",     time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10384, slug: "rr_wprice_up",            name: "Precio medio ponderado RR a subir",             time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10385, slug: "rr_wprice_down",          name: "Precio medio ponderado RR a bajar",             time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2196,  slug: "mfrr_price_elastic_ap",   name: "Precio necesidad elástica mFRR activación programada",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2197,  slug: "mfrr_price_energy_ap",    name: "Precio energías mFRR activación programada",            time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10392, slug: "rpa_wprice_reforzada",    name: "Precio medio ponderado programación reserva adicional TR", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10054, slug: "rr_abs_cubierta",         name: "Volumen absoluto necesidades cubiertas RR",     time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10251, slug: "rr_net_cubierta",         name: "Volumen neto necesidades cubiertas RR",         time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10485, slug: "mfrr_total_request_ap",   name: "Necesidad total solicitada mFRR AP",            time_trunc: "fifteen_minutes", native: "Quince minutos"}
+
+  - name: "mfrr_detailed"
+    description: "mFRR detailed: elastic vs inelastic, programada vs directa needs and assignments."
+    priority: F
+    indicators:
+      - {id: 2184, slug: "mfrr_inelast_up_ap",   name: "Necesidad inelástica solicitada mFRR subir AP", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2185, slug: "mfrr_inelast_dn_ap",   name: "Necesidad inelástica solicitada mFRR bajar AP", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2186, slug: "mfrr_elast_up_ap",     name: "Necesidad elástica solicitada mFRR subir AP",   time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2187, slug: "mfrr_elast_dn_ap",     name: "Necesidad elástica solicitada mFRR bajar AP",   time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2188, slug: "mfrr_up_ad",           name: "Necesidad solicitada mFRR subir AD",            time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2189, slug: "mfrr_dn_ad",           name: "Necesidad solicitada mFRR bajar AD",            time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2190, slug: "mfrr_elast_cub_up",    name: "Necesidad elástica cubierta mFRR subir AP",     time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2191, slug: "mfrr_elast_cub_dn",    name: "Necesidad elástica cubierta mFRR bajar AP",     time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2192, slug: "mfrr_inelast_cub_up",  name: "Necesidad inelástica cubierta mFRR subir AP",   time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2193, slug: "mfrr_inelast_cub_dn",  name: "Necesidad inelástica cubierta mFRR bajar AP",   time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10394, slug: "mfrr_assign_dn_ap_see", name: "Asignación a bajar mFRR SEE AP", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10395, slug: "mfrr_assign_up_ap_see", name: "Asignación a subir mFRR SEE AP", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10396, slug: "mfrr_assign_up_ad_see", name: "Asignación directa a subir mFRR SEE AD", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10397, slug: "mfrr_assign_dn_ad_see", name: "Asignación directa a bajar mFRR SEE AD", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2207, slug: "afrr_energy_need_up_sepe", name: "Necesidad energía aFRR subir SEPE",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2208, slug: "afrr_energy_need_dn_sepe", name: "Necesidad energía aFRR bajar SEPE",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+
+  - name: "renewable_curtailment_pct_rtt_rtd"
+    description: "Percent of renewable energy non-integrable due to technical restrictions in transport (RTT) and distribution (RTD) grids, both PDBF and tiempo real. New post-2024 metrics."
+    priority: F
+    indicators:
+      - {id: 10456, slug: "vre_curt_pct_rtt_pdbf_f1",  name: "% VRE no integrable por RTT PDBF Fase 1", time_trunc: "month", native: "Mes"}
+      - {id: 10457, slug: "vre_curt_pct_rtd_pdbf_f1",  name: "% VRE no integrable por RTD PDBF Fase 1", time_trunc: "month", native: "Mes"}
+      - {id: 10458, slug: "vre_curt_pct_rtt_rt",       name: "% VRE no integrable por RTT en tiempo real", time_trunc: "month", native: "Mes"}
+      - {id: 10459, slug: "vre_curt_pct_rtd_rt",       name: "% VRE no integrable por RTD en tiempo real", time_trunc: "month", native: "Mes"}
+      - {id: 10460, slug: "vre_curt_pct_rtt_total",    name: "% VRE no integrable por RTT total",      time_trunc: "month", native: "Mes"}
+      - {id: 10461, slug: "vre_curt_pct_rtd_total",    name: "% VRE no integrable por RTD total",      time_trunc: "month", native: "Mes"}
+      - {id: 10462, slug: "vre_curt_pct_total",        name: "% VRE no integrable por restricciones técnicas total", time_trunc: "month", native: "Mes"}
+
+  - name: "pvpc_component_prices_qh"
+    description: "PVPC and free-tariff component prices at quarter-hour: restrictions PBF, restrictions TR, IDA, banda secundaria, desvíos, saldo desvíos. Component decomposition of final retail price. Useful to cross-check our system-cost reading."
+    priority: F
+    indicators:
+      - {id: 780, slug: "pvpc_qh_restrcom_pbf",      name: "PVPC QH componente restricciones PBF comerc.referencia", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 781, slug: "pvpc_qh_restrcom_rt",       name: "PVPC QH componente restricciones TR comerc.referencia",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 783, slug: "pvpc_h_restrcom_ida",       name: "PVPC H componente restricciones IDA comerc.referencia",  time_trunc: "hour",             native: "Hora"}
+      - {id: 785, slug: "pvpc_qh_bandasec_com",      name: "PVPC QH componente banda secundaria comerc.referencia",   time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 786, slug: "pvpc_qh_desvios_com",       name: "PVPC QH componente desvíos comerc.referencia",            time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 787, slug: "pvpc_qh_saldo_desv_com",    name: "PVPC QH componente saldo desvíos comerc.referencia",      time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 793, slug: "free_qh_rest_pbf",          name: "Free-tariff QH componente restricciones PBF contrat.libre", time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 794, slug: "free_qh_rest_rt",           name: "Free-tariff QH componente restricciones TR contrat.libre",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 796, slug: "free_h_rest_ida",           name: "Free-tariff H componente restricciones IDA contrat.libre",  time_trunc: "hour",             native: "Hora"}
+      - {id: 798, slug: "free_qh_bandasec",          name: "Free-tariff QH componente banda secundaria contrat.libre",  time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 799, slug: "free_qh_desvios",           name: "Free-tariff QH componente desvíos contrat.libre",           time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 800, slug: "free_qh_saldo_desv",        name: "Free-tariff QH componente saldo desvíos contrat.libre",     time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10377, slug: "all_qh_resttecn",          name: "All-customers QH componente restricciones técnicas",        time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10378, slug: "ref_qh_resttecn",          name: "Comerc.referencia QH componente restricciones técnicas",    time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 10379, slug: "free_qh_resttecn",        name: "Free-tariff QH componente restricciones técnicas",          time_trunc: "fifteen_minutes", native: "Quince minutos"}
+
+  - name: "voltage_control_prices"
+    description: "Voltage / reactive-power control service prices (PO-7.4, BOE-A-2025-13076 Jun 2025; permanent under RD 997/2025 + CNMC Resolución Jan 2026). Two-tier service: mandatory minimum (unpaid) + retributed dynamic consigna-following. Quarter-hour 'coste' indicators = REE payments to providers ÷ total demand. 'Demanda' indicators = same flow allocated to PVPC vs free-tariff. 'Ingreso' (monthly) = provider revenue per MWh of demand. Coverage starts ~mid-2025."
+    priority: F
+    indicators:
+      - {id: 2375, slug: "vctl_qh_demanda",         name: "Precio QH componente control de tensión (demanda)",                       time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2376, slug: "vctl_qh_demanda_ref",     name: "Precio QH componente control de tensión (demanda) comerc.referencia",     time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2377, slug: "vctl_qh_demanda_free",    name: "Precio QH componente control de tensión (demanda) contratación libre",    time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2399, slug: "vctl_qh_coste",           name: "Precio QH componente control de tensión (coste)",                         time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2400, slug: "vctl_qh_coste_ref",       name: "Precio QH componente control de tensión (coste) comerc.referencia",       time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2401, slug: "vctl_qh_coste_free",      name: "Precio QH componente control de tensión (coste) contratación libre",      time_trunc: "fifteen_minutes", native: "Quince minutos"}
+      - {id: 2540, slug: "vctl_monthly_ingreso",    name: "Precio mensual componente ingreso control tensión",                       time_trunc: "month",           native: "Mes"}
+      - {id: 2542, slug: "vctl_monthly_ingreso_free", name: "Precio mensual componente ingreso control tensión contratación libre",   time_trunc: "month",           native: "Mes"}

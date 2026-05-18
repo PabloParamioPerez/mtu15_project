@@ -1,0 +1,76 @@
+tech,PC,regime,hour_class,coef
+Solar Thermal,PC1,3-sess,Critical,0.0
+Solar Thermal,PC1,3-sess,Flat,7.064269914605081
+Solar Thermal,PC1,3-sess,Midday,-14.436423751349189
+Solar Thermal,PC1,ISP15-win,Critical,50.141611661151295
+Solar Thermal,PC1,ISP15-win,Flat,123.63260236010365
+Solar Thermal,PC1,ISP15-win,Midday,-26.891734302937955
+Solar Thermal,PC1,DA60/ID15 pre-blk,Critical,49.050978541355434
+Solar Thermal,PC1,DA60/ID15 pre-blk,Flat,0.07396082632301315
+Solar Thermal,PC1,DA60/ID15 pre-blk,Midday,-26.434016772190084
+Solar Thermal,PC1,DA60/ID15 post-blk,Critical,-28.25572350721528
+Solar Thermal,PC1,DA60/ID15 post-blk,Flat,-40.866911872103586
+Solar Thermal,PC1,DA60/ID15 post-blk,Midday,-32.48668637387466
+Solar Thermal,PC1,DA15/ID15,Critical,-9.627195207333585
+Solar Thermal,PC1,DA15/ID15,Flat,-17.558328159058334
+Solar Thermal,PC1,DA15/ID15,Midday,-4.79307424310446
+Solar Thermal,PC2,3-sess,Critical,0.0
+Solar Thermal,PC2,3-sess,Flat,10.080704379891468
+Solar Thermal,PC2,3-sess,Midday,-28.26307596237306
+Solar Thermal,PC2,ISP15-win,Critical,42.74439337318242
+Solar Thermal,PC2,ISP15-win,Flat,38.083185848508094
+Solar Thermal,PC2,ISP15-win,Midday,12.73733062929384
+Solar Thermal,PC2,DA60/ID15 pre-blk,Critical,14.102965087477774
+Solar Thermal,PC2,DA60/ID15 pre-blk,Flat,24.43151129835822
+Solar Thermal,PC2,DA60/ID15 pre-blk,Midday,-4.976032145203419
+Solar Thermal,PC2,DA60/ID15 post-blk,Critical,-6.608474189636855
+Solar Thermal,PC2,DA60/ID15 post-blk,Flat,-7.216069641853764
+Solar Thermal,PC2,DA60/ID15 post-blk,Midday,-24.08149171181656
+Solar Thermal,PC2,DA15/ID15,Critical,32.120116621121
+Solar Thermal,PC2,DA15/ID15,Flat,30.66294081273615
+Solar Thermal,PC2,DA15/ID15,Midday,17.582316887241085
+Solar Thermal,PC3,3-sess,Critical,0.0
+Solar Thermal,PC3,3-sess,Flat,11.254840672355432
+Solar Thermal,PC3,3-sess,Midday,-11.130336498410696
+Solar Thermal,PC3,ISP15-win,Critical,23.834302560816173
+Solar Thermal,PC3,ISP15-win,Flat,37.23745237123544
+Solar Thermal,PC3,ISP15-win,Midday,0.98812332014651
+Solar Thermal,PC3,DA60/ID15 pre-blk,Critical,-2.1853361308170713
+Solar Thermal,PC3,DA60/ID15 pre-blk,Flat,-7.0828628667292275
+Solar Thermal,PC3,DA60/ID15 pre-blk,Midday,-10.7647948071595
+Solar Thermal,PC3,DA60/ID15 post-blk,Critical,-6.866593094760801
+Solar Thermal,PC3,DA60/ID15 post-blk,Flat,-6.3487121335131285
+Solar Thermal,PC3,DA60/ID15 post-blk,Midday,-12.560436987506549
+Solar Thermal,PC3,DA15/ID15,Critical,13.106625383580061
+Solar Thermal,PC3,DA15/ID15,Flat,11.371188559330806
+Solar Thermal,PC3,DA15/ID15,Midday,10.729630006875835
+Solar Thermal,PC4,3-sess,Critical,0.0
+Solar Thermal,PC4,3-sess,Flat,6.134821776068038
+Solar Thermal,PC4,3-sess,Midday,3.820329957631074
+Solar Thermal,PC4,ISP15-win,Critical,-2.6800763633046785
+Solar Thermal,PC4,ISP15-win,Flat,9.159143977611091
+Solar Thermal,PC4,ISP15-win,Midday,-6.948972126899809
+Solar Thermal,PC4,DA60/ID15 pre-blk,Critical,-11.954853775827182
+Solar Thermal,PC4,DA60/ID15 pre-blk,Flat,-7.17553110221901
+Solar Thermal,PC4,DA60/ID15 pre-blk,Midday,-12.022463196151833
+Solar Thermal,PC4,DA60/ID15 post-blk,Critical,-6.855587459637169
+Solar Thermal,PC4,DA60/ID15 post-blk,Flat,-4.303036535867313
+Solar Thermal,PC4,DA60/ID15 post-blk,Midday,-1.3041710165252791
+Solar Thermal,PC4,DA15/ID15,Critical,1.54610433489397
+Solar Thermal,PC4,DA15/ID15,Flat,1.1749336998713202
+Solar Thermal,PC4,DA15/ID15,Midday,0.23906883019291758
+Solar Thermal,PC5,3-sess,Critical,0.0
+Solar Thermal,PC5,3-sess,Flat,-14.89598643231275
+Solar Thermal,PC5,3-sess,Midday,-3.130639706480469
+Solar Thermal,PC5,ISP15-win,Critical,3.617776478878286
+Solar Thermal,PC5,ISP15-win,Flat,3.5388901190356528
+Solar Thermal,PC5,ISP15-win,Midday,2.862395956996897
+Solar Thermal,PC5,DA60/ID15 pre-blk,Critical,6.390308746604392
+Solar Thermal,PC5,DA60/ID15 pre-blk,Flat,3.152567146846754
+Solar Thermal,PC5,DA60/ID15 pre-blk,Midday,10.2815669243705
+Solar Thermal,PC5,DA60/ID15 post-blk,Critical,3.8124477275637645
+Solar Thermal,PC5,DA60/ID15 post-blk,Flat,-4.177743416744997
+Solar Thermal,PC5,DA60/ID15 post-blk,Midday,2.1467878132592055
+Solar Thermal,PC5,DA15/ID15,Critical,5.634721133061281
+Solar Thermal,PC5,DA15/ID15,Flat,3.835810358094088
+Solar Thermal,PC5,DA15/ID15,Midday,0.7509391670273491

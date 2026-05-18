@@ -1,0 +1,207 @@
+% ============================================================================
+% advisor_memo.tex
+% Intuitive 5-page overview of the MTU15 thesis project for the advisor.
+% Companion: bidding_internal.tex (detailed working notes).
+%
+% SKELETON ONLY. Section structure, figure placeholders, and table skeletons.
+% Prose to be written by the author.
+% ============================================================================
+
+\documentclass[11pt]{article}
+
+\usepackage[margin=1.9cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[table]{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, urlcolor=blue!50!black}
+\usepackage{microtype}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*, itemsep=2pt, topsep=2pt}
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{8pt}{4pt}
+\titlespacing*{\paragraph}{0pt}{4pt}{6pt}
+\renewcommand{\arraystretch}{1.05}
+
+\graphicspath{{../../figures/thesis/}{../../figures/working/}}
+
+\title{\vspace{-1.5cm}\large MTU15 thesis project --- intuitive overview\vspace{-0.4cm}}
+\author{\normalsize Pablo Paramio Mart\'in}
+\date{\normalsize\today}
+
+\begin{document}
+\maketitle
+\vspace{-0.8cm}
+
+% =====================================================================
+% PAGE 1: The question
+% =====================================================================
+\section*{1. The question}
+
+\paragraph{Market structure (reform calendar in one paragraph).}
+% TODO: Spanish wholesale; auction layers (DA, IDA auctions, continuous, balancing);
+%       three reforms (IDA-sessions 2024-06, ISP15 2024-12, MTU15-IDA 2025-03, MTU15-DA 2025-10);
+%       what each reform changed in market design and in settlement.
+
+\paragraph{Who actually sets the price (NOT a priori CCGT).}
+% TODO: tech-level price-setter shares (see bidding_internal §X for the table);
+%       hydro dominates, CCGT is ~9% — but CCGT is the focal technology because
+%       of strategic profile, not because it's most often marginal.
+
+\paragraph{Why this matters.}
+% TODO: granular pricing as a NEW STRATEGIC MARGIN that didn't exist before;
+%       framing in terms of within-hour discrimination opportunity for whichever
+%       units are at or near the margin in critical hours.
+
+\paragraph{Outcomes we care about, and why.}
+\begin{itemize}
+\item % TODO: bid-shape divergence
+\item % TODO: quarter-level cleared quantities (q1, q2)
+\item % TODO: within-hour clearing-price dispersion
+\item % TODO: mark-up / market-power proxies
+\end{itemize}
+
+% =====================================================================
+% PAGE 2: Variation across hours
+% =====================================================================
+\section*{2. Variation across hours: where granularity has economic content}
+
+\paragraph{Intuition.}
+% TODO: short paragraph on within-hour residual-demand variation as the
+%       structural condition for granularity to matter.
+
+\paragraph{Classifier.}
+% TODO: sigma_within(h,d) definition; data window 2023-01-01 to 2026-05-14
+%       (ENTSO-E 15-min ISP, A65 load + A75 wind+solar actuals).
+
+\paragraph{What we see.}
+\begin{itemize}
+\item % TODO: critical hours 5--9, 16--22, sigma in [522, 1303] MW
+\item % TODO: flat hours 1--3, sigma in [336, 357] MW
+\item % TODO: midday hours 11--14, sigma in [468, 502] MW, excluded (solar-marginal regime)
+\end{itemize}
+
+\paragraph{Validation.}
+% TODO: post-MTU15-DA within-hour DA quarter-price std: 6.6 EUR/MWh critical vs
+%       2.1 flat (3x). Same falsifier on CCGT price-setting share (9.1% crit vs 9.0% flat).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.72\textwidth]{fig_critical_hours_calibration.pdf}
+\caption{\small % TODO: caption.
+}
+\label{fig:sigma_within}
+\end{figure}
+
+% =====================================================================
+% PAGE 3: Variation across firms / technologies
+% =====================================================================
+\section*{3. Variation across firms and technologies: how do CCGTs bid?}
+
+\paragraph{The object.}
+% TODO: 4 quarter supply curves per unit per hour; need to measure how much
+%       they differ in the band that matters for clearing.
+
+\paragraph{Metric: $D_w$.}
+% TODO: kernel-weighted area between curves in the band $\pm 50$ EUR/MWh around
+%       the hour-mean clearing price; aggregate the 6 within-hour pairs by max.
+
+\paragraph{Decomposition: $\Delta p$ vs $\Delta q$.}
+% TODO: upper bound D_w <= Delta_p * M_i + 2h * Delta_q; what each channel
+%       means in plain terms.
+
+\paragraph{What we see (post-MTU15-DA, critical hours, CCGT, Oct--Dec 2025).}
+\begin{itemize}
+\item % TODO: GN dominates $\Delta q$
+\item % TODO: GE leans on $\Delta p$
+\item % TODO: IB and HC negligible on both
+\item % TODO: flat hours $\approx 0$ across firms
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\textwidth]{fig_per_firm_bid_curves_quarters_ccgt.pdf}
+\caption{\small % TODO: caption.
+}
+\label{fig:perfirm}
+\end{figure}
+
+\paragraph{Operational vs strategic decomposition.}
+% TODO: how we separate physical-constraint shape variation from strategic
+%       variation (price-setter restriction).
+
+% =====================================================================
+% PAGE 4: Confounders: blackout + reforzada
+% =====================================================================
+\section*{4. The 2025 regulatory shock: blackout and reinforced operation}
+
+\paragraph{The blackout (28 April 2025).}
+% TODO: pan-Iberian blackout; XBID suspension; entrance into reforzada posture.
+
+\paragraph{What ``reforzada'' does in practice.}
+\begin{itemize}
+\item % TODO: PO-3.x forced CCGT inclusion (+1,044 GWh/mo post-blackout)
+\item % TODO: PO-7.4 zonal reactive market (June 2025)
+\item % TODO: CNMC enforcement (April 2026 cohort, ~100 expedientes)
+\end{itemize}
+
+\paragraph{What this lets us claim.}
+% TODO: within a tight window around each reform date, regulatory state is
+%       approximately constant; sharp changes at the reform date are
+%       attributable to the reform itself, not to the broader 2025 turmoil.
+
+% =====================================================================
+% PAGE 5: Reform windows + outcomes
+% =====================================================================
+\section*{5. Reform windows we use, and outcomes we measure in each}
+
+\paragraph{Strategy in one sentence.}
+% TODO: tight window per reform; reforzada (and other regulatory confounders)
+%       are constant within window; reform variation stands out.
+
+\paragraph{The reform calendar and our windows.}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{p{2.6cm} p{3.2cm} p{8.8cm}}
+\toprule
+\textbf{Reform} & \textbf{Date} & \textbf{Window and why} \\
+\midrule
+% TODO: IDA: 6 MIBEL --> 3 European sessions & 2024-06-14 & ...
+\\ \addlinespace
+% TODO: ISP15 & 2024-12-01 & (quantities at 15-min, prices still hourly --- the
+%       genuinely new ex-ante information environment vs the prior regime) & ...
+\\ \addlinespace
+% TODO: MTU15-IDA & 2025-03-19 & ...
+\\ \addlinespace
+% TODO: MTU15-DA & 2025-10-01 & ...
+\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Outcomes we measure in each window.}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{p{4.4cm} p{12.0cm}}
+\toprule
+\textbf{Outcome} & \textbf{What it tells us / why it matters} \\
+\midrule
+% TODO: D_w bid-shape divergence
+\\ \addlinespace
+% TODO: Delta_p / Delta_q channel shares
+\\ \addlinespace
+% TODO: quarter-level CCGT cleared output (q1, q2)
+\\ \addlinespace
+% TODO: mark-up proxies
+\\ \addlinespace
+% TODO: price-setter frequency by firm and hour-class
+\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}

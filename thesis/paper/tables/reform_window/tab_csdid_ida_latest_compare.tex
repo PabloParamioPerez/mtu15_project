@@ -1,0 +1,13 @@
+\begin{table}[H]\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{DR-DiD on IDA prices: Session 1 (baseline, in Table~\ref{tab:reform_ddd_summary}) vs closest-to-delivery session (robustness). For each (date, period) the closest-to-delivery price is the row with the maximum \code{session_number}: under SIDC, IDA-3 for afternoon and IDA-2 for morning; under MIBEL, Sessions 4--6 for D-day afternoons and Session 3 for morning. This robustness removes the MIBEL-to-SIDC redefinition of Session 1. Covariates: \code{i.dow + i.month}. Standard errors in parentheses. Stars: $^{*}$ 0.10, $^{**}$ 0.05, $^{***}$ 0.01.}
+\label{tab:csdid_ida_latest_compare}
+\begin{tabular}{lccc}
+\toprule
+Window & ATT$_{\text{crit}}$ & ATT$_{\text{flat}}$ & DDD \\
+\midrule
+DA15 &   -2.54 \scriptsize{( 4.39)} &   -3.76 \scriptsize{( 4.75)} &    1.21 \scriptsize{( 2.33)} \\
+IDA15 &  -27.84 \scriptsize{( 5.16)} &  -34.10 \scriptsize{( 5.88)} &    6.26* \scriptsize{( 3.38)} \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,442 @@
+regime,day_type,hour_class,tech,share_pct_q_at,n_obs
+3-sess (Jun-Nov 2024),weekday,Critical,Biomass,0.5048674851988715,110
+3-sess (Jun-Nov 2024),weekday,Critical,CCGT,12.219732188977629,113
+3-sess (Jun-Nov 2024),weekday,Critical,Coal,0.04768148766241506,1
+3-sess (Jun-Nov 2024),weekday,Critical,Cogen,2.4265903762864065,337
+3-sess (Jun-Nov 2024),weekday,Critical,Hybrid_RES,0.7493145786148527,29
+3-sess (Jun-Nov 2024),weekday,Critical,Hydro,16.13541542496126,154
+3-sess (Jun-Nov 2024),weekday,Critical,Hydro_RES,1.9074184447888103,290
+3-sess (Jun-Nov 2024),weekday,Critical,Hydro_pump,14.994715301784078,153
+3-sess (Jun-Nov 2024),weekday,Critical,Import,1.152302618508364,6
+3-sess (Jun-Nov 2024),weekday,Critical,Nuclear,12.348392736520045,27
+3-sess (Jun-Nov 2024),weekday,Critical,Solar PV,10.130488337902808,673
+3-sess (Jun-Nov 2024),weekday,Critical,Solar Thermal,0.11117733539953113,4
+3-sess (Jun-Nov 2024),weekday,Critical,Wind,25.127746652362216,740
+3-sess (Jun-Nov 2024),weekday,Critical,_unmapped_,2.1441570310327016,226
+3-sess (Jun-Nov 2024),weekday,Flat,CCGT,11.392582412083769,16
+3-sess (Jun-Nov 2024),weekday,Flat,Cogen,0.28321335406005854,11
+3-sess (Jun-Nov 2024),weekday,Flat,Hybrid_RES,0.8159480141706752,7
+3-sess (Jun-Nov 2024),weekday,Flat,Hydro,38.76853896602107,76
+3-sess (Jun-Nov 2024),weekday,Flat,Hydro_RES,1.228592206128617,20
+3-sess (Jun-Nov 2024),weekday,Flat,Hydro_pump,11.81990432792704,31
+3-sess (Jun-Nov 2024),weekday,Flat,Import,1.167546218151007,2
+3-sess (Jun-Nov 2024),weekday,Flat,Nuclear,8.236204607470961,3
+3-sess (Jun-Nov 2024),weekday,Flat,Solar Thermal,0.36627592786565877,4
+3-sess (Jun-Nov 2024),weekday,Flat,Wind,25.16162175505548,66
+3-sess (Jun-Nov 2024),weekday,Flat,_unmapped_,0.7595722110656695,14
+3-sess (Jun-Nov 2024),weekday,Midday,Biomass,1.0621212541459055,214
+3-sess (Jun-Nov 2024),weekday,Midday,CCGT,1.7081980443226037,11
+3-sess (Jun-Nov 2024),weekday,Midday,Cogen,4.906729988932323,651
+3-sess (Jun-Nov 2024),weekday,Midday,Hybrid_RES,2.27813422399655,60
+3-sess (Jun-Nov 2024),weekday,Midday,Hydro,1.4886339336601446,21
+3-sess (Jun-Nov 2024),weekday,Midday,Hydro_RES,1.5233490416214461,485
+3-sess (Jun-Nov 2024),weekday,Midday,Hydro_pump,0.07157754218825073,1
+3-sess (Jun-Nov 2024),weekday,Midday,Import,0.08947192773531341,1
+3-sess (Jun-Nov 2024),weekday,Midday,Nuclear,10.62532825013488,21
+3-sess (Jun-Nov 2024),weekday,Midday,Solar PV,23.61826265200162,1325
+3-sess (Jun-Nov 2024),weekday,Midday,Solar Thermal,0.057619921461541844,3
+3-sess (Jun-Nov 2024),weekday,Midday,Wind,49.214749626231026,1185
+3-sess (Jun-Nov 2024),weekday,Midday,_unmapped_,3.3558235935684,328
+3-sess (Jun-Nov 2024),weekday,Dropped,Biomass,0.546143084517558,92
+3-sess (Jun-Nov 2024),weekday,Dropped,CCGT,9.258958185984815,60
+3-sess (Jun-Nov 2024),weekday,Dropped,Coal,0.18639695717322802,2
+3-sess (Jun-Nov 2024),weekday,Dropped,Cogen,2.3257162561964044,240
+3-sess (Jun-Nov 2024),weekday,Dropped,Hybrid_RES,1.0188664786818837,27
+3-sess (Jun-Nov 2024),weekday,Dropped,Hydro,13.857578227178541,88
+3-sess (Jun-Nov 2024),weekday,Dropped,Hydro_RES,1.1288406834140885,218
+3-sess (Jun-Nov 2024),weekday,Dropped,Hydro_pump,12.666708778571806,88
+3-sess (Jun-Nov 2024),weekday,Dropped,Import,0.7507655219477241,3
+3-sess (Jun-Nov 2024),weekday,Dropped,Nuclear,11.961506957266426,20
+3-sess (Jun-Nov 2024),weekday,Dropped,Solar PV,10.390491269891406,526
+3-sess (Jun-Nov 2024),weekday,Dropped,Solar Thermal,0.21735956283700314,6
+3-sess (Jun-Nov 2024),weekday,Dropped,Wind,33.76881185401805,549
+3-sess (Jun-Nov 2024),weekday,Dropped,_unmapped_,1.9218561823210774,165
+3-sess (Jun-Nov 2024),weekend,Critical,Biomass,1.1893270259942301,210
+3-sess (Jun-Nov 2024),weekend,Critical,CCGT,3.178692446587137,19
+3-sess (Jun-Nov 2024),weekend,Critical,Cogen,3.6381598845264334,479
+3-sess (Jun-Nov 2024),weekend,Critical,Hybrid_RES,1.4988382011768309,73
+3-sess (Jun-Nov 2024),weekend,Critical,Hydro,7.104359054696005,68
+3-sess (Jun-Nov 2024),weekend,Critical,Hydro_RES,2.037630328835249,520
+3-sess (Jun-Nov 2024),weekend,Critical,Hydro_pump,5.150671633816948,48
+3-sess (Jun-Nov 2024),weekend,Critical,Import,0.30788121580481054,2
+3-sess (Jun-Nov 2024),weekend,Critical,Nuclear,12.5569353865992,26
+3-sess (Jun-Nov 2024),weekend,Critical,Solar PV,26.84615537859429,1201
+3-sess (Jun-Nov 2024),weekend,Critical,Solar Thermal,0.0362213195064483,1
+3-sess (Jun-Nov 2024),weekend,Critical,Wind,31.75713243057731,1250
+3-sess (Jun-Nov 2024),weekend,Critical,_unmapped_,4.697995693285111,377
+3-sess (Jun-Nov 2024),weekend,Flat,CCGT,2.8295523713951996,3
+3-sess (Jun-Nov 2024),weekend,Flat,Cogen,0.39399871683090126,4
+3-sess (Jun-Nov 2024),weekend,Flat,Hydro,29.471762054386623,21
+3-sess (Jun-Nov 2024),weekend,Flat,Hydro_RES,0.06662608781482882,2
+3-sess (Jun-Nov 2024),weekend,Flat,Hydro_pump,17.080132265122476,20
+3-sess (Jun-Nov 2024),weekend,Flat,Nuclear,49.675917548159966,7
+3-sess (Jun-Nov 2024),weekend,Flat,Solar PV,0.06744863210883904,2
+3-sess (Jun-Nov 2024),weekend,Flat,Wind,0.15957359303798507,5
+3-sess (Jun-Nov 2024),weekend,Flat,_unmapped_,0.25498873114317205,1
+3-sess (Jun-Nov 2024),weekend,Midday,Biomass,1.3094927647610446,249
+3-sess (Jun-Nov 2024),weekend,Midday,Cogen,3.937976758122482,537
+3-sess (Jun-Nov 2024),weekend,Midday,Hybrid_RES,2.203989009413841,90
+3-sess (Jun-Nov 2024),weekend,Midday,Hydro,1.1791047611481742,19
+3-sess (Jun-Nov 2024),weekend,Midday,Hydro_RES,1.9815522562305607,662
+3-sess (Jun-Nov 2024),weekend,Midday,Nuclear,3.4997521764434643,8
+3-sess (Jun-Nov 2024),weekend,Midday,Solar PV,46.46803939617402,1902
+3-sess (Jun-Nov 2024),weekend,Midday,Solar Thermal,0.2852993138655121,8
+3-sess (Jun-Nov 2024),weekend,Midday,Wind,32.940327196174366,1498
+3-sess (Jun-Nov 2024),weekend,Midday,_unmapped_,6.194466367666538,508
+3-sess (Jun-Nov 2024),weekend,Dropped,Biomass,1.3764200821834796,195
+3-sess (Jun-Nov 2024),weekend,Dropped,CCGT,2.844079487153299,12
+3-sess (Jun-Nov 2024),weekend,Dropped,Cogen,4.357018108282011,441
+3-sess (Jun-Nov 2024),weekend,Dropped,Hybrid_RES,1.6757849248580627,63
+3-sess (Jun-Nov 2024),weekend,Dropped,Hydro,4.807994561954792,36
+3-sess (Jun-Nov 2024),weekend,Dropped,Hydro_RES,2.123470407932828,479
+3-sess (Jun-Nov 2024),weekend,Dropped,Hydro_pump,3.698029616465748,29
+3-sess (Jun-Nov 2024),weekend,Dropped,Import,0.14752626818686812,1
+3-sess (Jun-Nov 2024),weekend,Dropped,Nuclear,7.828878607442813,17
+3-sess (Jun-Nov 2024),weekend,Dropped,Solar PV,33.421281685521656,1251
+3-sess (Jun-Nov 2024),weekend,Dropped,Wind,32.03589654550221,1120
+3-sess (Jun-Nov 2024),weekend,Dropped,_unmapped_,5.683619704516233,369
+ISP15-win (Dec24-Mar25),weekday,Critical,Biomass,0.005403613937001067,1
+ISP15-win (Dec24-Mar25),weekday,Critical,CCGT,22.211374967578315,62
+ISP15-win (Dec24-Mar25),weekday,Critical,Coal,0.22875298999971183,3
+ISP15-win (Dec24-Mar25),weekday,Critical,Cogen,0.04358915242514194,3
+ISP15-win (Dec24-Mar25),weekday,Critical,Hybrid_RES,0.15634456324389756,5
+ISP15-win (Dec24-Mar25),weekday,Critical,Hydro,23.621898325600164,104
+ISP15-win (Dec24-Mar25),weekday,Critical,Hydro_RES,0.6145710251015879,22
+ISP15-win (Dec24-Mar25),weekday,Critical,Hydro_pump,17.47384650854492,82
+ISP15-win (Dec24-Mar25),weekday,Critical,Solar PV,0.7680336609124183,39
+ISP15-win (Dec24-Mar25),weekday,Critical,Wind,34.32717801665754,72
+ISP15-win (Dec24-Mar25),weekday,Critical,_unmapped_,0.5490071759993084,8
+ISP15-win (Dec24-Mar25),weekday,Flat,CCGT,9.664609206514463,15
+ISP15-win (Dec24-Mar25),weekday,Flat,Cogen,0.059864653826132236,2
+ISP15-win (Dec24-Mar25),weekday,Flat,Hybrid_RES,0.25953744329590245,3
+ISP15-win (Dec24-Mar25),weekday,Flat,Hydro,10.6666914553432,24
+ISP15-win (Dec24-Mar25),weekday,Flat,Hydro_RES,0.015245036067524354,1
+ISP15-win (Dec24-Mar25),weekday,Flat,Hydro_pump,1.7669368632408717,4
+ISP15-win (Dec24-Mar25),weekday,Flat,Import,1.3014055179593962,1
+ISP15-win (Dec24-Mar25),weekday,Flat,Wind,75.53878188443518,31
+ISP15-win (Dec24-Mar25),weekday,Flat,_unmapped_,0.7269279393173199,20
+ISP15-win (Dec24-Mar25),weekday,Midday,Biomass,0.21465098856714762,8
+ISP15-win (Dec24-Mar25),weekday,Midday,CCGT,8.877886713787825,21
+ISP15-win (Dec24-Mar25),weekday,Midday,Coal,0.17263281326341165,1
+ISP15-win (Dec24-Mar25),weekday,Midday,Cogen,0.8042083319761572,32
+ISP15-win (Dec24-Mar25),weekday,Midday,Hybrid_RES,1.0214650988567149,10
+ISP15-win (Dec24-Mar25),weekday,Midday,Hydro,9.640728315038597,27
+ISP15-win (Dec24-Mar25),weekday,Midday,Hydro_RES,0.7520927657079574,30
+ISP15-win (Dec24-Mar25),weekday,Midday,Hydro_pump,3.7076968176932352,11
+ISP15-win (Dec24-Mar25),weekday,Midday,Import,0.06514445783524966,1
+ISP15-win (Dec24-Mar25),weekday,Midday,Solar PV,14.207680531578776,223
+ISP15-win (Dec24-Mar25),weekday,Midday,Wind,57.02289827692909,136
+ISP15-win (Dec24-Mar25),weekday,Midday,_unmapped_,3.5129148887658377,49
+ISP15-win (Dec24-Mar25),weekday,Dropped,CCGT,23.402708285064996,40
+ISP15-win (Dec24-Mar25),weekday,Dropped,Cogen,0.041161594999482395,1
+ISP15-win (Dec24-Mar25),weekday,Dropped,Hybrid_RES,0.3588699540074633,6
+ISP15-win (Dec24-Mar25),weekday,Dropped,Hydro,16.532912022636413,50
+ISP15-win (Dec24-Mar25),weekday,Dropped,Hydro_RES,0.27358904460733807,10
+ISP15-win (Dec24-Mar25),weekday,Dropped,Hydro_pump,7.5811277784076605,25
+ISP15-win (Dec24-Mar25),weekday,Dropped,Import,0.8873158203481234,1
+ISP15-win (Dec24-Mar25),weekday,Dropped,Solar PV,3.739789706150577,88
+ISP15-win (Dec24-Mar25),weekday,Dropped,Wind,43.55315761193735,63
+ISP15-win (Dec24-Mar25),weekday,Dropped,_unmapped_,3.6293681818405887,55
+ISP15-win (Dec24-Mar25),weekend,Critical,Biomass,0.02303705125743905,2
+ISP15-win (Dec24-Mar25),weekend,Critical,CCGT,5.802265310040315,12
+ISP15-win (Dec24-Mar25),weekend,Critical,Cogen,0.18890382031100014,6
+ISP15-win (Dec24-Mar25),weekend,Critical,Hybrid_RES,0.41889038203109996,4
+ISP15-win (Dec24-Mar25),weekend,Critical,Hydro,10.302937224035324,25
+ISP15-win (Dec24-Mar25),weekend,Critical,Hydro_RES,0.014590132463044731,2
+ISP15-win (Dec24-Mar25),weekend,Critical,Hydro_pump,15.479746592436166,31
+ISP15-win (Dec24-Mar25),weekend,Critical,Import,1.5358034171626032,2
+ISP15-win (Dec24-Mar25),weekend,Critical,Nuclear,12.969859857938184,4
+ISP15-win (Dec24-Mar25),weekend,Critical,Solar PV,2.756383182952582,46
+ISP15-win (Dec24-Mar25),weekend,Critical,Solar Thermal,0.03839508542906508,1
+ISP15-win (Dec24-Mar25),weekend,Critical,Wind,47.204837780764066,32
+ISP15-win (Dec24-Mar25),weekend,Critical,_unmapped_,3.264350163179113,23
+ISP15-win (Dec24-Mar25),weekend,Flat,CCGT,17.138277541458603,5
+ISP15-win (Dec24-Mar25),weekend,Flat,Cogen,0.07397817643795081,2
+ISP15-win (Dec24-Mar25),weekend,Flat,Hydro,10.015823109960339,4
+ISP15-win (Dec24-Mar25),weekend,Flat,Hydro_RES,0.08219797381994533,1
+ISP15-win (Dec24-Mar25),weekend,Flat,Hydro_pump,7.295070176520148,3
+ISP15-win (Dec24-Mar25),weekend,Flat,Import,12.740685942091526,2
+ISP15-win (Dec24-Mar25),weekend,Flat,Nuclear,41.304481844522535,2
+ISP15-win (Dec24-Mar25),weekend,Flat,Solar PV,0.16850584633088792,2
+ISP15-win (Dec24-Mar25),weekend,Flat,Wind,4.742823089410845,9
+ISP15-win (Dec24-Mar25),weekend,Flat,_unmapped_,6.438156299447219,10
+ISP15-win (Dec24-Mar25),weekend,Midday,Biomass,0.5686125852918879,37
+ISP15-win (Dec24-Mar25),weekend,Midday,CCGT,1.0526622732839563,2
+ISP15-win (Dec24-Mar25),weekend,Midday,Cogen,2.1021169883944713,89
+ISP15-win (Dec24-Mar25),weekend,Midday,Hybrid_RES,1.7656149763807079,25
+ISP15-win (Dec24-Mar25),weekend,Midday,Hydro,3.5697206508427124,10
+ISP15-win (Dec24-Mar25),weekend,Midday,Hydro_RES,1.4772263369685659,82
+ISP15-win (Dec24-Mar25),weekend,Midday,Nuclear,2.527264244474252,1
+ISP15-win (Dec24-Mar25),weekend,Midday,Solar PV,30.79110048404969,340
+ISP15-win (Dec24-Mar25),weekend,Midday,Solar Thermal,0.13705021286522423,3
+ISP15-win (Dec24-Mar25),weekend,Midday,Wind,52.89263428004899,235
+ISP15-win (Dec24-Mar25),weekend,Midday,_unmapped_,3.115996967399546,65
+ISP15-win (Dec24-Mar25),weekend,Dropped,Biomass,0.27022772588939026,9
+ISP15-win (Dec24-Mar25),weekend,Dropped,CCGT,11.537149753384405,14
+ISP15-win (Dec24-Mar25),weekend,Dropped,Cogen,0.8841431419876167,27
+ISP15-win (Dec24-Mar25),weekend,Dropped,Hybrid_RES,0.9820897610802113,10
+ISP15-win (Dec24-Mar25),weekend,Dropped,Hydro,6.295693846853465,14
+ISP15-win (Dec24-Mar25),weekend,Dropped,Hydro_RES,0.6969951376499808,22
+ISP15-win (Dec24-Mar25),weekend,Dropped,Hydro_pump,6.1229754783642925,11
+ISP15-win (Dec24-Mar25),weekend,Dropped,Nuclear,3.7897470878371293,1
+ISP15-win (Dec24-Mar25),weekend,Dropped,Solar PV,13.26214712981425,123
+ISP15-win (Dec24-Mar25),weekend,Dropped,Solar Thermal,0.03716724385210061,1
+ISP15-win (Dec24-Mar25),weekend,Dropped,Wind,53.834347780459645,95
+ISP15-win (Dec24-Mar25),weekend,Dropped,_unmapped_,2.2873159128275096,29
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Critical,Biomass,0.8144291558200074,89
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Critical,CCGT,1.1754679558695924,3
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Critical,Cogen,2.8126936903433744,349
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Critical,Hybrid_RES,1.098921532168092,34
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Critical,Hydro,2.784595677864551,44
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Critical,Hydro_RES,1.0904508078178587,265
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Critical,Hydro_pump,2.5353291186314615,25
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Critical,Import,0.2582537911656543,1
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Critical,Nuclear,17.18110821866865,18
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Critical,Solar PV,25.784161811495395,1222
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Critical,Wind,40.408144291558195,827
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Critical,_unmapped_,4.056443948597165,290
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Flat,Cogen,0.05549000595787432,1
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Flat,Hybrid_RES,0.6571184916064063,5
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Flat,Hydro,2.666440812607329,4
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Flat,Hydro_pump,12.10850340533405,14
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Flat,Nuclear,10.481770072779522,2
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Flat,Wind,73.72051728367659,27
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Flat,_unmapped_,0.31015992803822384,5
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Midday,Biomass,1.1518915959440414,183
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Midday,Cogen,4.053742354856159,659
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Midday,Hybrid_RES,1.6451372739906278,52
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Midday,Hydro,5.7696364560187225,46
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Midday,Hydro_RES,1.6016324962631039,552
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Midday,Other,0.0019700276706803243,4
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Midday,Solar PV,42.77750917909768,2361
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Midday,Solar Thermal,0.04350477772752383,3
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Midday,Wind,37.13953623906943,1437
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Midday,_unmapped_,5.81543959936204,523
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Dropped,Biomass,0.5780742686909124,47
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Dropped,Cogen,2.105753037458092,173
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Dropped,Hybrid_RES,1.1304667241524224,22
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Dropped,Hydro,4.681094138631985,21
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Dropped,Hydro_RES,1.0109295571210222,139
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Dropped,Hydro_pump,3.696780278857798,17
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Dropped,Import,0.15564735290546916,1
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Dropped,Nuclear,2.7938699846531714,2
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Dropped,Solar PV,27.884378920367702,785
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Dropped,Solar Thermal,0.048561974106506374,2
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Dropped,Wind,50.99162928536075,514
+DA60/ID15 pre-blk (Mar19-Apr27),weekday,Dropped,_unmapped_,4.922814477694179,242
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Critical,Biomass,1.3062156328346601,67
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Critical,Cogen,2.0412970989372154,136
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Critical,Hybrid_RES,0.9775549252181976,25
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Critical,Hydro,2.6662504141776107,22
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Critical,Hydro_RES,1.7068905747540313,196
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Critical,Hydro_pump,1.7013362854062006,8
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Critical,Import,0.34474899400328285,1
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Critical,Nuclear,12.579507736742007,8
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Critical,Solar PV,11.03407460751285,494
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Critical,Solar Thermal,2.3119250592297926,26
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Critical,Wind,60.91063531493779,515
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Critical,_unmapped_,2.419563356246374,108
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Flat,Cogen,0.09992847225144105,1
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Flat,Hybrid_RES,0.926705095300206,4
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Flat,Hydro_pump,8.314048891319898,6
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Flat,Nuclear,18.87596246896958,2
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Flat,Solar PV,0.04207514621113308,1
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Flat,Wind,65.82867000462824,21
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Flat,_unmapped_,5.9126099213194765,15
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Midday,Biomass,2.1589534916421673,81
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Midday,Cogen,2.9165341657634976,143
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Midday,Hybrid_RES,1.5028306519477093,19
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Midday,Hydro,3.8796264448006648,40
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Midday,Hydro_RES,2.1009775862553837,209
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Midday,Nuclear,15.227328284237693,9
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Midday,Solar PV,19.681089254771656,529
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Midday,Solar Thermal,4.6415336790254855,52
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Midday,Wind,45.770679334834654,593
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Midday,_unmapped_,2.120447106721095,134
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Dropped,Biomass,1.3112752224225153,51
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Dropped,Cogen,2.1285204783780114,117
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Dropped,Hybrid_RES,1.1026632552189335,19
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Dropped,Hydro,2.9469771859432843,22
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Dropped,Hydro_RES,1.6025081894128819,149
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Dropped,Hydro_pump,0.6541838692795254,4
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Dropped,Nuclear,16.818582698532687,8
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Dropped,Solar PV,17.97212692136225,474
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Dropped,Solar Thermal,2.0170669302785367,19
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Dropped,Wind,50.59554961136631,431
+DA60/ID15 pre-blk (Mar19-Apr27),weekend,Dropped,_unmapped_,2.8505456378050424,102
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,Biomass,0.606008054991613,139
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,CCGT,7.838637049971446,69
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,Cogen,2.0868228828737245,491
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,Hybrid_RES,1.2147070871368302,57
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,Hydro,9.917626199353569,168
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,Hydro_RES,1.2693040236088395,430
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,Hydro_pump,10.06443395295574,145
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,Import,0.28105761382085864,2
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,Nuclear,8.110126745023935,15
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,Solar PV,25.837865636520746,2087
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,Solar Thermal,0.025534383213086525,4
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,Wind,29.82188721217757,1350
+DA60/ID15 post-blk (Apr28-Sep),weekday,Critical,_unmapped_,2.9259891583520456,434
+DA60/ID15 post-blk (Apr28-Sep),weekday,Flat,CCGT,32.56465959564276,38
+DA60/ID15 post-blk (Apr28-Sep),weekday,Flat,Cogen,0.17813094173182,4
+DA60/ID15 post-blk (Apr28-Sep),weekday,Flat,Hybrid_RES,0.5247117957535131,5
+DA60/ID15 post-blk (Apr28-Sep),weekday,Flat,Hydro,16.421736621785413,26
+DA60/ID15 post-blk (Apr28-Sep),weekday,Flat,Hydro_RES,1.0238656737802871,9
+DA60/ID15 post-blk (Apr28-Sep),weekday,Flat,Hydro_pump,19.318687871993554,45
+DA60/ID15 post-blk (Apr28-Sep),weekday,Flat,Import,0.07744823553557391,1
+DA60/ID15 post-blk (Apr28-Sep),weekday,Flat,Nuclear,3.8956462474393674,1
+DA60/ID15 post-blk (Apr28-Sep),weekday,Flat,Solar Thermal,0.1742585299550413,1
+DA60/ID15 post-blk (Apr28-Sep),weekday,Flat,Wind,23.22750031947397,49
+DA60/ID15 post-blk (Apr28-Sep),weekday,Flat,_unmapped_,2.5933541669086924,38
+DA60/ID15 post-blk (Apr28-Sep),weekday,Midday,Biomass,0.9034627309862456,156
+DA60/ID15 post-blk (Apr28-Sep),weekday,Midday,Cogen,2.845368405510956,585
+DA60/ID15 post-blk (Apr28-Sep),weekday,Midday,Hybrid_RES,1.8683722182496143,65
+DA60/ID15 post-blk (Apr28-Sep),weekday,Midday,Hydro,1.3068834842120196,63
+DA60/ID15 post-blk (Apr28-Sep),weekday,Midday,Hydro_RES,1.326931483609856,484
+DA60/ID15 post-blk (Apr28-Sep),weekday,Midday,Solar PV,57.803882798092765,3249
+DA60/ID15 post-blk (Apr28-Sep),weekday,Midday,Solar Thermal,0.48484313345164304,21
+DA60/ID15 post-blk (Apr28-Sep),weekday,Midday,Wind,29.16412146337369,1389
+DA60/ID15 post-blk (Apr28-Sep),weekday,Midday,_unmapped_,4.296134282513223,546
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,Biomass,0.7250310939134899,97
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,CCGT,5.552188419244666,36
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,Cogen,2.534005883165854,368
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,Hybrid_RES,1.3081160049750262,39
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,Hydro,7.5746747477938134,93
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,Hydro_RES,1.389947288413322,318
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,Hydro_pump,7.0131087990839625,54
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,Import,0.07896866918050265,1
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,Nuclear,7.911673543521608,8
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,Solar PV,35.54014569719464,1692
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,Solar Thermal,0.097723728110872,6
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,Wind,27.10007304601899,908
+DA60/ID15 post-blk (Apr28-Sep),weekday,Dropped,_unmapped_,3.1743430793832546,289
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,Biomass,0.7367434615336654,113
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,CCGT,3.6419931303779824,15
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,Cogen,2.1263983594245324,287
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,Hybrid_RES,1.51732128863443,55
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,Hydro,8.501085308197794,81
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,Hydro_RES,0.9253175593562389,314
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,Hydro_pump,4.602128796300648,42
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,Import,0.297344711724302,1
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,Nuclear,7.539319042243091,8
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,Solar PV,36.46136772812334,1836
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,Solar Thermal,1.6030716667897609,45
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,Wind,29.369024929956133,1040
+DA60/ID15 post-blk (Apr28-Sep),weekend,Critical,_unmapped_,2.678884017338074,327
+DA60/ID15 post-blk (Apr28-Sep),weekend,Flat,CCGT,34.330138936997265,12
+DA60/ID15 post-blk (Apr28-Sep),weekend,Flat,Hydro,33.99819112496631,18
+DA60/ID15 post-blk (Apr28-Sep),weekend,Flat,Hydro_RES,0.18569834122310738,6
+DA60/ID15 post-blk (Apr28-Sep),weekend,Flat,Hydro_pump,19.237578416657044,19
+DA60/ID15 post-blk (Apr28-Sep),weekend,Flat,Nuclear,9.59281068390871,1
+DA60/ID15 post-blk (Apr28-Sep),weekend,Flat,Solar PV,0.07889774083054303,2
+DA60/ID15 post-blk (Apr28-Sep),weekend,Flat,Wind,2.5766847554170034,15
+DA60/ID15 post-blk (Apr28-Sep),weekend,Midday,Biomass,0.6807519651040058,102
+DA60/ID15 post-blk (Apr28-Sep),weekend,Midday,Cogen,2.640626067051691,338
+DA60/ID15 post-blk (Apr28-Sep),weekend,Midday,Hybrid_RES,1.6006963984547145,57
+DA60/ID15 post-blk (Apr28-Sep),weekend,Midday,Hydro,1.7845642625532825,46
+DA60/ID15 post-blk (Apr28-Sep),weekend,Midday,Hydro_RES,0.7812006995104637,314
+DA60/ID15 post-blk (Apr28-Sep),weekend,Midday,Nuclear,1.8015074225736487,2
+DA60/ID15 post-blk (Apr28-Sep),weekend,Midday,Solar PV,72.97712932731332,2964
+DA60/ID15 post-blk (Apr28-Sep),weekend,Midday,Solar Thermal,0.4256536731647143,14
+DA60/ID15 post-blk (Apr28-Sep),weekend,Midday,Wind,13.533003287491713,918
+DA60/ID15 post-blk (Apr28-Sep),weekend,Midday,_unmapped_,3.774866896782441,335
+DA60/ID15 post-blk (Apr28-Sep),weekend,Dropped,Biomass,0.9491538825203807,87
+DA60/ID15 post-blk (Apr28-Sep),weekend,Dropped,CCGT,2.689983148482787,8
+DA60/ID15 post-blk (Apr28-Sep),weekend,Dropped,Cogen,3.3536660698077805,232
+DA60/ID15 post-blk (Apr28-Sep),weekend,Dropped,Hybrid_RES,1.962221632867542,39
+DA60/ID15 post-blk (Apr28-Sep),weekend,Dropped,Hydro,7.089497534868475,58
+DA60/ID15 post-blk (Apr28-Sep),weekend,Dropped,Hydro_RES,1.364099844004039,239
+DA60/ID15 post-blk (Apr28-Sep),weekend,Dropped,Hydro_pump,4.625189641341071,21
+DA60/ID15 post-blk (Apr28-Sep),weekend,Dropped,Solar PV,53.411073242327454,1437
+DA60/ID15 post-blk (Apr28-Sep),weekend,Dropped,Solar Thermal,0.09768279283835228,4
+DA60/ID15 post-blk (Apr28-Sep),weekend,Dropped,Wind,20.372710096249673,632
+DA60/ID15 post-blk (Apr28-Sep),weekend,Dropped,_unmapped_,4.084722114692448,231
+DA15/ID15 (Oct-Dec 2025),weekday,Critical,Biomass,0.11127339644595116,34
+DA15/ID15 (Oct-Dec 2025),weekday,Critical,CCGT,3.462372507375422,52
+DA15/ID15 (Oct-Dec 2025),weekday,Critical,Cogen,0.3648628428370752,113
+DA15/ID15 (Oct-Dec 2025),weekday,Critical,Hybrid_RES,0.4768062246103476,24
+DA15/ID15 (Oct-Dec 2025),weekday,Critical,Hydro,26.44415337304113,380
+DA15/ID15 (Oct-Dec 2025),weekday,Critical,Hydro_RES,0.4778112026013297,125
+DA15/ID15 (Oct-Dec 2025),weekday,Critical,Hydro_pump,29.886537984818133,474
+DA15/ID15 (Oct-Dec 2025),weekday,Critical,Import,0.5806539503451541,5
+DA15/ID15 (Oct-Dec 2025),weekday,Critical,Nuclear,3.5252394639224067,7
+DA15/ID15 (Oct-Dec 2025),weekday,Critical,Solar PV,3.703567225211101,396
+DA15/ID15 (Oct-Dec 2025),weekday,Critical,Wind,29.597885972963862,450
+DA15/ID15 (Oct-Dec 2025),weekday,Critical,_unmapped_,1.3688358558280906,176
+DA15/ID15 (Oct-Dec 2025),weekday,Flat,Biomass,0.32281304007212114,29
+DA15/ID15 (Oct-Dec 2025),weekday,Flat,CCGT,2.333898912277525,22
+DA15/ID15 (Oct-Dec 2025),weekday,Flat,Cogen,0.9117500009841862,83
+DA15/ID15 (Oct-Dec 2025),weekday,Flat,Hybrid_RES,0.9871386560741999,11
+DA15/ID15 (Oct-Dec 2025),weekday,Flat,Hydro,18.924717637008555,68
+DA15/ID15 (Oct-Dec 2025),weekday,Flat,Hydro_RES,1.1280741052764185,73
+DA15/ID15 (Oct-Dec 2025),weekday,Flat,Hydro_pump,11.275426447836171,54
+DA15/ID15 (Oct-Dec 2025),weekday,Flat,Import,3.8186420593897266,9
+DA15/ID15 (Oct-Dec 2025),weekday,Flat,Wind,58.81338650562758,275
+DA15/ID15 (Oct-Dec 2025),weekday,Flat,_unmapped_,1.4841526354535326,62
+DA15/ID15 (Oct-Dec 2025),weekday,Midday,Biomass,0.2968940268279267,68
+DA15/ID15 (Oct-Dec 2025),weekday,Midday,CCGT,0.6222120480855137,10
+DA15/ID15 (Oct-Dec 2025),weekday,Midday,Cogen,0.8688712749147123,235
+DA15/ID15 (Oct-Dec 2025),weekday,Midday,Hybrid_RES,1.4967426865443862,67
+DA15/ID15 (Oct-Dec 2025),weekday,Midday,Hydro,1.5765460713524926,47
+DA15/ID15 (Oct-Dec 2025),weekday,Midday,Hydro_RES,0.9470213625076704,149
+DA15/ID15 (Oct-Dec 2025),weekday,Midday,Hydro_pump,1.4405305812293536,26
+DA15/ID15 (Oct-Dec 2025),weekday,Midday,Solar PV,20.00877519291117,1214
+DA15/ID15 (Oct-Dec 2025),weekday,Midday,Wind,68.95934478559596,775
+DA15/ID15 (Oct-Dec 2025),weekday,Midday,_unmapped_,3.7830619700308086,326
+DA15/ID15 (Oct-Dec 2025),weekday,Dropped,Biomass,0.21934943858741485,57
+DA15/ID15 (Oct-Dec 2025),weekday,Dropped,CCGT,4.9672237679733,49
+DA15/ID15 (Oct-Dec 2025),weekday,Dropped,Cogen,0.6775366966913917,180
+DA15/ID15 (Oct-Dec 2025),weekday,Dropped,Hybrid_RES,0.878028673156718,30
+DA15/ID15 (Oct-Dec 2025),weekday,Dropped,Hydro,12.21823341331982,143
+DA15/ID15 (Oct-Dec 2025),weekday,Dropped,Hydro_RES,0.9017231794662567,131
+DA15/ID15 (Oct-Dec 2025),weekday,Dropped,Hydro_pump,14.831779520515727,180
+DA15/ID15 (Oct-Dec 2025),weekday,Dropped,Import,0.5608167173855285,6
+DA15/ID15 (Oct-Dec 2025),weekday,Dropped,Nuclear,2.063104499082013,3
+DA15/ID15 (Oct-Dec 2025),weekday,Dropped,Solar PV,6.070210046891288,549
+DA15/ID15 (Oct-Dec 2025),weekday,Dropped,Wind,54.36760554395366,691
+DA15/ID15 (Oct-Dec 2025),weekday,Dropped,_unmapped_,2.2443885029768853,263
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,Biomass,0.23283694192076035,29
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,CCGT,0.5491600826195601,5
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,Cogen,0.8760273280083197,89
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,Hybrid_RES,1.0093452544306905,26
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,Hydro,16.64784134733436,116
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,Hydro_RES,0.4604740513916774,86
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,Hydro_pump,24.587696618664516,148
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,Import,0.4622073288749585,1
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,Nuclear,6.63123077145292,5
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,Solar PV,18.033741135007872,618
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,Solar Thermal,0.3284560830817674,8
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,Wind,28.7966721072321,390
+DA15/ID15 (Oct-Dec 2025),weekend,Critical,_unmapped_,1.3843109499805006,120
+DA15/ID15 (Oct-Dec 2025),weekend,Flat,Biomass,0.013451708366962604,1
+DA15/ID15 (Oct-Dec 2025),weekend,Flat,Cogen,0.9631423190745223,7
+DA15/ID15 (Oct-Dec 2025),weekend,Flat,Hydro,27.542372881355938,22
+DA15/ID15 (Oct-Dec 2025),weekend,Flat,Hydro_RES,0.19504977132095774,5
+DA15/ID15 (Oct-Dec 2025),weekend,Flat,Hydro_pump,24.671778315846108,21
+DA15/ID15 (Oct-Dec 2025),weekend,Flat,Nuclear,25.907990314769975,2
+DA15/ID15 (Oct-Dec 2025),weekend,Flat,Wind,13.171912832929781,42
+DA15/ID15 (Oct-Dec 2025),weekend,Flat,_unmapped_,7.534301856335753,30
+DA15/ID15 (Oct-Dec 2025),weekend,Midday,Biomass,1.0754838452378916,328
+DA15/ID15 (Oct-Dec 2025),weekend,Midday,CCGT,0.034183943801596395,1
+DA15/ID15 (Oct-Dec 2025),weekend,Midday,Cogen,2.4305923507728426,646
+DA15/ID15 (Oct-Dec 2025),weekend,Midday,Hybrid_RES,2.324223312310208,133
+DA15/ID15 (Oct-Dec 2025),weekend,Midday,Hydro,0.3652554395200574,51
+DA15/ID15 (Oct-Dec 2025),weekend,Midday,Hydro_RES,1.8619424456332863,651
+DA15/ID15 (Oct-Dec 2025),weekend,Midday,Nuclear,1.0961651312378575,2
+DA15/ID15 (Oct-Dec 2025),weekend,Midday,Solar PV,48.153725195275776,4406
+DA15/ID15 (Oct-Dec 2025),weekend,Midday,Solar Thermal,0.10955953988411643,12
+DA15/ID15 (Oct-Dec 2025),weekend,Midday,Wind,39.48291087676118,2189
+DA15/ID15 (Oct-Dec 2025),weekend,Midday,_unmapped_,3.06595791956518,691
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,Biomass,0.7083705157951098,132
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,CCGT,0.022309477065857578,1
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,Cogen,1.6921292164911659,289
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,Hybrid_RES,1.765839728716759,65
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,Hydro,4.811172586114582,66
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,Hydro_RES,1.4702837765482777,273
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,Hydro_pump,6.070676423344637,59
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,Import,0.285561306442977,1
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,Nuclear,11.819293235766557,14
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,Solar PV,24.80296269855435,1646
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,Solar Thermal,0.2510262359450295,12
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,Wind,44.255131179725154,898
+DA15/ID15 (Oct-Dec 2025),weekend,Dropped,_unmapped_,2.0452436194895594,301

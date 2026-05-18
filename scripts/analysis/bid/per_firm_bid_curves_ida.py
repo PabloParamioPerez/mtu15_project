@@ -175,7 +175,7 @@ def build_per_hour_supply_curves(df):
         g_binned["cum_qty_per_period"] = g_binned["qty"].cumsum() / n_periods_per_hour_session
         g_binned["firm"] = firm
         g_binned["hour"] = int(hour)
-        g_binned["hour_class"] = g["hour_class"].iloc[0]
+        g_binned["hour_class"] = g["hour_class"].iloc[0] if len(g) else hour_class
         out.append(g_binned)
     return pd.concat(out, ignore_index=True)
 
@@ -201,6 +201,8 @@ def build_per_quarter_curves(df, hour_class="critical"):
         g_binned["firm"] = firm
         g_binned["quarter"] = int(quarter)
         out.append(g_binned)
+    if not out:
+        return pd.DataFrame(columns=["price","qty","cum_qty_per_cell","firm","quarter"])
     return pd.concat(out, ignore_index=True)
 
 
@@ -435,10 +437,12 @@ def main():
     print("compact grid: IDA per-hour, all techs...")
     plot_compact_grid_per_hour(df, list(TECHS_GRID),
                                 str(FIGDIR / "fig_bid_curves_grid_per_hour_ida"))
-    print("compact grid: IDA per-quarter (critical), all techs...")
-    plot_compact_grid_per_quarter(df, list(TECHS_GRID),
-                                    str(FIGDIR / "fig_bid_curves_grid_per_quarter_ida"),
-                                    hour_class="critical")
+    for hc in ("critical", "flat", "midday"):
+        print(f"compact grid: IDA per-quarter ({hc}), all techs...")
+        suffix = "" if hc == "critical" else f"_{hc}"
+        plot_compact_grid_per_quarter(df, list(TECHS_GRID),
+                                        str(FIGDIR / f"fig_bid_curves_grid_per_quarter_ida{suffix}"),
+                                        hour_class=hc)
 
 
 if __name__ == "__main__":

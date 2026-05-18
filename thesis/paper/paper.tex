@@ -189,7 +189,9 @@ WE SHOULD DEFINE HERE HOW WE DEFINE PIVOTALITY AND HOW WE CALCULATE IT, WITH DIS
 
 ALSO WE SHOULD DISCUSS THAT THE TREATMENT IN OUR IDENTIFICATION IS AT THE HOUR LEVEL (CRITICAL VS FLAT), NOT AT THE FIRM LEVEL, AND THAT FIRMS ENTER THE ANALYSIS AS SUBJECTS: PIVOTAL FIRMS ARE THOSE EXPECTED TO REACT TO THE TREATMENT BECAUSE THEY HAVE A STRATEGIC MARGIN IN CRITICAL HOURS; NON-PIVOTAL FIRMS SERVE AS PLACEBO BECAUSE THEY BID AT MARGINAL COST REGARDLESS OF HOUR.
 
-HOWEVER, WE SHOULD THINK IF THIS IS THE BEST WAY TO PRESENT IT, MAYBE IT IS BETTER TO TALK ABOUT "EXPOSURE" TO THE TREATMENT ACROSS TIME OR SOMETHING LIKE THAT!! TO THINK ABOUT IT
+OJO, WE SEE THAT FIRMS ALSO EXPLOIT GRANULARITY IN FLAT HOURS, BUT THE KEY IS THAT NOT AS MUCH!!! THE CRITICAL-FLAT SPREAD IN THE STRATEGIC RESPONSE IS WHAT WE FOCUS ON, SO WE IDENTIFY A LOWER BOUND ON THE MECHANISM'S EFFECT, NOT THE FULL EFFECT!!! FOR THE FULL EFFECT WE SHOULD CONSIDER A BEFORE-AFTER COMPARISON WITHIN CRITICAL HOURS, BUT THAT IS MORE SUSCEPTIBLE TO CONFOUNDING TRENDS IN THE ABSOLUTE PRICE LEVEL OF CRITICAL HOURS, WHICH IS WHY WE FOCUS ON THE CRITICAL-FLAT SPREAD.
+
+
 
 \subsection{Parallel-trends discussion}\label{sec:data:pta}
 
@@ -590,7 +592,8 @@ which is exactly the bid-curve step function plotted in §\ref{sec:bid_evidence:
 \begin{equation}\label{eq:wasserstein}
    W_1(\mu_i,\mu_j) \;=\; \int_{p_{\min}}^{p_{\max}} \bigl| F_i(p) - F_j(p) \bigr|\, dp \;=\; \sum_{k=1}^{K-1} \bigl| F_i(p_{(k)}) - F_j(p_{(k)}) \bigr|\cdot \bigl( p_{(k+1)} - p_{(k)} \bigr),
 \end{equation}
-where $\{p_{(1)} < p_{(2)} < \dots < p_{(K)}\}$ is the sorted union of distinct bid prices from both quarters and $[p_{\min}, p_{\max}] = [p_{(1)}, p_{(K)}]$ is the resulting integration domain. Computation handles the union grid in $O(K \log K)$ via a sort/merge of the two ordered price lists; see \texttt{scripts/analysis/bid/quarter\_dissimilarity\_ot.py}.
+where $\{p_{(1)} < p_{(2)} < \dots < p_{(K)}\}$ is the sorted union of distinct bid prices from both quarters and $[p_{\min}, p_{\max}] = [p_{(1)}, p_{(K)}]$ is the resulting integration domain. Computation handles the union grid in $O(K \log K)$ via a sort/merge of the two ordered price lists.
+% Implementation: scripts/analysis/bid/quarter_dissimilarity_ot.py
 
 \paragraph{Wasserstein interpretation.} Equation~\ref{eq:wasserstein} is the closed-form expression of the 1-D Wasserstein-1 distance (Earth Mover's Distance) for probability measures on $\mathbb{R}$: $W_1(\mu, \nu) = \int |F_\mu - F_\nu|$ \citep{vallender1973}. Strictly, the equality requires the two measures to share total mass. In our setting, two quarters may submit slightly different total volumes ($\sum_k q_{i,k} \neq \sum_k q_{j,k}$), in which case Equation~\ref{eq:wasserstein} is the natural \emph{unbalanced} extension --- the L1 area between two non-decreasing step functions over the observed price range. This still captures (i) horizontal shifts of the curve (price re-pricing), (ii) vertical shifts (quantity re-allocation), and (iii) total-volume changes, in a single non-negative number. Magnitudes (in MWh$\cdot$EUR/MWh) are not directly interpretable, but the metric serves the role we need: \textbf{$W_1 = 0$ iff the two bid multisets are identical}, and $W_1 > 0$ iff there is any difference.
 

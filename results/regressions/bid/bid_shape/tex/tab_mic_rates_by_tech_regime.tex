@@ -1,0 +1,18 @@
+% auto-built by bid_shape_mic_filter.py
+% Denominator: DA bid-shape per_cell sample (cab+det entered into casación).
+% Numerator: cells dropped by the MIC filter — either absent from pdbc
+% (sparse-zero) or present with daily SUM(assigned_power_mw)=0.
+\begin{tabular}{l r r r r r}
+\toprule
+ & 3-sess & ISP15-win & DA60/ID15 pre-blk & DA60/ID15 post-blk & DA15/ID15 \\
+\midrule
+CCGT & 79.6 & 77.1 & 97.4 & 88.3 & 87.3 \\
+Hydro & 28.7 & 25.0 & 24.9 & 24.2 & 22.0 \\
+Hydro pump & 20.6 & 13.7 & 7.5 & 11.6 & 22.8 \\
+Nuclear & 0.1 & 0.0 & 2.9 & 0.8 & 0.4 \\
+Wind & 0.4 & 0.8 & 0.0 & 0.5 & 0.1 \\
+Solar PV & 2.8 & 3.2 & 2.2 & 2.4 & 0.9 \\
+Solar Thermal & 0.6 & 2.3 & 0.8 & 0.1 & 2.0 \\
+Cogen & 4.9 & 5.9 & 6.7 & 6.2 & 6.6 \\
+\bottomrule
+\end{tabular}

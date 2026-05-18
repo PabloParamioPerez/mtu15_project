@@ -27,8 +27,18 @@ def cls(h):
     return "dropped"
 
 
+DATE_FROM = "2023-01-01"
+DATE_TO   = "2026-05-15"
+
+
 def build_csv() -> pd.DataFrame:
-    """Recompute hour-level metrics from ENTSO-E parquets (2025 full year)."""
+    """Recompute hour-level metrics from ENTSO-E parquets at 15-min ISP.
+
+    Window is the largest 15-min ISP window available for both Spanish A65
+    (actual load) and A75 (actual wind+solar): from 2023-01-01 onward.
+    Pre-2023 the same ENTSO-E series are only 60-min, so within-hour variance
+    of residual demand is undefined (one observation per hour).
+    """
     con = duckdb.connect()
     df = con.execute(f"""
         WITH load_isp AS (
@@ -37,7 +47,7 @@ def build_csv() -> pd.DataFrame:
                    EXTRACT(MINUTE FROM (isp_start_utc AT TIME ZONE 'Europe/Madrid')) AS minute,
                    load_mw
             FROM '{LOAD}'
-            WHERE isp_start_utc >= TIMESTAMP '2025-01-01' AND isp_start_utc < TIMESTAMP '2026-01-01'
+            WHERE isp_start_utc >= TIMESTAMP '{DATE_FROM}' AND isp_start_utc < TIMESTAMP '{DATE_TO}'
               AND mtu_minutes = 15
         ),
         vre_per_isp AS (
@@ -48,7 +58,8 @@ def build_csv() -> pd.DataFrame:
                    SUM(CASE WHEN psr_type='B16' THEN quantity_mw ELSE 0 END) AS solar_mw,
                    SUM(CASE WHEN psr_type IN ('B18','B19') THEN quantity_mw ELSE 0 END) AS wind_mw
             FROM '{WIND_SOLAR}'
-            WHERE isp_start_utc >= TIMESTAMP '2025-01-01' AND isp_start_utc < TIMESTAMP '2026-01-01'
+            WHERE isp_start_utc >= TIMESTAMP '{DATE_FROM}' AND isp_start_utc < TIMESTAMP '{DATE_TO}'
+              AND mtu_minutes = 15
             GROUP BY 1,2,3,4
         ),
         per_quarter AS (

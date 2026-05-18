@@ -1,0 +1,51 @@
+regime,service,cost_eur_m
+3-sess (Jun-Nov 24),Fase I up cost (1373),843.4271502399932
+3-sess (Jun-Nov 24),Fase I dn cost (1374),70.15117631999998
+3-sess (Jun-Nov 24),Fase II up cost (1375),4.20074585
+3-sess (Jun-Nov 24),Fase II dn cost (1376),308.59080458000005
+3-sess (Jun-Nov 24),TR up cost (1723),667.6002758100004
+3-sess (Jun-Nov 24),TR dn cost (1724),-3.6370154500000207
+3-sess (Jun-Nov 24),aFRR reserve up cost (712),259.00258500999985
+3-sess (Jun-Nov 24),aFRR reserve dn cost (2127),14.397819690000023
+3-sess (Jun-Nov 24),"Imbalance excess (726, day)",0.12537856
+3-sess (Jun-Nov 24),"Imbalance deficit (727, day)",0.05152600999999998
+ISP15-win (Dec24-Mar25),Fase I up cost (1373),573.0663788899994
+ISP15-win (Dec24-Mar25),Fase I dn cost (1374),32.54682719000004
+ISP15-win (Dec24-Mar25),Fase II up cost (1375),3.067705229999998
+ISP15-win (Dec24-Mar25),Fase II dn cost (1376),235.63377147999998
+ISP15-win (Dec24-Mar25),TR up cost (1723),627.4178140800008
+ISP15-win (Dec24-Mar25),TR dn cost (1724),-0.8226263000000001
+ISP15-win (Dec24-Mar25),aFRR reserve up cost (712),169.058843809998
+ISP15-win (Dec24-Mar25),aFRR reserve dn cost (2127),94.54008440999904
+ISP15-win (Dec24-Mar25),"Imbalance excess (726, day)",0.31516322
+ISP15-win (Dec24-Mar25),"Imbalance deficit (727, day)",0.008764550000000003
+DA60/ID15 pre-blk,Fase I up cost (1373),305.17811430999865
+DA60/ID15 pre-blk,Fase I dn cost (1374),1.3169108899999995
+DA60/ID15 pre-blk,Fase II up cost (1375),0.0086154
+DA60/ID15 pre-blk,Fase II dn cost (1376),29.835027070000102
+DA60/ID15 pre-blk,TR up cost (1723),147.81208885000032
+DA60/ID15 pre-blk,TR dn cost (1724),-16.685874050000002
+DA60/ID15 pre-blk,aFRR reserve up cost (712),25.392271529999892
+DA60/ID15 pre-blk,aFRR reserve dn cost (2127),27.30640631000002
+DA60/ID15 pre-blk,"Imbalance excess (726, day)",0.08811799000000002
+DA60/ID15 pre-blk,"Imbalance deficit (727, day)",0.022252880000000003
+DA60/ID15 post-blk,Fase I up cost (1373),1625.2003850000017
+DA60/ID15 post-blk,Fase I dn cost (1374),109.57028336000035
+DA60/ID15 post-blk,Fase II up cost (1375),45.91776828000008
+DA60/ID15 post-blk,Fase II dn cost (1376),379.5572405000015
+DA60/ID15 post-blk,TR up cost (1723),452.2532168699968
+DA60/ID15 post-blk,TR dn cost (1724),-65.90866405999957
+DA60/ID15 post-blk,aFRR reserve up cost (712),118.2470888300002
+DA60/ID15 post-blk,aFRR reserve dn cost (2127),77.00723534000036
+DA60/ID15 post-blk,"Imbalance excess (726, day)",0.2679769499999999
+DA60/ID15 post-blk,"Imbalance deficit (727, day)",0.15952117999999998
+DA15/ID15 (Oct-Dec 25),Fase I up cost (1373),1200.1348323999891
+DA15/ID15 (Oct-Dec 25),Fase I dn cost (1374),43.55155407999999
+DA15/ID15 (Oct-Dec 25),Fase II up cost (1375),0.026963359999999995
+DA15/ID15 (Oct-Dec 25),Fase II dn cost (1376),430.73643299999986
+DA15/ID15 (Oct-Dec 25),TR up cost (1723),170.4060728399992
+DA15/ID15 (Oct-Dec 25),TR dn cost (1724),-13.596317140000039
+DA15/ID15 (Oct-Dec 25),aFRR reserve up cost (712),71.18581001999989
+DA15/ID15 (Oct-Dec 25),aFRR reserve dn cost (2127),41.98779396000003
+DA15/ID15 (Oct-Dec 25),"Imbalance excess (726, day)",0.17324689000000007
+DA15/ID15 (Oct-Dec 25),"Imbalance deficit (727, day)",0.08849162999999997

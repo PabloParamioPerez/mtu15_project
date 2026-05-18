@@ -412,7 +412,7 @@ REE has operated in **operación reforzada** (reinforced operation mode) since t
 
 Operación reforzada is a **regime overlay**, not a separate clock-structure regime. It is active continuously from May 2025 onward and therefore co-exists with both the MTU15-IDA and MTU15-DA market regimes. REE has stated (Nov 2025 press release) that the reinforced programming will continue until utilities meet the new voltage-control compliance requirements.
 
-(Authoritative blackout-causes references — ENTSO-E Final Report, CNMC PRO/CNMC/001/26 — are catalogued under §13.)
+(Authoritative blackout-causes references — ENTSO-E Final Report, CNMC PRO/CNMC/001/26 — are catalogued under §14.)
 
 ### How it cascades through the scheduling chain
 
@@ -484,7 +484,7 @@ Operación reforzada is a regime shift orthogonal to the MTU15 reform sequence. 
 
 | Date | BOE | Substance |
 |---|---|---|
-| **2025-04-28** | — | Blackout (the trigger; technical detail in §13 references). Operación reforzada begins administratively the next day and has remained active continuously since. |
+| **2025-04-28** | — | Blackout (the trigger; technical detail in §14 references). Operación reforzada begins administratively the next day and has remained active continuously since. |
 | **2025-06-12** | BOE-A-2025-13076 | CNMC Resolución modifies PO-3.1, 3.6, **7.4**, 9.1, 14.4 to develop the two-tier voltage control service. |
 | **2025-06-24 → 2025-07-22** | BOE-A-2025-12857 → BOE-A-2025-15313 | RDL 7/2025 (system-reinforcement emergency measures) approved 24 June, **REPEALED by Congress 22 July**. Substance later re-enacted via RD 997/2025. |
 | **2025-10-20** | BOE-A-2025-21198 | CNMC **temporary** modifications to PO-3.1, 3.2, 7.2 for voltage stabilisation (initial 30+15 days, max 3 months) following Sept-2025 voltage oscillations. |
@@ -494,7 +494,77 @@ Operación reforzada is a regime shift orthogonal to the MTU15 reform sequence. 
 
 ---
 
-## 12. Glossary
+## 12. Bidding incentives across the cascade
+
+§§3, 6, 7 describe each ajuste service mechanically; this section reads them as **strategic incentives** for DA / IDA bidders. Every cleared MWh in DA/IDA also triggers downstream cash flows in the post-clearing cascade, and rational bidders price those expected flows into their DA/IDA bid. Empirical magnitudes are from `thesis/provisional/bidding_internal.tex` §§7-8 (data 2024-06-14 → 2025-12-31).
+
+### 12.1 Fase I — PDBF restrictions (pay-as-bid, ~€170/MWh, ~2-3× DA spot)
+
+**Strongest single bidding distorter.** Pay-as-bid post-clearing means a unit that REE *has to* call for security gets paid its bid price, not the marginal price. A zonally-dominant CCGT in a transmission corridor with limited substitutes (Sur, Levante, Cataluña — see §10 / firm-zone HHI 3,000-5,500) can bid scarcity-tier prices (>€500/MWh) in DA, deliberately *not clear*, and still earn €170+/MWh through Fase I forced inclusion.
+
+**Predicted bidding pattern**: zonally-dominant incumbents offer at scarcity prices in DA (DA non-clearing is strategic, not technical). Empirical confirmation: GN CCGTs (40-45% share in Sur/Levante/Cataluña) submit single-block scarcity bids and essentially never partial-clear at MCP (Table 2 in `bidding_internal.tex` §2.1). Non-zonal CCGTs (GE, IB inland) bid near marginal cost.
+
+**Reform sensitivity**: Fase I cost more than doubled under MTU15-DA (€5.3M/day → €13.0M/day), driven by the substitution-cost term in REE PO 14.4 settlement. The Fase I rent channel was *not* killed by the reform; it intensified.
+
+### 12.2 Fase II — post-IDA rebalance (negligible)
+
+Operationally dead post-2024 (≤7 GWh per regime, prices ~€2-90/MWh). No meaningful incentive effect on bidding. Documented for completeness.
+
+### 12.3 Gestión de Desvíos (GD, hourly between IDAs and gate closure)
+
+Volumes small, prices reported as zero in our parquet (settled at marginal mFRR/RR prices rather than its own auction). Negligible direct effect on DA bidding; primarily a portfolio-rebalancing channel for forecast updates between IDA sessions and balancing.
+
+### 12.4 TR — Tiempo Real (pay-as-bid real-time, €220-545/MWh, 3-7× DA)
+
+**Pre-MTU15** (3-sess + ISP15-win): TR was a major rent source. €545/MWh average price ≈ 7× DA. Incentive: stay out of late IDA sessions to preserve flexibility for real-time activation; submit single-block-at-MCP in IDA to maximise discretionary upside without contractual commitment.
+
+**Post-MTU15** (DA60/ID15 onward): TR price halved to ~€226/MWh because granular IDA absorbs the intra-hour scarcity that previously bled into real time. TR cost dropped €5.8M/day → €1.8M/day (-69%). **MTU15 destroyed the rent that the TR channel previously created.** This is the *efficient* part of the reform: it kills a strategic detour.
+
+### 12.5 aFRR capacity ("banda secundaria", €6-13/MWh, daily marginal auction)
+
+Steady ~€0.1-3M/day system-wide. Incentive: **reserve capacity for the band rather than clearing it in DA**, since the band auction pays separately for the right to ramp ±. Distinguishes CCGT/hydro portfolios that systematically hold back ~10% of nameplate from DA (especially Iberdrola hydro pump-storage in MUEL, where MUEL is a top price-setter at MCP precisely because its operator chooses how much capacity to dedicate to the auction vs the band).
+
+Reform sensitivity mild: capacity price fell €13 → €6/MWh under MTU15 (less reserve scarcity), but the volume-side incentive structure is largely unchanged.
+
+### 12.6 aFRR energy / mFRR / RR (activation reserves, marginal-price energy)
+
+Activations are unpredictable from the bidder's perspective. Incentive: **bid at marginal cost in DA**, capture the activation spread when it materialises. Doesn't distort DA bidding much for thermal units.
+
+For **flexible hydro and pumped-storage**, these are a meaningful revenue line because they have fast ramp + storage and so capture a disproportionate share of activations. This is why DA15/ID15 shows hydro pump as the #2 marginal price-setter (IB MUEL, MLTG = top-2 units by event count in §2.1).
+
+**RR sign-flip in DA60/ID15 post-blackout** (price = €-11/MWh = REE paying providers to come on): this is a side-payment that does not move DA bidding incentives, just shifts cost allocation.
+
+### 12.7 Imbalance settlement (desvíos, dual-price)
+
+Two-price scheme penalises being on the wrong side of the system. Incentive: **bid your true expected output in DA**, not a strategic deviation. Disciplines DA bids toward physical realism, especially for RES with high forecast uncertainty.
+
+### 12.8 RES curtailment compensation (codes 33/34, REE pays €-10 to €-140/MWh)
+
+Under reforzada, curtailment compensation rose sharply (mean €-66/MWh in DA60/ID15 post-blk, €-43/MWh in DA15/ID15). Incentive: **wind/solar bid at zero / negative in DA** for priority dispatch, knowing they will be made whole if curtailed. Explains why apuntamiento drops (Solar PV 0.97 → 0.86, 2023 → 2025) without a strategic uplift response — the curtailment cushion absorbs the downside.
+
+### 12.9 Summary table — incentives by tech / firm class
+
+| Class | DA bidding behaviour | Channel of rent capture |
+|---|---|---|
+| **Zonally-dominant CCGT** (e.g. GN in Sur/Levante/Cataluña) | Single block at scarcity prices (~€500+/MWh); rarely clears in DA | **Fase I forced inclusion** at pay-as-bid (~€170/MWh) |
+| **Non-zonal CCGT** (e.g. IB Centro, GE Galicia after Q1) | Near marginal cost; clears occasionally; partial-cleared at MCP | DA spot + occasional aFRR/mFRR activation |
+| **Flexible hydro + pump-storage** (e.g. IB MUEL, EDP TAJO) | At marginal cost in DA; holds back band capacity | DA spot + aFRR capacity band + activation spreads |
+| **Wind aggregators** (RE-Mercado portfolios — Gesternova, AXPO, NEXUS) | At zero / near-zero in DA (priority dispatch) | DA spot + RES-curtailment compensation under reforzada |
+| **Solar PV aggregators** | At zero in DA; midday cannibalisation drives apuntamiento < 1 | DA spot + RES-curtailment compensation |
+| **Nuclear** | At zero in DA (must-run, technical floor) | DA spot only (no flexibility for ancillary) |
+| **Retail demand units** (commercialisers) | Inelastic demand bid at high prices (price-taker) | n/a (consumer side) |
+
+### 12.10 Reform-direction summary
+
+**Pre-MTU15 (3-sess + ISP15-win):** Big rents in **TR** (€5.8M/day, €545/MWh). Strong incentive to stay out of late IDA. Fase I a secondary channel.
+
+**Post-MTU15-IDA (DA60/ID15 + DA15/ID15):** TR rent collapsed; **Fase I rent doubled and became the dominant channel**. Zonally-dominant CCGTs benefit most; the reform did not remove their scarcity rents, it redirected them earlier in the cascade.
+
+**Operational implication for the welfare counterfactual:** any analysis that focuses only on the DA auction will understate scarcity rents by an order of magnitude. The €21M/day Fase I bill in DA15/ID15 dwarfs any DA-side margin measurable through price-setter analysis (§2.1).
+
+---
+
+## 13. Glossary
 
 ### Programs (sequential outputs)
 
@@ -670,7 +740,7 @@ When filtering at the row level, rely on the parser docstring rather than this t
 
 ---
 
-## 13. References (full document set in repo)
+## 14. References (full document set in repo)
 
 For the formal regulatory texts:
 - `docs/regulation/spain/ree_guia_proveedor_ajuste.pdf` (REE, 2024-12)

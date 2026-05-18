@@ -217,6 +217,8 @@ def build_per_quarter_curves(df, hour_class="critical"):
         g_binned["firm"] = firm
         g_binned["quarter"] = int(quarter)
         out.append(g_binned)
+    if not out:
+        return pd.DataFrame(columns=["price", "qty", "cum_qty_per_cell", "firm", "quarter"])
     return pd.concat(out, ignore_index=True)
 
 
@@ -357,7 +359,7 @@ def plot_compact_grid_per_quarter(df, techs, out_stem, hour_class: str = "critic
                 ax.text(0.5, 0.5, "(no units)", ha="center", va="center",
                         transform=ax.transAxes, fontsize=8, color="gray")
             else:
-                curves = build_per_quarter_curves(sub)
+                curves = build_per_quarter_curves(sub, hour_class=hour_class)
                 panel = curves[curves["firm"] == firm]
                 for q in (1, 2, 3, 4):
                     s = panel[panel["quarter"] == q].sort_values("price")
@@ -600,9 +602,12 @@ def main():
     print("compact grid: per-hour, all techs...")
     plot_compact_grid_per_hour(df, techs_grid,
                                 str(FIGDIR / "fig_bid_curves_grid_per_hour"))
-    print("compact grid: per-quarter, all techs...")
-    plot_compact_grid_per_quarter(df, techs_grid,
-                                    str(FIGDIR / "fig_bid_curves_grid_per_quarter"), hour_class="critical")
+    for hc in ("critical", "flat", "midday"):
+        print(f"compact grid: per-quarter, all techs ({hc} hours)...")
+        suffix = "" if hc == "critical" else f"_{hc}"
+        plot_compact_grid_per_quarter(df, techs_grid,
+                                        str(FIGDIR / f"fig_bid_curves_grid_per_quarter{suffix}"),
+                                        hour_class=hc)
 
     print("building bid-shape detail table (CCGT)...")
     agg = build_table(df)
