@@ -21,7 +21,7 @@ The thesis paper itself, [`thesis/paper/paper.tex`](thesis/paper/paper.tex) → 
 | [`CLAUDE.md`](CLAUDE.md) | Canonical project rules — data layers, OVB / seasonality protocols, file conventions, source-separation rule. |
 | [`docs/notes/SPANISH_MARKET_STRUCTURE.md`](docs/notes/SPANISH_MARKET_STRUCTURE.md) | Project reference for the sequential market structure (DA $\to$ IDA $\to$ continuous $\to$ balancing $\to$ P48), `tipo_redespacho` codes, TR cause-code dictionary, ESIOS indicator inventory. |
 | [`notebooks/memos/_esios_archive_catalog.md`](notebooks/memos/_esios_archive_catalog.md) | ESIOS API archive triage memo (which archives we ingest and why) — the only memo we actively maintain. |
-| [`data/external/esios_indicator_catalog.yaml`](data/external/esios_indicator_catalog.yaml) | 279 curated ESIOS indicators across 32 families, tagged with their native granularity and priority tier. |
+| [`data/external/esios_indicator_catalog.yaml`](data/external/esios_indicator_catalog.yaml) | 279 curated ESIOS indicators across 32 families, tagged with their native granularity. |
 
 Run `uv run pytest` for the test suite; `uv run python scripts/pipelines/.../00_*.py` for any pipeline step. All pipeline scripts are idempotent.
 
@@ -90,13 +90,13 @@ OMIE file specification: [`docs/omie/ficherosomie137.pdf`](docs/omie/ficherosomi
 
 Two endpoint families on the ESIOS API (`https://api.esios.ree.es`), with `ESIOS_TOKEN` from `.env`:
 
-**Indicators** (`/indicators/{id}`) — 2,018 system-wide time series. We curate **279 indicators across 32 families** in [`data/external/esios_indicator_catalog.yaml`](data/external/esios_indicator_catalog.yaml), tagged with their native granularity (15-min / hour / day / month) and grouped into priority tiers:
+**Indicators** (`/indicators/{id}`) — 2,018 system-wide time series. We curate **279 indicators across 32 families** in [`data/external/esios_indicator_catalog.yaml`](data/external/esios_indicator_catalog.yaml), tagged with their native granularity (15-min / hour / day / month). The catalog groups indicators by topic, including:
 
-- **Tier A** — fuel / CO₂ prices, renewable forecasts, demand actuals / forecasts (controls for parallel-trends regressions; OVB defense).
-- **Tier B** — DA + IDA clearing prices (sanity-check against OMIE), 13 PVPC quarter-hour components, demand-program stages.
-- **Tier D** — reserve-market prices: aFRR (capacity + energy), mFRR (programada + directa), RR, RPA, Gestión de Desvíos, technical-restrictions Fase I and Fase II.
-- **Tier E** — reserve-market volumes, cross-border balancing flows, SRAD demand response.
-- **Tier F** — recent additions: per-cause-code TR volumes (SCB / SCA / CT / RTD / ASE), daily Fase~I volumes per zone, reforzada operational signals (id 1880/1881), voltage-control prices, indisponibilidades aggregates.
+- Fuel / CO₂ prices, renewable forecasts, demand actuals / forecasts (controls for parallel-trends regressions; OVB defense).
+- DA + IDA clearing prices (sanity-check against OMIE), 13 PVPC quarter-hour components, demand-program stages.
+- Reserve-market prices: aFRR (capacity + energy), mFRR (programada + directa), RR, RPA, Gestión de Desvíos, technical-restrictions Fase~I and Fase~II.
+- Reserve-market volumes, cross-border balancing flows, SRAD demand response.
+- Per-cause-code TR volumes (SCB / SCA / CT / RTD / ASE), daily Fase~I volumes per zone, *operación reforzada* operational signals (id 1880/1881), voltage-control prices, indisponibilidades aggregates.
 
 **Archives** (`/archives/{id}`) — daily/monthly file dumps per archive ID:
 
@@ -172,7 +172,7 @@ scripts/pipelines/esios/
 └── indisponibilidades/                   # archive id=105 (outage snapshots)
 ```
 
-Each sub-family has its own `00_sync_*.py`, `10_parse_*.py`, `20_build_*all.py`. The batch driver `indicators/00_batch_sync.py` reads `data/external/esios_indicator_catalog.yaml` and requests each indicator at its **native** granularity (15-min for `Quince minutos`, hourly for `Hora`, etc.) — most Tier-D and Tier-F indicators are natively 15-min.
+Each sub-family has its own `00_sync_*.py`, `10_parse_*.py`, `20_build_*all.py`. The batch driver `indicators/00_batch_sync.py` reads `data/external/esios_indicator_catalog.yaml` and requests each indicator at its **native** granularity (15-min for `Quince minutos`, hourly for `Hora`, etc.) — most reserve-market and TR indicators are natively 15-min.
 
 S3-redirect quirk: ESIOS issues HTTP 307 redirects to pre-signed S3 URLs for large payloads; re-sending the `x-api-key` on the S3 leg invalidates the AWS signature. The shared helper [`src/mtu/ingestion/esios_common.py`](src/mtu/ingestion/esios_common.py) follows the redirect without auth headers.
 
