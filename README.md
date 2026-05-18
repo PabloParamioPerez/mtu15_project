@@ -194,6 +194,12 @@ The project is organised by **purpose**. Each top-level directory has a single r
 mtu15_project/
 ├── data/                                  # DATA ONLY — never analytical outputs
 │   ├── raw/{omie,esios,entsoe}/           # verbatim source files (symlinks to external SSD)
+│   │                                      # ENTSO-E raw + processed both share 6 topical
+│   │                                      # buckets: balancing/ generation/ load/ outages/
+│   │                                      # prices/ transmission/. ESIOS reservas/ uses
+│   │                                      # per-family subfolders (balancing_bids/,
+│   │                                      # curvas_ofertas_afrr/, liquicierre/,
+│   │                                      # liquicierresrs/) consistently in raw + processed.
 │   ├── processed/{omie,esios,entsoe}/     # canonical parquet, one per family (symlinks)
 │   ├── derived/
 │   │   ├── panels/                        # analysis-ready panels (multi-source merges)
