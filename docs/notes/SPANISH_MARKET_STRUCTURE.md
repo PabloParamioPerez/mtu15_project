@@ -400,7 +400,7 @@ For quick orientation when looking for a Spanish-side time series for a given la
 | Fuel / CO₂ prices | indicators 1391, 1940, 1933–1939 | day / month | 2018+ | Controls for the gas-price-shock defense |
 | Renewable forecasts | indicators 541, 542, 543, 1777, 1778, 10034, 10358, 10359, 10249 | 15-min / hour | 2018+ | Mix of native granularities; see catalog YAML |
 | Demand actual + forecast | indicators 460, 544, 1192, 1293, 1742, 1775, 1776, 2052, 603 | 5-min / 15-min / hour | 2018+ | Cross-validation for ENTSO-E A65 |
-| RT2 redispatch by `tipo_redespacho` | archive 28 → `totalrp48preccierre_all.parquet` | system-aggregate × ISP | 2015+ | Per-zone (RZ / SCB / SCA / CT / RTD) per phase; complements per-unit `PHF − PIBCA` |
+| RT2 redispatch by `tipo_redespacho` | archive 28 → `totalrp48preccierre_all.parquet` | system-aggregate × ISP | 2015+ | Per-CAUSE-CODE (see §13.2 below for SCB/SCA/CT/RTD/ASE meanings — these are restriction-type codes per REE Guía §4.3, NOT transmission-zone labels) × phase; complements per-unit `PHF − PIBCA` |
 
 The full catalog (169 indicators across Tiers A / B / D / E) is at `data/external/esios_indicator_catalog.yaml`. The archive triage memo is `notebooks/memos/_esios_archive_catalog.md`.
 
@@ -737,6 +737,23 @@ The doc and the project code base use a few REE-specific numeric codes that aren
 | 19 / 22 / 23 / 24 / 32 / 38 / 65 / 66 / 80 / 82 / 85 / 89 / 95 / 96 | Less common; some are reform-superseded. Filter at the row level using the parser docstring before relying on any of these. |
 
 When filtering at the row level, rely on the parser docstring rather than this table — REE adds and supersedes codes around each reform.
+
+### 13.2 Restriction cause codes (TR per-cause series, ESIOS 1802–1819)
+
+ESIOS publishes the tiempo-real TR energy series broken down by the **cause code** that triggered the restriction (REE *Guía del proveedor de servicios de ajuste*, v5.0 Dec 2024, §4.3). These are **restriction-type codes, not transmission-zone labels** — the mapping from a cause code to physical zones is many-to-many. The codes that appear in our data:
+
+| Code | Spanish name | Physical meaning |
+|---|---|---|
+| **SCB** | Sobrecarga en Base | Transmission overload in the base operating case (no contingency assumed) |
+| **SCA** | Sobrecarga ante Contingencia | Transmission overload under N-1 contingency analysis |
+| **CT** | Cortocircuito | Short-circuit current limit (fault-level constraint) |
+| **RTD** | Reducción de Tensión Dinámica | Dynamic voltage limit (post-blackout PO 7.4 product, paid from mid-2025) |
+| **ASE** | Aseguramiento del Servicio Esencial | Essential-service safeguard (very small in our sample) |
+| **RBI** | (reserve cause) | Additional reserve cause (≈ 0 GWh across all our 2024–26 regime windows) |
+
+These codes are emitted in the ESIOS indicator names as suffixes — e.g., `rt_rt_up_scb` (id 1802) is TR-tiempo-real energy *subir* under cause SCB. The ESIOS catalog YAML at `data/external/esios_indicator_catalog.yaml` carries the full mapping.
+
+Note that the older parser-docstring family (`tipo_redespacho` codes 33/34/61/68/69/81/92/94 above) describes which **process/phase** the redispatch belongs to (Fase I / II / TR / GD / mFRR / ...), while these cause codes describe **why** the restriction was applied. The two classifications are orthogonal: a TR-tiempo-real (tipo 61) redispatch can be triggered by any of SCB / SCA / CT / RTD.
 
 ---
 
