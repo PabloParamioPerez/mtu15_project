@@ -20,7 +20,7 @@ import pandas as pd
 con = duckdb.connect()
 con.execute("SET memory_limit='6GB'")
 
-LIQ = 'data/processed/esios/liquicomun_all.parquet'
+LIQ = 'data/processed/esios/liquidaciones/liquicomun_all.parquet'
 A87 = 'data/processed/entsoe/balancing/financial_balance_all.parquet'
 
 # Aggregate impdsvqh (direct imbalance € per ISP) monthly

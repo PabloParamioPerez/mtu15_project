@@ -1,8 +1,8 @@
 """Parse ENTSO-E A65 day-ahead forecast load and week-ahead forecast load.
 
 Inputs:
-  data/raw/entsoe/load_forecast_da/{YYYYMM}.xml  (process A01)
-  data/raw/entsoe/load_forecast_wa/{YYYYMM}.xml  (process A31)
+  data/raw/entsoe/load/load_forecast_da/{YYYYMM}.xml  (process A01)
+  data/raw/entsoe/load/load_forecast_wa/{YYYYMM}.xml  (process A31)
 
 Outputs (concatenated all-month):
   data/processed/entsoe/load/load_forecast_da_all.parquet

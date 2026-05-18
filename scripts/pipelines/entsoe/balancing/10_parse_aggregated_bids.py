@@ -87,7 +87,7 @@ def parse_one(path: Path) -> pd.DataFrame:
 
 
 def main() -> None:
-    raw = PROJECT_ROOT / "data/raw/entsoe/balancing_aggregated_bids"
+    raw = PROJECT_ROOT / "data/raw/entsoe/balancing/aggregated_bids_xml"
     out = PROJECT_ROOT / "data/processed/entsoe/balancing/aggregated_bids_all.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)
     if not raw.exists():

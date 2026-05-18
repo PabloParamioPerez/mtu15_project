@@ -1,6 +1,6 @@
 """Parse ENTSO-E File Library 'Balancing Energy Bids' (12.3.B&C) for Spain.
 
-Source files: data/raw/entsoe/fms_balancing_energy_bids/*.csv
+Source files: data/raw/entsoe/balancing/individual_bids_fms/*.csv
   Daily files, all-Europe, ~25 MB each. ~46k Spanish bids per day.
 
 Per EU GL EB Article 12.3.B and the data-view spec in entsoe v3r4 page 83-85,
@@ -28,7 +28,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[4]
 
 
 def main() -> None:
-    raw = PROJECT_ROOT / "data/raw/entsoe/fms_balancing_energy_bids"
+    raw = PROJECT_ROOT / "data/raw/entsoe/balancing/individual_bids_fms"
     out = PROJECT_ROOT / "data/processed/entsoe/balancing/individual_bids_es_all.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)
 

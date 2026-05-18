@@ -53,7 +53,7 @@ def parse_one(path: Path) -> pd.DataFrame:
 
 
 def main() -> None:
-    raw = PROJECT_ROOT / "data/raw/entsoe/generation_actual_all"
+    raw = PROJECT_ROOT / "data/raw/entsoe/generation/actual_per_type"
     out = PROJECT_ROOT / "data/processed/entsoe/generation/gen_actual_per_type_all.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)
     if not raw.exists():

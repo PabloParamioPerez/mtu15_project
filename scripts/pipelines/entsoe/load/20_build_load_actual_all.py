@@ -3,8 +3,8 @@ from pathlib import Path
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
-SRC = PROJECT_ROOT / "data/processed/entsoe/load"
-OUT = SRC / "load_actual_all.parquet"
+SRC = PROJECT_ROOT / "data/processed/entsoe/load/load_actual"
+OUT = PROJECT_ROOT / "data/processed/entsoe/load/load_actual_all.parquet"
 
 
 def main() -> None:

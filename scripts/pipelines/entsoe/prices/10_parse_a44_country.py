@@ -1,6 +1,6 @@
 """Parse and build A44 day-ahead price all-month parquet for any country.
 
-Iterates over data/raw/entsoe/prices_da_<X>/ and emits
+Iterates over data/raw/entsoe/prices/da_<X>/ and emits
 data/processed/entsoe/prices/<X>_da_all.parquet.
 """
 from __future__ import annotations

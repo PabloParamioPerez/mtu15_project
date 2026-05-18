@@ -12,7 +12,7 @@ import statsmodels.api as sm
 
 con = duckdb.connect()
 con.execute("SET memory_limit='6GB'")
-LIQ = 'data/processed/esios/liquicomun_all.parquet'
+LIQ = 'data/processed/esios/liquidaciones/liquicomun_all.parquet'
 
 wide = con.sql(f"""
     SELECT date, hour, quarter,

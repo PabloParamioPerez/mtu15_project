@@ -1,6 +1,6 @@
 """Parse ENTSO-E A65 actual total load (Spain) into per-ISP records.
 
-Output: data/processed/entsoe/load/load_actual_{YYYYMM}.parquet
+Output: data/processed/entsoe/load/load_actual/load_actual_{YYYYMM}.parquet
 """
 from __future__ import annotations
 
@@ -11,8 +11,8 @@ from pathlib import Path
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
-RAW = PROJECT_ROOT / "data/raw/entsoe/load_actual"
-OUT_DIR = PROJECT_ROOT / "data/processed/entsoe/load"
+RAW = PROJECT_ROOT / "data/raw/entsoe/load/load_actual"
+OUT_DIR = PROJECT_ROOT / "data/processed/entsoe/load/load_actual"
 NS = {"e": "urn:iec62325.351:tc57wg16:451-6:generationloaddocument:3:0"}
 
 
