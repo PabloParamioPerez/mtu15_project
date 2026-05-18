@@ -42,7 +42,7 @@ def main() -> None:
     args = parse_args()
 
     raw_root = PROJECT_ROOT / "data/raw/esios/reservas/curvas_ofertas_afrr"
-    processed_dir = PROJECT_ROOT / "data/processed/esios/reservas"
+    processed_dir = PROJECT_ROOT / "data/processed/esios/reservas/curvas_ofertas_afrr"
     ingestion_log = PROJECT_ROOT / "data/metadata/ingestion_log.csv"
     ensure_dir(processed_dir)
 

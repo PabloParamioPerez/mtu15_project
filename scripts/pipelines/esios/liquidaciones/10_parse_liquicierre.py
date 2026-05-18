@@ -54,9 +54,8 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
 
-    processed_dir = PROJECT_ROOT / "data/processed/esios/reservas"
+    processed_root = PROJECT_ROOT / "data/processed/esios/reservas"
     ingestion_log = PROJECT_ROOT / "data/metadata/ingestion_log.csv"
-    ensure_dir(processed_dir)
 
     grand = {"success": 0, "skipped": 0, "failed": 0, "empty": 0}
 
@@ -68,6 +67,9 @@ def main() -> None:
         if not raw_root.exists():
             print(f"[SKIP archive] {archive_tag}: no raw root {raw_root}")
             continue
+
+        processed_dir = processed_root / archive_tag
+        ensure_dir(processed_dir)
 
         print(f"\n=== {archive_tag} ===")
         for month_dir in sorted(raw_root.iterdir()):

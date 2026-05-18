@@ -13,15 +13,14 @@ from pathlib import Path
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
-PROCESSED = PROJECT_ROOT / "data/processed/esios/reservas"
-OUT = PROCESSED / "curvas_ofertas_afrr_all.parquet"
+RESERVAS = PROJECT_ROOT / "data/processed/esios/reservas"
+SRC = RESERVAS / "curvas_ofertas_afrr"
+OUT = RESERVAS / "curvas_ofertas_afrr_all.parquet"
 
 
 def main() -> None:
     parts = []
-    for p in sorted(PROCESSED.glob("curvas_ofertas_afrr_*.parquet")):
-        if p.name == "curvas_ofertas_afrr_all.parquet":
-            continue
+    for p in sorted(SRC.glob("curvas_ofertas_afrr_*.parquet")):
         parts.append(pd.read_parquet(p))
 
     if not parts:

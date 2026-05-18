@@ -16,17 +16,15 @@ from pathlib import Path
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
-PROCESSED = PROJECT_ROOT / "data/processed/esios/reservas"
-OUT = PROCESSED / "liquicierre_all.parquet"
+RESERVAS = PROJECT_ROOT / "data/processed/esios/reservas"
+OUT = RESERVAS / "liquicierre_all.parquet"
 
 
 def main() -> None:
     parts = []
-    for p in sorted(PROCESSED.glob("liquicierre_*.parquet")):
-        if p.name == "liquicierre_all.parquet":
-            continue
+    for p in sorted((RESERVAS / "liquicierre").glob("liquicierre_*.parquet")):
         parts.append(pd.read_parquet(p))
-    for p in sorted(PROCESSED.glob("liquicierresrs_*.parquet")):
+    for p in sorted((RESERVAS / "liquicierresrs").glob("liquicierresrs_*.parquet")):
         parts.append(pd.read_parquet(p))
 
     if not parts:
