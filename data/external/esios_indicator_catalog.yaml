@@ -1,16 +1,21 @@
 # ESIOS /indicators curated catalog for the MTU15 / ISP15 thesis.
 #
-# 109 indicators across 4 priority tiers, intended as a backfill 2018-01-01 → today
-# via scripts/pipelines/esios/00_download_indicator.py.
-#
-# Source: 2,018-indicator catalog at https://api.esios.ree.es/indicators (token required).
-# Catalog dump at /tmp/esios_catalog_full.json from 2026-05-15 exploration.
-#
-# Per the project plan (~/.claude/plans/dazzling-churning-seal.md), this YAML drives
+# 279 indicators across 32 topical families (last updated 2026-05-19),
+# intended as a backfill 2018-01-01 → today via
 # scripts/pipelines/esios/indicators/00_batch_sync.py.
+#
+# Source: the 2,018-indicator full catalog at https://api.esios.ree.es/indicators
+# (token-required). The subset below is hand-curated; entries grew incrementally
+# in commits 3afbc5e (initial 109, 2026-05-14), d05822d (native-granularity
+# refinement), a690757 (+30 reforzada/RT2/curtailment), and later additions.
+#
+# Each family carries a 'name', 'description', and a list of indicators with
+# (id, slug, name, time_trunc, native). The earlier Tier A/B/D/E/F priority
+# labels have been dropped — the catalog is now topic-grouped.
 
 version: 1
 created: 2026-05-15
+last_updated: 2026-05-19
 
 # Default ingestion parameters per indicator (can be overridden per-entry).
 defaults:
