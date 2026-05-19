@@ -15,10 +15,15 @@
 
 from __future__ import annotations
 from pathlib import Path
+import sys
 import duckdb
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
+
+REPO_FOR_IMPORT = Path(__file__).resolve().parents[3]
+if str(REPO_FOR_IMPORT / "src") not in sys.path:
+    sys.path.insert(0, str(REPO_FOR_IMPORT / "src"))
+from mtu.analysis.sa_fwl import fit_sa, attach_design_columns  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[3]
 OUT_DIR = REPO / "results/regressions/bid/seasonality_adjusted"
@@ -39,44 +44,14 @@ REGIME_DATES = [
 ]
 
 
-def fourier(doy, K):
-    return pd.DataFrame({
-        **{f"cos_{k}": np.cos(2 * np.pi * k * doy / 365.25) for k in range(1, K + 1)},
-        **{f"sin_{k}": np.sin(2 * np.pi * k * doy / 365.25) for k in range(1, K + 1)},
-    })
-
-
-def fit_sa(daily, value_col, transform="log"):
-    """Fit Spec A FWL regression and return regime SA values."""
-    d = daily.copy()
-    d["d"] = pd.to_datetime(d["d"])
-    d["doy"] = d["d"].dt.dayofyear
-    fk = fourier(d["doy"].values, K)
-    d = pd.concat([d.reset_index(drop=True), fk.reset_index(drop=True)], axis=1)
-    for r in REGIME_DATES:
-        d[f"D_{r[0]}"] = ((d["d"] >= r[1]) & (d["d"] <= r[2])).astype(float)
-    cols = [f"D_{r[0]}" for r in REGIME_DATES] + [f"cos_{k}" for k in range(1, K + 1)] + [f"sin_{k}" for k in range(1, K + 1)]
-    d = d.dropna(subset=cols + [value_col])
-    if transform == "log":
-        d["y"] = np.log(d[value_col].clip(lower=0.01))
-    else:
-        d["y"] = d[value_col]
-    if len(d) < 200:
+def fit_cascade_sa(daily, value_col, transform="log"):
+    """Wrap the shared SA helper to return {regime_label: SA_value} only."""
+    d = attach_design_columns(daily, [r[:3] for r in REGIME_DATES], K=K)
+    res = fit_sa(d, value_col, [r[:3] for r in REGIME_DATES],
+                 transform=transform, K=K, min_obs=200)
+    if res is None:
         return None
-    X = sm.add_constant(d[cols].astype(float))
-    fit = sm.OLS(d["y"].astype(float), X).fit(cov_type="HAC", cov_kwds={"maxlags": 14})
-    fcols = [f"cos_{k}" for k in range(1, K + 1)] + [f"sin_{k}" for k in range(1, K + 1)]
-    means = d[fcols].mean()
-    base_t = fit.params["const"] + sum(fit.params[c] * means[c] for c in fcols)
-
-    def back(z):
-        return np.exp(z) if transform == "log" else z
-
-    out = {}
-    for r in REGIME_DATES:
-        b = fit.params.get(f"D_{r[0]}", 0)
-        out[r[0]] = back(base_t + b)
-    return out
+    return {r[0]: res[f"{r[0]}_sa"] for r in REGIME_DATES}
 
 
 def build_outcome_series(con, indicator_id=None, agg="sum", from_omie_da=False, omie_col=None):
@@ -106,22 +81,22 @@ def main():
 
     # === DA spot price ===
     da_p = build_outcome_series(con, from_omie_da=True, omie_col="price_es_eur_mwh").rename(columns={"v": "da"})
-    da_sa = fit_sa(da_p, "da", "log")
+    da_sa = fit_cascade_sa(da_p, "da", "log")
     print("DA price SA:", {k: round(v, 1) for k, v in da_sa.items()})
 
     # === aFRR reserve price (id 634) ===
     afrr = build_outcome_series(con, indicator_id=634, agg="mean").rename(columns={"v": "afrr"})
-    afrr_sa = fit_sa(afrr, "afrr", "log")
+    afrr_sa = fit_cascade_sa(afrr, "afrr", "log")
     print("aFRR reserve SA:", {k: round(v, 1) for k, v in afrr_sa.items()})
 
     # === Fase I up cost (id 1373) — daily sum EUR ===
     fase1 = build_outcome_series(con, indicator_id=1373, agg="sum").rename(columns={"v": "fase1"})
-    fase1_sa = fit_sa(fase1, "fase1", "log")  # EUR/day
+    fase1_sa = fit_cascade_sa(fase1, "fase1", "log")  # EUR/day
     print("Fase I cost (€M/day) SA:", {k: round(v / 1e6, 2) for k, v in fase1_sa.items()})
 
     # === TR up cost (id 1723) — daily sum EUR ===
     tr = build_outcome_series(con, indicator_id=1723, agg="sum").rename(columns={"v": "tr"})
-    tr_sa = fit_sa(tr, "tr", "log")
+    tr_sa = fit_cascade_sa(tr, "tr", "log")
     print("TR up cost (€M/day) SA:", {k: round(v / 1e6, 2) for k, v in tr_sa.items()})
 
     # Compute total cost over each regime window in M€

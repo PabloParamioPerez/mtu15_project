@@ -1,19 +1,18 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-19
 # CLAIM: Seasonality-adjusted descriptive regime comparison APPLIED PER
-#        OUTCOME VARIABLE, in a single Frisch-Waugh-Lovell pooled regression:
+#        OUTCOME VARIABLE. Uses the shared SA helper (src/mtu/analysis/sa_fwl.py):
 #
 #          g(y_t) = α + Σ_r β_r·D_regime_r(t)
 #                     + Σ_{k=1..K} [a_k cos(2π k·doy/365) + b_k sin(...)]
-#                     + δ·t + γ'·X_t + ε_t
+#                     + Σ_{j=1..6} δ_j·1{dow(t)=j}
+#                     + γ'·X_t + ε_t
 #
-#        with the link g(·) chosen by outcome:
-#          - logit for bounded shares (in-band-share)
-#          - log    for positive levels (prices, costs, MWh aggregates)
-#          - identity for already-symmetric outcomes
-#
-#        β_r is the regime effect after partialling out the Fourier seasonal,
-#        linear trend, and covariates. HAC SE (Newey-West, maxlags=14).
+#        with the link g(·) chosen by outcome (log / logit / identity).
+#        SA value = Duan-smeared inverse link of (α + β_r) at within-week DOW
+#        mean, annual-mean Fourier, panel-mean controls. No HAC: the spec is
+#        a point-estimation device for the SA values, not for inference on
+#        regime contrasts.
 #
 # OUTCOMES COVERED (one regression per (outcome, tech-if-applicable)):
 #   1. Bid-shape: in-band share, per tech (CCGT, Wind, Solar_PV, Hydro,
@@ -34,12 +33,15 @@
 
 from __future__ import annotations
 from pathlib import Path
+import sys
 
 import duckdb
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
-from statsmodels.stats.diagnostic import acorr_ljungbox
+REPO_FOR_IMPORT = Path(__file__).resolve().parents[3]
+if str(REPO_FOR_IMPORT / "src") not in sys.path:
+    sys.path.insert(0, str(REPO_FOR_IMPORT / "src"))
+from mtu.analysis.sa_fwl import fit_sa, attach_design_columns  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[3]
 DET = REPO / "data/processed/omie/mercado_diario/ofertas/det_all.parquet"
@@ -88,13 +90,6 @@ def tech_bucket(t):
     return "Other"
 
 
-def fourier_terms(doy, K):
-    return pd.DataFrame({
-        **{f"cos_{k}": np.cos(2 * np.pi * k * doy / 365.25) for k in range(1, K + 1)},
-        **{f"sin_{k}": np.sin(2 * np.pi * k * doy / 365.25) for k in range(1, K + 1)},
-    })
-
-
 def covariate_panel():
     con = duckdb.connect()
     con.execute("SET memory_limit='8GB'")
@@ -114,18 +109,13 @@ def covariate_panel():
     base["res_gw"] = base["d"].apply(
         lambda x: res_annual.get(x.year, np.nan)
         + (res_annual.get(x.year + 1, res_annual.get(x.year, 0)) - res_annual.get(x.year, 0))
-        * (x.dayofyear - 1) / 365.25
+        * (x.dayofyear - 1) / 365.0
     )
     res_w = pd.read_parquet(RESERVOIR)
     res_w["d"] = pd.to_datetime(res_w["week_start"]).dt.date.astype("datetime64[ns]")
     res_w = res_w[["d", "reservoir_twh"]].drop_duplicates(subset="d").set_index("d").sort_index().asfreq("D").ffill().reset_index()
     base = base.merge(co2, on="d", how="left").merge(res_w[["d", "reservoir_twh"]], on="d", how="left")
-    base["doy"] = base["d"].dt.dayofyear
-    base["t_yr"] = (base["d"] - pd.Timestamp(START)).dt.days / 365.25
-    for label, lo, hi in REGIME_DATES:
-        base[f"D_{label}"] = ((base["d"] >= lo) & (base["d"] <= hi)).astype(float)
-    fk = fourier_terms(base["doy"].values, K_HARMONICS)
-    return pd.concat([base.reset_index(drop=True), fk.reset_index(drop=True)], axis=1)
+    return attach_design_columns(base, REGIME_DATES, K=K_HARMONICS)
 
 
 # ===========================================================================
@@ -295,79 +285,45 @@ def build_ccgt_da_cleared():
 # ===========================================================================
 
 def fit_outcome(df_y, cov, outcome_name, tech_label, transform):
-    """Run TWO specs side-by-side:
-       (A) Regime + Fourier only — cleanest seasonality-only adjustment
-       (B) Regime + Fourier + RES_GW + reservoir_twh — adds slow-moving
-           structural controls. CO2 and t_yr dropped because they are
-           near-collinear with RES_GW + regime dummies; including them
-           inflated regime coefficients via multicollinearity.
+    """Run TWO specs side-by-side via the shared SA helper:
+       (A) Regime + Fourier + DOW (seasonality-only)
+       (B) (A) + RES_GW + reservoir_twh (slow-moving structural controls)
+
+    SA value = Duan-smeared inverse link of (alpha + beta_r) at within-week
+    DOW mean, annual-mean Fourier, panel-mean extras. Ljung-Box is reported as
+    a residual-autocorrelation diagnostic, not used to set SEs.
     """
-    fourier_cols = [f"{p}_{k}" for k in range(1, K_HARMONICS + 1) for p in ("cos", "sin")]
-    regime_cols = [f"D_{r[0]}" for r in REGIME_DATES]
-    ctrl_cols_B = ["res_gw", "reservoir_twh"]
-
-    df = df_y.merge(cov, on="d", how="inner")
-    base_drop = regime_cols + fourier_cols + ctrl_cols_B + ["value"]
-    df = df.dropna(subset=base_drop).reset_index(drop=True)
-    if len(df) < 200:
-        return None
-
-    if transform == "logit":
-        p = df["value"].clip(0.001, 0.999).astype(float)
-        df["y_t"] = np.log(p / (1 - p))
-        def back(z): return 1 / (1 + np.exp(-z))
-    elif transform == "log":
-        df["y_t"] = np.log(df["value"].clip(lower=1.0))
-        def back(z): return np.exp(z)
-    elif transform == "identity":
-        df["y_t"] = df["value"].astype(float)
-        def back(z): return z
-    else:
-        raise ValueError(transform)
-
+    df = df_y.merge(cov, on="d", how="inner").reset_index(drop=True)
     rows = []
-    y = df["y_t"].astype(float)
-    for spec_label, cols in [
-        ("A_seasonality_only", regime_cols + fourier_cols),
-        ("B_with_controls",    regime_cols + fourier_cols + ctrl_cols_B),
+    for spec_label, extras in [
+        ("A_seasonality_only", []),
+        ("B_with_controls",    ["res_gw", "reservoir_twh"]),
     ]:
-        X = sm.add_constant(df[cols].astype(float))
-        fit = sm.OLS(y, X).fit(cov_type="HAC", cov_kwds={"maxlags": 14})
-        resid = y - fit.predict(X)
-        try:
-            lb = acorr_ljungbox(resid, lags=[10, 30], return_df=True)
-            lb10 = float(lb["lb_pvalue"].iloc[0])
-            lb30 = float(lb["lb_pvalue"].iloc[1])
-        except Exception:
-            lb10 = lb30 = np.nan
-
-        means = df[[c for c in cols if c not in regime_cols]].mean()
-        base_t = fit.params["const"] + sum(fit.params[c] * means[c] for c in means.index)
-        base_level = back(base_t)
-        for r_col in regime_cols:
-            b = fit.params.get(r_col, np.nan)
-            se = fit.bse.get(r_col, np.nan)
-            pv = fit.pvalues.get(r_col, np.nan)
-            regime_level = back(base_t + b)
+        res = fit_sa(df, "value", REGIME_DATES, transform=transform, K=K_HARMONICS,
+                     extra_cols=extras, min_obs=200)
+        if res is None:
+            return None
+        base_level = res["baseline_sa"]
+        for label, _, _ in REGIME_DATES:
+            sa = res[f"{label}_sa"]
+            b = res[f"{label}_beta"]
+            pv = res[f"{label}_p"]
             if transform == "logit":
-                diff_val = (regime_level - base_level) * 100
+                diff_val = (sa - base_level) * 100
                 diff_label = "pp"
             elif transform == "log":
-                diff_val = (np.exp(b) - 1) * 100
+                diff_val = (sa / base_level - 1.0) * 100 if base_level else np.nan
                 diff_label = "%"
             else:
-                diff_val = regime_level - base_level
+                diff_val = sa - base_level
                 diff_label = "abs"
             rows.append({
-                "outcome": outcome_name, "tech": tech_label, "regime": r_col[2:],
-                "spec": spec_label,
-                "transform": transform,
-                "n": len(df), "R2": fit.rsquared,
-                "lb_p_lag10": lb10, "lb_p_lag30": lb30,
-                "beta": float(b), "se": float(se), "pval": float(pv),
-                "base_level": float(base_level),
-                "regime_level": float(regime_level),
-                "diff": float(diff_val), "diff_label": diff_label,
+                "outcome": outcome_name, "tech": tech_label, "regime": label,
+                "spec": spec_label, "transform": transform,
+                "n": res["n"], "R2": res["R2"],
+                "beta": b, "pval": pv,
+                "base_level": base_level, "regime_level": sa,
+                "diff": diff_val, "diff_label": diff_label,
             })
     return rows
 
@@ -426,7 +382,6 @@ def main():
     diag = (
         out_df.groupby(["outcome", "tech"], observed=True)
         .agg(n=("n", "first"), R2=("R2", "first"),
-             lb_p_lag10=("lb_p_lag10", "first"), lb_p_lag30=("lb_p_lag30", "first"),
              transform=("transform", "first"))
         .reset_index()
     )
@@ -434,16 +389,16 @@ def main():
 
     # Print compact summary — one row per (outcome, tech, spec)
     print("\n" + "=" * 110)
-    print(f"{'OUTCOME':<24} {'TECH':<10} {'SPEC':<22} {'R²':>5} {'LBp10':>6}  REGIME EFFECTS (Δ vs pre-IDA baseline)")
+    print(f"{'OUTCOME':<24} {'TECH':<10} {'SPEC':<22} {'R²':>5}  REGIME EFFECTS (Δ vs pre-IDA baseline)")
     print("=" * 110)
     for (out_name, tech, spec), grp in out_df.groupby(["outcome", "tech", "spec"]):
-        r2 = grp["R2"].iloc[0]; lbp = grp["lb_p_lag10"].iloc[0]
+        r2 = grp["R2"].iloc[0]
         diff_label = grp["diff_label"].iloc[0]
         parts = []
         for _, r in grp.iterrows():
             star = "***" if r["pval"] < 0.01 else "**" if r["pval"] < 0.05 else "*" if r["pval"] < 0.10 else ""
             parts.append(f"{r['regime'][:9]}={r['diff']:+6.2f}{diff_label}{star}")
-        print(f"{out_name:<24} {tech:<10} {spec:<22} {r2:>5.3f} {lbp:>6.3f}  {'  '.join(parts)}")
+        print(f"{out_name:<24} {tech:<10} {spec:<22} {r2:>5.3f}  {'  '.join(parts)}")
 
     print(f"\nwrote {OUT_DIR}/")
 

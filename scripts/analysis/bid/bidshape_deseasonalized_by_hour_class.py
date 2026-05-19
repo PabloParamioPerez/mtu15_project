@@ -4,10 +4,14 @@
 #        format of tab_bidshape_DA_by_regime_normalized.tex and IDA equivalent,
 #        with adjusted values in [seasoncol] color brackets per cell.
 #
-#        For each (market, tech, hour_class) cell, fit:
-#          logit(share_t) = α + Σ_r β_r·D_regime + Σ_k Fourier_k(t)
-#                            + γ_RES·RES_GW + γ_res·reservoir + ε_t
-#        HAC SE, pooled 2022-2026 daily-tech-hourclass panel.
+#        For each (market, tech, hour_class) cell, fit Spec A (seasonality
+#        only) via the shared SA helper:
+#          logit(share_t) = α + Σ_r β_r·D_regime
+#                            + Σ_k Fourier_k(t)
+#                            + Σ_j δ_j·1{dow(t)=j} + ε_t
+#        Adjusted cell = Duan-smeared sigmoid of (α + β_r) at within-week DOW
+#        mean, annual-mean Fourier. Pooled 2022-2026 daily-(tech, hour-class)
+#        panel. No HAC — point-estimation device.
 #
 # Hour-class definition (matches §1 of descriptive_facts.tex):
 #   Critical: clock hours 5,6,7,8,16,17,18,19,20,21,22
@@ -20,10 +24,15 @@
 
 from __future__ import annotations
 from pathlib import Path
+import sys
 import duckdb
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
+
+REPO_FOR_IMPORT = Path(__file__).resolve().parents[3]
+if str(REPO_FOR_IMPORT / "src") not in sys.path:
+    sys.path.insert(0, str(REPO_FOR_IMPORT / "src"))
+from mtu.analysis.sa_fwl import fit_sa, attach_design_columns  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[3]
 DET = REPO / "data/processed/omie/mercado_diario/ofertas/det_all.parquet"
@@ -78,13 +87,6 @@ def tech_bucket(t):
     if "re mercado solar térmica" in t: return "Solar_Thermal"
     if "re mercado térmica no renovab" in t: return "Cogen"
     return "Other"
-
-
-def fourier_terms(doy, K):
-    return pd.DataFrame({
-        **{f"cos_{k}": np.cos(2 * np.pi * k * doy / 365.25) for k in range(1, K + 1)},
-        **{f"sin_{k}": np.sin(2 * np.pi * k * doy / 365.25) for k in range(1, K + 1)},
-    })
 
 
 def build_panel(market: str) -> pd.DataFrame:
@@ -181,55 +183,19 @@ def build_panel(market: str) -> pd.DataFrame:
 
 
 def add_covariates(df):
-    con = duckdb.connect()
-    cap = pd.read_parquet(RES_CAP)
-    res_psr = ["B01", "B11", "B15", "B16", "B17", "B19", "B25"]
-    cap_res = cap[cap["psr_type"].isin(res_psr)].groupby("year")["capacity_mw"].sum() / 1000
-    res_annual = {}
-    for yr in range(2022, 2027):
-        res_annual[yr] = cap_res[yr] if yr in cap_res.index and cap_res[yr] > 0 else RES_GW_ANNUAL.get(yr, np.nan)
-    df = df.copy()
-    df["res_gw"] = df["d"].apply(
-        lambda x: res_annual.get(x.year, np.nan)
-        + (res_annual.get(x.year + 1, res_annual.get(x.year, 0)) - res_annual.get(x.year, 0))
-        * (x.dayofyear - 1) / 365.25
-    )
-    res_w = pd.read_parquet(RESERVOIR)
-    res_w["d"] = pd.to_datetime(res_w["week_start"]).dt.date.astype("datetime64[ns]")
-    res_w = res_w[["d", "reservoir_twh"]].drop_duplicates(subset="d").set_index("d").sort_index().asfreq("D").ffill().reset_index()
-    df = df.merge(res_w[["d", "reservoir_twh"]], on="d", how="left")
-    df["doy"] = df["d"].dt.dayofyear
-    for label, lo, hi, _ in REGIME_DATES:
-        df[f"D_{label}"] = ((df["d"] >= lo) & (df["d"] <= hi)).astype(float)
-    fk = fourier_terms(df["doy"].values, K_HARMONICS)
-    return pd.concat([df.reset_index(drop=True), fk.reset_index(drop=True)], axis=1)
+    # Bid-shape SA: Spec A only — no exogenous controls required beyond regime
+    # dummies, Fourier, and DOW (all attached by the shared helper).
+    return attach_design_columns(df, [r[:3] for r in REGIME_DATES], K=K_HARMONICS)
 
 
 def fit_and_get_adjusted(df_t):
-    fourier_cols = [f"{p}_{k}" for k in range(1, K_HARMONICS + 1) for p in ("cos", "sin")]
-    regime_cols = [f"D_{r[0]}" for r in REGIME_DATES]
-    ctrl = []  # Spec A: seasonality only
-    cols = regime_cols + fourier_cols + ctrl
-
-    df = df_t.copy()
-    p = df["in_band_share"].clip(0.001, 0.999).astype(float)
-    df["y"] = np.log(p / (1 - p))
-    df = df.dropna(subset=cols + ["y"]).reset_index(drop=True)
-    if len(df) < 100:
+    res = fit_sa(df_t, "in_band_share", [r[:3] for r in REGIME_DATES],
+                 transform="logit", K=K_HARMONICS, min_obs=100)
+    if res is None:
         return None
-
-    X = sm.add_constant(df[cols].astype(float))
-    y = df["y"].astype(float)
-    fit = sm.OLS(y, X).fit(cov_type="HAC", cov_kwds={"maxlags": 14})
-
-    means = df[[c for c in cols if c not in regime_cols]].mean()
-    base_t = fit.params["const"] + sum(fit.params[c] * means[c] for c in means.index)
-    def sig(z): return 1 / (1 + np.exp(-z))
-    base_share = sig(base_t)
-    out = {"_base": base_share * 100}
+    out = {"_base": res["baseline_sa"] * 100.0}
     for label, _, _, _ in REGIME_DATES:
-        b = fit.params.get(f"D_{label}", 0.0)
-        out[label] = sig(base_t + b) * 100
+        out[label] = res[f"{label}_sa"] * 100.0
     return out
 
 

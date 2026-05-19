@@ -156,23 +156,27 @@ For an outcome $y_t$ observed on daily series across regimes
 \end{align*}
 we fit a Frisch-Waugh-Lovell pooled regression on $t \in [2022\text{-}01\text{-}01, 2026\text{-}05\text{-}15]$:
 \[
-g(y_t) \;=\; \alpha \;+\; \sum_{r \in \mathcal{R} \setminus \{0\}} \beta_r \,\mathbf{1}\{\text{regime}(t) = r\} \;+\; \underbrace{\sum_{k=1}^{K} \left[ a_k\, c_k(t) + b_k\, s_k(t) \right]}_{\text{Fourier basis on day-of-year}} \;+\; \varepsilon_t,
+g(y_t) \;=\; \alpha \;+\; \sum_{r \in \mathcal{R} \setminus \{0\}} \beta_r \,\mathbf{1}\{\text{regime}(t) = r\} \;+\; \underbrace{\sum_{k=1}^{K} \left[ a_k\, c_k(t) + b_k\, s_k(t) \right]}_{\text{Fourier basis on day-of-year}} \;+\; \underbrace{\sum_{j=1}^{6} \delta_j\, \mathbf{1}\{\operatorname{dow}(t) = j\}}_{\text{day-of-week dummies}} \;+\; \varepsilon_t,
 \]
-where the omitted regime is pre-IDA, the link $g(\cdot)$ is $\log(\cdot)$ for positive levels (prices, costs, MWh aggregates) and $\operatorname{logit}(\cdot) = \log(p / (1 - p))$ for bounded shares (in-band MW share, capture rate, channel-share fractions), and the day-of-year sinusoids are
+where the omitted regime is pre-IDA, the omitted day-of-week is Monday, the link $g(\cdot)$ is $\log(\cdot)$ for positive levels (prices, costs, MWh aggregates) and $\operatorname{logit}(\cdot) = \log(p / (1 - p))$ for bounded shares (in-band MW share, capture rate, channel-share fractions), and the day-of-year sinusoids are
 \[
-c_k(t) \;=\; \cos\!\left( \frac{2\pi k \cdot \operatorname{doy}(t)}{365} \right), \qquad s_k(t) \;=\; \sin\!\left( \frac{2\pi k \cdot \operatorname{doy}(t)}{365} \right), \qquad k = 1, 2, 3, 4,
+c_k(t) \;=\; \cos\!\left( \frac{2\pi k \cdot \operatorname{doy}(t)}{365} \right), \qquad s_k(t) \;=\; \sin\!\left( \frac{2\pi k \cdot \operatorname{doy}(t)}{365} \right), \qquad k = 1, 2, 3, 4.
 \]
-with $\operatorname{doy}(t) \in \{1, \ldots, 366\}$ the day-of-year of $t$. We use $K=4$ harmonics throughout: the annual fundamental ($k=1$, $\sim 365$-day period), the semi-annual harmonic ($k=2$, $\sim 183$-day period), the four-month harmonic ($k=3$), and the quarterly harmonic ($k=4$, $\sim 91$-day period); higher harmonics ($k \ge 5$) are not identified separately from intra-month noise on daily data and do not improve out-of-sample fit on the year-fold CV diagnostics we ran for bid-shape (\S\ref{sec:prov:fpca}). We do not report standard errors on the $\widehat\beta_r$: the spec is used purely as a point-estimation device for the SA values defined below, not for inference on the regime contrast itself.
+We use $K=4$ harmonics throughout: the annual fundamental ($k=1$, $\sim 365$-day period), the semi-annual harmonic ($k=2$, $\sim 183$-day period), the four-month harmonic ($k=3$), and the quarterly harmonic ($k=4$, $\sim 91$-day period); higher harmonics ($k \ge 5$) are not identified separately from intra-month noise on daily data and do not improve out-of-sample fit on the year-fold CV diagnostics we ran for bid-shape (\S\ref{sec:prov:fpca}). The six day-of-week dummies absorb weekly periodicity in prices and MWh aggregates; with the shortest regime window (MTU15-IDA pre-blk) only 40 days long, DOW imbalance can otherwise leak into $\widehat\beta_r$. We do not report standard errors on the $\widehat\beta_r$: the spec is used purely as a point-estimation device for the SA values defined below, not for inference on the regime contrast itself.
 
-The seasonality-adjusted (SA) value of $y$ in regime $r$ is the model-predicted level at \emph{average day-of-year of the full panel}:
+\emph{Pooled seasonality across regimes is a constraint, not a modelling choice.} With only 40 days in MTU15-IDA pre-blk, regime-specific Fourier coefficients ($a_k$ interacted with regime dummies) are not estimable --- there is not enough within-regime calendar variation to separate them from the regime fixed effect.
+
+\paragraph{Seasonality-adjusted (SA) regime value.} We define $\hat y_r^{\text{SA}}$ as the predicted level of $y$ in regime $r$ at \emph{annual-mean Fourier} (which is exactly zero on the integer doy grid, by orthogonality of $c_k, s_k$ to a constant) and \emph{within-week DOW mean} (one-seventh weight on each day-of-week dummy). For an identity-link outcome:
 \[
-\hat y_r^{\text{SA}} \;=\; g^{-1}\!\left( \widehat\alpha + \widehat\beta_r + \sum_{k=1}^{K} \left[\widehat a_k\, \overline{c_k} + \widehat b_k\, \overline{s_k}\right] \right),
-\qquad
-\overline{c_k} = \frac{1}{|T|}\sum_{t \in T} c_k(t),\ \ \overline{s_k} = \frac{1}{|T|}\sum_{t \in T} s_k(t),
+\hat y_r^{\text{SA, identity}} \;=\; \widehat\alpha \;+\; \widehat\beta_r \;+\; \tfrac{1}{7}\sum_{j=1}^{6}\widehat\delta_j.
 \]
-where $T$ is the full 2022--2026 daily panel. By design, $\hat y_r^{\text{SA}}$ removes the seasonal-mix contribution arising from regime $r$ spanning different calendar months than the rest of the panel. Where SA values appear in tables, they sit in {\color{seasoncol}coloured brackets} next to the raw regime mean; where the value is calendar-matched by construction (Dec-vs-Dec, etc.), no SA is computed because seasonality is already differenced out.
+For $g \in \{\log, \operatorname{logit}\}$ the naive plug-in $g^{-1}(\widehat\alpha + \widehat\beta_r + \tfrac{1}{7}\sum_j \widehat\delta_j)$ is biased by Jensen's inequality; we correct it non-parametrically via Duan smearing across the in-sample residuals $\{\widehat e_i\}_{i=1}^{n}$:
+\[
+\hat y_r^{\text{SA}} \;=\; \frac{1}{n}\sum_{i=1}^{n} g^{-1}\!\left(\widehat\alpha + \widehat\beta_r + \tfrac{1}{7}\sum_{j=1}^{6}\widehat\delta_j + \widehat e_i\right).
+\]
+Duan smearing is robust to non-normal residuals and handles the regime-heterogeneous variance case automatically (winter residual variance is larger than summer; the smear factor adjusts for the pooled scale). For $\log$ outcomes Duan typically multiplies the naive plug-in by $\exp(\sigma^2/2) \approx 1.10$--$1.37$ in our data --- a material correction that the original (uncorrected) spec was missing. Where SA values appear in tables, they sit in {\color{seasoncol}coloured brackets} next to the raw regime mean; where the value is calendar-matched by construction (Dec-vs-Dec, etc.), no SA is computed because seasonality is already differenced out.
 
-Why Fourier rather than month or year fixed effects: with our reform windows (Table~\ref{tab:calendar_coverage}), some regimes do not span all 12 calendar months (e.g., MTU15-IDA pre-blk is 40 days in late March--April only). A month-of-year fixed effect interacted with regime would be partially absorbed into the regime dummy itself --- not separately identified. A smooth Fourier basis extrapolates the seasonal cycle to any calendar date, allowing the same parametric form to apply across regimes regardless of which calendar months they happen to cover.
+Why Fourier+DOW rather than month or year fixed effects: with our reform windows (Table~\ref{tab:calendar_coverage}), some regimes do not span all 12 calendar months (e.g., MTU15-IDA pre-blk is 40 days in late March--April only). A month-of-year fixed effect interacted with regime would be partially absorbed into the regime dummy itself --- not separately identified. A smooth Fourier basis extrapolates the seasonal cycle to any calendar date, allowing the same parametric form to apply across regimes regardless of which calendar months they happen to cover.
 
 \noindent\textbf{Discipline applied throughout this document.}
 
@@ -877,12 +881,12 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 \input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_IDA_by_regime_deseasonalized.tex}
 \end{table}
 
-\paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing Tables~\ref{tab:bidshape_da} (DA) and \ref{tab:bidshape_ida} (IDA): for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $44.0\%$ raw / {\color{seasoncol}40.9\% (SA)} vs IDA $77.5\%$ raw / {\color{seasoncol}79.1\% (SA)}. Nuclear in any regime: DA $\sim 6$--$20\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
+\paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing Tables~\ref{tab:bidshape_da} (DA) and \ref{tab:bidshape_ida} (IDA): for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $44.0\%$ raw / {\color{seasoncol}41.3\% (SA)} vs IDA $77.5\%$ raw / {\color{seasoncol}76.5\% (SA)}. Nuclear in any regime: DA $\sim 6$--$20\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
 
 \paragraph{Reading the DA table (Table~\ref{tab:bidshape_da}) --- patterns and their seasonality robustness.}
 \begin{itemize}
-\item \textbf{CCGT DA-side critical $>$ flat throughout, and the gap survives deseasonalization.} In DA15/ID15: 44.0\% raw / {\color{seasoncol}40.9 adjusted} (critical) vs 24.4\% raw / {\color{seasoncol}19.8 adjusted} (flat). In 3-sess: 22.8 raw / {\color{seasoncol}22.6 adjusted} (critical) vs 10.1 raw / {\color{seasoncol}4.8 adjusted} (flat). The critical-flat gap is $\sim$20 pp across regimes on adjusted shares — \textbf{the pattern is not driven by seasonal-mix differences in the regime windows}.
-\item \textbf{CCGT DA-side in-band share rose post-reform on adjusted shares too.} Critical: ISP15-win 25.0 raw / {\color{seasoncol}23.1 adjusted} $\to$ DA15/ID15 44.0 / {\color{seasoncol}40.9}, a $+18$ pp shift on adjusted shares. Flat hours: 10.3 / {\color{seasoncol}10.5} $\to$ 24.4 / {\color{seasoncol}19.8}, $+9$ pp on adjusted shares. Both moves are direction-preserving after seasonality removal — \textbf{the reform-window concentration of CCGT bids near MCP is a real shift, not a seasonal artifact.}
+\item \textbf{CCGT DA-side critical $>$ flat throughout, and the gap survives deseasonalization.} In DA15/ID15: 44.0\% raw / {\color{seasoncol}41.3 adjusted} (critical) vs 24.4\% raw / {\color{seasoncol}23.6 adjusted} (flat). In 3-sess: 22.8 raw / {\color{seasoncol}23.5 adjusted} (critical) vs 10.1 raw / {\color{seasoncol}6.5 adjusted} (flat). The critical-flat gap is $\sim$18 pp across regimes on adjusted shares --- \textbf{the pattern is not driven by seasonal-mix differences in the regime windows}.
+\item \textbf{CCGT DA-side in-band share rose post-reform on adjusted shares too.} Critical: ISP15-win 25.0 raw / {\color{seasoncol}24.0 adjusted} $\to$ DA15/ID15 44.0 / {\color{seasoncol}41.3}, a $+17$ pp shift on adjusted shares. Flat hours: 10.3 / {\color{seasoncol}13.6} $\to$ 24.4 / {\color{seasoncol}23.6}, $+10$ pp on adjusted shares. Both moves are direction-preserving after seasonality removal --- \textbf{the reform-window concentration of CCGT bids near MCP is a real shift, not a seasonal artifact.}
 \item \textbf{Hydro DA-side regime-stable on both raw and adjusted}, around 33--40\% share with no reform-window trend. \textbf{Hydro pump} high and stable (70--80\% raw / {\color{seasoncol}75--85 adjusted}). These bid stacks reflect opportunity-cost economics, not the reform.
 \item \textbf{Wind / Solar PV: deseasonalization changes the cross-regime reading.} Wind critical in MTU15-IDA pre-blk: raw 67.9 / {\color{seasoncol}adjusted 16.1} — the raw figure is mostly seasonal (the 40-day Mar--Apr window catches a high-wind spell), the adjusted figure is more comparable. Wind/Solar PV cross-regime cross-regime comparisons should use the {\color{seasoncol}adjusted} columns.
 \item \textbf{Nuclear DA-side: raw values have huge regime swings driven by maintenance-window seasonality} (Spanish nukes refuel in spring + late summer). MTU15-IDA pre-blk raw 56.3 / {\color{seasoncol}adjusted 15.1} confirms the raw spike is the refuelling-window seasonal artifact.
@@ -890,7 +894,7 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \paragraph{Reading the IDA table (Table~\ref{tab:bidshape_ida}) --- patterns and their seasonality robustness.}
 \begin{itemize}
-\item \textbf{CCGT IDA-side: critical-flat ordering and reform shift both survive deseasonalization.} 3-sess critical $47.3$ raw / {\color{seasoncol}$48.0$ (SA)} vs flat $64.3$ / {\color{seasoncol}$67.7$}. DA15/ID15 critical $77.5$ / {\color{seasoncol}$79.1$} vs flat $72.1$ / {\color{seasoncol}$77.4$}. The flip from critical-below-flat (early regimes) to critical-above-flat (DA15/ID15) is preserved on the SA comparison. \textbf{Not a seasonal artifact.}
+\item \textbf{CCGT IDA-side: critical-flat ordering and reform shift both survive deseasonalization.} 3-sess critical $47.3$ raw / {\color{seasoncol}$48.8$ (SA)} vs flat $64.3$ / {\color{seasoncol}$64.4$}. DA15/ID15 critical $77.5$ / {\color{seasoncol}$76.5$} vs flat $72.1$ / {\color{seasoncol}$71.3$}. The flip from critical-below-flat (early regimes) to critical-above-flat (DA15/ID15) is preserved on the SA comparison. \textbf{Not a seasonal artifact.}
 \item \textbf{CCGT IDA-side share rose substantially on SA shares}: critical $48.0$ (3-sess SA) $\to 79.1$ (DA15/ID15 SA), $+31$ pp. In flat: $67.7 \to 77.4$, $+10$ pp. Direction matches raw, magnitude even larger on critical.
 \item \textbf{Nuclear IDA share is very high (80--99\%) and stable across regimes on SA shares} too. The structural pattern (nuclear IDA bids cluster at MCP) is not driven by seasonality.
 \item \textbf{Solar PV IDA: large differences between raw and SA in some cells.} Reform-window comparisons of Solar PV IDA shares should use the {\color{seasoncol}(SA)} columns.
@@ -1213,30 +1217,30 @@ This is a descriptive check, not an ATT/ATE estimation. We do not slap a treatme
 
 \textbf{Why this needs its own subsection.} The aggregate CI volume per regime can hide a critical pattern: firms making \emph{offsetting} adjustments across the four 15-min quarters within an hour (sell in Q1, buy back in Q3) would aggregate to ~zero hourly net change but represent real within-hour rebalancing activity. We therefore keep per-quarter resolution explicitly --- never aggregating quarters into hourly totals before measuring the dispersion --- and report two complementary outcomes: (i) the daily gross CI volume per hour-class, Fourier-deseasonalized; (ii) the per-firm, per-(date, clock-hour) standard deviation of CI MWh \emph{across the four within-hour quarters}, which captures within-hour quarter heterogeneity directly.
 
-\textbf{Outcome 1: CI volume, deseasonalized.} Fitting $\log(\text{GWh}_t) = \alpha + \sum_r \beta_r D_r + \sum_{k=1}^{4}\text{Fourier}_k + \varepsilon_t$ on the pooled 2022--2026 daily series:
+\textbf{Outcome 1: CI volume, deseasonalized.} Fitting $\log(\text{GWh}_t) = \alpha + \sum_r \beta_r D_r + \sum_{k=1}^{4}\text{Fourier}_k(t) + \sum_{j=1}^{6}\delta_j \mathbf{1}\{\operatorname{dow}(t)=j\} + \varepsilon_t$ on the pooled 2022--2026 daily series (Duan-smeared inverse-link prediction at within-week DOW mean, annual-mean Fourier):
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{Continuous-intraday daily volume by regime and hour-class, deseasonalized.} GWh per day; bracketed values are Fourier-adjusted (seasonality-only Spec~A). The reform-window pattern --- volumes fall during MTU15-IDA-only, recover partially under MTU15-DA --- survives Fourier-deseasonalization in every cut.}
+\caption{\textbf{Continuous-intraday daily volume by regime and hour-class, deseasonalized.} GWh per day; bracketed values are Fourier+DOW adjusted (seasonality-only Spec~A, Duan-smeared). The reform-window pattern --- volumes fall during MTU15-IDA-only, partial recovery under DA15/ID15 --- survives the SA correction in every cut.}
 \label{tab:ci_volume_seasonality_adjusted}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{l r r r r r}
 \toprule
  & 3-sess & ISP15-win & MTU15-IDA pre-blk & MTU15-IDA post-blk & DA15/ID15 \\
 \midrule
-\textbf{Total system} GWh/day & 28.5~{\color{seasoncol}\scriptsize[29.8]} & 25.2~{\color{seasoncol}\scriptsize[24.9]} & 15.8~{\color{seasoncol}\scriptsize[11.4]} & 16.9~{\color{seasoncol}\scriptsize[16.7]} & 21.1~{\color{seasoncol}\scriptsize[21.0]} \\
-\textbf{Critical hours} GWh/day & 14.2~{\color{seasoncol}\scriptsize[14.4]} & 12.3~{\color{seasoncol}\scriptsize[12.2]} & 7.1~{\color{seasoncol}\scriptsize[5.5]} & 8.3~{\color{seasoncol}\scriptsize[7.9]} & 10.3~{\color{seasoncol}\scriptsize[10.4]} \\
-\textbf{Flat hours} GWh/day & 2.1~{\color{seasoncol}\scriptsize[2.1]} & 2.0~{\color{seasoncol}\scriptsize[1.7]} & 1.0~{\color{seasoncol}\scriptsize[0.6]} & 1.0~{\color{seasoncol}\scriptsize[0.9]} & 1.4~{\color{seasoncol}\scriptsize[1.2]} \\
+\textbf{Total system} GWh/day & 28.5~{\color{seasoncol}\scriptsize[32.3]} & 25.2~{\color{seasoncol}\scriptsize[27.0]} & 15.8~{\color{seasoncol}\scriptsize[12.3]} & 16.9~{\color{seasoncol}\scriptsize[18.1]} & 21.1~{\color{seasoncol}\scriptsize[22.8]} \\
+\textbf{Critical hours} GWh/day & 14.2~{\color{seasoncol}\scriptsize[15.8]} & 12.3~{\color{seasoncol}\scriptsize[13.3]} & 7.1~{\color{seasoncol}\scriptsize[6.0]} & 8.3~{\color{seasoncol}\scriptsize[8.7]} & 10.3~{\color{seasoncol}\scriptsize[11.4]} \\
+\textbf{Flat hours} GWh/day & 2.1~{\color{seasoncol}\scriptsize[2.6]} & 2.0~{\color{seasoncol}\scriptsize[2.1]} & 1.0~{\color{seasoncol}\scriptsize[0.8]} & 1.0~{\color{seasoncol}\scriptsize[1.2]} & 1.4~{\color{seasoncol}\scriptsize[1.6]} \\
 \midrule
-\textbf{CCGT} sell GWh/day & 3.2~{\color{seasoncol}\scriptsize[2.5]} & 3.5~{\color{seasoncol}\scriptsize[3.1]} & 1.6~{\color{seasoncol}\scriptsize[1.7]} & 2.0~{\color{seasoncol}\scriptsize[1.5]} & 2.9~{\color{seasoncol}\scriptsize[2.2]} \\
-\textbf{Wind} sell GWh/day & 3.0~{\color{seasoncol}\scriptsize[3.0]} & 2.3~{\color{seasoncol}\scriptsize[1.8]} & 2.0~{\color{seasoncol}\scriptsize[1.1]} & 1.9~{\color{seasoncol}\scriptsize[1.9]} & 3.2~{\color{seasoncol}\scriptsize[2.6]} \\
-\textbf{Solar PV} sell GWh/day & 1.6~{\color{seasoncol}\scriptsize[1.3]} & 1.0~{\color{seasoncol}\scriptsize[1.1]} & 0.9~{\color{seasoncol}\scriptsize[0.5]} & 1.4~{\color{seasoncol}\scriptsize[1.0]} & 1.8~{\color{seasoncol}\scriptsize[2.0]} \\
-\textbf{Hydro} sell GWh/day & 4.0~{\color{seasoncol}\scriptsize[4.1]} & 4.2~{\color{seasoncol}\scriptsize[2.8]} & 2.4~{\color{seasoncol}\scriptsize[1.4]} & 2.0~{\color{seasoncol}\scriptsize[2.0]} & 2.6~{\color{seasoncol}\scriptsize[1.8]} \\
+\textbf{CCGT} sell GWh/day & 3.2~{\color{seasoncol}\scriptsize[3.2]} & 3.5~{\color{seasoncol}\scriptsize[4.0]} & 1.6~{\color{seasoncol}\scriptsize[2.2]} & 2.0~{\color{seasoncol}\scriptsize[1.9]} & 2.9~{\color{seasoncol}\scriptsize[2.6]} \\
+\textbf{Wind} sell GWh/day & 3.0~{\color{seasoncol}\scriptsize[3.5]} & 2.3~{\color{seasoncol}\scriptsize[2.2]} & 2.0~{\color{seasoncol}\scriptsize[1.3]} & 1.9~{\color{seasoncol}\scriptsize[2.2]} & 3.2~{\color{seasoncol}\scriptsize[3.0]} \\
+\textbf{Solar PV} sell GWh/day & 1.6~{\color{seasoncol}\scriptsize[1.7]} & 1.0~{\color{seasoncol}\scriptsize[1.4]} & 0.9~{\color{seasoncol}\scriptsize[0.7]} & 1.4~{\color{seasoncol}\scriptsize[1.2]} & 1.8~{\color{seasoncol}\scriptsize[2.5]} \\
+\textbf{Hydro} sell GWh/day & 4.0~{\color{seasoncol}\scriptsize[5.3]} & 4.2~{\color{seasoncol}\scriptsize[3.7]} & 2.4~{\color{seasoncol}\scriptsize[1.8]} & 2.0~{\color{seasoncol}\scriptsize[2.6]} & 2.6~{\color{seasoncol}\scriptsize[2.4]} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Reading the volume evidence.} Total system CI volume on deseasonalized values: $30 \to 25 \to 11 \to 17 \to 21$ GWh/day across the five reform regimes. \emph{The reforms reduced CI volume substantially}: from a $\sim 30$ GWh/day pre-reform baseline to $\sim 21$ GWh/day under DA15/ID15 (a $-30\%$ decrease), with the trough at $\sim 11$ GWh/day during the 40-day MTU15-IDA-only window ($-62\%$ vs baseline). The decrease applies to both critical hours ($14.4 \to 10.4$ GWh/day adjusted) and flat hours ($2.1 \to 1.2$). The per-tech decomposition shows Hydro CI activity falling sharply ($4.1 \to 1.8$, more than halved), CCGT roughly stable around 2--3 GWh/day, Wind recovering after a dip, Solar PV rising under DA15/ID15. \emph{The decrease in CI volume is the mirror image of the granular auction absorbing scarcity that previously fell to XBID and real-time TR.}
+\textbf{Reading the volume evidence.} Total system CI volume on deseasonalized values: $32 \to 27 \to 12 \to 18 \to 23$ GWh/day across the five reform regimes. \emph{The reforms reduced CI volume substantially}: from a $\sim 32$ GWh/day pre-reform baseline to $\sim 23$ GWh/day under DA15/ID15 (a $-29\%$ decrease), with the trough at $\sim 12$ GWh/day during the 40-day MTU15-IDA-only window ($-62\%$ vs baseline). The decrease applies to both critical hours ($15.8 \to 11.4$ GWh/day adjusted) and flat hours ($2.6 \to 1.6$). The per-tech decomposition shows Hydro CI activity falling ($5.3 \to 2.4$, more than halved), CCGT roughly stable around 2--3 GWh/day, Wind recovering after a dip, Solar PV rising under DA15/ID15. \emph{The decrease in CI volume is the mirror image of the granular auction absorbing scarcity that previously fell to XBID and real-time TR.}
 
 \textbf{Outcome 2: Per-firm within-hour quarter heterogeneity (post-MTU15-IDA only).} For each (firm, date, clock-hour) we compute the standard deviation of CI sell-side MWh across the four 15-min quarters of that clock-hour, then average across hours within (firm, hour-class, regime). This metric directly captures within-hour rebalancing intensity --- a firm trading 30 MWh in Q1, 5 MWh in Q2, 25 MWh in Q3, 10 MWh in Q4 has a within-hour std of $\sim 10$ MWh, whereas trading 17.5 MWh uniformly across the four quarters has std $= 0$. Aggregating to hourly totals would hide this entirely.
 
@@ -1250,15 +1254,15 @@ This is a descriptive check, not an ATT/ATE estimation. We do not slap a treatme
  \cmidrule(lr){2-4}\cmidrule(lr){5-7}
 Firm & MTU15-IDA pre & MTU15-IDA post & DA15/ID15 & MTU15-IDA pre & MTU15-IDA post & DA15/ID15 \\
 \midrule
-GN & 8.6 & 8.4 & \textbf{9.1} & 2.8 & 2.3 & 1.6 \\
-IB & 11.7 & 13.4 & \textbf{12.7} & 6.6 & 4.9 & 5.1 \\
-HC & 6.2 & 6.5 & \textbf{6.9} & 3.2 & 4.3 & 4.1 \\
-GE & 3.7 & 3.0 & \textbf{2.8} & 4.9 & 1.3 & 1.4 \\
+GN & 9.2 & 8.8 & \textbf{9.4} & 3.0 & 2.1 & 1.7 \\
+IB & 12.9 & 14.1 & \textbf{13.0} & 5.7 & 5.2 & 5.2 \\
+HC & 6.5 & 6.8 & \textbf{7.1} & 3.3 & 4.4 & 4.1 \\
+GE & 4.1 & 3.2 & \textbf{2.9} & --- & 1.3 & 1.4 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Reading the per-firm within-hour evidence.} (i) Within-hour quarter std in CI is $\sim 2$--$5\times$ larger in critical hours than flat hours for every firm --- the same critical-flat asymmetry as the auction-side bid-shape evidence (\S\ref{sec:prov:dw_tables}). (ii) \textbf{IB has the highest within-hour CI rebalancing intensity} ($\sim 12$--$13$ MWh std in critical hours, against a mean per-quarter activity of $\sim 35$--$42$ MWh, so a CV $\approx 0.30$). (iii) \textbf{GN second} ($\sim 8$--$9$ MWh std, CV $\approx 0.40$). (iv) \textbf{HC moderate} ($\sim 6$--$7$ MWh). (v) \textbf{GE the lowest} ($\sim 3$ MWh). (vi) The per-firm within-hour std is roughly stable across the post-MTU15-IDA regimes for every firm --- the reform did not change the within-hour rebalancing intensity per firm.
+\textbf{Reading the per-firm within-hour evidence.} (i) Within-hour quarter std in CI is $\sim 2$--$5\times$ larger in critical hours than flat hours for every firm --- the same critical-flat asymmetry as the auction-side bid-shape evidence (\S\ref{sec:prov:dw_tables}). (ii) \textbf{IB has the highest within-hour CI rebalancing intensity} ($\sim 13$--$14$ MWh std in critical hours). (iii) \textbf{GN second} ($\sim 9$ MWh std). (iv) \textbf{HC moderate} ($\sim 6$--$7$ MWh). (v) \textbf{GE the lowest} ($\sim 3$--$4$ MWh). (vi) The per-firm within-hour std is roughly stable across the post-MTU15-IDA regimes for every firm --- the reform did not change the within-hour rebalancing intensity per firm.
 
 \textit{Combined verdict on CI behaviour under MTU15.} \emph{The volume of CI trades fell with MTU15-IDA} (the granular IDA absorbed the scarcity that previously needed XBID) but \emph{the within-hour rebalancing intensity per firm did not}. Firms continue to make differently-sized trades across the four within-hour quarters in critical hours, with $\text{CV} \approx 0.3$--$0.5$. This intensity would have been invisible under MTU60: pre-reform, each hour's CI activity was lumped into a single hourly slot and within-hour heterogeneity had no place to manifest. Aggregating quarters into hourly totals \emph{would have hidden this entirely}, which is why per-quarter resolution is essential for the granularity-reform reading.
 
@@ -1679,7 +1683,7 @@ REE's adjustment markets, in order of pre-physical-delivery time-stamp (REE \emp
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{Per-regime average UP price by service, EUR/MWh.} ``---'' $=$ no data in window. Sources: ESIOS indicator IDs cited inline in the section preamble; arithmetic mean across ISP-15 cells. \emph{\color{seasoncol}Bracketed (SA) values}: Fourier-deseasonalized predictions at average day-of-year, applied to outcomes with multi-year daily series (DA spot from \texttt{marginalpdbc}, aFRR reserve from ESIOS id 634). DA spot decline strengthens post-deseasonalization (ISP15-win $94.6$ {\color{seasoncol}(SA)} $\to$ DA15/ID15 $47.7$ {\color{seasoncol}(SA)}, winter raw inflated by heating-demand seasonality). aFRR reserve same direction. Other rows kept raw.}
+\caption{\textbf{Per-regime average UP price by service, EUR/MWh.} ``---'' $=$ no data in window. Sources: ESIOS indicator IDs cited inline in the section preamble; arithmetic mean across ISP-15 cells. \emph{\color{seasoncol}Bracketed (SA) values}: Duan-smeared Fourier+DOW seasonally adjusted predictions, applied to outcomes with multi-year daily series (DA spot from OMIE; aFRR reserve from ESIOS id 634). DA spot decline strengthens post-deseasonalization (ISP15-win $132.7$ {\color{seasoncol}(SA)} $\to$ DA15/ID15 $65.3$ {\color{seasoncol}(SA)}, winter raw inflated by heating-demand seasonality). aFRR reserve same direction. Other rows kept raw.}
 \label{tab:cascade_prices_up}
 \setlength{\tabcolsep}{4pt}
 \input{../../results/regressions/bid/seasonality_adjusted/tab_cascade_prices_up_SA.tex}
@@ -1699,7 +1703,7 @@ REE's adjustment markets, in order of pre-physical-delivery time-stamp (REE \emp
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{Per-regime ajuste-cascade cost composition.} EUR \emph{million} per regime, summed across ISP-15 cells. \textbf{Source}: ESIOS cost indicators (REE-published, per-day or per-ISP, summed). Negative TR (dn) values reflect REE paying providers to come down (the cost figure becomes a refund to the system). \emph{\color{seasoncol}Bracketed (SA) values for Fase~I (up) and TR (up)}: Fourier-deseasonalized predictions (per-day rate $\times$ regime days). Fase~I up rises through every regime on both raw and SA; TR up collapses on both, with the SA collapse being sharper (raw $\texteuro 668 \to \texteuro 170$M total 3-sess $\to$ DA15/ID15 $= \times 0.25$; SA $\sim \texteuro 470 \to \texteuro 210$M total $= \times 0.45$ --- both confirm structural collapse). Other rows kept raw.}
+\caption{\textbf{Per-regime ajuste-cascade cost composition.} EUR \emph{million} per regime, summed across ISP-15 cells. \textbf{Source}: ESIOS cost indicators (REE-published, per-day or per-ISP, summed). Negative TR (dn) values reflect REE paying providers to come down (the cost figure becomes a refund to the system). \emph{\color{seasoncol}Bracketed (SA) values for Fase~I (up) and TR (up)}: Duan-smeared Fourier+DOW seasonally adjusted per-day rate $\times$ regime days. Fase~I up rises through every regime on both raw and SA; TR up collapses on both, with the SA reading preserving the direction (raw $\texteuro 668 \to \texteuro 170$M total 3-sess $\to$ DA15/ID15 $= \times 0.25$; SA $\sim \texteuro 611 \to \texteuro 273$M total $= \times 0.45$ --- both confirm structural collapse, the raw understates it). Other rows kept raw.}
 \label{tab:cascade_costs_official}
 \setlength{\tabcolsep}{4pt}
 \input{../../results/regressions/bid/seasonality_adjusted/tab_cascade_costs_official_SA.tex}
@@ -1723,10 +1727,10 @@ REE's adjustment markets, in order of pre-physical-delivery time-stamp (REE \emp
 Length (days) & $\sim$170 & $\sim$108 & 40 & $\sim$155 & 92 \\
 Total cost (\texteuro M) & 2\,163 & 1\,735 & 520 & 2\,741 & 1\,944 \\
 \textbf{Per day (\texteuro M)} & 12.7 & \textbf{16.1} & 13.0 & \textbf{17.7} & \textbf{21.1} \\
-\textbf{Fase~I up / day} & 5.0~{\color{seasoncol}\scriptsize[6.3]} & 5.3~{\color{seasoncol}\scriptsize[4.5]} & 7.6~{\color{seasoncol}\scriptsize[5.0]} & 10.5~{\color{seasoncol}\scriptsize[12.1]} & \textbf{13.0}~{\color{seasoncol}\scriptsize[13.5]} \\
-\textbf{TR up / day} & 3.9~{\color{seasoncol}\scriptsize[2.8]} & 5.8~{\color{seasoncol}\scriptsize[4.4]} & 3.7~{\color{seasoncol}\scriptsize[4.1]} & 2.9~{\color{seasoncol}\scriptsize[2.4]} & 1.8~{\color{seasoncol}\scriptsize[0.8]} \\
+\textbf{Fase~I up / day} & 5.0~{\color{seasoncol}\scriptsize[7.0]} & 5.3~{\color{seasoncol}\scriptsize[4.9]} & 7.6~{\color{seasoncol}\scriptsize[5.8]} & 10.5~{\color{seasoncol}\scriptsize[13.6]} & \textbf{13.0}~{\color{seasoncol}\scriptsize[13.9]} \\
+\textbf{TR up / day} & 3.9~{\color{seasoncol}\scriptsize[3.6]} & 5.8~{\color{seasoncol}\scriptsize[5.9]} & 3.7~{\color{seasoncol}\scriptsize[5.2]} & 2.9~{\color{seasoncol}\scriptsize[3.0]} & 1.8~{\color{seasoncol}\scriptsize[1.2]} \\
 \bottomrule
-\multicolumn{6}{p{14cm}}{\scriptsize{\color{seasoncol}[bracketed]} values are seasonality-adjusted (Fourier $K{=}4$ on day-of-year, regime dummies, HAC SE). For Fase~I up: ISP15-win raw 5.3 vs adjusted 4.5 (winter mean is partly seasonal); DA15/ID15 raw 13.0 vs adjusted 13.5 (the reform-window jump survives deseasonalization). For TR up: ISP15-win raw 5.8 vs adjusted 4.4 (same seasonal direction); DA15/ID15 raw 1.8 vs adjusted 0.8 ($-56\%$ below the all-doy-average baseline). The TR-channel collapse is sharper after seasonality removal.} \\
+\multicolumn{6}{p{14cm}}{\scriptsize{\color{seasoncol}[bracketed]} values are seasonality-adjusted (Fourier $K{=}4$ on day-of-year $+$ six DOW dummies, regime dummies; Duan-smeared inverse-link prediction). For Fase~I up: ISP15-win raw 5.3 vs adjusted 4.9 (winter mean is partly seasonal); DA15/ID15 raw 13.0 vs adjusted 13.9 (the reform-window jump survives deseasonalization). For TR up: ISP15-win raw 5.8 vs adjusted 5.9 (no seasonal correction needed); DA15/ID15 raw 1.8 vs adjusted 1.2 ($-66\%$ below 3-sess baseline). The TR-channel collapse is preserved after seasonality removal.} \\
 \end{tabular}
 \end{center}
 
@@ -2053,7 +2057,7 @@ In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17,
 
 \textbf{MTU15-IDA (intraday granularity, Mar 2025).}
 \begin{itemize}\setlength{\itemsep}{2pt}
-\item Largest single efficiency channel: TR-up cost fell from $\texteuro 5.8$M/day to $\texteuro 2.9$M/day raw, and to $\texteuro 0.8$M/day {\color{seasoncol}(SA)} by DA15/ID15. Tables~\ref{tab:efficiency_gains} and \S\ref{sec:prov:full_cascade:perday}.
+\item Largest single efficiency channel: TR-up cost fell from $\texteuro 5.8$M/day to $\texteuro 2.9$M/day raw, and to $\texteuro 1.2$M/day {\color{seasoncol}(SA)} by DA15/ID15. Tables~\ref{tab:efficiency_gains} and \S\ref{sec:prov:full_cascade:perday}.
 \item Mechanism: granular IDA absorbed within-hour scarcity that previously bled into real-time correction.
 \item CI volume halved: system $24.9 \to 11.4$ GWh/day {\color{seasoncol}(SA)}, CI share of OMIE $2.94\% \to 1.32\%$ {\color{seasoncol}(SA)} (Table~\ref{tab:ci_relative_system}).
 \item Within-hour quarter rebalancing capability appeared at this stage (Table~\ref{tab:ci_per_firm_within_hour}).
@@ -2063,7 +2067,7 @@ In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17,
 \begin{itemize}\setlength{\itemsep}{2pt}
 \item Smaller marginal efficiency channel: $\sim \texteuro 1.5$M/day extra TR $+$ aFRR savings.
 \item Confounded with reinforced-operation cost growth ($+\texteuro 2.5$M/day in Fase~I cost).
-\item Bid-side counterpart: RES CI activity grew (Wind volume $+37\%$, Solar PV $+100\%$ {\color{seasoncol}(SA)} vs MTU15-IDA post-blk; Table~\ref{tab:ci_volume_seasonality_adjusted}).
+\item Bid-side counterpart: RES CI activity grew (Wind volume $+36\%$, Solar PV $+108\%$ {\color{seasoncol}(SA)} vs MTU15-IDA post-blk; Table~\ref{tab:ci_volume_seasonality_adjusted}).
 \item Per-firm within-hour rebalancing intensity \emph{did not} jump under MTU15-DA --- capability existed already from MTU15-IDA (\S\ref{sec:prov:ci_seasonality_adjusted}).
 \end{itemize}
 
@@ -2106,10 +2110,10 @@ In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17,
 % =====================================================================
 
 \begin{itemize}\setlength{\itemsep}{2pt}
-\item CI volume fell substantially with MTU15-IDA, partially recovered under MTU15-DA. System {\color{seasoncol}(SA)} GWh/day: $21.9$ (3-sess) $\to 18.6$ (ISP15-win) $\to 8.7$ (MTU15-IDA pre-blk) $\to 12.7$ (MTU15-IDA post) $\to 16.7$ (DA15/ID15). Table~\ref{tab:ci_volume_seasonality_adjusted}.
+\item CI volume fell substantially with MTU15-IDA, partially recovered under MTU15-DA. System {\color{seasoncol}(SA)} GWh/day: $32.3$ (3-sess) $\to 27.0$ (ISP15-win) $\to 12.3$ (MTU15-IDA pre-blk) $\to 18.1$ (MTU15-IDA post) $\to 22.8$ (DA15/ID15). Table~\ref{tab:ci_volume_seasonality_adjusted}.
 \item \textbf{CI share of OMIE never returned to pre-reform.} {\color{seasoncol}(SA)}: $3.57\%$ (3-sess) $\to 1.32\%$ (MTU15-IDA pre-blk) $\to 2.25\%$ (DA15/ID15). Still below pre-reform $2.69$--$3.57\%$ range. Table~\ref{tab:ci_relative_system}.
-\item \textbf{Per-firm within-hour rebalancing intensity} (std of MWh across 4 quarters of an hour, critical): IB $\sim 12$, GN $\sim 9$, HC $\sim 7$, GE $\sim 3$ MWh. Stable across the three post-MTU15-IDA regimes (Table~\ref{tab:ci_per_firm_within_hour}).
-\item \textbf{Per-tech CI evolution} {\color{seasoncol}(all SA, sell-side GWh/day, MTU15-IDA post $\to$ DA15/ID15)}: Wind $1.9 \to 2.6$ ($+37\%$); Solar PV $1.0 \to 2.0$ ($+100\%$); CCGT $1.5 \to 2.2$ (modest recovery); Hydro $2.0 \to 1.8$ (continuing decline). Table~\ref{tab:ci_volume_seasonality_adjusted}.
+\item \textbf{Per-firm within-hour rebalancing intensity} (std of MWh across 4 quarters of an hour, critical): IB $\sim 13$, GN $\sim 9$, HC $\sim 7$, GE $\sim 3$--$4$ MWh. Stable across the three post-MTU15-IDA regimes (Table~\ref{tab:ci_per_firm_within_hour}).
+\item \textbf{Per-tech CI evolution} {\color{seasoncol}(all SA, sell-side GWh/day, MTU15-IDA post $\to$ DA15/ID15)}: Wind $2.2 \to 3.0$ ($+36\%$); Solar PV $1.2 \to 2.5$ ($+108\%$); CCGT $1.9 \to 2.6$ (modest recovery); Hydro $2.6 \to 2.4$ (roughly flat). Table~\ref{tab:ci_volume_seasonality_adjusted}.
 \item \textbf{CI prices, stable cross-tech directionality throughout} (Table~\ref{tab:ci_prices_per_tech}): CCGT and hydro at $+\texteuro 6$/MWh scarcity-side premium, nuclear at $-\texteuro 21$/MWh, Solar PV at $-\texteuro 20$/MWh excess-supply discount, wind near parity. Pattern preserved across regimes.
 \item \textbf{Largest market-structure shift is in bilaterals}: Wind $20\% \to 43\%$, Solar PV $15\% \to 33\%$, CCGT $12\% \to 22\%$ bilateral share of dispatch from pre-IDA to DA15/ID15 (Table~\ref{tab:ci_share_per_tech}).
 \end{itemize}
@@ -2120,7 +2124,7 @@ In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17,
 
 \begin{itemize}\setlength{\itemsep}{2pt}
 \item Total ajuste cost: $\texteuro 16.1$M/day (ISP15-win) $\to \texteuro 21.1$M/day (DA15/ID15), $+31\%$ raw (\S\ref{sec:prov:full_cascade:perday}).
-\item Composition shift: \textbf{Fase~I up cost} rose $+145\%$ raw ($\texteuro 5.3 \to \texteuro 13.0$M/day) and $\times 3$ {\color{seasoncol}(SA)} ($\texteuro 4.5 \to \texteuro 13.5$M/day). \textbf{TR up cost} fell $-69\%$ raw ($\texteuro 5.8 \to \texteuro 1.8$M/day) and $\times 7$ {\color{seasoncol}(SA)} ($\texteuro 5.8 \to \texteuro 0.8$M/day, sharper after deseasonalization).
+\item Composition shift: \textbf{Fase~I up cost} rose $+145\%$ raw ($\texteuro 5.3 \to \texteuro 13.0$M/day) and $\times 2.8$ {\color{seasoncol}(SA)} ($\texteuro 4.9 \to \texteuro 13.9$M/day). \textbf{TR up cost} fell $-69\%$ raw ($\texteuro 5.8 \to \texteuro 1.8$M/day) and $-80\%$ {\color{seasoncol}(SA)} ($\texteuro 5.9 \to \texteuro 1.2$M/day, sharper after deseasonalization).
 \item REE pays CCGTs more, earlier in the program chain (pre-IDA Fase~I) rather than in real-time emergency redispatch.
 \item PVPC retail decomposition confirms the same picture: Fase~I component nearly triples, real-time component falls by half (\S\ref{sec:prov:full_cascade:pvpc}, Table~\ref{tab:pvpc_components}).
 \end{itemize}

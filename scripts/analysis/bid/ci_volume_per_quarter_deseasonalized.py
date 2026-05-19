@@ -15,17 +15,23 @@
 #              make mean-zero rebalancing across quarters within an hour, you
 #              miss it entirely when summing.
 #
-# Each outcome → Fourier(K=4) + regime dummies FWL regression (Spec A) +
-# HAC SE (maxlags=14). Report raw daily mean vs adjusted regime mean.
+# Each outcome → shared SA helper (regime + Fourier K=4 + DOW dummies),
+# Duan-smeared inverse-link prediction at (alpha + beta_r). Report raw
+# daily mean vs adjusted regime mean.
 #
 # OUT: results/regressions/bid/ci_volume_per_quarter/{outcomes_summary,by_tech,by_firm}.csv
 
 from __future__ import annotations
 from pathlib import Path
+import sys
 import duckdb
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
+
+REPO_FOR_IMPORT = Path(__file__).resolve().parents[3]
+if str(REPO_FOR_IMPORT / "src") not in sys.path:
+    sys.path.insert(0, str(REPO_FOR_IMPORT / "src"))
+from mtu.analysis.sa_fwl import fit_sa, attach_design_columns  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[3]
 TRADES = REPO / "data/processed/omie/mercado_intradiario_continuo/transacciones/trades_all.parquet"
@@ -75,13 +81,6 @@ def firm_bucket(agent):
     return "Other"
 
 
-def fourier_terms(doy, K):
-    return pd.DataFrame({
-        **{f"cos_{k}": np.cos(2 * np.pi * k * doy / 365.25) for k in range(1, K + 1)},
-        **{f"sin_{k}": np.sin(2 * np.pi * k * doy / 365.25) for k in range(1, K + 1)},
-    })
-
-
 def hour_class_of(clock_hour):
     for hc, hs in HOUR_CLASS.items():
         if int(clock_hour) in hs:
@@ -98,13 +97,15 @@ def build_daily_panel():
     units["firm"] = units["owner_agent"].apply(firm_bucket)
     con.register("u_full", units[["unit_code", "tech", "firm"]])
 
-    # Per-trade: gross MWh = quantity_mw * mtu_minutes/60; classify by clock_hour
+    # Per-trade: gross MWh = quantity_mw * mtu_minutes/60; classify by clock_hour.
+    # DuckDB '/' is real division — use FLOOR((period-1)/4.0)::INT for the MTU15
+    # bin, otherwise float clock_hour breaks downstream GROUP BY.
     sql = f"""
     WITH t AS (
       SELECT
         CAST(delivery_date AS DATE) AS d,
         CASE WHEN mtu_minutes = 60 THEN period - 1
-             ELSE (period - 1) / 4 END AS clock_hour,
+             ELSE CAST(FLOOR((period - 1) / 4.0) AS INT) END AS clock_hour,
         period, mtu_minutes,
         seller_unit, buyer_unit,
         quantity_mw * mtu_minutes/60.0 AS mwh
@@ -175,61 +176,19 @@ def build_daily_panel():
 def add_covariates(df):
     df = df.copy()
     df["d"] = pd.to_datetime(df["d"])
-    cap = pd.read_parquet(RES_CAP)
-    res_psr = ["B01", "B11", "B15", "B16", "B17", "B19", "B25"]
-    cap_res = cap[cap["psr_type"].isin(res_psr)].groupby("year")["capacity_mw"].sum() / 1000
-    res_annual = {yr: (cap_res[yr] if yr in cap_res.index and cap_res[yr] > 0 else RES_GW_ANNUAL.get(yr, np.nan)) for yr in range(2022, 2027)}
-    df["res_gw"] = df["d"].apply(
-        lambda x: res_annual.get(x.year, np.nan)
-        + (res_annual.get(x.year + 1, res_annual.get(x.year, 0)) - res_annual.get(x.year, 0))
-        * (x.dayofyear - 1) / 365.25
-    )
-    res_w = pd.read_parquet(RESERVOIR)
-    res_w["d"] = pd.to_datetime(res_w["week_start"]).dt.date.astype("datetime64[ns]")
-    res_w = res_w[["d", "reservoir_twh"]].drop_duplicates(subset="d").set_index("d").sort_index().asfreq("D").ffill().reset_index()
-    df = df.merge(res_w[["d", "reservoir_twh"]], on="d", how="left")
-    df["doy"] = df["d"].dt.dayofyear
-    for label, lo, hi in REGIME_DATES:
-        df[f"D_{label}"] = ((df["d"] >= lo) & (df["d"] <= hi)).astype(float)
-    fk = fourier_terms(df["doy"].values, K_HARMONICS)
-    return pd.concat([df.reset_index(drop=True), fk.reset_index(drop=True)], axis=1)
+    return attach_design_columns(df, REGIME_DATES, K=K_HARMONICS)
 
 
 def fit_outcome(df, y_col, transform="log"):
-    """Fit Spec A: log(y) ~ regimes + Fourier + ε, HAC SE."""
-    fourier_cols = [f"{p}_{k}" for k in range(1, K_HARMONICS + 1) for p in ("cos", "sin")]
-    regime_cols = [f"D_{r[0]}" for r in REGIME_DATES]
-    cols = regime_cols + fourier_cols
-
-    df = df.copy()
-    if transform == "log":
-        df["y"] = np.log(df[y_col].clip(lower=0.01))
-    else:
-        df["y"] = df[y_col].astype(float)
-    df = df.dropna(subset=cols + ["y"]).reset_index(drop=True)
-    if len(df) < 200:
+    """Spec A SA on a daily series using the shared helper."""
+    res = fit_sa(df, y_col, REGIME_DATES, transform=transform, K=K_HARMONICS, min_obs=200)
+    if res is None:
         return None
-
-    X = sm.add_constant(df[cols].astype(float))
-    fit = sm.OLS(df["y"], X).fit(cov_type="HAC", cov_kwds={"maxlags": 14})
-
-    means = df[fourier_cols].mean()
-    base_t = fit.params["const"] + sum(fit.params[c] * means[c] for c in fourier_cols)
-    def back(z):
-        return np.exp(z) if transform == "log" else z
-
-    base = back(base_t)
-    # raw mean per regime
-    out = {"R2": fit.rsquared}
-    df["regime"] = "preIDA"
-    for r_lab, lo, hi in REGIME_DATES:
-        df.loc[(df["d"] >= lo) & (df["d"] <= hi), "regime"] = r_lab
-    raw_means = df.groupby("regime")[y_col].mean()
+    out = {"R2": res["R2"], "n": res["n"]}
     for r_lab, _, _ in REGIME_DATES:
-        b = fit.params.get(f"D_{r_lab}", 0)
-        out[f"{r_lab}_raw"] = float(raw_means.get(r_lab, np.nan))
-        out[f"{r_lab}_adj"] = float(back(base_t + b))
-        out[f"{r_lab}_p"] = float(fit.pvalues.get(f"D_{r_lab}", np.nan))
+        out[f"{r_lab}_raw"] = res[f"{r_lab}_raw"]
+        out[f"{r_lab}_adj"] = res[f"{r_lab}_sa"]
+        out[f"{r_lab}_p"] = res[f"{r_lab}_p"]
     return out
 
 
@@ -242,7 +201,13 @@ def main():
     print(f"  daily_qstd: {len(daily_qstd):,} rows (within-hour quarter std)")
     print(f"  daily_tech: {len(daily_tech):,} rows")
 
-    cov_dummy = add_covariates(pd.DataFrame({"d": pd.date_range(START, END, freq="D")}))[["d"] + [f"cos_{k}" for k in range(1, K_HARMONICS + 1)] + [f"sin_{k}" for k in range(1, K_HARMONICS + 1)] + ["doy"] + [f"D_{r[0]}" for r in REGIME_DATES]]
+    cov_dummy = add_covariates(pd.DataFrame({"d": pd.date_range(START, END, freq="D")}))
+    keep = (["d"]
+            + [f"cos_{k}" for k in range(1, K_HARMONICS + 1)]
+            + [f"sin_{k}" for k in range(1, K_HARMONICS + 1)]
+            + [f"dow_{i}" for i in range(1, 7)]
+            + [f"D_{r[0]}" for r in REGIME_DATES])
+    cov_dummy = cov_dummy[keep]
 
     out_rows = []
 
@@ -315,7 +280,7 @@ def main():
     WITH t AS (
       SELECT
         CAST(delivery_date AS DATE) AS d,
-        (period - 1) / 4 AS clock_hour,
+        CAST(FLOOR((period - 1) / 4.0) AS INT) AS clock_hour,
         period, mtu_minutes,
         seller_unit, quantity_mw * mtu_minutes/60.0 AS mwh
       FROM read_parquet('{TRADES}')
