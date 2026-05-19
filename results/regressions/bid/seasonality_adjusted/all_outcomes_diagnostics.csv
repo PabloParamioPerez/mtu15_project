@@ -1,0 +1,14 @@
+outcome,tech,n,R2,lb_p_lag10,lb_p_lag30,transform
+CCGT_DA_cleared,system,1265,0.28410474033872823,0.0,0.0,log
+CCGT_post_DA_gap,system,1494,0.9197608254224537,1.439188800125923e-207,4.62430375170873e-208,identity
+DA_price,system,1563,0.20936015024074417,0.0,0.0,log
+Fase1_cost,system,1545,0.4921738315886115,0.0,0.0,log
+TR_up_cost,system,1519,0.21553573142109128,2.5138371669199377e-231,0.0,log
+aFRR_up_price,system,1562,0.38956228139831617,0.0,0.0,log
+bidshape_in_band_share,CCGT,1470,0.25700579296054915,0.0,0.0,logit
+bidshape_in_band_share,Hydro,1470,0.12930304157977646,0.0,0.0,logit
+bidshape_in_band_share,Hydro_pump,1470,0.06163290321186676,0.0,0.0,logit
+bidshape_in_band_share,Nuclear,1470,0.1734044684385333,0.0,0.0,logit
+bidshape_in_band_share,Solar_PV,1470,0.2708675383805389,0.0,0.0,logit
+bidshape_in_band_share,Wind,1470,0.2513795420002465,0.0,0.0,logit
+sys_imbalance,system,1562,0.21576369310675814,1.5542440662478049e-52,1.8889943733787952e-51,log
