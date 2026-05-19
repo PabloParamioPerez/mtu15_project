@@ -873,12 +873,12 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing the DA and IDA panels in Table~\ref{tab:bidshape_da_ida}: for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $44.0\%$ raw / {\color{seasoncol}41.3\% (SA)} vs IDA $77.5\%$ raw / {\color{seasoncol}76.5\% (SA)}. Nuclear in any regime: DA $\sim 6$--$20\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
 
-\paragraph{Per-(firm, tech) distribution view.} Hour-class means flatten the 11-hour critical band (morning ramp + evening peak combined), the 4-hour midday band, and the 3-hour flat band into one number each, and also collapse multimodal day-distributions into a single mean. Two complementary views replace the per-(firm, hour-class) cell means with finer information: (i) a diurnal heatmap of the regime mean by hour-of-day; (ii) an estimated probability density of the daily in-band share across (unit, day, hour) cells.
+\paragraph{Per-(firm, tech) distribution view.} Hour-class means flatten the 11-hour critical band (morning ramp + evening peak combined), the 4-hour midday band, and the 3-hour flat band into one number each, and also collapse multimodal day-distributions into a single mean. Two complementary views replace the per-(firm, hour-class) cell means with finer information: (i) a 3D surface of the regime mean by hour-of-day; (ii) an estimated probability density of the daily in-band share across (unit, day, hour) cells.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{../../figures/working/bidshape_diurnal_heatmap.pdf}
-\caption{\textbf{In-band MW share (\%, $\pm 50$ EUR/MWh around DA MCP) per (tech, firm) and hour-of-day, by regime.} Rows: (tech, firm); columns: hours 0--23; colour: regime mean of daily in-band share at that cell. Red lines mark critical hours; green lines mark midday hours. Morning ramp (05--08) and evening peak (18--22) within ``critical hours'' have distinct intensities for several firms; midday CCGT shares for IB/GE under DA15/ID15 collapse to near zero (solar-rich periods price low) while spiking on the morning/evening boundaries.}
+\includegraphics[width=\textwidth]{../../figures/working/bidshape_3d_surface.pdf}
+\caption{\textbf{In-band MW share (\%, $\pm 50$ EUR/MWh around DA MCP) per (tech, firm) hour-of-day, by regime --- 3D surface.} $x$-axis: hour 0--23; $y$-axis: (tech, firm) row; $z$-axis: regime-mean in-band share. One panel per regime. Morning ramp (05--08) and evening peak (18--22) within ``critical hours'' have distinct intensities for several firms; midday CCGT shares for IB/GE under DA15/ID15 collapse to near zero (solar-rich periods price low) while spiking on the morning/evening boundaries. Heatmap version on disk (\texttt{bidshape\_diurnal\_heatmap.pdf}).}
 \label{fig:bidshape_diurnal_heatmap}
 \end{figure}
 
@@ -1508,8 +1508,8 @@ Path A is the workhorse measurement throughout this section. Paths B and C provi
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{../../figures/working/post_da_gap_diurnal_heatmap.pdf}
-\caption{\textbf{Post-DA gap (PHF$_{\text{last}}$ $-$ PDBC, GWh/day) per (tech, firm) hour-of-day, by regime.} Rows: (tech, firm); columns: hours 0--23; colour: regime-mean post-DA gap GWh/day at that cell (red $=$ up, REE adds the unit; blue $=$ down). Reform-window inclusion concentrates in critical hours (red vertical lines) for CCGT firms; the diurnal profile sharpens from 3-sess to DA15/ID15. Evening peak (18--22) is larger than morning ramp peak for IB/GN/HC CCGT.}
+\includegraphics[width=\textwidth]{../../figures/working/post_da_gap_3d_surface.pdf}
+\caption{\textbf{Post-DA gap (PHF$_{\text{last}}$ $-$ PDBC, GWh/day) per (tech, firm) hour-of-day, by regime --- 3D surface.} $x$-axis: hour 0--23; $y$-axis: (tech, firm) row; $z$-axis: regime-mean post-DA gap (red $=$ up, REE adds the unit; blue $=$ down). Reform-window inclusion concentrates in critical hours for CCGT firms; the diurnal profile sharpens from 3-sess to DA15/ID15. Evening peak (18--22) is larger than morning ramp peak for IB/GN/HC CCGT. Heatmap version on disk (\texttt{post\_da\_gap\_diurnal\_heatmap.pdf}).}
 \label{fig:post_da_gap_diurnal}
 \end{figure}
 
