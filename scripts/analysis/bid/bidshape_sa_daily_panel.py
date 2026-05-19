@@ -27,6 +27,7 @@ from mtu.analysis.sa_fwl import fourier_terms, dow_dummies, DEFAULT_K  # noqa: E
 DET = REPO / "data/processed/omie/mercado_diario/ofertas/det_all.parquet"
 CAB = REPO / "data/processed/omie/mercado_diario/ofertas/cab_all.parquet"
 MPDBC = REPO / "data/processed/omie/mercado_diario/precios/marginalpdbc_all.parquet"
+PDBC = REPO / "data/processed/omie/mercado_diario/programas/pdbc_all.parquet"
 UNITS = REPO / "data/external/omie_reference/lista_unidades.csv"
 OUT_DIR = REPO / "data/derived/panels"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -87,6 +88,13 @@ def build_raw_panel():
       FROM read_parquet('{MPDBC}')
       WHERE date >= '{START}' AND date <= '{END}' AND price_es_eur_mwh IS NOT NULL
     ),
+    pdbc_daily AS (
+      SELECT CAST(date AS DATE) AS d, unit_code,
+             SUM(assigned_power_mw * COALESCE(mtu_minutes, 60)/60.0) AS daily_mwh
+      FROM read_parquet('{PDBC}')
+      WHERE date >= '{START}' AND date <= '{END}'
+      GROUP BY 1, 2
+    ),
     joined AS (
       SELECT mp.d, mp.period, c.unit_code, dv.q, mp.p_clear,
              (dv.p BETWEEN mp.p_clear - {H} AND mp.p_clear + {H})::INT AS in_band,
@@ -108,9 +116,12 @@ def build_raw_panel():
              SUM(mw_total) AS mw_total
       FROM per_cell GROUP BY 1, 2, 3
     )
-    SELECT d, clock_hour, dlymw.unit_code, u.tech, in_band_share, mw_total
+    SELECT dlymw.d, dlymw.clock_hour, dlymw.unit_code, u.tech,
+           dlymw.in_band_share, dlymw.mw_total,
+           CASE WHEN COALESCE(pd.daily_mwh, 0) > 0 THEN 1 ELSE 0 END AS mic_active
     FROM daily dlymw JOIN u ON dlymw.unit_code = u.unit_code
-    WHERE in_band_share IS NOT NULL
+      LEFT JOIN pdbc_daily pd ON pd.d = dlymw.d AND pd.unit_code = dlymw.unit_code
+    WHERE dlymw.in_band_share IS NOT NULL
     """
     df = con.execute(sql).fetchdf()
     df["d"] = pd.to_datetime(df["d"])
@@ -182,8 +193,10 @@ def main():
     print(f"  {n_sa:,} / {len(out):,} cells with SA share ({(out['in_band_share_sa'].isna() & out['in_band_share'].notna()).sum():,} dropped below MIN_OBS)")
 
     out_cols = ["d", "clock_hour", "unit_code", "tech",
-                "in_band_share", "in_band_share_sa", "mw_total"]
+                "in_band_share", "in_band_share_sa", "mw_total", "mic_active"]
     out[out_cols].to_parquet(OUT, index=False)
+    n_mic = int(out["mic_active"].sum())
+    print(f"  {n_mic:,} / {len(out):,} cells MIC-active (unit cleared >0 MWh that day)")
     print(f"wrote {OUT}")
 
 

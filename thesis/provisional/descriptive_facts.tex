@@ -910,20 +910,32 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 \end{figure}
 \end{landscape}
 
+\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_bidshare_CCGT.pdf}\\[2pt]
-\includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_bidshare_Hydro.pdf}
-\caption{\textbf{Distribution of the {\color{seasoncol}SA} daily in-band MW share, across regimes --- 3D ridge (aggregated across hours).} Estimated density of SA share-per-(unit, day, hour) cells, $y$-axis stacks regimes. CCGT (top): the reform-window mass shifts rightward on SA shares; bimodality visible post-MTU15-IDA. Hydro (bottom): wider, more uniform distribution with smaller cross-regime shift. Hydro pump panel in Fig.~\ref{fig:bidshape_kde_hp}. Hour-of-day decomposition in Figs.~\ref{fig:bidshape_3d_hourly}--\ref{fig:bidshape_3d_hourly_hp}.}
+\includegraphics[width=0.6\linewidth, height=0.78\textheight, keepaspectratio]{../../figures/working/distribution_3d_bidshare_CCGT.pdf}
+\caption{\textbf{CCGT --- {\color{seasoncol}SA} in-band share distribution, across regimes (aggregated across hours).} Estimated density of SA share-per-(unit, day, hour) cells, $y$-axis stacks regimes. The reform-window mass shifts rightward on SA shares; bimodality visible post-MTU15-IDA. Hour-of-day decomposition in Fig.~\ref{fig:bidshape_3d_hourly}.}
 \label{fig:bidshape_kde}
 \end{figure}
+\end{landscape}
 
+\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_bidshare_Hydro_pump.pdf}
-\caption{\textbf{Hydro pump {\color{seasoncol}SA} in-band share distribution, across regimes --- 3D ridge (aggregated across hours).} Companion to Fig.~\ref{fig:bidshape_kde}. Hydro pump SA distributions are sharper than hydro's, consistent with pumped storage's purer level-bidding posture and concentration around the high-share end of the band.}
+\includegraphics[width=0.6\linewidth, height=0.78\textheight, keepaspectratio]{../../figures/working/distribution_3d_bidshare_Hydro.pdf}
+\caption{\textbf{Hydro --- {\color{seasoncol}SA} in-band share distribution, across regimes (aggregated across hours).} Wider, more uniform distribution than CCGT with smaller cross-regime shift. Hour-of-day decomposition in Fig.~\ref{fig:bidshape_3d_hourly_hydro}.}
+\label{fig:bidshape_kde_hydro}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\linewidth, height=0.78\textheight, keepaspectratio]{../../figures/working/distribution_3d_bidshare_Hydro_pump.pdf}
+\caption{\textbf{Hydro pump --- {\color{seasoncol}SA} in-band share distribution, across regimes (aggregated across hours).} Sharper than Hydro, consistent with pumped storage's purer level-bidding posture and concentration around the high-share end of the band. Hour-of-day decomposition in Fig.~\ref{fig:bidshape_3d_hourly_hp}.}
 \label{fig:bidshape_kde_hp}
 \end{figure}
+\end{landscape}
 
 \paragraph{Reading the distribution.} The density plot exposes what neither hour-class means nor quantiles capture cleanly: \textbf{bimodality at the daily cell level}. CCGT bidding strategies are not noisy continuous deviations from a central mean; firms operate in two distinct postures (``saturated at MCP'' vs ``well above MCP'') and the relative weight of these postures shifts with the reform. REP CCGT under DA15/ID15 has a dominant mass near full-saturation; GN-CCGT has a dominant mass at zero with a long upper tail. HC CCGT under DA15/ID15 shows a more unimodal middle-mass distribution. The diurnal heatmap (Fig.~\ref{fig:bidshape_diurnal_heatmap}) shows the in-band concentration is hour-specific within critical hours: most firms' CCGT shares peak on the morning and evening ramps (hours 6--8 and 19--21) rather than mid-day-peak hours (10--14). The hour-conditional ridges (Figs.~\ref{fig:bidshape_3d_hourly}--\ref{fig:bidshape_3d_hourly_hp}) sharpen this: hour 03 (flat) shows near-uniform regime alignment at corner-1 for CCGT and hydro pump --- everyone saturates when overnight prices are low; hour 13 (midday) shows the mirror image at corner-0 under DA15/ID15 (solar-driven low midday prices push CCGTs above MCP). The cross-regime distribution shift is concentrated at the two critical hours (07 morning ramp, 19 evening peak), where the bimodality is visibly stronger post-MTU15-IDA and post-DA15/ID15 than under the legacy 3-sess regime.
 
@@ -981,17 +993,36 @@ The choice DA vs IDA is itself a methodologically substantive choice that any id
 \input{../../results/regressions/bid/bid_shape/tex/tab_mic_rates_by_tech_regime.tex}
 \end{table}
 
-\paragraph{Conditional bid shape (cleared days only).} Re-running the steepness metric on the MIC-filtered sample (= unit-days where the unit operated):
+\paragraph{Conditional bid shape (cleared days only).} On the MIC-filtered sample (the $47\%$ of unit-days where the unit actually cleared $>0$ MWh), we re-do the per-tech aggregate ridges of the SA in-band share. This substitutes the per-(tech, hour-class, regime) Portela-style table that previously sat here, since the cell-level distribution carries more information than its conditional mean and lines up directly with Figs.~\ref{fig:bidshape_kde}--\ref{fig:bidshape_kde_hp}.
 
-\begin{table}[H]
-\centering\tiny
-\caption{\textbf{DA and IDA bid-shape share (\%), MIC-filtered (conditional on unit clearing $>0$ MWh that day).} Same metric as Table~\ref{tab:bidshape_da_ida} but on the MIC-filtered subsample (Portela's Phase 1 filter; drop rates in Table~\ref{tab:mic_drop_rates}). Numbers represent the bid shape \emph{conditional on operational activity}; the unfiltered Table~\ref{tab:bidshape_da_ida} captures \emph{unconditional} strategic submission. Both are valid: the first captures what bids actually constrain clearing; the second captures what firms submit.}
-\label{tab:bidshape_mic}
-\setlength{\tabcolsep}{2pt}
-\input{../../results/regressions/bid/bid_shape/tex/tab_bidshape_DA_IDA_mic_combined.tex}
-\end{table}
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\linewidth, height=0.78\textheight, keepaspectratio]{../../figures/working/bidshape_3d_mic_CCGT.pdf}
+\caption{\textbf{CCGT --- {\color{seasoncol}SA} in-band share distribution, MIC-filtered (cleared days only), across regimes.} Companion to Fig.~\ref{fig:bidshape_kde}, restricted to unit-days where the unit cleared $>0$ MWh. With $\sim$77--97\% of CCGT bid-shape cells dropped by the filter (Table~\ref{tab:mic_drop_rates}), the conditional distribution under DA15/ID15 develops a clear interior mode at $\sim 0.5$--$0.7$ rather than the corner-0 mass of the unconditional Fig.~\ref{fig:bidshape_kde}. Operationally-active CCGT IS doing graded near-MCP bidding post-reform; the unconditional figure was diluted by silent-bid majority cells.}
+\label{fig:bidshape_3d_mic_ccgt}
+\end{figure}
+\end{landscape}
 
-\paragraph{Reading the MIC-filtered tables.} Table~\ref{tab:bidshape_mic} now report the \emph{share} (in \%) of a unit's offered MW that falls inside the $\text{MCP}\pm 50$ EUR/MWh band, on the operationally-active subsample. The relevant comparison is each cell against its unfiltered counterpart in Table~\ref{tab:bidshape_da_ida}. Drop rates of the MIC filter on the bid-shape per-cell sample are in Table~\ref{tab:mic_drop_rates}: CCGT $77$--$97\%$, Hydro $22$--$29\%$, Hydro pump $8$--$23\%$, Nuclear/RES $\le 7\%$.
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\linewidth, height=0.78\textheight, keepaspectratio]{../../figures/working/bidshape_3d_mic_Hydro.pdf}
+\caption{\textbf{Hydro --- {\color{seasoncol}SA} in-band share distribution, MIC-filtered (cleared days only), across regimes.} Hydro DA drop rate is much smaller ($22$--$29\%$); the MIC-filtered distribution is close to the unconditional Fig.~\ref{fig:bidshape_kde_hydro} with a modest leftward shift (dropped Hydro cells were closer to MCP than retained ones).}
+\label{fig:bidshape_3d_mic_hydro}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\linewidth, height=0.78\textheight, keepaspectratio]{../../figures/working/bidshape_3d_mic_Hydro_pump.pdf}
+\caption{\textbf{Hydro pump --- {\color{seasoncol}SA} in-band share distribution, MIC-filtered (cleared days only), across regimes.} Hydro pump drop rate $8$--$23\%$. The MIC-filtered distribution shifts upward (dropped Hydro pump cells had lower in-band share); the high-share concentration sharpens.}
+\label{fig:bidshape_3d_mic_hp}
+\end{figure}
+\end{landscape}
+
+\paragraph{Reading the MIC-filtered ridges.} The cell-level conditional distribution makes the operationally-active patterns visible. Drop rates per (tech, regime) are in Table~\ref{tab:mic_drop_rates}: CCGT $77$--$97\%$, Hydro $22$--$29\%$, Hydro pump $8$--$23\%$, Nuclear/RES $\le 7\%$.
 \begin{itemize}
 \item \textbf{DA, CCGT: the MIC filter raises in-band share substantially.} In the unfiltered DA table, CCGT in-band share in critical hours rises from $24.5\%$ (3-sess) to $39.5\%$ (DA15/ID15); in the MIC-filtered DA table the same cells go from $27.6\%$ to \textbf{$62.1\%$} ($+34.5$ pp across the reform window vs $+15.0$ pp unfiltered). In flat hours: $10.6\to 20.9\%$ unfiltered, $24.0\to 54.6\%$ filtered. Because the CCGT MIC drop rate is high (77--97\% of bid-shape cells), the unfiltered share dilutes a small operationally-active core in a large silent-bid majority. Conditioning on operational activity recovers the operationally-relevant bid-shape, which is much closer to MCP.
 \item \textbf{DA, Hydro shows the opposite pattern: filtering \emph{lowers} share.} Hydro DA critical-hour share is $26.7\%$ (3-sess) $\to 24.3\%$ (DA15/ID15) unfiltered, falling to $23.9\to 19.0\%$ filtered. Even though the Hydro DA drop rate is modest ($22$--$29\%$), the dropped Hydro cells have higher in-band share than the retained ones --- consistent with reservoir bids being concentrated near MCP on days the unit is bid-only-not-cleared (then dispatched elsewhere via shutdown / inflow constraints), and more spread out on days it actually operates.
@@ -1045,13 +1076,7 @@ Cogen & 0.62 & 0.19 & 0.12 & 0.03 & 0.02 & 0.97 \\
 \end{tabular}
 \end{center}
 
-\paragraph{Eigenfunctions, CCGT (functional-SA basis).}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{../../figures/working/fpca_eigenfuncs_CCGT_sa.pdf}
-\caption{\textbf{CCGT functional-SA bid-curve fPCA basis.} Left: mean $S^{-1}(q)$ across all CCGT (unit, date, period) deseasonalised cells. The familiar L-shape persists --- functional SA strips the seasonal cycle but preserves the within-tech bid-stack geometry. Right: first 3 eigenfunctions. \textbf{PC1} is essentially a uniform shift across all quantiles (level effect; 86\% of curve variance). \textbf{PC2} is a high-low region trade-off (8\%, cheap vs scarcity tilt). \textbf{PC3} (3\%) is finer shape variation around the scarcity-mid transition. Raw-pipeline eigenfunctions are visually indistinguishable; the seasonal cycle was a small share of total curve variance even though it was material in EUR/MWh for individual reform-pairwise coefficients.}
-\end{figure}
+\paragraph{Per-tech aggregate eigenfunctions are not reported.} The per-tech pooled fPCA produces a single ``aggregate'' basis (mean curve and eigenfunctions of $\{f_i^{\text{SA}}\}$ pooled across all units in the tech). Visualising that aggregate basis as if it were a single unit's curve flattens the within-fleet heterogeneity that is empirically the substantive object --- different CCGT plants in different zones bid very differently, so a CCGT-wide mean is an artefact of averaging, not a representation of any actual bidder. We use the per-tech basis only as a projection target for cell-level scores (so PC1/PC2/PC3 are commensurable across units within a tech), and rely on (i) the per-cell score distributions in Figs.~\ref{fig:dist_3d_pc_ccgt}--\ref{fig:dist_3d_pc_hydropump} and (ii) the per-unit near-MCP results in \S\ref{sec:prov:fpca_nearmcp} for everything else.
 
 \paragraph{Score regression: pairwise reform-window design.} Rather than pool all regimes against a single reference, we isolate each reform by restricting the sample to its \textbf{immediate before/after windows}:
 \begin{center}\scriptsize
@@ -1074,37 +1099,37 @@ For each (tech, firm) and each pairwise reform, we restrict the sample to pre $+
 \end{align*}
 where $X_i$ collects calendar-month FE, hour-of-day FE, and within-hour quarter FE. \emph{No} Fourier-on-doy and \emph{no} DOW FE here: the functional pre-deseasonalisation already removed those at the curve level, so adding them in the score regression would be a redundant near-zero block. Post-effect on Critical hours is $\beta_{0,k}$; on Flat hours $\beta_{0,k} + \beta_{\text{Flat},k}$; on Midday $\beta_{0,k} + \beta_{\text{Mid},k}$. Reference: pre regime $\times$ Critical hour. This is the cleanest single-shock descriptive read of bid-shape change the data supports per reform.
 
-\paragraph{Headline tables.} Each cell is the pre-post change of PC$_k$ projected back onto the curve domain via $\widehat\beta_k \cdot \phi_k$ (EUR/MWh, summed across quantiles). Table~\ref{tab:fpca_pc123_all} report PC1, PC2, PC3 critical-hour coefficients across all eight techs; PC1 picks up the level shift, PC2 the cheap-vs-scarcity tilt, PC3 finer scarcity-tail shape. The figure below shows the full $\sum_k \widehat\beta_k \phi_k(q)$ curve shift for CCGT (firm: GN) under the functional-SA pipeline; analogous per-tech figures live on disk.
+\paragraph{Headline table.} Each cell of Table~\ref{tab:fpca_pc123_all} is the pre-post change of PC$_k$ projected back onto the curve domain via $\widehat\beta_k \cdot \phi_k$ (EUR/MWh, summed across quantiles); PC1 picks up the level shift, PC2 the cheap-vs-scarcity tilt, PC3 finer scarcity-tail shape. The summed-projection caveat is the same as above --- the projection back uses the per-tech aggregate eigenfunctions, so the EUR/MWh interpretation is the contribution of the aggregate-basis $\phi_k$ to the firm's mean cell-shift. The per-unit version of this exercise lives in \S\ref{sec:prov:fpca_nearmcp}.
 % Score regressions output: coeffs_pairwise.csv.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{../../figures/working/fpca_pairwise_curve_CCGT_sa.pdf}
-\caption{\textbf{CCGT pairwise reform-window fitted bid-curve shifts on functionally-deseasonalised curves (firm: GN).} Each row $=$ a reform; each column $=$ hour-class. The fitted shift is $\sum_k \beta_k \phi_k(q)$. Positive ordinate $=$ bid curve shifts up under the reform.}
-\end{figure}
 
 \paragraph{Distribution of PC scores per tech, across regimes.} Rather than reporting aggregate explained-variance ratios (which collapse all observations to a single eigenvalue per PC), we plot the \emph{distribution} of PC1, PC2, PC3 scores across all (unit, day, period) cells per regime. The 3D ridge plots below show, per tech, the regime-wise estimated density of each PC score. The reform-window shift of the WHOLE distribution is the substantive object; eigenvalues are just one moment of it.
 
+\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{../../figures/working/distribution_3d_PCscores_CCGT.pdf}
-\caption{\textbf{CCGT: distribution of functional-SA PC scores across regimes.} Each panel is a 3D ridge plot of one principal component score; one curve per regime, stacked along the $y$-axis. Bimodality emerges post-MTU15-IDA on PC1 and PC2 (firms with cap-padded ladders vs firms bidding near MCP).}
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/distribution_3d_PCscores_CCGT.pdf}
+\caption{\textbf{CCGT: distribution of functional-SA PC scores across regimes.} Each panel is a 3D ridge plot of one principal component score; one curve per regime, stacked along the $y$-axis. Cell-level scores (per-(unit, day, period)) projected onto the per-tech aggregate basis; the basis itself is not shown (the per-unit decomposition in \S\ref{sec:prov:fpca_nearmcp} is the maximum-granularity object). Bimodality emerges post-MTU15-IDA on PC1 and PC2.}
 \label{fig:dist_3d_pc_ccgt}
 \end{figure}
+\end{landscape}
 
+\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{../../figures/working/distribution_3d_PCscores_Hydro.pdf}
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/distribution_3d_PCscores_Hydro.pdf}
 \caption{\textbf{Hydro: distribution of functional-SA PC scores across regimes.} Hydro PC1 distributions are wider and more multi-modal than CCGT's, consistent with the reservoir-spilling vs scarcity-bidding split being a real second margin for hydro.}
 \label{fig:dist_3d_pc_hydro}
 \end{figure}
+\end{landscape}
 
+\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{../../figures/working/distribution_3d_PCscores_Hydro_pump.pdf}
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/distribution_3d_PCscores_Hydro_pump.pdf}
 \caption{\textbf{Hydro pump: distribution of functional-SA PC scores across regimes.} Hydro\_pump distributions are sharper than hydro (more concentrated PC1 mass), consistent with pumped storage's purer level-bidding posture.}
 \label{fig:dist_3d_pc_hydropump}
 \end{figure}
+\end{landscape}
 
 \begin{table}[H]
 \centering\scriptsize
@@ -1131,13 +1156,7 @@ where $X_i$ collects calendar-month FE, hour-of-day FE, and within-hour quarter 
 
 \paragraph{Motivation.} The full-curve fPCA puts each bid stack on the quantile-of-total-MW domain, so PC1 mixes the strategic-withholding tail (parking unused MW at the 4{,}000 EUR/MWh cap) with the in-band bidding region (tranches that actually compete with MCP). Several headline full-curve coefficients turn out to be entirely scarcity-tail phenomena --- e.g., the CCGT GE $-15{,}018$ shift under MTU15-DA. To isolate the strategic in-band margin we restrict to tranches near MCP and re-run.
 
-\paragraph{Spec.} For each (unit/firm, date, period), keep only tranches with $|p - \text{MCP}| \le H$, $H=50$ EUR/MWh (matches the in-band kernel used in \S\ref{sec:prov:steepness}). Reparameterise the curve in MCP-centred price coordinates: $f_i^{\text{band}}(q)$ returns $\tilde p = p - \text{MCP}$ at quantile $q$ of cumulative in-band MW, $q \in \{0.01, \ldots, 0.99\}$. Filter cells with fewer than three in-band tranches (the 99-point quantile curve is artefacts otherwise). Apply the same functional-SA and PCA pipeline as the full-curve case.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{../../figures/working/fpca_eigenfuncs_CCGT_nearmcp_H50_sa.pdf}
-\caption{\textbf{CCGT near-MCP fPCA basis (functional-SA, $H=50$).} Left: mean $\tilde p = p - \text{MCP}$ across all CCGT in-band cells, running from $-50$ at $q=0.01$ to $+50$ at $q=0.99$ by construction. Right: first 3 eigenfunctions (91\%, 6\%, 1\% of variance). PC1 is a uniform shift of in-band bidding; PC2 captures cheap-vs-scarcity tilt within the band.}
-\end{figure}
+\paragraph{Spec.} For each (unit/firm, date, period), keep only tranches with $|p - \text{MCP}| \le H$, $H=50$ EUR/MWh (matches the in-band kernel used in \S\ref{sec:prov:steepness}). Reparameterise the curve in MCP-centred price coordinates: $f_i^{\text{band}}(q)$ returns $\tilde p = p - \text{MCP}$ at quantile $q$ of cumulative in-band MW, $q \in \{0.01, \ldots, 0.99\}$. Filter cells with fewer than three in-band tranches (the 99-point quantile curve is artefacts otherwise). Apply the same functional-SA and PCA pipeline as the full-curve case. We skip displaying the per-tech aggregate near-MCP basis for the same reason as the full-curve case (above) --- the per-unit decomposition below is the substantive object.
 
 \paragraph{Per-unit basis: maximum granularity.} A per-tech near-MCP fPCA separates in-band repositioning from scarcity-tail behaviour; firm- and firm-hour-aggregates hide within-firm-fleet heterogeneity (e.g., GN runs $\sim 10$ CCGT units in different zones with different bid postures, IB runs many hydro plants across river systems with idiosyncratic reservoir constraints). We push to the most granular level the data supports: fit a separate PCA basis \emph{per unit} on the functionally-deseasonalised near-MCP curves, then within each unit run a pairwise score regression per (reform, hour-class). The reform shift inside each (unit, reform, hour-class) cell is summarised by \emph{Level shift} $=\langle \Delta f\rangle$ (mean over band quantiles, MCP-centred EUR/MWh; positive = bid up) and \emph{Tilt magnitude} $=\operatorname{std}_q(\Delta f)$ (within-band spread). 67 units survive the $\ge 500$-cell threshold. Per-unit EVR data is on disk under \texttt{results/regressions/bid/fpca/per\_unit/}.
 
