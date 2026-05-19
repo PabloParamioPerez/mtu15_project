@@ -219,6 +219,7 @@ def plot_pairwise_curves(tech: str, all_coef: pd.DataFrame):
 
 
 def write_tex_table(all_coef: pd.DataFrame):
+    """PC1-only across (Critical, Flat, Midday) for the 4 strategic techs (legacy)."""
     for reform, _, _ in PAIRS:
         sub = all_coef[(all_coef["reform"] == reform)
                        & (all_coef["tech"].isin(["CCGT", "Hydro", "Hydro_pump", "Nuclear"]))
@@ -246,6 +247,80 @@ def write_tex_table(all_coef: pd.DataFrame):
         print(f"  wrote {out}")
 
 
+def write_tex_pc123(all_coef: pd.DataFrame):
+    """PC1, PC2, PC3 on Critical hours across all techs (one row per tech-firm)."""
+    all_techs_order = ["CCGT", "Hydro", "Hydro_pump", "Nuclear",
+                       "Wind", "Solar PV", "Solar Thermal", "Cogen"]
+    for reform, _, _ in PAIRS:
+        sub = all_coef[(all_coef["reform"] == reform)
+                       & (all_coef["hour_class"] == "Critical")
+                       & (all_coef["n_rows"] >= 200)]
+        if len(sub) == 0:
+            continue
+        piv = sub.pivot_table(index=["tech", "firm"], columns="PC", values="coef")
+        for col in ["PC1", "PC2", "PC3"]:
+            if col not in piv.columns:
+                piv[col] = np.nan
+        piv = piv[["PC1", "PC2", "PC3"]].round(0)
+        rows = []
+        rows.append(r"\begin{tabular}{l l r r r}")
+        rows.append(r"\toprule")
+        rows.append(r"Tech & Firm & PC1 & PC2 & PC3 \\")
+        rows.append(r"\midrule")
+        last_tech = None
+        for tech in all_techs_order:
+            firms_here = sorted({f for (t, f) in piv.index if t == tech})
+            for firm in firms_here:
+                if (tech, firm) not in piv.index:
+                    continue
+                r = piv.loc[(tech, firm)]
+                tech_label = tech.replace("_", " ") if tech != last_tech else ""
+                last_tech = tech
+                cells = [tech_label, firm]
+                for pc in ["PC1", "PC2", "PC3"]:
+                    v = r.get(pc, np.nan)
+                    cells.append(f"{int(v):+d}" if not pd.isna(v) else "---")
+                rows.append(" & ".join(cells) + r" \\")
+            if tech != all_techs_order[-1] and any((t, f) in piv.index for f in piv.index.get_level_values(1) for t in [tech]):
+                rows.append(r"\addlinespace")
+        rows.append(r"\bottomrule")
+        rows.append(r"\end{tabular}")
+        out = TEX / f"tab_fpca_pairwise_{reform.replace('/', '_').replace(' ', '_')}_sa_pc123.tex"
+        out.write_text(
+            f"% functional-SA pairwise {reform}: PC1, PC2, PC3 critical-hour effects across all techs\n"
+            + "\n".join(rows)
+        )
+        print(f"  wrote {out}")
+
+
+def write_evr_table(techs):
+    """Tech x (raw PC1..PC5 cumulative, SA PC1..PC5 cumulative). Reads pc_basis_*.npz."""
+    rows = []
+    rows.append(r"\begin{tabular}{l r r r r r r r r r r}")
+    rows.append(r"\toprule")
+    rows.append(r" & \multicolumn{5}{c}{Raw curves} & \multicolumn{5}{c}{Functional-SA curves} \\")
+    rows.append(r"\cmidrule(lr){2-6}\cmidrule(lr){7-11}")
+    rows.append(r"Tech & PC1 & PC2 & PC3 & PC4 & PC5 & PC1 & PC2 & PC3 & PC4 & PC5 \\")
+    rows.append(r"\midrule")
+    for tech in techs:
+        raw_p = IN / f"pc_basis_{tech.replace(' ', '_')}.npz"
+        sa_p  = IN / f"pc_basis_{tech.replace(' ', '_')}_sa.npz"
+        if not raw_p.exists() or not sa_p.exists():
+            continue
+        e_raw = np.load(raw_p)["explained_variance_ratio"]
+        e_sa  = np.load(sa_p)["explained_variance_ratio"]
+        cells = [tech.replace("_", " ")]
+        for arr in (e_raw, e_sa):
+            for v in arr[:5]:
+                cells.append(f"{float(v):.2f}")
+        rows.append(" & ".join(cells) + r" \\")
+    rows.append(r"\bottomrule")
+    rows.append(r"\end{tabular}")
+    out = TEX / "tab_fpca_evr_raw_vs_sa.tex"
+    out.write_text("% Raw vs functional-SA explained-variance ratios per tech\n" + "\n".join(rows))
+    print(f"  wrote {out}")
+
+
 def main():
     all_rows = []
     for tech in TECHS:
@@ -256,6 +331,8 @@ def main():
     all_coef.to_csv(IN / "coeffs_pairwise_sa.csv", index=False)
     print(f"\nTotal: {len(all_coef):,} coefficient rows")
     write_tex_table(all_coef)
+    write_tex_pc123(all_coef)
+    write_evr_table(TECHS)
     for tech in TECHS:
         plot_pairwise_curves(tech, all_coef)
     print("All functional-SA pairwise regressions done.")

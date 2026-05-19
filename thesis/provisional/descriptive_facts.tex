@@ -1112,6 +1112,53 @@ where $X_i$ collects calendar-month FE, hour-of-day FE, and within-hour quarter 
 
 \paragraph{Caveat on PC interpretation.} The reading above focuses on PC1 because it captures most of the variance. PC2 and PC3 capture shape effects (high-low region trade-off, scarcity tail) that the level-shift interpretation misses. The full curve shifts (Fig above) show the combined effect of all 5 PCs and are the correct visual summary; the per-PC tables are decompositions.
 
+\paragraph{Explained variance: raw vs functional-SA.} The two pipelines deliver near-identical eigenstructure (Table~\ref{tab:fpca_evr_raw_vs_sa}). The seasonal cycle, while material in EUR/MWh terms for the headline pairwise coefficients (Sec.~\ref{sec:prov:fpca}), is a small fraction of \emph{total} curve variance once the within-tech bid-stack shape (the L-shape for CCGT, the steep hydro curve, etc.) dominates the variance budget. The implication: functional SA changes \emph{which} variation gets projected onto PC1 but not the rank-1 share. Higher PCs (PC2 captures cheap-vs-scarcity tilt, PC3 captures scarcity-tail shape) retain the same fraction.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{fPCA explained-variance ratios per tech: raw curves vs functionally-deseasonalised curves.} Each block shows the share of total curve-shape variance captured by PC$_1, \ldots, \text{PC}_5$. The seasonal cycle is a small share of total curve variance --- both pipelines deliver near-identical eigenstructure --- but it does shift \emph{which} variation gets projected onto PC1 (see the headline coefficient sign-flips in Tables~\ref{tab:fpca_isp15}--\ref{tab:fpca_da15}).}
+\label{tab:fpca_evr_raw_vs_sa}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_evr_raw_vs_sa.tex}
+\end{table}
+
+\paragraph{PC2 and PC3 carry meaningful weight in several reform-firm cells.} The PC1-only tables above can understate the bid-shape shift when the reform moves the cheap-vs-scarcity tilt (PC2) or the scarcity-tail shape (PC3) instead of pushing the whole curve up or down. Tables~\ref{tab:fpca_pc123_isp15}--\ref{tab:fpca_pc123_mtu15da} report PC1, PC2, PC3 critical-hour coefficients across \emph{all} eight techs.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{ISP15 pairwise PC1, PC2, PC3 coefficients (functional-SA), critical hours, all techs.} Cells in EUR/MWh on the curve domain (post coefficient projected via $\beta_k \phi_k(q)$, summed). RES techs (Wind, Solar PV, Cogen, Solar Thermal) are aggregated per firm into ``OTH'' (RES has too many small distributed units for per-firm fPCA).}
+\label{tab:fpca_pc123_isp15}
+\setlength{\tabcolsep}{6pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_ISP15_sa_pc123.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{MTU15-IDA pairwise PC1, PC2, PC3 coefficients (functional-SA), critical hours, all techs.} 40-day post window.}
+\label{tab:fpca_pc123_mtu15ida}
+\setlength{\tabcolsep}{6pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_MTU15-IDA_sa_pc123.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{MTU15-DA pairwise PC1, PC2, PC3 coefficients (functional-SA), critical hours, all techs.}}
+\label{tab:fpca_pc123_mtu15da}
+\setlength{\tabcolsep}{6pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_MTU15-DA_sa_pc123.tex}
+\end{table}
+
+\paragraph{Reading the PC2/PC3 evidence.}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{Nuclear under MTU15-IDA: PC2 dominates, PC1 collapses.} For all three nuclear firms (GE, GN, IB), PC1 is $|\widehat\beta_1| \le 65$ on the critical hours but PC2 is $+393$ to $+512$ --- nuclear under MTU15-IDA shifts the \emph{shape} of its bid stack (cheap-vs-scarcity tilt) rather than a uniform level. PC1-only reading would say ``no nuclear effect''; the PC2 reading says ``tilt towards the scarcity tail''.
+\item \textbf{Nuclear under MTU15-DA: PC2 and PC3 are at least as large as PC1.} IB Nuclear: PC1 $+763$, PC2 $-1{,}666$ (twice PC1, opposite sign), PC3 $-516$. GE Nuclear: PC1 $+1{,}681$, PC2 $-767$, PC3 $-1{,}498$ (PC3 close to PC1). The full curve shift looks substantially different from the level-only projection.
+\item \textbf{CCGT under MTU15-DA: systematic PC2 tilt opposite to the level shift.} For five of seven firms (AXPO, GE, GN, HC, IB, OTH, REP), PC1 is positive (level up) but PC2 is negative ($-270$ to $-879$, $\sim 30$--$60\%$ of PC1 in absolute value). The reform pushes the average price up but compresses the high-quantile (scarcity-tail) end of the bid curve --- CCGTs are repricing the cheap-MW tranches higher more than the scarcity tranches.
+\item \textbf{CCGT GE under ISP15: PC2 reinforces PC1.} PC1 $+3{,}459$, PC2 $+2{,}042$ (59\% of PC1, same sign). The reform-window curve shifts up across all quantiles AND tilts further up at the scarcity end. The combined shift is larger than PC1 alone.
+\item \textbf{Hydro HC and Hydro IB under ISP15: PC2 partially undoes PC1.} HC PC1 $+519$, PC2 $-331$ (64\% magnitude, opposite sign) --- the average curve shifts up but the cheap end is pulled down (or the scarcity tail is pulled up). The level reading misses this tilt.
+\item \textbf{Cogen under MTU15-DA: PC2 and PC3 exceed PC1.} OTH: PC1 $+121$, PC2 $+182$, PC3 $-136$. Cogen's reform-window bid-shape change is dominated by tilt and scarcity-tail shape, not level. This is consistent with Cogen's lower PC1 explained-variance share ($62\%$ vs CCGT's $86\%$).
+\item \textbf{Bottom line.} The seasonal-cycle stripping (functional SA) does not change the rank-1 share of variance, but the reform shifts often have a non-trivial PC2 (and sometimes PC3) component. PC1-only tables can substantially mis-describe the bid-shape shift for Nuclear and for CCGTs around MTU15-DA. The full-curve projection $\sum_k \beta_k \phi_k(q)$ (the figures above) is the correct visual summary.
+\end{itemize}
+
 % =====================================================================
 \subsubsection{Descriptive parallel-trends check, DA-side}\label{sec:prov:fpca_placebo}
 % =====================================================================
