@@ -884,11 +884,17 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{../../figures/working/distribution_3d_bidshare_CCGT.pdf}
-\includegraphics[width=0.7\textwidth]{../../figures/working/distribution_3d_bidshare_Hydro.pdf}
-\includegraphics[width=0.7\textwidth]{../../figures/working/distribution_3d_bidshare_Hydro_pump.pdf}
-\caption{\textbf{Distribution of the daily in-band MW share per tech, across regimes — 3D ridge.} Estimated density of share-per-(unit, day, hour) cells. The reform-window mass shift is whole-distribution: under DA15/ID15 the share distribution moves rightward relative to 3-sess for CCGT and Hydro. \textbf{Bimodality} visible in CCGT post-MTU15-IDA regimes — mass clustered near 0 (firm did not have MW close to MCP) and near 1 (firm fully in-band, often a single block at MCP); a 2D version (\texttt{bidshape\_kde\_per\_firm\_tech.pdf}) splits this per firm on disk.}
+\includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_bidshare_CCGT.pdf}\\[2pt]
+\includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_bidshare_Hydro.pdf}
+\caption{\textbf{Distribution of the daily in-band MW share, across regimes --- 3D ridge.} Estimated density of share-per-(unit, day, hour) cells. CCGT (top): the reform-window mass shifts rightward; bimodality visible post-MTU15-IDA (mass clustered near 0 vs near 1). Hydro (bottom): wider, more uniform distribution with smaller cross-regime shift. Hydro pump panel in Fig.~\ref{fig:bidshape_kde_hp}; per-firm 2D version on disk (\texttt{bidshape\_kde\_per\_firm\_tech.pdf}).}
 \label{fig:bidshape_kde}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_bidshare_Hydro_pump.pdf}
+\caption{\textbf{Hydro pump in-band share distribution, across regimes --- 3D ridge.} Companion to Fig.~\ref{fig:bidshape_kde}. Hydro pump distributions are sharper than hydro's, consistent with pumped storage's purer level-bidding posture and concentration around the high-share end of the band.}
+\label{fig:bidshape_kde_hp}
 \end{figure}
 
 \paragraph{Reading the distribution.} The density plot exposes what neither hour-class means nor quantiles capture cleanly: \textbf{bimodality at the daily cell level}. CCGT bidding strategies are not noisy continuous deviations from a central mean; firms operate in two distinct postures (``saturated at MCP'' vs ``well above MCP'') and the relative weight of these postures shifts with the reform. REP CCGT under DA15/ID15 has a dominant mass near full-saturation; GN-CCGT has a dominant mass at zero with a long upper tail. HC CCGT under DA15/ID15 shows a more unimodal middle-mass distribution. The diurnal heatmap (Fig.~\ref{fig:bidshape_diurnal_heatmap}) shows the in-band concentration is hour-specific within critical hours: most firms' CCGT shares peak on the morning and evening ramps (hours 6--8 and 19--21) rather than mid-day-peak hours (10--14).
@@ -1514,11 +1520,17 @@ Path A is the workhorse measurement throughout this section. Paths B and C provi
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{../../figures/working/distribution_3d_postdagap_CCGT.pdf}
-\includegraphics[width=0.7\textwidth]{../../figures/working/distribution_3d_postdagap_Hydro.pdf}
-\includegraphics[width=0.7\textwidth]{../../figures/working/distribution_3d_postdagap_Hydro_pump.pdf}
-\caption{\textbf{Distribution of the daily post-DA gap per tech, across regimes — 3D ridge.} Estimated density of GWh/day per (firm, tech, date) cell. \textbf{The reform shifts the whole CCGT distribution rightward}, not just the tail: under DA15/ID15 the CCGT density mass sits to the right of pre-MTU15 regimes. Hydro and Hydro\_pump distributions shift modestly. A per-firm 2D version is on disk (\texttt{post\_da\_gap\_kde\_per\_firm\_tech.pdf}).}
+\includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_postdagap_CCGT.pdf}\\[2pt]
+\includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_postdagap_Hydro.pdf}
+\caption{\textbf{Distribution of the daily post-DA gap, across regimes --- 3D ridge.} Estimated density of GWh/day per (firm, tech, date) cell. CCGT (top): the reform-window mass shifts rightward whole-distribution rather than tail-driven; the reforzada signature is the whole density translation, not a few extreme days. Hydro (bottom): modest cross-regime shift. Hydro pump panel in Fig.~\ref{fig:post_da_gap_kde_hp}; per-firm 2D version on disk (\texttt{post\_da\_gap\_kde\_per\_firm\_tech.pdf}).}
 \label{fig:post_da_gap_kde}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_postdagap_Hydro_pump.pdf}
+\caption{\textbf{Hydro pump post-DA gap distribution, across regimes --- 3D ridge.} Companion to Fig.~\ref{fig:post_da_gap_kde}.}
+\label{fig:post_da_gap_kde_hp}
 \end{figure}
 
 \textit{Reading.} (i) Every CCGT firm doubles its post-DA gap; GN gains the most ($+534$ GWh/mo). (ii) The mirror decrease in Wind / Solar / Hydro / Nuclear shows that REE substitutes CCGT for clean tech post-PDBF. (iii) Cross-checking against the system view in Figure~\ref{fig:ree_intervention_full}: the two largest delivered-energy channels in 2024-2026 are the PO 3.2 system-security restrictions (code 61, $\sim$12 TWh each direction) and the catch-all code 81 ($\sim$12 TWh each direction; the latter's exact content is not documented in the project reference and we treat it as not interpretable at the channel level). Among the documented channels, only code 61 is pay-as-bid \emph{and} local-grid binding --- the combination that yields zonal market power. (iv) Figures~\ref{fig:post_da_gap_diurnal} and \ref{fig:post_da_gap_kde} resolve the gap below the hour-class mean: critical hours carry $\sim 3$--$5\times$ the per-day gap of flat or midday for every CCGT firm, and the reform-window density shift is whole-distribution rather than tail-driven.
