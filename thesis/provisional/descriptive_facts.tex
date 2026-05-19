@@ -841,20 +841,22 @@ Pump-st. & \textbf{GE (MLTG)} & 1 & 418 & \textbf{86.1} & 91.6 & 3.44 & 195 \\
 
 
 % =====================================================================
-\subsection{Per-regime in-band share (bid concentration near MCP)}\label{sec:prov:steepness}
+\subsection{Per-tech bid-shape distributions: in-band share and within-hour $D_w$}\label{sec:prov:steepness}
 % =====================================================================
 
-\paragraph{Definition.} For each (date, period, sell-unit) cell we compute the \emph{share} of the unit's offered MW falling within $\pm 50$ EUR/MWh of the clearing price:
+\paragraph{Scope and metrics.} For each (date, period, sell-unit) cell we report two distributional views of the unit's bid stack, sliced by hour-of-day, with regimes stacked as 3D ridges. Same per-tech landscape format throughout, one tech per page (CCGT, Hydro, Hydro pump).
+
+(i) \emph{In-band MW share}: the share of a unit's offered MW within $\pm 50$ EUR/MWh of the clearing price,
 \[
-\text{share}_{\text{band}} = \frac{\sum_{|p_{\text{bid}} - p_{\text{clear}}| \le 50} q}{\sum q}
-= \frac{\text{MW}_{\text{band}}}{\text{MW}_{\text{total}}}.
+\text{share}_{\text{band}} = \frac{\sum_{|p_{\text{bid}} - p_{\text{clear}}| \le 50} q}{\sum q}.
 \]
-The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov:dw_decomp}). The denominator normalises by the unit's total offered MW for that period, isolating the \emph{shape} of bid concentration near MCP from the unit's operational \emph{scale} (which varies with technical commitment --- larger MW online at night $\Rightarrow$ mechanically larger $\text{MW}_{\text{band}}$ even without strategic change). We aggregate per (tech, firm, year-month, hour-class), then take the mean across months within each reform regime.
+A coarse first-moment summary of where the unit's MW sits relative to MCP; mechanically scales with the number of tranches near MCP. Defined for all 5 regimes. Figs.~\ref{fig:bidshape_3d_hourly}--\ref{fig:bidshape_3d_hourly_hp}.
 
-\textbf{Coverage:} 28.4 M DA per-cell rows $+$ 33.2 M IDA per-cell rows, June 2024 -- January 2026. The per-cell aggregate has one row per (date, period, unit) with the in-band MW, total MW, $n$ tranches in band, etc., for both DA and IDA bid stacks.
-% Underlying tables: DA cab/det and IDA icab/idet.
+(ii) \emph{Within-hour quarter dissimilarity $D_w$}: kernel-weighted ($H=50$ EUR/MWh Epanechnikov) max-pairwise $L^1$ distance between the 4 within-hour 15-min quarter bid curves, per (unit, day, hour) (\S\ref{sec:prov:dw_decomp} for the full definition). Captures whether the unit's intra-hour bid curve actually \emph{differs} across quarters in the price-setting band --- the substantive metric for granularity exploitation. Defined only for the 3 MTU15-IDA regimes (pre-MTU15-IDA had 60-min IDA periods, so no within-hour quarter structure). Figs.~\ref{fig:dw_3d_hourly_ccgt}--\ref{fig:dw_3d_hourly_hp}.
 
-\paragraph{Bid-shape metrics covered below.} We show two distributional views per technology, in the same per-tech landscape ridge format throughout: (i) the SA in-band MW share (Figs.~\ref{fig:bidshape_3d_hourly}--\ref{fig:bidshape_3d_hourly_hp}) --- the share of a unit's offered MW within $[\text{MCP}\pm 50]$ EUR/MWh on a given day-hour; (ii) the within-hour quarter-dissimilarity $D_w$ (Figs.~\ref{fig:dw_3d_hourly_ccgt}--\ref{fig:dw_3d_hourly_hp}) --- a kernel-weighted distance between the four 15-min quarter bid curves inside the same band, computed per-(unit, day, hour) and only defined post-MTU15-IDA (the 3 most recent regimes). $D_w$ is the more substantive metric: in-band share scales with the number of tranches, but $D_w$ captures whether the unit's intra-hour bid curve actually varies across quarters in the price-setting band. Each cell-level distribution is sliced at four representative hours (03 flat, 07 morning ramp critical, 13 midday, 19 evening peak critical).
+Hours sliced: 03 (flat), 07 (morning ramp, critical), 13 (midday), 19 (evening peak, critical).
+
+\textbf{Coverage:} 28.4 M DA per-cell rows $+$ 33.2 M IDA per-cell rows, June 2024 -- January 2026. SA versions of the in-band share use per-(unit, hour) FWL on logit-share (\S\ref{sec:bid_internal:calendar_discipline}); the $D_w$ panel is unsmoothed (the metric is itself a difference, so calendar-mix bias is second-order).
 
 \begin{landscape}
 \begin{figure}[H]

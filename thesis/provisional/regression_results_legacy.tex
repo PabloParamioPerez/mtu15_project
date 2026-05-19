@@ -1,0 +1,346 @@
+\documentclass[11pt,a4paper]{article}
+
+% =============================================================================
+% Provisional regression-output companion -- reform-window DDD
+% =============================================================================
+% Standalone document holding the current regression outputs from the reform-
+% window DDD design (DA15 + IDA15). The design is NOT pinned down: the
+% identification choices (heterogeneity vs treatment/control, covariate set,
+% session-choice for IDA, etc.) are still being iterated, and the user has
+% flagged that the descriptive foundations must come first. The numbers here
+% are the current state of play; they may be revised or replaced once the
+% descriptive companion (descriptive_facts.tex) settles the design language.
+%
+% Content was migrated 2026-05-17 from thesis/paper/provisional.tex section 1.
+% The descriptive bidding-pattern content from that file lives in the sibling
+% document thesis/provisional/descriptive_facts.tex.
+
+\PassOptionsToPackage{table}{xcolor}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{graphicx, booktabs, subcaption, tikz, float}
+\graphicspath{{../../figures/thesis/}}
+\usepackage{array, makecell, multirow}
+\usepackage{xcolor}
+\usepackage{longtable}
+\usepackage[hidelinks]{hyperref}
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf}
+
+\usepackage{url}
+\urlstyle{tt}
+\Urlmuskip=0mu plus 1mu\relax
+\def\UrlBreaks{\do\/\do\_\do\-\do\.\do\:\do\,}
+\newcommand{\code}[1]{\nolinkurl{#1}}
+
+\title{Provisional: regression outputs --- reform-window DDD (DA15 + IDA15)\\[3pt]\large MTU15 thesis companion (design NOT pinned down)}
+\author{Pablo Paramio}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\noindent\emph{\textbf{Status.} This file collects the current reform-window DDD outputs. The identification design is being iterated --- the descriptive foundations live in a sibling document and the framing of "heterogeneity vs treatment/control", covariate choice, and session-choice for the IDA outcomes is still in flux. Read the numbers here as the current state of play, not as final results.}
+% Sibling file: thesis/provisional/descriptive_facts.tex.
+
+\tableofcontents
+
+\bigskip
+
+% =====================================================================
+\section{Reform-window identification (DA15 + IDA15)}\label{sec:prov:reform_window_ddd}
+% =====================================================================
+
+\noindent The headline thesis question is the effect of \textbf{MTU15 granularity} on strategic bidding. Reforzada (the post-blackout RT2 pay-as-bid + zonal-monopoly windfall channel documented in the descriptive companion, Part B) is a parallel \emph{confounding} mechanism --- analogous in spirit to the operational/solar midday channel in the main paper (main paper~\S2.4): a real economic phenomenon that we want to characterise but \emph{exclude from the identifying contrast} so as not to mix channels. This section's design picks reform windows in which reforzada is held constant, then differences out residual seasonality via a 2024 placebo.
+
+\paragraph{Design.} Two reform-windows, each chosen so that reforzada is constant within both the pre- and post-treatment sub-windows:
+
+\begin{table}[H]
+\centering
+\caption{Reform-window design. Reforzada is the post-blackout RT2 pay-as-bid regime (active 2025-04-28 onward). The 2024 placebo uses calendar-matched dates. PT assumption: YoY seasonal change in (crit $-$ flat) was the same in 2024 as in 2025.}
+\label{tab:reform_windows}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}l l l c c@{}}
+\toprule
+Reform / sample & Pre-window & Post-window & Reforzada & Length pre/post \\
+\midrule
+\textbf{IDA15 (2025)} & 2024-12-09 -- 2025-03-18 & 2025-03-19 -- 2025-04-27 & off & 100 / 40 d \\
+IDA15 placebo (2024)  & 2023-12-09 -- 2024-03-18 & 2024-03-19 -- 2024-04-27 & off & matching \\
+\addlinespace
+\textbf{DA15 (2025)} & 2025-04-28 -- 2025-09-30 & 2025-10-01 -- 2026-02-13 & on  & 155 / 135 d \\
+DA15 placebo (2024)  & 2024-04-28 -- 2024-09-30 & 2024-10-01 -- 2025-02-13 & off & matching \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent The temporal design holds reforzada constant within each window (on for DA15, off for IDA15), and the 2024 placebo absorbs YoY seasonality that the within-day DiD alone could not. Each pre-window is $\ge 3$ months; DA15 has 5 months post-reform.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../../figures/working/fig_reform_windows_timeline.pdf}
+\caption{\textbf{Timeline of reforms and DDD windows.} Vertical guides: ISP15 (2024-12-09), MTU15-IDA (2025-03-19), Iberian blackout (2025-04-28), MTU15-DA (2025-10-01). Shaded grey: reforzada zone. Blue bars: pre-reform sub-windows; red bars: post-reform. 2024 placebo rows shown with lighter shading.}
+\end{figure}
+
+\paragraph{Triple-difference specification.}
+Let $Y_{f,u,d,h}$ be the outcome at firm $f$, unit $u$, date $d$, clock-hour $h$. Define $\text{crit}_h = 1$ if $h \in \{5\!-\!9,\,16\!-\!22\}$ (treated hour-class), restrict sample to $\{\text{crit}, \text{flat}\}$. Let $\text{post}_d = 1$ if $d$ is after the reform date, $\text{y25}_d = 1$ if $d$ falls in the 2025 (treatment) window. Then:
+\begin{multline}
+  Y_{f,u,d,h} = \alpha + \beta_1 \text{crit}_h + \beta_2 \text{post}_d + \beta_3 \text{y25}_d
+    + \beta_4 (\text{crit} \times \text{post}) + \beta_5 (\text{crit} \times \text{y25}) \\
+    + \beta_6 (\text{post} \times \text{y25})
+    + \boxed{\beta_7 (\text{crit} \times \text{post} \times \text{y25})}
+    + \gamma_f + \mu_u + \delta_{\text{DOW}(d)} + \varepsilon_{f,u,d,h}.
+\end{multline}
+$\beta_7$ is the headline coefficient: the change in the (critical $-$ flat) differential at the reform date, \emph{net of} the corresponding 2024 seasonal change. FE: firm $\gamma_f$ + unit $\mu_u$ + day-of-week $\delta_{\text{DOW}}$. SE clustered at the date level. Equivalently $\beta_7 = \Delta\Delta Y^{2025} - \Delta\Delta Y^{2024}$ where $\Delta\Delta Y = (\bar Y_{\text{post,crit}} - \bar Y_{\text{post,flat}}) - (\bar Y_{\text{pre,crit}} - \bar Y_{\text{pre,flat}})$.
+
+\paragraph{Event-study spec (visual pre-trends).} For each outcome, plot the monthly differential separately for the 2025 treatment year and the 2024 placebo year, anchored to $\tau =$ months from the reform date:
+\[
+  \Delta Y_{\tau,y} \;=\; \bar Y_{\text{crit}}(\tau, y) - \bar Y_{\text{flat}}(\tau, y), \qquad y \in \{2024, 2025\}.
+\]
+Identifying assumption test: for $\tau < 0$ the two series should overlap (parallel pre-trends); at $\tau \ge 0$ the 2025 series diverges from the 2024 series by exactly the treatment effect.
+
+\paragraph{Identifying assumptions.}
+\textit{Formal PT (triple-difference).}
+\[
+  \mathbb{E}\big[\Delta\Delta Y(0) \mid \text{y25}=1\big] \;=\; \mathbb{E}\big[\Delta\Delta Y(0) \mid \text{y25}=0\big],
+\]
+where $\Delta\Delta Y(0)$ is the untreated within-day pre/post change in the critical-flat differential.
+
+\textit{Threats killed by the design.}
+\begin{itemize}
+   \item \emph{Seasonality of the critical-flat spread} (summer-to-winter heating/AC patterns): differenced out by the 2024 placebo on the same calendar months.
+   \item \emph{Day-level cost shocks} (TTF gas, CO$_2$, demand spikes): within-day differencing on each date absorbs anything that hits both hour-classes proportionally.
+   \item \emph{Asymmetric gas-cost confound}: ruled out empirically in main paper~\S2.4 --- CCGT price-setting share 9.1\% crit vs 9.0\% flat, so TTF shocks cannot propagate asymmetrically.
+   \item \emph{Operational midday channel} (solar drives prices down at midday): midday hours $\in \{11\!-\!14\}$ excluded from the control set; only flat hours $\in \{1,2,3\}$ enter as control.
+   \item \emph{Reforzada / RT2 pay-as-bid windfall}: held constant within each window by design (the central insight). Characterised as a confounder in the descriptive companion, Part B (REE post-clearing CCGT inclusion, geographic CCGT concentration, Cournot reading $+$ CNMC sanctions).
+\end{itemize}
+
+\textit{Threats remaining.}
+\begin{itemize}
+   \item \emph{Within-firm portfolio composition shifts}: addressed by unit FE; sensitivity check restricts to units active in both years.
+   \item \emph{Reform-anticipation effects}: tested by the event-study leads $\beta_\tau$ for $\tau \in \{-1, -2\}$.
+\end{itemize}
+
+\paragraph{What this DDD identifies (and what it does not).}
+The within-day differencing on (crit $-$ flat) absorbs day-level common shocks; the 2024 placebo absorbs YoY seasonal variation in the spread itself. Whether the identified parameter is the \emph{differential} reform effect or the \emph{absolute} effect on critical hours depends on whether flat hours are exposed to MTU15. This is a market-specific empirical question; the existing project evidence (descriptive companion, $D_w$ decomposition section, DA Oct--Dec 2025) shows:
+\begin{itemize}
+    \item \textbf{DA market}: flat hours show essentially zero within-hour granularity activity (GN, GE, HC: 0\%--0.05\% on both $\Delta p$ and $\Delta q$ channels; IB: 0.89\%/1.03\%, an order of magnitude below its critical-hour shaping). Critical hours, by contrast, show GN at 18.4\% $\Delta q$-active. Flat hours are approximately MTU15-untreated for CCGT bidding. \emph{The DA-cell DDDs on prices and on $q_1$ should therefore be read as close to the absolute critical-hour effect, not a within-day differential between two treated arms.}
+    \item \textbf{IDA market} (pre-blackout, see descriptive companion): flat-hour cell activity is 7--21\% across pivotal firms, against critical-hour 9--30\%. Both hour-classes show within-hour activity in the IDA. \emph{The IDA-cell DDD identifies a true differential, not an absolute effect on critical hours.}
+\end{itemize}
+Same logic for pivotal-vs-non-pivotal in the $D_w$ decomposition: the table only breaks out the four pivotal firms because non-pivotal CCGT participation in the relevant zones is negligible. For granularity-driven outcomes the non-pivotal-as-control reading is more defensible than for aggregate outcomes like $q_2$, where the older 2-way DiD in the main paper's appendix shows non-pivotal firms do respond (with sign reversal). The framing is outcome- and market-specific: closer to treatment/control for DA-granularity-shaping outcomes, closer to heterogeneity for IDA and for aggregate $q_2$.
+
+\paragraph{Heterogeneity decomposition by pivotal firm status.}
+For firm-level outcomes ($q_1$, $q_2$) we report the DDD twice: pooled over the CCGT sample, and decomposed by pivotal status (Big-4: IB, GE, GN, HC, EDP-PT; non-pivotal: Repsol, Engie, TotalEnergies, Moeve). The decomposition is a \emph{heterogeneity analysis}, not a fourth difference: non-pivotal CCGT firms are exposed to the same MTU15 reform as pivotal firms and the older 2-way DiD in the main paper's appendix in fact shows them responding (the $q_2$ sign on (crit $\times$ post) reverses between pivotal and non-pivotal subsamples). We do not assume they are an "untreated control"; we read the contrast as how the reform's effect varies with market power. Operationally this is implemented as a saturated OLS-FE regression with all crit/post/y25/pivotal interactions (the pivotal main effect is firm-invariant and absorbed by $\gamma_f$), yielding a coefficient on (crit $\times$ post $\times$ y25 $\times$ piv) that is mathematically the difference of the two sub-sample DDDs. We label it $\delta_{\text{piv}}$ rather than $\beta_{1234}$ to make the heterogeneity-not-fourth-difference reading explicit:
+\[
+  \delta_{\text{piv}} \;\equiv\; \widehat{\text{DDD}}_{\text{pivotal}} \;-\; \widehat{\text{DDD}}_{\text{non-pivotal}}.
+\]
+SE clustered at the firm level (pivotal does not vary within firm; $G \approx 9$ --- wild-cluster bootstrap as a robustness step is flagged below). The DDDD-style name and the "quadruple difference" framing previously used in this section have been retired: in light of the credibility-quadratic-in-differences argument (Roth, paraphrased in Borusyak's lecture notes), and given the empirical evidence that non-pivotal firms are not a clean control, the heterogeneity-decomposition interpretation is the only one we sustain.
+
+\paragraph{Outcomes and joint $q_1 / q_2$ sign-quadrants.}
+Two firm-level quantity outcomes and two market-level price outcomes. The firm-level pair is informative \emph{only when read jointly}: $q_1$ (DA-cleared MWh) and $q_2$ (signed intraday MWh) jointly characterise the firm's strategic posture, with each $(\text{sign}(\beta_{q_1}), \text{sign}(\beta_{q_2}))$ quadrant mapping to a distinct economic narrative. Table~\ref{tab:reform_outcomes} lays this out. $D_w$, $\Delta p$, $\Delta q$ are \emph{not} DDD outcomes because they require within-hour quarters that do not exist pre-MTU15; they appear as post-only cross-section in the descriptive companion ($D_w$ decomposition and $D_w$ distribution sections).
+
+\begin{table}[H]
+\centering\footnotesize
+\setlength{\tabcolsep}{6pt}
+\caption{Joint $(q_1, q_2)$ sign quadrants and the firm-behaviour narrative each implies. The DDD coefficient on critical-flat-spread for each quantity outcome gives the row/column sign. Each cell is a coherent story about how dispatchable firms responded to the reform; only one is realised in the data.}
+\label{tab:reform_outcomes}
+\begin{tabular}{@{}p{2.6cm} p{5.5cm} p{5.5cm}@{}}
+\toprule
+ & $\beta(q_1) > 0$ (more DA-cleared) & $\beta(q_1) < 0$ (less DA-cleared) \\
+\midrule
+$\beta(q_2) > 0$ (more IDA selling) & \emph{Production expansion}: firms scale up across both stages (unlikely under unchanged demand). & \emph{Ito--Reguant withholding}: classic strategic relabelling --- withhold in DA to drive up clearing, sell volume back in IDA. \\
+\addlinespace
+$\beta(q_2) < 0$ (less IDA selling) & \emph{Operational refinement}: granular DA absorbs within-hour variation that previously needed IDA repositioning; auctions clear better, less intraday correction needed. & \emph{Broader disengagement}: firms reduce participation in \emph{both} auction-cleared stages, with the outside option being REE post-clearing redispatch (RT2 pay-as-bid). Not Ito--Reguant. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent For prices, the within-day spread response separately tests the operational-refinement vs strategic-exploitation directions: negative ($\beta_7 < 0$, spread compresses) if granularity lets non-pivotal competitors fill critical-hour 15-min slots; positive ($\beta_7 > 0$, spread widens) if pivotal firms exploit the new pricing dimension.
+
+\paragraph{How to read Figure~\ref{fig:event_study}.}
+Each panel is a single (outcome $\times$ reform) cell. The horizontal axis is $\tau =$ months relative to the reform date (e.g.\ $\tau = 0$ is March 2025 for IDA15 and October 2025 for DA15). The vertical axis is the monthly mean of the within-day differential $\bar Y_{\text{crit}}(\tau) - \bar Y_{\text{flat}}(\tau)$ in that month --- a scalar that tells us how much higher the critical-hour outcome is relative to the same day's flat-hour outcome.
+
+Each panel has two coloured lines:
+\begin{itemize}
+\item \textcolor{red}{Red (2025)}: the actual treatment year. At $\tau = 0$, MTU15 is implemented.
+\item \textcolor{blue}{Blue (2024)}: the calendar-matched placebo. At $\tau = 0$, the analogous calendar month one year earlier --- no reform, just seasonality.
+\end{itemize}
+
+The DDD coefficient $\beta_7$ is a difference of \emph{changes} (not levels). In raw form the two lines can sit at different levels (e.g., 2025 prices systematically higher than 2024 because of inflation) and the design still works --- the level shift is absorbed by the $\text{y25}$ main effect $\beta_3$ and what matters is that the (red $-$ blue) gap stays constant pre-reform and shifts post-reform.
+
+The figure normalises each line by subtracting its value at $\tau = -1$, so both start at zero at the omitted reference month. After normalisation the visual test is the standard event-study form:
+\begin{itemize}
+\item For $\tau < 0$ (pre-reform): red and blue should \textbf{overlap} (parallel-trends test).
+\item At $\tau \geq 0$ (post-reform): a persistent vertical separation between red and blue is the treatment effect.
+\item $\beta_7$ is the average post-period vertical separation between the two normalised lines.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../../figures/working/fig_event_study_ddd.pdf}
+\caption{Event-study (reduced-form, normalised). Rows = outcomes (DA price, IDA price, $q_1$, $q_2$); columns = reforms (IDA15, DA15). Each panel plots the monthly (critical $-$ flat) within-day differential, anchored to $\tau =$ months from the reform date and \emph{normalised by subtracting the $\tau = -1$ value}, so both lines start at 0 at $\tau = -1$. Red = 2025 (treatment); blue = 2024 (placebo). Pre/post regions lightly shaded. Reduced-form monthly means; full regression-based event-study with CI follows the headline DDD.}
+\label{fig:event_study}
+\end{figure}
+
+\textit{Pre-trend reading.} DA15: pre-period overlap is reasonable for prices; $q_1$ shows the 2025 series sitting below the 2024 series \emph{already before $\tau = 0$}, signalling that the reforzada channel pre-bends the differential before MTU15-DA fires --- a partial PT violation for $q_1$ on this window. IDA15: pre-period overlap looks reasonable for prices; post-period is too short to read visually. The headline DDD with date-clustered SE follows.
+
+\paragraph{Estimators in practice: OLS-FE and doubly-robust DiD on prices in levels.}
+We report two estimators for the same DDD parameter, each with three to four specifications. Both use clearing prices in EUR/MWh as the outcome (in levels), and both target the same coefficient: the (critical $-$ flat) differential response to the reform, net of the 2024 calendar placebo.
+
+\textit{Panel construction.} For each (reform window, market) combination $w \in \{\text{DA15}, \text{IDA15}\} \times \{\text{DA}, \text{IDA-S1}\}$ we build two analytic panels:
+\begin{itemize}
+\item \emph{Period panel}: one row per (date, ISP-period) tuple. Pre-MTU15 days contribute 1 observation per clock-hour (MTU60); post-MTU15 days contribute 4 (MTU15). Sample restricted to clock-hours in \{critical $\cup$ flat\}. Used for the OLS-FE estimator. Sizes: 13\,888 obs (DA15-DA), 19\,138 obs (DA15-IDA), 3\,934 obs (IDA15-DA), 5\,530 obs (IDA15-IDA).
+\item \emph{Spread panel}: one row per date with the within-day means $\bar Y^{\text{crit}}_d = \frac{1}{|H_{\text{crit}}|}\sum_{p \in H_{\text{crit}}} Y_{d,p}$ and $\bar Y^{\text{flat}}_d$ as two columns. Used for the DR-DiD estimator (one drdid call per hour-class). Sizes: 584 dates (DA15-DA), 554 (DA15-IDA), 281 (IDA15-DA), 278 (IDA15-IDA).
+\end{itemize}
+
+\textit{OLS-FE DDD.} On the period panel, three specifications, each with the same DDD coefficient $\beta_7$ but different fixed-effect structures:
+\begin{align*}
+\text{(M1) sparse:}\quad & Y_{d,p} = \alpha + \sum_{k=1}^{7} \beta_k Z_k + \gamma_h + \delta_{\text{DOW}(d)} + \varepsilon_{d,p}, \\
+\text{(M2) month FE:}\quad & Y_{d,p} = \alpha + \sum_{k=1}^{7} \beta_k Z_k + \gamma_h + \delta_{\text{DOW}(d)} + \eta_{\text{month}(d)} + \varepsilon_{d,p}, \\
+\text{(M3) date FE:}\quad & Y_{d,p} = \alpha + \beta_1 \text{crit} + \beta_4 (\text{crit}\!\times\!\text{post}) + \beta_5 (\text{crit}\!\times\!\text{y25}) \\
+& \qquad\qquad\quad + \beta_7 (\text{crit}\!\times\!\text{post}\!\times\!\text{y25}) + \gamma_h + \delta_{\text{DOW}(d)} + \nu_d + \varepsilon_{d,p}.
+\end{align*}
+Here $(Z_1,\ldots,Z_7) = (\text{crit},\,\text{post},\,\text{y25},\,\text{crit}\!\times\!\text{post},\,\text{crit}\!\times\!\text{y25},\,\text{post}\!\times\!\text{y25},\,\text{crit}\!\times\!\text{post}\!\times\!\text{y25})$, $\gamma_h$ is a clock-hour FE, $\delta_{\text{DOW}(d)}$ is a day-of-week FE, $\eta_{\text{month}(d)}$ is a calendar-month FE, and $\nu_d$ is a date FE that absorbs all date-level terms in M3 (so the date-level $\beta_2,\beta_3,\beta_6$ drop out and $\beta_7$ is identified purely from within-date variation). SE clustered at the date level via \texttt{reghdfe ..., vce(cluster date)}.
+
+\textit{Doubly-robust DiD (Sant'Anna--Zhao 2020).} On the spread panel, two 2$\times$2 doubly-robust DiDs per (window, market), one on each hour-class outcome:
+\[
+\widehat{\text{ATT}}^{\text{DR}}_{c} \;=\; \mathbb{E}_n\!\left[\Big(\,w_{1}(D)\,-\,w_{0}(D,X;\hat p)\Big)\,\Big(\,(Y^{c}_{\text{post}}-Y^{c}_{\text{pre}})\,-\,\big(\hat m^{0}_{\text{post}}(X)-\hat m^{0}_{\text{pre}}(X)\big)\,\Big)\right],
+\]
+with $c \in \{\text{crit}, \text{flat}\}$, treatment indicator $D = \text{y25}_d$, time indicator $t = \text{post}_d$, covariates $X = (\text{i.dow}, \text{i.month})$, and
+\[
+w_{1}(D) = \frac{D}{\mathbb{E}_n[D]}, \qquad
+w_{0}(D, X; \hat p) = \frac{\hat p(X)(1-D)/(1-\hat p(X))}{\mathbb{E}_n[\hat p(X)(1-D)/(1-\hat p(X))]}.
+\]
+The default \code{drdid} estimator (\code{drimp}) uses inverse-probability-tilting for $\hat p(X)$ and weighted least squares for the outcome model $\hat m^{0}(X)$. Three nuisance-model specifications are reported:
+\begin{itemize}
+\item \emph{DR1}: no covariates ($X = \emptyset$). Reduces to the unconditional 2$\times$2 DiD on the spread $Y^{c}$.
+\item \emph{DR2}: $X = (\text{i.dow}, \text{i.month})$, asymptotic SE via the influence function.
+\item \emph{DR3}: $X = (\text{i.dow}, \text{i.month})$, wild-bootstrap inference (999 Mammen draws, \texttt{drdid ..., wboot rseed(4242)}).
+\end{itemize}
+
+\textit{DDD via the difference of two doubly-robust DiDs (the headline).} The triple difference is the difference of the two hour-class ATTs:
+\[
+\widehat{\text{DDD}} \;=\; \widehat{\text{ATT}}^{\text{DR}}_{\text{crit}} \,-\, \widehat{\text{ATT}}^{\text{DR}}_{\text{flat}}.
+\]
+Joint inference uses the recentered influence functions $\hat\psi^{c}_i$ saved by drdid's \texttt{stub(}$c$\texttt{)} option, which satisfy $\sqrt N(\widehat{\text{ATT}}^{c} - \text{ATT}^{c}) = N^{-1/2}\sum_i \hat\psi^{c}_i + o_p(1)$ (Sant'Anna--Zhao 2020, Theorem 1). Because the crit and flat means are computed on the same dates (within-date dependence), the variance of the DDD is taken from the variance of the IF \emph{difference}:
+\[
+\widehat{\text{Var}}(\widehat{\text{DDD}}) \;=\; \frac{1}{N}\,\widehat{\text{Var}}_n\!\left[\hat\psi^{\text{crit}}_i - \hat\psi^{\text{flat}}_i\right], \qquad N = \text{number of dates},
+\]
+i.e.\ the cross-class covariance is captured automatically by the joint distribution of IFs. The two-sided $p$-value is reported under asymptotic normality.
+% Implementation: scripts/stata/reform_window/03_csdid_da15.do and 04_csdid_ida15.do
+
+\textit{Why two estimators.} The OLS-FE DDD targets the standard triple-interaction coefficient $\beta_7$ under the unconditional PT assumption $\mathbb{E}[\Delta\Delta Y(0) \mid \text{y25}=1] = \mathbb{E}[\Delta\Delta Y(0) \mid \text{y25}=0]$. The DR-DiD targets the conditional ATT under the conditional PT $\mathbb{E}[Y_{\text{post}}(0) - Y_{\text{pre}}(0) \mid \text{y25}, X] = \mathbb{E}[Y_{\text{post}}(0) - Y_{\text{pre}}(0) \mid X]$, and is semiparametrically efficient under correct specification of the nuisance models (Sant'Anna--Zhao 2020). The two estimands coincide when $X$ is balanced across treatment cells; with calendar-matched windows, balance on $X = (\text{dow}, \text{month})$ is approximate but not exact (a year-on-year drift of $\approx 1$ day-of-week, plus daylight-saving boundaries). The discrepancy between the OLS-FE and DR-DiD point estimates is therefore the IPW contribution.
+
+\paragraph{Naive before-after vs DDD: how much of the apparent reform effect is seasonal bias?}
+The standard alternative to a DDD design is a within-year before-after (BA) regression with calendar (and sometimes weather) controls. Table~\ref{tab:ba_vs_ddd} compares the BA-with-calendar-controls estimate for each of our four (window, market) cells against the DDD with the same controls. The seasonal bias --- what the BA misattributes to the reform but the DDD nets out via the 2024 placebo --- is striking on the DA15 window: BA gives $+26$ EUR/MWh on the critical-flat spread, DDD gives essentially zero. The 2024 calendar-matched placebo year shows the same $+27$ swing in its own pre-vs-post comparison; almost the entire apparent BA effect is seasonal swing of the critical-flat spread from summer to winter, not the MTU15 reform. On the IDA15 window the bias is smaller (3--5 EUR/MWh) but goes the \emph{opposite direction} (the 2024 placebo shows a $\approx-8$ EUR/MWh swing, vs $+2$/$+6$ in the 2025 treatment year). In both windows the BA is uninformative about the reform; the DDD is the design that isolates the reform from the calendar.
+
+\input{../paper/tables/reform_window/tab_ba_vs_ddd.tex}
+
+\paragraph{Headline DDD estimates: clearing prices, all (reform window, outcome) cells.}
+Every price outcome is estimated in \emph{both} reform windows. The natural mapping (DA price tested in DA15 window, IDA price tested in IDA15 window) is the direct-effect cell; the off-diagonal cells (DA price in IDA15 window, IDA price in DA15 window) test \emph{spillover}. We report the doubly-robust DiD (Sant'Anna--Zhao 2020, \code{drdid}) on prices in levels, decomposed into ATT$_{\text{crit}}$ and ATT$_{\text{flat}}$, with the DDD given by the difference. Joint SE for the DDD comes from the difference of the recentered influence functions (drdid \code{stub()} option), which correctly handles the within-date covariance between the two hour-class means. Covariates: \code{i.dow + i.month}. Full per-cell OLS-FE companion tables: Tables~\ref{tab:reform_ddd_da15_da}--\ref{tab:reform_ddd_ida15_ida}.
+% Pipeline: scripts/stata/reform_window/
+
+\begin{table}[H]
+\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Headline DDD on \emph{prices in levels}, EUR/MWh, all four (reform window, market) cells. DR-DiD columns (Sant'Anna--Zhao 2020, drimp): ATT$_{\text{crit}}$ and ATT$_{\text{flat}}$ are 2$\times$2 DiDs per hour-class with covariates \code{i.dow + i.month}; DDD is their difference with joint SE from the influence-function difference. OLS-FE $\beta_7$ column: triple-interaction coefficient from \code{reghdfe} on the period-level panel with clock-hour + DOW + month FE, SE clustered at date. Standard errors in parentheses. Stars: $^{*}~0.10,~^{**}~0.05,~^{***}~0.01$. The \emph{Channel} column distinguishes direct (the market hit by the reform) from spillover (the cross-market test): DA15-DA and IDA15-IDA are direct; the other two cells are spillover.}
+\label{tab:reform_ddd_summary}
+\begin{tabular}{llcccc}
+\toprule
+& & \multicolumn{3}{c}{DR-DiD on levels} & OLS-FE \\
+\cmidrule(lr){3-5}
+Window & Outcome & ATT$_{\text{crit}}$ & ATT$_{\text{flat}}$ & DDD & $\beta_7$ \\
+\midrule
+DA15  & DA price        & $-8.34^{*}$ \scriptsize{(4.33)}    & $-2.96$ \scriptsize{(4.85)}     & $-5.38^{**}$ \scriptsize{(2.36)}  & $-0.29$ \scriptsize{(2.92)} \\
+DA15  & IDA-S1 price    & $-10.38^{**}$ \scriptsize{(4.46)}  & $-5.02$ \scriptsize{(4.96)}     & $-5.36^{**}$ \scriptsize{(2.30)}  & $-2.67$ \scriptsize{(2.85)} \\
+IDA15 & DA price        & $-25.02^{***}$ \scriptsize{(5.49)} & $-31.30^{***}$ \scriptsize{(6.16)} & $+6.28^{**}$ \scriptsize{(3.01)}  & $-2.24$ \scriptsize{(3.63)} \\
+IDA15 & IDA-S1 price    & $-25.40^{***}$ \scriptsize{(5.59)} & $-34.82^{***}$ \scriptsize{(6.13)} & $+9.43^{***}$ \scriptsize{(2.95)} & $+0.50$ \scriptsize{(3.69)} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textit{OLS-FE vs DR-DiD.} Both estimators target the DDD parameter; the gap between them is the IPW reweighting on calendar covariates. Without covariates, DR-DiD reproduces OLS-FE to 3 decimal places (sanity check). With $X = (\text{i.dow}, \text{i.month})$, DR-DiD reweights observations so the (dow, month) distribution is balanced across 2024-placebo and 2025-treatment cells before computing the ATT. This balance is approximate but not exact under calendar-matched windows (day-of-week drifts $\approx 1$ position across years; DST boundaries differ by a day). The OLS-FE estimand is the unconditional uniform-weight DDD; the DR-DiD estimand is the conditional ATT under conditional PT. We report both. The DR-DiD is the preferred headline only insofar as conditional PT given $(\text{dow}, \text{month})$ is the assumption we are willing to maintain --- a discussion of covariate adequacy is below.
+
+\textit{Reading the four price cells.}
+DA15: both DA and IDA Session~1 spreads compress by $\approx 5.4$ EUR/MWh after MTU15-DA. Same direction, near-identical magnitude across markets ($-5.38$, $-5.36$). The IDA-cell is a clean spillover because MTU15-IDA is held constant within the DA15 window in both years. IDA15: both spreads widen ($+6.3$ DA, $+9.4$ IDA), again same direction across markets, with the directly-affected IDA larger. Hour-class decomposition: in DA15, critical and flat both fall ($-3$ to $-10$ EUR/MWh) with critical falling more; in IDA15, both fall sharply ($-25$ to $-35$, post-MTU15-IDA is structurally cheaper) with flat falling more. The DDD identifies the differential of these moves, not the absolute response of critical hours. Same-direction-within-window rules out a market-specific artefact; cross-window asymmetry (DA15 compresses, IDA15 widens) is a property of the reforms, not of the markets being measured.
+
+\textit{Mechanism reading (pending joint $q_1$/$q_2$ check).}
+The price DDDs are consistent with two compositional stories that we cannot separate from prices alone: (a) MTU15-DA opens 4$\times$ finer critical-hour quarter-slots that non-pivotal generators (renewables, hydro, fast-ramp gas) fill while pivotal firms reduce DA participation, compressing the spread; (b) MTU15-IDA reshapes IDA bidding so that the post-reform IDA market is structurally different in ways the DDD only captures via spread widening. The firm-level $q_1$/$q_2$ regressions below are the test that pins down which compositional story is consistent with the data.
+
+\emph{Follow-ups flagged in priority order}: (a) BA-with-controls comparison to quantify how much of the apparent reform effect the DDD absorbs as seasonal; (b) closest-to-delivery IDA price (in place of Session 1) as a robustness for the IDA-spillover cell, given the June 2024 IDA reform redefined Session 1; (c) augmented DR-DiD covariate set with ENTSO-E wind+solar generation and TTF gas as exogenous structural cost shifters; (d) propensity-score overlap diagnostic to confirm DR-DiD weights are not extreme; (e) event-study with multiplier-bootstrap simultaneous CI.
+
+\input{../paper/tables/reform_window/tab_ddd_da15_da.tex}
+\input{../paper/tables/reform_window/tab_ddd_da15_ida.tex}
+\input{../paper/tables/reform_window/tab_ddd_ida15_da.tex}
+\input{../paper/tables/reform_window/tab_ddd_ida15_ida.tex}
+\input{../paper/tables/reform_window/tab_csdid_da15_da.tex}
+\input{../paper/tables/reform_window/tab_csdid_da15_ida.tex}
+\input{../paper/tables/reform_window/tab_csdid_ida15_da.tex}
+\input{../paper/tables/reform_window/tab_csdid_ida15_ida.tex}
+
+\paragraph{IDA-price robustness: closest-to-delivery session.}
+The IDA-cell DDDs in Table~\ref{tab:reform_ddd_summary} use Session 1 price throughout. Session 1's clearing horizon was redefined at the SIDC reform of June 2024 (MIBEL 6-session $\to$ SIDC 3-session, per the project's Spanish-market reference \S IDA): under MIBEL Session 1 closed at 14:00 D$-$1 and targeted all 24 hours of D; under SIDC it covers all 96 ISP15 periods of D. Both target the same horizon nominally, but liquidity, participants, and the SIDC coupling regime differ in ways the within-window pre/post differencing cannot absorb when the placebo year is MIBEL and the treatment year is SIDC. As a robustness, we re-estimate the IDA-cell DR-DiD using the \emph{closest-to-delivery} session price per (date, period) --- the row with the maximum \code{session_number}, which under SIDC is IDA-3 for afternoons and IDA-2 for mornings, and under MIBEL is Session 4--6 for D-day afternoons and Session 3 for mornings. This is MTU- and session-count-invariant by construction. Results in Table~\ref{tab:csdid_ida_latest_compare}:
+
+\input{../paper/tables/reform_window/tab_csdid_ida_latest_compare.tex}
+
+The DA15-IDA "spillover" cell --- baseline DDD of $-5.36$ EUR/MWh (significant) --- effectively disappears under the robustness ($+1.21$, $p=0.60$). The IDA15-IDA "direct" cell shrinks from $+9.43^{***}$ to $+6.26$ ($p=0.064$), losing conventional significance. \textbf{The two IDA-side DDD numbers in the headline table are partly artefacts of the Session 1 choice}: the DA15 spillover is not robust at all, and the IDA15 direct effect is robust in direction and order of magnitude but loses statistical significance. The DA-side cells of the headline table (DA15-DA and IDA15-DA) are unaffected by this robustness (no session choice in the DA market). We will treat the IDA-side numbers in the headline as upper bounds on the true DDD until the wild-cluster-bootstrap and closest-to-delivery results converge.
+
+\paragraph{Propensity-score overlap diagnostic.}
+The DR-DiD propensity score $\hat p(X) = \Pr(\text{y25} = 1 \mid \text{i.dow}, \text{i.month})$ is estimated by logit on each (window, market) spread panel; weights blow up if $\hat p(X)$ clusters near 0 or 1. Across all four cells, $\hat p(X)$ ranges $[0.38, 0.54]$ (DA15-IDA) to $[0.49, 0.51]$ (DA15-DA), with median $\approx 0.50$ in every cell and 0\% of observations below 0.10 or above 0.90. Calendar-matched windows deliver essentially balanced treatment assignment in (dow, month) cells by design, so the IPW weights are not extreme and the DR-DiD inference is not driven by propensity-score tail behaviour. Per-cell overlap histograms are produced as working figures.
+% Histograms: figures/working/fig_overlap_{window}_{market}.pdf.
+
+\paragraph{Headline DDD estimates: firm-level outcomes ($q_1$, $q_2$).}
+Outcomes at the firm level: $q_1$ = DA-cleared MWh per (firm, unit, date, clock-hour) from OMIE \code{pdbc}, $q_2$ = signed intraday programmed MWh from \code{pibci}, both zero-filled for offline cells. CCGT-only sample: 42 pivotal Big-4 units (IB, GE, GN, HC, EDP-PT) and 8 non-pivotal units (Repsol, Engie, TotalEnergies, Moeve); untagged firms dropped. We report the pooled DDD ($\beta_7$) and the pivotal-status heterogeneity contrast $\delta_{\text{piv}} = \widehat{\text{DDD}}_{\text{pivotal}} - \widehat{\text{DDD}}_{\text{non-pivotal}}$ (per the framing above; this is what we previously over-labelled $\beta_{1234}$). All specs include firm + unit + clock-hour + DOW fixed effects. Full per-cell tables: Tables~\ref{tab:reform_ddd_firm_q1_da15}--\ref{tab:reform_ddd_firm_q2_ida15}.
+
+\begin{table}[H]
+\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Pooled DDD ($\beta_7$) and pivotal-status heterogeneity contrast ($\delta_{\text{piv}}$) on firm-level $q_1$ and $q_2$, MWh per unit-hour. $\delta_{\text{piv}} > 0$ means pivotal firms' DDD effect is \emph{larger} (in algebraic terms) than non-pivotal firms'. SE clustered at date (pooled) and at firm (decomposed; $G \approx 9$, asymptotic SE may under-cover, wild-cluster bootstrap recommended). Standard errors in parentheses. Stars: $^{*}~0.10,~^{**}~0.05,~^{***}~0.01$.}
+\label{tab:reform_firm_summary}
+\begin{tabular}{llcc|cc}
+\toprule
+& & \multicolumn{2}{c}{Pooled DDD ($\beta_7$)} & \multicolumn{2}{c}{$\delta_{\text{piv}}$ (heterogeneity)} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Outcome & Window & $\beta_7$ & SE & $\delta_{\text{piv}}$ & SE \\
+\midrule
+$q_1$ & DA15  & $-16.27^{***}$ & (2.69) & $-18.65^{**}$  & (7.35) \\
+$q_1$ & IDA15 & $-9.96^{***}$  & (3.10) & $-4.01$        & (6.55) \\
+$q_2$ & DA15  & $-1.27^{**}$   & (0.64) & $+18.78$       & (15.82) \\
+$q_2$ & IDA15 & $-1.70^{**}$   & (0.85) & $+11.10$       & (10.81) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textit{Joint $(q_1, q_2)$ reading.}
+Locating each window's pooled $\beta_7$ on the Table~\ref{tab:reform_outcomes} sign-matrix: DA15 lands in $(\beta(q_1) < 0,\,\beta(q_2) < 0)$ and IDA15 lands in the same quadrant. Both reforms produce \textbf{broader disengagement}, not Ito--Reguant withholding (which would require $\beta(q_2) > 0$): dispatchable CCGT firms reduce both DA-cleared volume and intraday programmed volume. The natural reading is that the relevant outside option for these units is not the IDA leg but REE's post-clearing redispatch (RT2 pay-as-bid; characterised in the descriptive companion, Part B). This is a substantively different story from the classical Ito--Reguant signature.
+
+\textit{Pivotal-status heterogeneity reading.}
+(i) For $q_1$ in the DA15 window the pooled DDD effect is sharply concentrated in pivotal firms: $\delta_{\text{piv}} = -18.65$ MWh/unit-hour, with the pooled $\beta_7$ ($-16.27$) entirely absorbed by the heterogeneity contrast. Non-pivotal firms in this window show no measurable change. (ii) For $q_1$ in the IDA15 window the pooled effect is significant ($-9.96$) but $\delta_{\text{piv}}$ is small and non-significant: the IDA reform pulled all CCGT firms in the same direction, no market-power moderation. (iii) For $q_2$, $\delta_{\text{piv}}$ has wide SEs and is not identifiable in either window. (iv) These contrasts identify heterogeneity \emph{in the DDD effect}, not the absolute effect on pivotal firms --- they tell us where the reform's response is concentrated, not whether the response is "strategic" in a structural sense.
+
+\textit{Tension with the older 2-way DiD in \code{paper.tex}.}
+The appendix in \code{paper.tex} (commented-out main table) reports a 2-way DiD (no 2024 placebo) on $q_2$ in pivotal vs non-pivotal subsamples with \emph{opposite signs} (+3.87 pivotal vs $-$4.74 non-pivotal, both highly significant). Our DDD on the same outcome shows both subsamples moving in the \emph{same} direction (both negative). The sign reversal in the older 2-way DiD was driven by the seasonality that the 2024 placebo here absorbs. Reconciling: once we net out YoY seasonality, the pivotal-vs-non-pivotal contrast in $q_2$ is wide-SE and uninformative --- the headline pattern in the appendix was partly seasonal.
+
+\textit{Caveats.}
+(a) Firm-cluster $G \approx 9$ is small; asymptotic SE may under-cover. Wild-cluster bootstrap (\code{boottest}) is a planned robustness. (b) Pivotal/non-pivotal partition treats all 5 Big-4 firms as identical and all 4 placebo firms as identical; firm-by-firm decomposition is a natural next step (Moeve has a documented pre-trend break in the main paper that may pull the non-pivotal subsample). (c) The 2024 placebo for the DA15 $q_1$ panel includes 6 weeks (Apr 28 -- Jun 13, 2024) before the June 14, 2024 IDA reform changed sessions $6 \to 3$. Robustness fix: use closest-to-delivery IDA price (MTU- and session-count-invariant) instead of Session 1 for the IDA-spillover regressions.
+
+\input{../paper/tables/reform_window/tab_ddd_firm_q1_da15.tex}
+\input{../paper/tables/reform_window/tab_ddd_firm_q1_ida15.tex}
+\input{../paper/tables/reform_window/tab_ddd_firm_q2_da15.tex}
+\input{../paper/tables/reform_window/tab_ddd_firm_q2_ida15.tex}
+
+\paragraph{Granularity strategy.}
+The cross-reform DDD runs on disaggregated period-level data, not on hourly aggregates. Pre-MTU15 the period is a 60-minute slot (1 obs / hour); post-MTU15 the period is a 15-minute slot (4 obs / hour). Both are valid observations of the unit's strategic choice within the relevant clock-hour, so we stack them in the same regression and let the FE structure absorb the time-aggregation difference. The \code{crit}, \code{post}, \code{y25} indicators are defined at the clock-hour level and replicate across the 4 quarters in the post-period. This gives $4\times$ the observations per hour post-reform, yielding tighter SE; SE are clustered at the date level to preserve correct inference under within-day dependence.
+
+The within-hour quarter index is not used as a treatment-defining variable: ex ante there is no reason firms should bid more aggressively in a particular within-hour quarter regardless of clock-hour (e.g., they do not systematically bid less aggressively in the first quarter of every hour). The granularity is exploited as residual heterogeneity that the FE absorb, not as a treatment dimension. Post-reform cross-section descriptive use of the 15-min data (the $D_w$, $\Delta p$, $\Delta q$ histograms in the descriptive companion) is a separate complementary exercise.
+
+\paragraph{Supporting evidence elsewhere in the project.}
+See the descriptive-facts sibling document for: (i) RT2 channel characterisation (Part B: REE post-clearing CCGT inclusion, Path A: $+1\,044$ GWh/mo CCGT post-blackout); (ii) zonal concentration (Part B: GN-dominated Cataluña/Levante/Sur, GE-Galicia, IB-Centro); (iii) GN's 840 EUR/MWh bid plateau invariant across regime (Part B: DA bid prices on RT2-up days); (iv) CNMC 2019 sanction (Part B: Cournot reading + CNMC); (v) $q_1$ collapse same-cal-month CCGT-only with parallel-trends on the post-clearing gap (Part A: $q_1$ drop).
+
+% \paragraph{Source data.}
+% \code{scripts/analysis/firm/reform_windows_timeline.py} (timeline);
+% \code{scripts/analysis/firm/reform_window_event_study.py} (reduced-form event-study panel and figure);
+% \code{scripts/stata/reform_window/} (headline DDD + DR-DiD robustness pipeline);
+% panels at \code{results/regressions/firm/reform_window/panels/}; coefficients at \code{results/regressions/firm/reform_window/coefs/}; LaTeX tables at \code{thesis/paper/tables/reform_window/}.
+
+\end{document}
