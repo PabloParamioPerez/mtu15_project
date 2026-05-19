@@ -118,16 +118,16 @@ EUPHEMIA & Day-ahead pan-European auction algorithm (clears DA market). \\
 \label{tab:calendar_coverage}
 \setlength{\tabcolsep}{4pt}
 \scriptsize
-\begin{tabular}{l l l c c p{4.5cm}}
+\begin{tabular}{@{}p{2.4cm} p{2.6cm} p{2.1cm} r c p{4.4cm}@{}}
 \toprule
-Regime & Calendar dates & Months covered & Days & Reforzada? & Same-calendar pre-IDA placebo \\
+\textbf{Regime} & \textbf{Calendar dates} & \textbf{Months covered} & \textbf{Days} & \textbf{Reforzada?} & \textbf{Same-calendar pre-IDA placebo} \\
 \midrule
-\textbf{pre-IDA}             & $\le$ 2024-06-13       & all 12, multi-year     & --   & no  & N/A (is the baseline) \\
+\textbf{pre-IDA}             & $\le$ 2024-06-13         & all 12, multi-year     & --   & no  & N/A (is the baseline) \\
 \textbf{3-sess}              & 2024-06-14 -- 2024-11-30 & Jun--Nov               & 170  & no  & Clean (Jun--Nov 2018--2023) \\
-\textbf{ISP15-win}           & 2024-12-01 -- 2025-03-18 & Dec, Jan, Feb, Mar     & 108  & no  & Clean (Dec--Mar, 2018--2024) \\
-\textbf{MTU15-IDA pre-blk}   & 2025-03-19 -- 2025-04-27 & late Mar -- Apr        & 40   & no  & Clean (same 40 days, 2018--2024) \\
-\textbf{MTU15-IDA post-blk}  & 2025-04-28 -- 2025-09-30 & May -- Sep             & 156  & \textbf{yes} & Possible for granularity alone (May--Sep 2018--2023, pre-IDA), but NOT for reforzada (no pre-2025-04-28 reforzada in data) \\
-\textbf{DA15/ID15}           & 2025-10-01 -- present    & Oct, Nov, Dec, Jan, Feb, Mar, Apr, May (partial) & 220+ & \textbf{yes} & None clean. Calendar comparators in 2024-25 are themselves post-MTU15-IDA or ISP15-win regimes. \\
+\textbf{ISP15-win}           & 2024-12-01 -- 2025-03-18 & Dec--Mar               & 108  & no  & Clean (Dec--Mar 2018--2024) \\
+\textbf{MTU15-IDA pre-blk}   & 2025-03-19 -- 2025-04-27 & late Mar -- Apr        & 40   & no  & Clean (same 40 days 2018--2024) \\
+\textbf{MTU15-IDA post-blk}  & 2025-04-28 -- 2025-09-30 & May -- Sep             & 156  & \textbf{yes} & Clean for granularity (May--Sep 2018--2023, pre-IDA); none for reforzada (no pre-2025-04-28 reforzada in data) \\
+\textbf{DA15/ID15}           & 2025-10-01 -- present    & Oct--May (partial, ongoing) & 220+ & \textbf{yes} & None clean. 2024--25 same-calendar comparators are themselves a mix of post-MTU15-IDA + ISP15-win regimes \\
 \bottomrule
 \end{tabular}
 \end{table}
