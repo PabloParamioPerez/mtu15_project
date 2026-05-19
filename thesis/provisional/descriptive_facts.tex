@@ -1340,6 +1340,58 @@ scarcity rebalance); small tilt $=$ uniform level shift.
 
 \paragraph{What the per-firm exercise adds.} The per-firm decomposition delivers three things the per-tech basis cannot: (i) a per-firm bidding fingerprint --- IB's level-only PC1 vs hydro firms' multi-modal PCs --- which is itself a primitive of the firm-strategy description; (ii) two clean cross-firm comparable scalars per (firm, reform), the level shift and tilt magnitude on the curve domain; (iii) firm-level dropouts (CCGT GE) that flag firms whose strategy is entirely outside the in-band region. The per-tech results above remain the right tool for comparisons that need a common axis across firms.
 
+% =====================================================================
+\paragraph{Per-(tech, firm, hour-class) basis: max granularity after fSA.}\label{sec:prov:fpca_nearmcp_perfirmhour}
+% =====================================================================
+%
+A further refinement: fit fPCA separately per \emph{(tech, firm, hour-class)} on the same functionally-deseasonalised near-MCP curves. Each (firm $\times$ hour-class) cell gets its own eigen-basis, so we no longer pool critical, flat, and midday bidding shapes. With the per-firm bases above, IB-CCGT was a $96\%$-PC1 level bidder \emph{on average across hour-classes}; the per-(firm, hour-class) basis lets us see whether IB-CCGT is equally level-only in critical, flat, and midday hours separately. The reform shift within each cell is summarised by the same level/tilt scalars as above.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{Per-(firm, hour-class) near-MCP SA fPCA: own-basis EVR per cell.} Each row is one (tech, firm, hour-class) with its own PCA basis; PC$_k$ shares are not comparable across rows. ``$n$'' is the number of SA cells used to fit the basis (min 1{,}000 imposed). Empty hour-class rows indicate insufficient in-band cells.}
+\label{tab:fpca_nearmcp_perfirmhour_evr}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_firm_hour_evr.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{ISP15 near-MCP shifts per (firm, hour-class), MCP-centred EUR/MWh.} \emph{Level} = mean over band quantiles of the fitted curve shift; positive = bid up. \emph{Tilt} = within-band spread. Bases are firm-and-hour-class specific.}
+\label{tab:fpca_nearmcp_perfirmhour_isp15}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_firm_hour_ISP15.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{MTU15-IDA near-MCP shifts per (firm, hour-class), MCP-centred EUR/MWh.}}
+\label{tab:fpca_nearmcp_perfirmhour_mtu15ida}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_firm_hour_MTU15-IDA.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{MTU15-DA near-MCP shifts per (firm, hour-class), MCP-centred EUR/MWh.}}
+\label{tab:fpca_nearmcp_perfirmhour_mtu15da}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_firm_hour_MTU15-DA.tex}
+\end{table}
+
+\paragraph{Reading the per-(firm, hour-class) evidence.} The cell-by-cell decomposition reveals patterns the firm-level aggregation cannot:
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{ISP15: a clear critical-vs-flat sign-flip across firms.} For CCGT GN ($-15.6$ critical / $+6.2$ flat), CCGT HC ($-7.5$ / $+4.5$), Hydro IB ($-3.1$ / $+13.5$), Hydro\_pump IB ($-8.8$ / $+11.4$), Hydro\_pump REP ($-7.6$ / $+13.3$): the same firm bids \emph{down} in critical hours and \emph{up} in flat hours under ISP15. This pattern is consistent with the ISP15 settlement-discipline reading being asymmetric across hour-classes: tightening the imbalance penalty pushes firms to bid more aggressively when residual demand is variable (critical) but allows them to widen markups in low-variance flat hours where over-commitment is cheap.
+\item \textbf{ISP15: midday largely follows critical, except for HC-Hydro.} For CCGT GN, IB, OTH and Hydro\_pump REP, midday level shifts are close to critical (e.g. CCGT GN $-15.2$ midday vs $-15.6$ critical). HC-Hydro is the exception: $-3.5$ critical, $+1.5$ midday, $+4.4$ flat --- a graded pattern with positive shifts in low-residual-demand hours.
+\item \textbf{MTU15-DA: CCGT IB and HC bid up in critical, down in flat and midday.} IB-CCGT: $+8.7$ critical, $-14.2$ flat, $-15.0$ midday. HC-CCGT: $+4.1$ critical, $-10.8$ flat, $-14.1$ midday. The MTU15-DA effect on these two firms is hour-class-divergent in opposite directions --- they raise the in-band level in price-setting hours and lower it in inframarginal hours. The per-firm aggregate $+7.9$ (IB) and $+3.5$ (HC) average across the divergent components and lose the hour-class structure.
+\item \textbf{MTU15-DA: Hydro\_pump IB up uniformly ($+14.6, +14.5, +8.9$); Hydro\_pump REP down uniformly ($-2.3, -18.3, -17.3$).} Pumped storage shows no hour-class divergence: each firm picks one direction and applies it across the day. IB shifts every hour-class up; REP shifts flat and midday down by 18 EUR/MWh.
+\item \textbf{MTU15-DA: GN-CCGT reverses the IB/HC pattern.} GN: $-2.3$ critical, $+2.6$ flat, $+5.6$ midday --- the opposite hour-class profile. GN's Naturgy is bidding down in the price-setting hours and up in the inframarginal ones, where IB/HC do the reverse.
+\item \textbf{MTU15-IDA: Hydro GE midday $+28.3$ is the largest single-cell shift.} Endesa's hydro in midday hours moves up by 28 EUR/MWh on average with tilt $8.0$. Critical for the same firm is also large ($+17.3$, tilt $6.8$). The reform reshaped Endesa's hydro in-band bidding sharply, and disproportionately in midday hours.
+\item \textbf{MTU15-IDA: Hydro REP critical and midday share a tilt $\sim 10$.} Repsol's hydro shows level shifts of $-10.7$ critical and $-8.4$ midday with tilt $\sim 10$ in both --- the bid stack reshape is large in both hour-classes, not just one.
+\item \textbf{Per-cell EVRs reveal further bidding fingerprints.} IB-CCGT in flat hours has PC1 $= 0.99$ (essentially single-mode); Hydro REP-critical has PC1 only $0.69$ with PC2 $0.14$ and PC3 $0.06$ --- the most multi-modal cell in the table. The bidding-shape primitive ``how many distinct modes does this firm-hour-class bid stack have'' is itself heterogeneous across firms and hour-classes.
+\end{itemize}
+
+\paragraph{What this final layer of granularity adds.} The (tech, firm, hour-class) cell view picks out two new patterns: (a) ISP15's hour-class-asymmetric reading --- the settlement-discipline shift goes opposite directions in critical vs flat hours, which the firm-level aggregate averages out; (b) MTU15-DA's CCGT IB/HC critical-up but flat-midday-down divergence, the inverse of GN's pattern. Aggregating to the firm level (Tables~\ref{tab:fpca_nearmcp_perfirm_isp15}--\ref{tab:fpca_nearmcp_perfirm_mtu15da}) collapses these and reports a single direction per firm; the hour-class layer is required to see them.
+
 % Implementation: scripts/analysis/bid/fpca_per_tech.py (fPCA per tech)
 % scripts/analysis/bid/fpca_pairwise_regressions.py (pairwise with Fourier seasonal control)
 % scripts/analysis/bid/fpca_functional_sa.py (functional pre-deseasonalisation of curves)
