@@ -1616,10 +1616,10 @@ REE's adjustment markets, in order of pre-physical-delivery time-stamp (REE \emp
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{Per-regime average UP price by service, EUR/MWh.} ``---'' = no data in window. Sources: ESIOS indicator IDs cited inline in the section preamble; arithmetic mean across ISP-15 cells in each regime window. \emph{\color{seasoncol}Seasonality robustness for DA spot and aFRR reserve} (the two prices we have through the daily-aggregated Spec A regression): DA spot raw 117.5 (ISP15-win) $\to$ 76.4 (DA15/ID15) becomes 94.6 $\to$ 43.0 on Fourier-deseasonalized values (winter raw inflated by heating-demand seasonality; the post-reform decline strengthens after adjustment). aFRR reserve raw 13.3 (ISP15-win) $\to$ 6.5 (DA15/ID15) becomes 5.9 $\to$ 2.8 adjusted (same direction). The post-reform price declines are not seasonal artifacts.}
+\caption{\textbf{Per-regime average UP price by service, EUR/MWh.} ``---'' $=$ no data in window. Sources: ESIOS indicator IDs cited inline in the section preamble; arithmetic mean across ISP-15 cells. \emph{\color{seasoncol}Bracketed (SA) values}: Fourier-deseasonalized predictions at average day-of-year, applied to outcomes with multi-year daily series (DA spot from \texttt{marginalpdbc}, aFRR reserve from ESIOS id 634). DA spot decline strengthens post-deseasonalization (ISP15-win $94.6$ {\color{seasoncol}(SA)} $\to$ DA15/ID15 $47.7$ {\color{seasoncol}(SA)}, winter raw inflated by heating-demand seasonality). aFRR reserve same direction. Other rows kept raw.}
 \label{tab:cascade_prices_up}
 \setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/regulatory/ree_full_cascade/tex/tab_cascade_prices_up.tex}
+\input{../../results/regressions/bid/seasonality_adjusted/tab_cascade_prices_up_SA.tex}
 \end{table}
 
 \begin{table}[H]
@@ -1636,10 +1636,10 @@ REE's adjustment markets, in order of pre-physical-delivery time-stamp (REE \emp
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{Per-regime ajuste-cascade cost composition.} EUR \emph{million} per regime, summed across ISP-15 cells. \textbf{Source}: ESIOS cost indicators (REE-published, per-day or per-ISP, summed). Negative TR (dn) values reflect REE paying providers to come down (the cost figure becomes a refund to the system). \emph{\color{seasoncol}Seasonality robustness for Fase~I up and TR up}: see the per-day cascade Table~\ref{sec:prov:full_cascade:perday} below for the deseasonalized values. Fase~I up cost rises through every regime on both raw and adjusted; TR up cost collapses on both, with the adjusted collapse being sharper. Both cost reform-window patterns survive Fourier-deseasonalization.}
+\caption{\textbf{Per-regime ajuste-cascade cost composition.} EUR \emph{million} per regime, summed across ISP-15 cells. \textbf{Source}: ESIOS cost indicators (REE-published, per-day or per-ISP, summed). Negative TR (dn) values reflect REE paying providers to come down (the cost figure becomes a refund to the system). \emph{\color{seasoncol}Bracketed (SA) values for Fase~I (up) and TR (up)}: Fourier-deseasonalized predictions (per-day rate $\times$ regime days). Fase~I up rises through every regime on both raw and SA; TR up collapses on both, with the SA collapse being sharper (raw $\texteuro 668 \to \texteuro 170$M total 3-sess $\to$ DA15/ID15 $= \times 0.25$; SA $\sim \texteuro 470 \to \texteuro 210$M total $= \times 0.45$ --- both confirm structural collapse). Other rows kept raw.}
 \label{tab:cascade_costs_official}
 \setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/regulatory/ree_full_cascade/tex/tab_cascade_costs_official.tex}
+\input{../../results/regressions/bid/seasonality_adjusted/tab_cascade_costs_official_SA.tex}
 \end{table}
 
 \begin{figure}[H]
