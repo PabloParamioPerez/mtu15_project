@@ -1036,12 +1036,12 @@ Cogen & 0.62 & 0.19 & 0.12 & 0.03 & 0.02 & 0.97 \\
 \end{tabular}
 \end{center}
 
-\paragraph{Eigenfunctions, CCGT.}
+\paragraph{Eigenfunctions, CCGT (functional-SA basis).}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../../figures/working/fpca_eigenfuncs_CCGT.pdf}
-\caption{\textbf{CCGT bid-curve fPCA basis.} Left: mean $S^{-1}(q)$ across all CCGT (unit, date, period) cells. The familiar L-shape: most of the curve hugs low-to-moderate prices, then a sharp scarcity tail. Right: first 3 eigenfunctions. \textbf{PC1} is essentially a uniform shift across all quantiles (level effect). \textbf{PC2} is a high-low region trade-off: positive at low quantiles, negative at high (or vice versa), capturing the relative weight of cheap vs scarcity-priced bid mass. \textbf{PC3} is finer shape variation around the scarcity-mid transition.}
+\includegraphics[width=0.95\textwidth]{../../figures/working/fpca_eigenfuncs_CCGT_sa.pdf}
+\caption{\textbf{CCGT functional-SA bid-curve fPCA basis.} Left: mean $S^{-1}(q)$ across all CCGT (unit, date, period) deseasonalised cells. The familiar L-shape persists --- functional SA strips the seasonal cycle but preserves the within-tech bid-stack geometry. Right: first 3 eigenfunctions. \textbf{PC1} is essentially a uniform shift across all quantiles (level effect; 86\% of curve variance). \textbf{PC2} is a high-low region trade-off (8\%, cheap vs scarcity tilt). \textbf{PC3} (3\%) is finer shape variation around the scarcity-mid transition. Raw-pipeline eigenfunctions are visually indistinguishable; the seasonal cycle was a small share of total curve variance even though it was material in EUR/MWh for individual reform-pairwise coefficients.}
 \end{figure}
 
 \paragraph{Score regression: pairwise reform-window design.} Rather than pool all regimes against a single reference, we isolate each reform by restricting the sample to its \textbf{immediate before/after windows}:
@@ -1092,12 +1092,12 @@ where $X_i$ collects calendar-month FE, hour-of-day FE, and within-hour quarter 
 \input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_MTU15-DA_sa.tex}
 \end{table}
 
-\paragraph{Fitted curve shifts under each reform.} The figure below shows the full $\sum_k \beta_k \phi_k(q)$ curve shift per (reform, hour-class) for CCGT (firm: GN — the largest CCGT operator). One figure per tech is on disk; representative tech shown here:
+\paragraph{Fitted curve shifts under each reform.} The figure below shows the full $\sum_k \beta_k \phi_k(q)$ curve shift per (reform, hour-class) for CCGT (firm: GN — the largest CCGT operator), using the functional-SA pipeline. One figure per tech is on disk (suffix \_sa). Because the full projection sums PC1--PC5, it captures the cheap-vs-scarcity tilt (PC2) and scarcity-tail shape (PC3) that PC1 alone misses --- see the PC2/PC3 tables and reading above.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../../figures/working/fpca_pairwise_curve_CCGT.pdf}
-\caption{\textbf{CCGT pairwise reform-window fitted bid-curve shifts (firm: GN).} Each row $=$ a reform; each column $=$ hour-class. The fitted shift is $\sum_k \beta_k \phi_k(q)$ where $\beta_k$ is the pairwise reform coefficient on PC$_k$. Positive ordinate $=$ bid curve shifts up under the reform.}
+\includegraphics[width=0.95\textwidth]{../../figures/working/fpca_pairwise_curve_CCGT_sa.pdf}
+\caption{\textbf{CCGT pairwise reform-window fitted bid-curve shifts on functionally-deseasonalised curves (firm: GN).} Each row $=$ a reform; each column $=$ hour-class. The fitted shift is $\sum_k \beta_k \phi_k(q)$ where $\beta_k$ is the pairwise reform coefficient on the SA PC$_k$. Positive ordinate $=$ bid curve shifts up under the reform.}
 \end{figure}
 
 \paragraph{Reading the pairwise reform evidence (on functionally-SA curves).} The tables run on the deseasonalised supply curves $f_i^{\text{SA}}$, so PC1 captures shape variation orthogonal to the within-year calendar cycle. Compared to a naive PCA on raw curves (which mixes the seasonal cycle into PC1), several headline coefficients flip sign or change magnitude substantially --- the raw reading was contaminated by seasonality.
