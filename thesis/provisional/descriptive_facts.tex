@@ -1160,29 +1160,32 @@ where $X_i$ collects calendar-month FE, hour-of-day FE, and within-hour quarter 
 
 \paragraph{Per-unit basis: maximum granularity.} A per-tech near-MCP fPCA separates in-band repositioning from scarcity-tail behaviour; firm- and firm-hour-aggregates hide within-firm-fleet heterogeneity (e.g., GN runs $\sim 10$ CCGT units in different zones with different bid postures, IB runs many hydro plants across river systems with idiosyncratic reservoir constraints). We push to the most granular level the data supports: fit a separate PCA basis \emph{per unit} on the functionally-deseasonalised near-MCP curves, then within each unit run a pairwise score regression per (reform, hour-class). The reform shift inside each (unit, reform, hour-class) cell is summarised by \emph{Level shift} $=\langle \Delta f\rangle$ (mean over band quantiles, MCP-centred EUR/MWh; positive = bid up) and \emph{Tilt magnitude} $=\operatorname{std}_q(\Delta f)$ (within-band spread). 67 units survive the $\ge 500$-cell threshold. Per-unit EVR data is on disk under \texttt{results/regressions/bid/fpca/per\_unit/}.
 
-\begin{table}[H]
-\centering\tiny
-\caption{\textbf{ISP15 near-MCP shifts per (unit, hour-class), MCP-centred EUR/MWh.} \emph{Level} = mean over band quantiles of the fitted curve shift; positive = bid up. \emph{Tilt} = within-band spread. ``---'' = insufficient cells in the pre$+$post window for that (unit, hour-class).}
-\label{tab:fpca_nearmcp_perunit_isp15}
-\setlength{\tabcolsep}{3pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_unit_ISP15.tex}
-\end{table}
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/fpca_per_unit_3d_CCGT.pdf}
+\caption{\textbf{CCGT --- per-unit near-MCP fPCA Level shift and Tilt magnitude, by reform and hour-class.} Substitutes the per-(unit, hour-class) tables (3 reforms $\times$ 67 units made for an unreadable wall of numbers). Six panels: rows are hour-classes (Critical / Flat / Midday); columns are the two scalar summaries. Each panel stacks 3 reform ridges along the $y$-axis; each ridge is a KDE of the per-unit scalar across the units in this tech. Rugs along the bottom show actual unit values. \emph{Level} = $\langle \Delta f \rangle$, mean over band quantiles of the fitted curve shift; \emph{Tilt} = $\operatorname{std}_q(\Delta f)$, within-band spread. Per-unit EVR detail on disk (\texttt{results/regressions/bid/fpca/per\_unit/}).}
+\label{fig:fpca_per_unit_3d_ccgt}
+\end{figure}
+\end{landscape}
 
-\begin{table}[H]
-\centering\tiny
-\caption{\textbf{MTU15-IDA near-MCP shifts per (unit, hour-class), MCP-centred EUR/MWh.}}
-\label{tab:fpca_nearmcp_perunit_mtu15ida}
-\setlength{\tabcolsep}{3pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_unit_MTU15-IDA.tex}
-\end{table}
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/fpca_per_unit_3d_Hydro.pdf}
+\caption{\textbf{Hydro --- per-unit near-MCP fPCA Level shift and Tilt magnitude, by reform and hour-class.} Companion to Fig.~\ref{fig:fpca_per_unit_3d_ccgt}.}
+\label{fig:fpca_per_unit_3d_hydro}
+\end{figure}
+\end{landscape}
 
-\begin{table}[H]
-\centering\tiny
-\caption{\textbf{MTU15-DA near-MCP shifts per (unit, hour-class), MCP-centred EUR/MWh.}}
-\label{tab:fpca_nearmcp_perunit_mtu15da}
-\setlength{\tabcolsep}{3pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_unit_MTU15-DA.tex}
-\end{table}
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/fpca_per_unit_3d_Hydro_pump.pdf}
+\caption{\textbf{Hydro pump --- per-unit near-MCP fPCA Level shift and Tilt magnitude, by reform and hour-class.} Sparse with only 5 units; the rugs are most informative. Companion to Fig.~\ref{fig:fpca_per_unit_3d_ccgt}.}
+\label{fig:fpca_per_unit_3d_hp}
+\end{figure}
+\end{landscape}
 
 \paragraph{Reading the per-unit evidence.} The per-unit decomposition reveals within-fleet heterogeneity that any firm-level aggregate averages out:
 \begin{itemize}\setlength{\itemsep}{2pt}
@@ -1558,27 +1561,59 @@ Path A is the workhorse measurement throughout this section. Paths B and C provi
 \input{../../results/regressions/regulatory/pdbf_to_phf_alltech/tab_pdbf_to_phf_alltech.tex}
 \end{table}
 
+\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{../../figures/working/post_da_gap_3d_surface.pdf}
-\caption{\textbf{Post-DA gap (PHF$_{\text{last}}$ $-$ PDBC, GWh/day) per (tech, firm) hour-of-day, by regime --- 3D surface.} $x$-axis: hour 0--23; $y$-axis: (tech, firm) row; $z$-axis: regime-mean post-DA gap (red $=$ up, REE adds the unit; blue $=$ down). Reform-window inclusion concentrates in critical hours for CCGT firms; the diurnal profile sharpens from 3-sess to DA15/ID15. Evening peak (18--22) is larger than morning ramp peak for IB/GN/HC CCGT. Heatmap version on disk (\texttt{post\_da\_gap\_diurnal\_heatmap.pdf}).}
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/post_da_gap_3d_hourly_CCGT.pdf}
+\caption{\textbf{CCGT --- {\color{seasoncol}SA} post-DA gap distribution sliced by hour-of-day.} Four panels: hour 03 (flat), hour 07 (morning ramp, critical), hour 13 (midday), hour 19 (evening peak, critical). Each panel is a 3D ridge of the SA daily gap at THAT hour, with 5 regime ridges stacked along the $y$-axis. SA values are the per-cell residual after stripping the per-(firm, tech, hour) Fourier(K=4)+DOW seasonal component on the signed gap (identity link). The reform-window inclusion is concentrated at critical hours (07, 19); flat hour 03 and midday hour 13 show smaller cross-regime shifts. Hydro in Fig.~\ref{fig:post_da_gap_3d_hourly_hydro}, Hydro pump in Fig.~\ref{fig:post_da_gap_3d_hourly_hp}.}
 \label{fig:post_da_gap_diurnal}
 \end{figure}
+\end{landscape}
 
+\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_postdagap_CCGT.pdf}\\[2pt]
-\includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_postdagap_Hydro.pdf}
-\caption{\textbf{Distribution of the {\color{seasoncol}SA} daily post-DA gap, across regimes --- 3D ridge.} Estimated density of SA GWh/day per (firm, tech, date) cell. SA values are the per-cell residual after stripping the per-(firm, tech) Fourier(K=4)+DOW seasonal component on the signed gap (identity link). CCGT (top): the reform-window mass shifts rightward whole-distribution rather than tail-driven once seasonality is removed; the reforzada signature is the whole density translation, not a few extreme days. Hydro (bottom): modest cross-regime shift. Hydro pump panel in Fig.~\ref{fig:post_da_gap_kde_hp}.}
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/post_da_gap_3d_hourly_Hydro.pdf}
+\caption{\textbf{Hydro --- {\color{seasoncol}SA} post-DA gap distribution sliced by hour-of-day.} Companion to Fig.~\ref{fig:post_da_gap_diurnal}. Hydro gaps are smaller in magnitude than CCGT; the cross-regime shift is correspondingly smaller.}
+\label{fig:post_da_gap_3d_hourly_hydro}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/post_da_gap_3d_hourly_Hydro_pump.pdf}
+\caption{\textbf{Hydro pump --- {\color{seasoncol}SA} post-DA gap distribution sliced by hour-of-day.} Companion to Fig.~\ref{fig:post_da_gap_diurnal}.}
+\label{fig:post_da_gap_3d_hourly_hp}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\linewidth, height=0.78\textheight, keepaspectratio]{../../figures/working/distribution_3d_postdagap_CCGT.pdf}
+\caption{\textbf{CCGT --- distribution of the {\color{seasoncol}SA} daily post-DA gap, across regimes.} Estimated density of SA GWh/day per (firm, tech, date) cell. SA values are the per-cell residual after stripping the per-(firm, tech) Fourier(K=4)+DOW seasonal component on the signed gap (identity link). The reform-window mass shifts rightward whole-distribution rather than tail-driven once seasonality is removed; the reforzada signature is the whole density translation, not a few extreme days.}
 \label{fig:post_da_gap_kde}
 \end{figure}
+\end{landscape}
 
+\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_postdagap_Hydro_pump.pdf}
-\caption{\textbf{Hydro pump {\color{seasoncol}SA} post-DA gap distribution, across regimes --- 3D ridge.} Companion to Fig.~\ref{fig:post_da_gap_kde}.}
+\includegraphics[width=0.6\linewidth, height=0.78\textheight, keepaspectratio]{../../figures/working/distribution_3d_postdagap_Hydro.pdf}
+\caption{\textbf{Hydro --- distribution of the {\color{seasoncol}SA} daily post-DA gap, across regimes.} Companion to Fig.~\ref{fig:post_da_gap_kde}. Modest cross-regime shift.}
+\label{fig:post_da_gap_kde_hydro}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\linewidth, height=0.78\textheight, keepaspectratio]{../../figures/working/distribution_3d_postdagap_Hydro_pump.pdf}
+\caption{\textbf{Hydro pump --- {\color{seasoncol}SA} post-DA gap distribution, across regimes.} Companion to Fig.~\ref{fig:post_da_gap_kde}.}
 \label{fig:post_da_gap_kde_hp}
 \end{figure}
+\end{landscape}
 
 \textit{Reading.} (i) Every CCGT firm doubles its post-DA gap; GN gains the most ($+534$ GWh/mo). (ii) The mirror decrease in Wind / Solar / Hydro / Nuclear shows that REE substitutes CCGT for clean tech post-PDBF. (iii) Cross-checking against the system view in Figure~\ref{fig:ree_intervention_full}: the two largest delivered-energy channels in 2024-2026 are the PO 3.2 system-security restrictions (code 61, $\sim$12 TWh each direction) and the catch-all code 81 ($\sim$12 TWh each direction; the latter's exact content is not documented in the project reference and we treat it as not interpretable at the channel level). Among the documented channels, only code 61 is pay-as-bid \emph{and} local-grid binding --- the combination that yields zonal market power. (iv) Figures~\ref{fig:post_da_gap_diurnal} and \ref{fig:post_da_gap_kde} resolve the gap below the hour-class mean: critical hours carry $\sim 3$--$5\times$ the per-day gap of flat or midday for every CCGT firm, and the reform-window density shift is whole-distribution rather than tail-driven.
 
