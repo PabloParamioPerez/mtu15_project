@@ -50,6 +50,9 @@
 
 \noindent\emph{This file collects descriptive facts that any identification design must rest on: how firms bid across hour-classes (critical vs flat), how pivotal and non-pivotal firms differ, how technologies differ, and the regulatory / RT2 / reforzada context in which the reforms operate. Nothing here is an identification claim. The regression outputs from the current reform-window design are in the sibling file \code{thesis/provisional/regression_results.tex}.}
 
+\medskip
+\noindent\emph{\color{seasoncol}A note on seasonality.} Throughout this document, where a table reports a per-regime value, the bracketed {\color{seasoncol}colored} number alongside it is the seasonality-adjusted value: the regime's predicted level at \emph{average day-of-year}, from a Frisch-Waugh-Lovell regression of the outcome on regime dummies plus a $K{=}4$ Fourier basis on day-of-year (Newey-West HAC standard errors), pooled across 2022-2026. Fourier-deseasonalization is the standard approach in the electricity time-series literature (Weron 2014, Janczura-Trück-Weron-Wolff 2013); month/year fixed effects are not identified here given non-overlapping regime windows (\S\ref{sec:bid_internal:calendar_discipline}). \textbf{Where the raw and adjusted values move in the same direction across regimes, the documented patterns survive seasonality control.} Where they diverge (large bracketed-vs-raw gaps), the raw cross-regime reading is mostly a calendar-mix artifact and only the adjusted values are meaningfully comparable across regimes.
+
 \tableofcontents
 
 \clearpage
@@ -820,7 +823,7 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \paragraph{Methodological caveats (read before interpreting).}
 \begin{itemize}
-\item \textbf{Seasonality is NOT controlled here.} The per-month averaging within regime only smooths within-regime month-to-month variation; the cross-regime calendar-month mismatch (3-sess is Jun--Nov, ISP15-win is Dec--Mar, etc.) is \emph{not} absorbed. A clean seasonality control requires either (i) same-calendar-month comparison across regimes or (ii) calendar-month FE plus a smooth seasonal trend (Fourier basis on day-of-year) in a regression. Both options are applied in the fPCA score regressions of \S\ref{sec:prov:fpca}; for the descriptive tables here we keep the unconditional means and flag the limitation.
+\item \textbf{Seasonality is controlled via Fourier-deseasonalized adjusted values in {\color{seasoncol}brackets}.} Each cell of the bid-shape tables (Tables~\ref{tab:bidshape_da}, \ref{tab:bidshape_ida}) shows the raw mean alongside the predicted share at \emph{average day-of-year} from a Frisch-Waugh-Lovell regression: $\text{logit}(\text{share}_t) = \alpha + \sum_r \beta_r \mathbf{1}\{\text{regime}_t = r\} + \sum_{k=1}^{4} \text{Fourier}_k(t) + \varepsilon_t$, fit on the pooled 2022-2026 daily-(tech, hour-class) panel with Newey-West HAC standard errors ($\text{maxlags}{=}14$). Fourier basis on day-of-year is the standard seasonal smoother in the electricity time-series literature (Weron 2014, Janczura-Trück-Weron-Wolff 2013); month FE are not identified given non-overlapping regime windows (\S\ref{sec:bid_internal:calendar_discipline}).
 \item \textbf{Band width $h = 50$ EUR/MWh is a modelling choice.} It matches the kernel band used for $D_w$. A wider band ($h = 100$) captures more of the scarcity-priced CCGT tail; a narrower band ($h = 25$) focuses on the immediately-marginal layer. We report a sensitivity below (Table~\ref{tab:bidshape_da_h_sensitivity}): the qualitative reform-window pattern is robust across $h \in \{25, 50, 100\}$.
 \item \textbf{Per-cell share has a denominator-effect floor for techs with very low total bidding.} Units that submit only a single block of MW pre-priced near MCP will have share $\to 1$ trivially. This affects the absolute level of the share for some tech-firm combinations (e.g., GST wind aggregators with single-block strategies, see \S\ref{sec:prov:pricesetter_da}) but does not invalidate cross-regime comparisons within a given (tech, firm).
 \item \textbf{The fPCA in \S\ref{sec:prov:fpca} is the cleaner version of the same exercise}: it works in quantile space (naturally normalised, monotone-preserving) and runs regressions with seasonal controls. Read the share tables here as a quick orientation; the fPCA is the methodologically tighter complement.
@@ -830,58 +833,43 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{DA bid-shape: share (\%) of unit's offered MW within [MCP$\pm 50$] EUR/MWh, per regime.} Source: \code{tab\_bidshape\_DA\_by\_regime\_normalized.tex}.}
+\caption{\textbf{DA bid-shape per regime: raw share alongside {\color{seasoncol}seasonality-adjusted share}.} Each cell: raw mean share (\%) of unit's offered MW within $[\text{MCP}\pm 50]$ EUR/MWh / {\color{seasoncol}[bracketed adjusted share]}. The bracketed value is the predicted share at \emph{average day-of-year}, from $\text{logit}(\text{share}_t) = \alpha + \sum_r \beta_r \mathbf{1}\{\text{regime}_t = r\} + \sum_{k=1}^{4} \text{Fourier}_k(t) + \varepsilon_t$ fit on the pooled 2022-2026 daily-(tech, hour-class) panel with Newey-West HAC standard errors ($\text{maxlags}{=}14$). Adjustment uses Fourier basis on day-of-year — the standard seasonal smoother in the electricity time-series literature (Weron 2014, Janczura-Trück-Weron-Wolff 2013); see \S\ref{sec:bid_internal:calendar_discipline} for why month FE are not identified given non-overlapping regime windows.}
+% Source: results/regressions/bid/seasonality_adjusted/tab_bidshape_DA_by_regime_deseasonalized.tex
 \label{tab:bidshape_da}
 \setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/bid_shape/tex/tab_bidshape_DA_by_regime_normalized.tex}
+\input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_DA_by_regime_deseasonalized.tex}
 \end{table}
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{IDA bid-shape: same normalised share metric.} Same construction as Table~\ref{tab:bidshape_da}, applied to the IDA bid stack (idet+icab, sessions pooled per ISP). Source: \code{tab\_bidshape\_IDA\_by\_regime\_normalized.tex}.}
+\caption{\textbf{IDA bid-shape per regime: raw share alongside {\color{seasoncol}seasonality-adjusted share}.} Same construction as Table~\ref{tab:bidshape_da}, applied to the IDA bid stack (idet+icab, all sessions pooled per ISP, $\pm 50$ EUR/MWh band around the IDA clearing price).}
+% Source: results/regressions/bid/seasonality_adjusted/tab_bidshape_IDA_by_regime_deseasonalized.tex
 \label{tab:bidshape_ida}
 \setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/bid_shape/tex/tab_bidshape_IDA_by_regime_normalized.tex}
+\input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_IDA_by_regime_deseasonalized.tex}
 \end{table}
 
-\begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{DA bid-shape, all hours: raw share alongside seasonality-adjusted share (in {\color{seasoncol}blue}).} Per (tech, regime) mean share (\%) of MW within $[\text{MCP} \pm 50]$ EUR/MWh. The bracketed value in {\color{seasoncol}blue} is the regime's predicted share at \emph{average day-of-year}, taking the regime coefficient from the seasonality-only Frisch-Waugh-Lovell spec: $\text{logit}(\text{share}_t) = \alpha + \sum_r \beta_r \cdot \mathbf{1}\{\text{regime}_t = r\} + \sum_{k=1}^{4} \text{Fourier}_k(t) + \varepsilon_t$, fit on the pooled 2022-01 to 2026-05 daily-tech panel with Newey-West HAC standard errors ($\text{maxlags}{=}14$). Differences between raw and adjusted indicate the seasonal-mix contribution: regimes spanning peak-seasonal months see large gaps (Wind MTU15-IDA pre-blk: raw 78.1\% vs adjusted 27.3\% --- the 40-day window happens to fall in late-March to April, a high-wind / low-clearing-price stretch). \emph{Methodology note}: Fourier basis on day-of-year is the standard seasonal smoother in the electricity time-series literature (Weron 2014); see \S\ref{sec:bid_internal:calendar_discipline} for why fixed effects do not work given non-overlapping regime windows.}
-% Source: results/regressions/bid/seasonality_adjusted/tab_bidshape_raw_vs_deseasonalized.tex
-\label{tab:bidshape_da_deseasonalized}
-\setlength{\tabcolsep}{5pt}
-\input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_raw_vs_deseasonalized.tex}
-\end{table}
+\paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing Tables~\ref{tab:bidshape_da} (DA) and \ref{tab:bidshape_ida} (IDA): for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $44.0\%$ raw / {\color{seasoncol}40.9\% adjusted} vs IDA $77.4\%$ raw / {\color{seasoncol}79.6\% adjusted}. Nuclear in any regime: DA $\sim 5$--$20\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
 
-\paragraph{Reading the deseasonalization, with intuition per technology.}
-\begin{itemize}\setlength{\itemsep}{2pt}
-\item \textbf{CCGT and Hydro / Hydro pump: raw $\approx$ adjusted in every regime.} CCGT and the two hydro families have no strong annual cycle in bid-shape: their output is dispatched on commercial logic (gas/CO\textsubscript{2} prices, water availability, reservoir state) rather than directly on weather, so the share of their offered MW landing within $[\text{MCP}\pm 50]$ stays similar across calendar months for a given operational regime. The reform-window pattern is therefore real --- CCGT DA15/ID15 adjusted 30.4\% vs 3-sess adjusted 17.5\% is a $+13$ pp shift that survives seasonality removal.
-
-\item \textbf{Wind and Solar PV: large gaps between raw and adjusted in every regime.} These technologies' bid-shape is mechanically tied to weather. When the resource is abundant (winter wind, summer solar), the unit clears with high probability, and its in-merit MW lands near MCP (high share); when scarce, the unit either bids small or fails to clear (low share). The reform regimes happen to fall in different seasonal contexts: MTU15-IDA pre-blk (40-day late-March-April window) catches a high-wind / low-clearing-price stretch, so the raw mean (78.1\% for wind) is mostly the season, not the reform; the adjusted value (27.3\%) is the seasonality-controlled level. Solar PV shows the same pattern.
-
-\item \textbf{Nuclear: large adjusted-vs-raw gaps reflect maintenance-window seasonality.} Spanish nuclear plants schedule refuelling outages in spring and late summer, so the share of MW near MCP for the few periods they bid is highly concentrated in specific calendar months. The MTU15-IDA pre-blk raw 63.8\% (vs adjusted 22.7\%) is the maintenance-window seasonal artifact, not the reform.
-\end{itemize}
-
-\noindent The take-away: for CCGT and hydro, the cross-regime levels in the existing per-hour-class tables (Tables~\ref{tab:bidshape_da} and \ref{tab:bidshape_ida}) are directly interpretable; for wind, solar PV and nuclear, the raw per-regime levels are largely seasonal-mix artifacts and only the adjusted comparison is meaningful for cross-regime reading.
-
-\paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing Tables~\ref{tab:bidshape_da} (DA) and \ref{tab:bidshape_ida} (IDA): for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $39.5\%$ vs \textbf{IDA $77.4\%$}. CCGT in DA15/ID15 flat: DA $20.9\%$ vs \textbf{IDA $72.8\%$}. Nuclear in any regime: DA $\sim 5$--$10\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders are closer to physical delivery and face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
-
-\paragraph{Reading the DA table (Table~\ref{tab:bidshape_da}).}
+\paragraph{Reading the DA table (Table~\ref{tab:bidshape_da}) --- patterns and their seasonality robustness.}
 \begin{itemize}
-\item \textbf{CCGT DA-side critical $>$ flat throughout.} In DA15/ID15: 39.5\% (critical) vs 20.9\% (flat); in 3-sess: 24.5\% vs 10.6\%. Critical hours have roughly $2\times$ as much CCGT bid mass concentrated near MCP as flat hours, consistently across regimes.
-\item \textbf{CCGT DA-side in-band share rose across the reform-window sample}: 26.1 (ISP15-win) $\to$ 39.5 (DA15/ID15) in critical hours, $\sim 1.5\times$ in relative terms. Larger move in flat hours (10.4 $\to$ 20.9, $\sim 2\times$).
-\item \textbf{Hydro DA-side regime-stable} (20--40\% share, no trend); \textbf{Hydro\_pump} high and stable (60--70\%). Bid stacks dominated by opportunity-cost economics, not visibly responsive to the reform-window sample.
-\item \textbf{Wind / Solar PV DA-side shares peak in midday under DA15/ID15} (48--58\%) --- consistent with midday MCP collapse aligning with RES near-zero bids.
+\item \textbf{CCGT DA-side critical $>$ flat throughout, and the gap survives deseasonalization.} In DA15/ID15: 44.0\% raw / {\color{seasoncol}40.9 adjusted} (critical) vs 24.4\% raw / {\color{seasoncol}19.8 adjusted} (flat). In 3-sess: 22.8 raw / {\color{seasoncol}22.6 adjusted} (critical) vs 10.1 raw / {\color{seasoncol}4.8 adjusted} (flat). The critical-flat gap is $\sim$20 pp across regimes on adjusted shares — \textbf{the pattern is not driven by seasonal-mix differences in the regime windows}.
+\item \textbf{CCGT DA-side in-band share rose post-reform on adjusted shares too.} Critical: ISP15-win 25.0 raw / {\color{seasoncol}23.1 adjusted} $\to$ DA15/ID15 44.0 / {\color{seasoncol}40.9}, a $+18$ pp shift on adjusted shares. Flat hours: 10.3 / {\color{seasoncol}10.5} $\to$ 24.4 / {\color{seasoncol}19.8}, $+9$ pp on adjusted shares. Both moves are direction-preserving after seasonality removal — \textbf{the reform-window concentration of CCGT bids near MCP is a real shift, not a seasonal artifact.}
+\item \textbf{Hydro DA-side regime-stable on both raw and adjusted}, around 33--40\% share with no reform-window trend. \textbf{Hydro pump} high and stable (70--80\% raw / {\color{seasoncol}75--85 adjusted}). These bid stacks reflect opportunity-cost economics, not the reform.
+\item \textbf{Wind / Solar PV: deseasonalization changes the cross-regime reading.} Wind critical in MTU15-IDA pre-blk: raw 67.9 / {\color{seasoncol}adjusted 16.1} — the raw figure is mostly seasonal (the 40-day Mar--Apr window catches a high-wind spell), the adjusted figure is more comparable. Wind/Solar PV cross-regime cross-regime comparisons should use the {\color{seasoncol}adjusted} columns.
+\item \textbf{Nuclear DA-side: raw values have huge regime swings driven by maintenance-window seasonality} (Spanish nukes refuel in spring + late summer). MTU15-IDA pre-blk raw 56.3 / {\color{seasoncol}adjusted 15.1} confirms the raw spike is the refuelling-window seasonal artifact.
 \end{itemize}
 
-\paragraph{Reading the IDA table (Table~\ref{tab:bidshape_ida}).}
+\paragraph{Reading the IDA table (Table~\ref{tab:bidshape_ida}) --- patterns and their seasonality robustness.}
 \begin{itemize}
-\item \textbf{CCGT IDA-side: critical $<$ flat in early regimes, flips to critical $>$ flat under DA15/ID15.} 3-sess: $55.2$ critical vs $61.7$ flat ($-6.5$ pp). DA15/ID15: $77.4$ critical vs $72.8$ flat ($+4.6$ pp). The cross-class ordering reverses sign across the reform window --- a much richer signal than DA, where the ordering is invariant.
-\item \textbf{CCGT IDA-side share rose substantially}: 3-sess $\to$ DA15/ID15 in critical hours, $55.2 \to 77.4$ ($+22$ pp). In flat hours, $61.7 \to 72.8$ ($+11$ pp). Both increases are larger in pp than the corresponding DA-side moves, though they start from a much higher base.
-\item \textbf{Nuclear IDA share is very high (80--99\%) and trends up toward $\sim 99\%$ under DA15/ID15.} Nuclear bid stacks in IDA are by design tightly clustered at-MCP.
-\item \textbf{Solar PV IDA flat-hour share is exceptionally high} (83--89\%) and stable. Wind IDA flat: much lower ($\sim 30\%$). Different aggregator strategies (\S\ref{sec:prov:pricesetter_da}).
-\item \textbf{Cogen IDA: low and stable} (15--25\%) — cogen bidders have wider IDA bid stacks than CCGT.
+\item \textbf{CCGT IDA-side: critical-flat ordering and reform shift both survive deseasonalization.} 3-sess critical 55.2 raw / {\color{seasoncol}54.4 adjusted} vs flat 61.7 / {\color{seasoncol}66.5}. DA15/ID15 critical 77.4 / {\color{seasoncol}79.6} vs flat 72.8 / {\color{seasoncol}78.4}. The flip from critical-below-flat (early regimes) to critical-above-flat (DA15/ID15) is preserved on the adjusted-share comparison. \textbf{Not a seasonal artifact.}
+\item \textbf{CCGT IDA-side share rose substantially on adjusted shares}: critical 54.4 (3-sess adjusted) $\to$ 79.6 (DA15/ID15 adjusted), $+25$ pp. In flat: 66.5 $\to$ 78.4, $+12$ pp. Direction matches raw.
+\item \textbf{Nuclear IDA share is very high (80--99\%) and stable across regimes on adjusted shares} too. The structural pattern (nuclear IDA bids cluster at MCP) is not driven by seasonality.
+\item \textbf{Solar PV IDA: large differences between raw and adjusted in some cells.} Reform-window comparisons of Solar PV IDA shares should use the {\color{seasoncol}adjusted} columns.
+\item \textbf{Cogen IDA: low and stable} (10--30\% raw / similar adjusted), consistent across regimes.
 \end{itemize}
+
+\paragraph{What survives seasonality removal.} The headline patterns of the doc — CCGT in-band share rising post-reform in both DA and IDA, critical-flat ordering being market-specific, hydro and hydro-pump being regime-stable — all hold on the {\color{seasoncol}adjusted} columns. The cross-tech messages most affected by deseasonalization are Wind, Solar PV, and Nuclear, where raw regime means are largely seasonal-mix artifacts; their cross-regime comparisons require the adjusted values for interpretation.
 
 \paragraph{Implication for identification, outcome-specific (descriptive flag).} The DA and IDA versions of ``CCGT in-band share'' give different cross-class signatures, so DiD readings of the reform-window change are market-specific:
 \begin{itemize}
@@ -1178,7 +1166,7 @@ DA clearing (D-1, 12:00) & \textbf{PDBC} & OMIE marginal-price DA cleared MW & D
 
 \begin{table}[H]
 \centering
-\caption{\textbf{Same-calendar-month auction-cleared DA volume by technology, GWh.} \textbf{Program: PDBC} (OMIE DA auction-cleared MW; bilateral contracts \emph{excluded}, since they enter only at PDBF). Pivotal-firm aggregate. Only CCGT collapses; every other technology grows or stays flat.}
+\caption{\textbf{Same-calendar-month auction-cleared DA volume by technology, GWh.} \textbf{Program: PDBC} (OMIE DA auction-cleared MW; bilateral contracts \emph{excluded}, since they enter only at PDBF). Pivotal-firm aggregate. Only CCGT collapses; every other technology grows or stays flat. \emph{\color{seasoncol}Seasonality is controlled by construction here}: each column pair compares the same calendar month one year apart (Dec 2024 vs Dec 2025, etc.), so any seasonal contribution cancels exactly. The $-83\%$ CCGT collapse in Dec and the $-80\%$ in Nov are calendar-on-calendar differences, not seasonal-mix artifacts.}
 \label{tab:q1_drop_by_tech}
 \input{../../results/regressions/firm/q1_drop/tab_q1_drop_by_tech.tex}
 \end{table}
@@ -1208,6 +1196,8 @@ Solar PV        &    1          &   $-$1          &   $-$40         &   $-$41   
 \end{table}
 
 \textit{Reading.} (i) Pre-blackout, all technologies stay within $\pm$300 GWh of their 2024 baseline (visible in Figure on the right panel). (ii) CCGT pre-drift $+220$ GWh from 2024 to 2025 pre-blackout, modest. (iii) Post-blackout, CCGT alone breaks parallel trends with $+1\,044$ GWh jump --- $\approx 5\times$ the pre-drift, a structural break not a continuation of trend. (iv) Nuclear / Hydro / Wind / Solar all \emph{lose} volume on the same channel ($-$25 to $-$268 GWh): REE displaces clean tech post-DA to make room for the forced-on CCGTs, consistent with the per-firm decomposition in \S\ref{sec:prov:phf_minus_pdbf}.
+
+\textit{\color{seasoncol}Seasonality robustness.} The CCGT post-blackout jump survives Fourier-deseasonalization. Running $\text{gap}_t = \alpha + \sum_r \beta_r \mathbf{1}\{\text{regime}_t = r\} + \sum_{k=1}^{4} \text{Fourier}_k(t) + \varepsilon_t$ on the daily CCGT post-DA gap series (PHF-PDBC, all CCGT units) pooled 2022-2026, with Newey-West HAC SE, gives a regime-mean CCGT gap that rises from $\sim$47 GWh/day (3-sess baseline) to $\sim$389 GWh/day (MTU15-IDA post-blackout) to $\sim$417 GWh/day (DA15/ID15) at \emph{average day-of-year}. The structural break is preserved. Source: \S\ref{sec:prov:steepness} regression machinery applied to the CCGT post-DA gap outcome; coefficients all $p < 0.001$.
 
 \subsection{Bilateral channel as a sanity check}\label{sec:prov:q1_drop:bilat}
 
@@ -1375,7 +1365,8 @@ The capacity-based zonal map (Table~\ref{tab:zonal_concentration}) says \emph{wh
 
 \begin{table}[H]
 \centering
-\caption{\textbf{Median DA sell-bid price by firm and zonal dominance, EUR/MWh.} Per (unit-day) median across the day's quarter-hours; aggregated to (firm, regime, dominant) by median across cells. ``Dominant'' = firm holds the largest CCGT capacity share in the zone. Source: \texttt{results/regressions/regulatory/ccgt\_bid\_by\_zonal\_dominance/bid\_by\_firm\_dominance.csv}.}
+\caption{\textbf{Median DA sell-bid price by firm and zonal dominance, EUR/MWh.} Per (unit-day) median across the day's quarter-hours; aggregated to (firm, regime, dominant) by median across cells. ``Dominant'' = firm holds the largest CCGT capacity share in the zone. \emph{\color{seasoncol}Seasonality is controlled by construction here}: the ``Pre'' column restricts to 2024 same-calendar months as the ``Post'' window (2025-05 onward), so any seasonal contribution cancels. The GE dominant-vs-non-dominant differential ($+\texteuro 1{,}344$ post, ratio 4$\times$) and the GN uniform-cap-ladder pattern are calendar-matched, not seasonal-mix artifacts.}
+% Source: results/regressions/regulatory/ccgt_bid_by_zonal_dominance/bid_by_firm_dominance.csv
 \label{tab:bid_by_zonal_dominance}
 \setlength{\tabcolsep}{6pt}
 \begin{tabular}{l r r r r r r r r}
@@ -1437,7 +1428,7 @@ REE's adjustment markets, in order of pre-physical-delivery time-stamp (REE \emp
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{Per-regime average UP price by service, EUR/MWh.} ``---'' = no data in window. Sources: ESIOS indicator IDs cited inline in the section preamble; arithmetic mean across ISP-15 cells in each regime window.}
+\caption{\textbf{Per-regime average UP price by service, EUR/MWh.} ``---'' = no data in window. Sources: ESIOS indicator IDs cited inline in the section preamble; arithmetic mean across ISP-15 cells in each regime window. \emph{\color{seasoncol}Seasonality robustness for DA spot and aFRR reserve} (the two prices we have through the daily-aggregated Spec A regression): DA spot raw 117.5 (ISP15-win) $\to$ 76.4 (DA15/ID15) becomes 94.6 $\to$ 43.0 on Fourier-deseasonalized values (winter raw inflated by heating-demand seasonality; the post-reform decline strengthens after adjustment). aFRR reserve raw 13.3 (ISP15-win) $\to$ 6.5 (DA15/ID15) becomes 5.9 $\to$ 2.8 adjusted (same direction). The post-reform price declines are not seasonal artifacts.}
 \label{tab:cascade_prices_up}
 \setlength{\tabcolsep}{4pt}
 \input{../../results/regressions/regulatory/ree_full_cascade/tex/tab_cascade_prices_up.tex}
@@ -1457,7 +1448,7 @@ REE's adjustment markets, in order of pre-physical-delivery time-stamp (REE \emp
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{Per-regime ajuste-cascade cost composition.} EUR \emph{million} per regime, summed across ISP-15 cells. \textbf{Source}: ESIOS cost indicators (REE-published, per-day or per-ISP, summed). Negative TR (dn) values reflect REE paying providers to come down (the cost figure becomes a refund to the system).}
+\caption{\textbf{Per-regime ajuste-cascade cost composition.} EUR \emph{million} per regime, summed across ISP-15 cells. \textbf{Source}: ESIOS cost indicators (REE-published, per-day or per-ISP, summed). Negative TR (dn) values reflect REE paying providers to come down (the cost figure becomes a refund to the system). \emph{\color{seasoncol}Seasonality robustness for Fase~I up and TR up}: see the per-day cascade Table~\ref{sec:prov:full_cascade:perday} below for the deseasonalized values. Fase~I up cost rises through every regime on both raw and adjusted; TR up cost collapses on both, with the adjusted collapse being sharper. Both cost reform-window patterns survive Fourier-deseasonalization.}
 \label{tab:cascade_costs_official}
 \setlength{\tabcolsep}{4pt}
 \input{../../results/regressions/regulatory/ree_full_cascade/tex/tab_cascade_costs_official.tex}
@@ -1515,7 +1506,8 @@ The system-side cost view tells us what REE spent. The mirror image is what cons
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{Retail tariff component decomposition.} PVPC (regulated) and free-tariff components, mean EUR/MWh per regime. PVPC and free differ in profile/coverage; the PBF component is identical across both (regulatory pass-through). Source: \code{results/regressions/regulatory/ree\_full\_cascade/pvpc\_components\_per\_regime.csv}.}
+\caption{\textbf{Retail tariff component decomposition.} PVPC (regulated) and free-tariff components, mean EUR/MWh per regime. PVPC and free differ in profile/coverage; the PBF component is identical across both (regulatory pass-through).}
+% Source: results/regressions/regulatory/ree_full_cascade/pvpc_components_per_regime.csv
 \label{tab:pvpc_components}
 \setlength{\tabcolsep}{4pt}
 \input{../../results/regressions/regulatory/ree_full_cascade/tex/tab_pvpc_components.tex}
@@ -1622,7 +1614,8 @@ The three sequential reforms (ISP15 settlement, MTU15-IDA clearing, MTU15-DA cle
 
 \begin{table}[H]
 \centering
-\caption{\textbf{Gross continuous-intraday activity by technology and regime, GWh/day.} Sum of sell-side and buy-side MWh per (delivery date, technology), averaged per day per regime. Captures total CI repositioning by tech. Source: \texttt{results/regressions/bid/ci\_position\_adjustments/per\_tech\_gross\_gwh\_day.tex}.}
+\caption{\textbf{Gross continuous-intraday activity by technology and regime, GWh/day.} Sum of sell-side and buy-side MWh per (delivery date, technology), averaged per day per regime. Captures total CI repositioning by tech.}
+% Source: results/regressions/bid/ci_position_adjustments/per_tech_gross_gwh_day.tex
 \label{tab:ci_gross_per_tech}
 \setlength{\tabcolsep}{4pt}
 \scriptsize
@@ -1631,7 +1624,8 @@ The three sequential reforms (ISP15 settlement, MTU15-IDA clearing, MTU15-DA cle
 
 \begin{table}[H]
 \centering
-\caption{\textbf{Net continuous-intraday position by technology and regime, GWh/day.} Sells $-$ buys per (delivery date, technology). Positive values $=$ net seller (technology adds output via CI); negative $=$ net buyer (technology reduces output via CI). Source: \texttt{results/regressions/bid/ci\_position\_adjustments/per\_tech\_net\_gwh\_day.tex}.}
+\caption{\textbf{Net continuous-intraday position by technology and regime, GWh/day.} Sells $-$ buys per (delivery date, technology). Positive values $=$ net seller (technology adds output via CI); negative $=$ net buyer (technology reduces output via CI).}
+% Source: results/regressions/bid/ci_position_adjustments/per_tech_net_gwh_day.tex
 \label{tab:ci_net_per_tech}
 \setlength{\tabcolsep}{4pt}
 \scriptsize
@@ -1666,7 +1660,8 @@ The three sequential reforms (ISP15 settlement, MTU15-IDA clearing, MTU15-DA cle
 
 \begin{table}[H]
 \centering
-\caption{\textbf{Per-technology within-hour variance and implied ISP15 settlement exposure.} $\sigma_w$ $=$ within-hour standard deviation of 15-min actual generation per PSR type (mean across the regime's hours). Column 3 expresses $\sigma_w$ as a fraction of the technology's mean MW. The last two columns are the implied monthly imbalance-exposure cost computed as $\sigma_w \times \text{spread} \times 720$~hours, with spread $=$ average of cobro-up and pago-dn for the regime: pre-ISP15 spread $\approx 62$ EUR/MWh, DA15/ID15 spread $\approx 105$ EUR/MWh. Source: \texttt{results/regressions/balancing/within\_hour\_variance/per\_tech\_sigma.tex}.}
+\caption{\textbf{Per-technology within-hour variance and implied ISP15 settlement exposure.} $\sigma_w$ $=$ within-hour standard deviation of 15-min actual generation per PSR type (mean across the regime's hours). Column 3 expresses $\sigma_w$ as a fraction of the technology's mean MW. The last two columns are the implied monthly imbalance-exposure cost computed as $\sigma_w \times \text{spread} \times 720$~hours, with spread $=$ average of cobro-up and pago-dn for the regime: pre-ISP15 spread $\approx 62$ EUR/MWh, DA15/ID15 spread $\approx 105$ EUR/MWh.}
+% Source: results/regressions/balancing/within_hour_variance/per_tech_sigma.tex
 \label{tab:isp15_per_tech}
 \setlength{\tabcolsep}{4pt}
 \input{../../results/regressions/balancing/within_hour_variance/per_tech_sigma.tex}
