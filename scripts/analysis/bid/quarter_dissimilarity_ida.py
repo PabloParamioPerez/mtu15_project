@@ -207,6 +207,7 @@ def main():
     windows = {
         "pre_blackout":  ("2025-03-19", "2025-04-28"),
         "post_blackout": ("2025-04-28", "2025-10-01"),
+        "da15_id15":     ("2025-10-01", "2026-05-16"),
     }
     summaries = []
     for label, w in windows.items():
