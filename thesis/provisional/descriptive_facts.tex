@@ -1273,6 +1273,73 @@ This is a descriptive check, not an ATT/ATE estimation. We do not slap a treatme
 
 \paragraph{Verdict on near-MCP vs full-curve.} The two exercises measure different strategic margins on the same bid stack and should be read together. The full-curve fPCA captures withholding-tail behaviour (the 4{,}000 EUR/MWh cap region), where the largest reform coefficients sit. The near-MCP fPCA captures in-band repositioning, where the bid actually competes with MCP. The substantive split: most of CCGT GE's apparent MTU15-DA collapse was tail behaviour, while CCGT GE's MTU15-IDA reshape was an in-band tilt invisible to PC1; CCGT IB/HC/REP moved up uniformly in-band under MTU15-DA whereas the full-curve added an opposite-sign tail tilt; Hydro\_pump IB's MTU15-DA in-band move ($+158$) is hidden by the full-curve sign-flip. Both readings are descriptive; together they describe a richer firm-by-firm and reform-by-reform pattern than either alone.
 
+% =====================================================================
+\paragraph{Per-(tech, firm) basis: maximum granularity.}\label{sec:prov:fpca_nearmcp_perfirm}
+% =====================================================================
+%
+The tables above use ONE common PCA basis per tech and project each firm's
+near-MCP cells onto it. A more granular alternative is to fit a separate
+PCA basis per (tech, firm) so each firm's own bidding shape gets its own
+optimal decomposition. The eigenfunctions then differ across firms (IB-CCGT's
+PC1 may be a pure level shift; GE-Hydro's PC1 may carry tilt), so PC$_k$
+coefficients are not directly comparable across firms; what \emph{is}
+comparable is the fitted curve shift $\Delta f(q) = \sum_k \widehat\beta_k\,
+\phi_k^{\text{firm}}(q)$. We summarise it by two scalars per (firm, reform,
+hour-class):
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{Level shift} $= \langle \Delta f \rangle$, the average across
+$q$ of the fitted curve shift (MCP-centred EUR/MWh). Positive $=$ on average,
+the firm bids \emph{higher} relative to MCP under the reform.
+\item \textbf{Tilt magnitude} $= \operatorname{std}_q(\Delta f)$, the spread
+of the shift across the in-band quantile domain. Large tilt $=$ the firm's
+bid shape changed differently at different parts of the band (cheap-vs-
+scarcity rebalance); small tilt $=$ uniform level shift.
+\end{itemize}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{Per-firm near-MCP fPCA: own-basis EVR per firm.} Each row uses that firm's OWN eigen-basis (separate fPCA per (tech, firm) on the SA near-MCP curves). PC$_k$ shares differ across firms because the bases differ. GE-CCGT and GN-Hydro\_pump excluded (fewer than 1{,}000 in-band cells; GE-CCGT in particular rarely has $\ge 3$ tranches within $\pm 50$ of MCP --- its bidding posture is largely scarcity-tail).}
+\label{tab:fpca_nearmcp_perfirm_evr}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_firm_evr.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{Per-firm near-MCP shifts under ISP15, critical hours.} \emph{Level shift} = mean over band quantiles of the fitted curve shift, MCP-centred EUR/MWh; positive = bid up. \emph{Tilt (std)} = within-band spread of the shift. PC1/PC2/PC3 $\beta$'s are on each firm's own basis (units arbitrary across firms).}
+\label{tab:fpca_nearmcp_perfirm_isp15}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_firm_ISP15.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{Per-firm near-MCP shifts under MTU15-IDA, critical hours.}}
+\label{tab:fpca_nearmcp_perfirm_mtu15ida}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_firm_MTU15-IDA.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{Per-firm near-MCP shifts under MTU15-DA, critical hours.}}
+\label{tab:fpca_nearmcp_perfirm_mtu15da}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_firm_MTU15-DA.tex}
+\end{table}
+
+\paragraph{Reading the per-firm evidence.}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{Each firm's bidding ``fingerprint'' is visible in its own EVR.} IB-CCGT and IB-Hydro\_pump have PC1 fractions of $0.96$ and $0.99$ --- almost pure level-shift bidding inside the MCP band, very little tilt. GN-CCGT has PC1 $= 0.87$, PC2 $= 0.09$ --- about half as concentrated as IB. Hydro GE and Hydro REP have PC1 $\sim 0.72$--$0.74$ with PC2 $\sim 0.12$--$0.16$ --- their in-band shape is genuinely multi-dimensional, consistent with hydro's reservoir-spilling vs scarcity-bidding split.
+\item \textbf{ISP15: all four CCGTs shift down uniformly.} Level shifts (in MCP-centred EUR/MWh): GN $-15.6$, HC $-7.8$, IB $-15.3$, OTH $-18.3$. Tilts are small ($1$--$4$). The settlement-discipline reading is clean once we let each firm have its own basis: CCGT in-band bidding got more aggressive across the board.
+\item \textbf{MTU15-IDA: Hydro GE has the largest single shift ($+17.7$ level with tilt $6.7$).} Endesa hydro repositioned in-band by 18 EUR/MWh on average with a large within-band tilt. Hydro REP has level $-10$ but tilt $11.3$ --- the largest tilt magnitude in the table, meaning REP's hydro near-MCP curve reshaped sharply (different shifts at different quantiles), not a uniform level move.
+\item \textbf{MTU15-DA: Hydro\_pump IB is the largest in-band shift ($+15.8$).} Iberdrola's pumped storage moved its in-band bidding up by 16 EUR/MWh on average. Hydro REP also shifts up significantly ($+10.8$). Across CCGT, IB and HC shift up modestly ($+7.9$, $+3.5$); REP shifts up ($+5.4$) but with very small tilt ($0.8$). GN shifts down slightly ($-2.2$) with high tilt ($4.6$) --- a within-band reshape rather than a uniform move.
+\item \textbf{CCGT GE drops out of the per-firm exercise.} GE has only 651 in-band cells (vs IB's 74{,}430, HC's 62{,}431). Substantively: GE's bidding posture is so heavily scarcity-tail that it rarely has 3 or more tranches within $\pm 50$ of MCP. This is itself the strategy --- Endesa is structurally an out-of-band, withholding-tail bidder. The full-curve fPCA is the right lens for GE.
+\item \textbf{Cross-firm tilt comparison.} CCGT IB has remarkably low tilt across all three reforms ($1.0$, $1.0$, $4.4$): IB's in-band bidding moves as a level shift, not a shape reshape. CCGT GN has moderate tilt under MTU15-DA ($4.6$). Hydro REP has dramatically high tilt under MTU15-IDA ($11.3$). The tilt scalar is a clean second margin that the in-band MW share scalar cannot capture.
+\end{itemize}
+
+\paragraph{What the per-firm exercise adds.} The per-firm decomposition delivers three things the per-tech basis cannot: (i) a per-firm bidding fingerprint --- IB's level-only PC1 vs hydro firms' multi-modal PCs --- which is itself a primitive of the firm-strategy description; (ii) two clean cross-firm comparable scalars per (firm, reform), the level shift and tilt magnitude on the curve domain; (iii) firm-level dropouts (CCGT GE) that flag firms whose strategy is entirely outside the in-band region. The per-tech results above remain the right tool for comparisons that need a common axis across firms.
+
 % Implementation: scripts/analysis/bid/fpca_per_tech.py (fPCA per tech)
 % scripts/analysis/bid/fpca_pairwise_regressions.py (pairwise with Fourier seasonal control)
 % scripts/analysis/bid/fpca_functional_sa.py (functional pre-deseasonalisation of curves)
