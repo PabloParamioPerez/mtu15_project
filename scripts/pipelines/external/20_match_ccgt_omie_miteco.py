@@ -73,6 +73,21 @@ KNOWN_STEMS = {
     "TLG":     ["AS PONTES"],
 }
 
+# Manual overrides: OMIE unit_code → MITECO installation name (exact match).
+# These pin down ambiguous review-cases using external knowledge of the Spanish
+# CCGT fleet (plant identity, ownership, location).
+MANUAL_OVERRIDES = {
+    "COL4":    "CRISTOBAL COLON",            # Endesa Cristóbal Colón (Palos de la Frontera)
+    "CTGN3":   "CASTEJÓN, GRUPO A",          # Naturgy Castejón Grupo 3 (a.k.a. Grupo A in MITECO)
+    "CTJON3R": "CASTEJÓN, GRUPO A",          # TotalEnergies Castejón Grupo 3 (same plant as CTGN3)
+    "ECT2":    "CTCC ESCATRÓN",              # Ignis Energía — the CCGT, not the older thermal "ESCATRÓN"
+    "ECT3":    "CTCC ESCATRÓN",              # Repsol — same CCGT as ECT2 (different owner)
+    "ESC6":    "CTCC ESCOMBRERAS",           # Iberdrola virtual unit at Escombreras
+    "MALA1":   "MALA1 (CTCC MALAGA)",        # Naturgy Málaga 1 — OMIE code literally in MITECO name
+    "PBCN1":   "PUERTO DE BARCELONA, GRUPO 1",  # Naturgy Puerto de Barcelona Grupo 1 (NOT Plana del Vent)
+    "PBCN2":   "PUERTO DE BARCELONA, GRUPO 2",  # Naturgy Puerto de Barcelona Grupo 2
+}
+
 
 def _norm(s: str) -> str:
     # Strip accents, collapse whitespace, uppercase.
@@ -120,6 +135,25 @@ def main() -> None:
             if code.startswith(prefix):
                 stems = kws
                 break
+
+        # Manual overrides take precedence over keyword search.
+        if code in MANUAL_OVERRIDES:
+            override_name = MANUAL_OVERRIDES[code]
+            override_mask = inst_phase["installation"] == override_name
+            candidates_df = inst_phase[override_mask].copy()
+            if len(candidates_df) > 0:
+                rows.append({
+                    "omie_unit_code": code,
+                    "omie_owner": owner,
+                    "omie_zone": zone,
+                    "miteco_candidates": override_name,
+                    "potencia_neta_mw_sum": candidates_df["potencia_neta_mw_sum"].sum(),
+                    "fecha_puesta_servicio_min": candidates_df["fecha_puesta_servicio_min"].min(),
+                    "autonomia_first": candidates_df["autonomia"].iloc[0],
+                    "n_phases": int(candidates_df["n_phases"].sum()),
+                    "match_confidence": "manual",
+                })
+                continue
 
         candidates_df = pd.DataFrame()
         if stems:

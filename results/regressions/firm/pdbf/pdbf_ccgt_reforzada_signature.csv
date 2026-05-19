@@ -1,8 +1,0 @@
-firm,phase,bilateral_mwh,auction_mwh,n_units,bilat_share
-IB,PRE-blackout,0.0,5797.099999999999,4,0.0
-GN,POST-blackout,0.0,616034.1999999994,16,0.0
-HC,POST-blackout,0.0,12613.599999999999,2,0.0
-GE,PRE-blackout,0.0,3447.3000000000006,2,0.0
-IB,POST-blackout,0.0,347169.2,9,0.0
-GE,POST-blackout,0.0,812533.7000000001,6,0.0
-GN,PRE-blackout,0.0,9668.999999999998,14,0.0
