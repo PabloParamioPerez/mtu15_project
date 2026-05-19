@@ -1920,6 +1920,14 @@ The three sequential reforms (ISP15 settlement, MTU15-IDA clearing, MTU15-DA cle
 \input{../../results/regressions/balancing/within_hour_variance/per_tech_sigma.tex}
 \end{table}
 
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{Per-(tech, hour-class) within-hour mean MW and $\sigma_w$.} Disaggregates the per-tech aggregate of Table~\ref{tab:isp15_per_tech} to Critical / Flat / Midday hour-classes. Solar PV's $\sigma_w$ swings from 1{,}098 MW (Critical, morning ramp + evening fade) to 277 MW (Midday, peak production stable) to 31 MW (Flat, near zero). The ISP15 settlement burden is critical-hour-loaded for variable-renewable techs by a factor of $4$--$35\times$ vs flat hours.}
+\label{tab:isp15_per_tech_hc}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/balancing/within_hour_variance/per_tech_hc_sigma.tex}
+\end{table}
+
 \textit{Reading.}
 \begin{itemize}\setlength{\itemsep}{2pt}
 \item \textbf{Solar PV bears the largest absolute exposure.} Within-hour $\sigma_w$ for solar PV is $\sim 660$ MW under DA15/ID15 (7.6\% of its 8.6 GW mean) --- the highest in MW terms of any technology. The implied monthly imbalance-exposure cost rises from \texteuro 25M/month under pre-ISP15 settlement to \texteuro 50M/month under DA15/ID15, a near-doubling. This is the channel through which ISP15 falls hardest on solar: large within-hour swings (cloud-cover transitions, especially during morning ramp and evening fade) are now settled on the 15-min ISP grid rather than netted within the hour.
