@@ -22,7 +22,7 @@ MITECO publishes `POTENCIANETA` / `POTENCIABRUTA` in **kilowatts** (kW), with th
 
 1. **Per-installation commissioning + deactivation dates** — useful for fleet-evolution panels (capacity-growth covariate for the apuntamiento story, fleet attrition).
 2. **Per-installation capacity in MW** — sanity-check the OMIE roster.
-3. **Bridge to OMIE CCGT codes** (via `omie_ccgt_to_miteco.csv`) — pairs each OMIE `unit_code` with its installation name, commissioning date, and *autonomía* (region). Useful for the zonal-concentration / RT2 strategic-bidding analysis in `thesis/provisional/bidding_internal.tex` §§5–7.
+3. **Bridge to OMIE CCGT codes** (via `omie_ccgt_to_miteco.csv`) — pairs each OMIE `unit_code` with its installation name, commissioning date, and *autonomía* (region). Useful for the zonal-concentration / RT2 strategic-bidding analysis in `thesis/provisional/descriptive_facts.tex` §§5–7.
 
 ## Limitations
 

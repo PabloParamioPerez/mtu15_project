@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-17
-# FEEDS: thesis/provisional/bidding_internal.tex (h-sensitivity table)
+# FEEDS: thesis/provisional/descriptive_facts.tex (h-sensitivity table)
 # CLAIM: Sensitivity of the W1 decomposition channel-share metrics to the
 #        kernel-band half-width h. We re-run the (firm, hour-class) summary
 #        of the w1_decomposition for h in {20, 50, 100, 200} EUR/MWh and
@@ -192,7 +192,7 @@ def main():
     print("\nΔp-active (%):")
     print(pivot_dp.to_string())
 
-    # Emit a LaTeX comparison table for the bidding_internal document.
+    # Emit a LaTeX comparison table for the descriptive_facts document.
     tex_path = OUTDIR / "sensitivity_summary_table.tex"
     with open(tex_path, "w") as f:
         f.write("\\begin{table}[H]\n")

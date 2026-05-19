@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §3.4 (fPCA score regressions)
+# FEEDS: descriptive_facts.tex §3.4 (fPCA score regressions)
 # CLAIM: Per tech, run OLS of each PC score on regime × hour-class with
 #        seasonality + firm + hour FE. Output: coefficient table per tech,
 #        plot of the fitted curve change in quantile space per (regime, hour-class)

@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §3 (Pass 2 of bidding-patterns priority — descriptive tables/figures)
+# FEEDS: descriptive_facts.tex §3 (Pass 2 of bidding-patterns priority — descriptive tables/figures)
 # CLAIM: From the per-cell parquets, build descriptive tables and figures
 #        per (tech, firm, regime, hour-class). Outputs LaTeX-ready fragments
 #        and per-regime PDF figures.

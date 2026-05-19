@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex Table 33 (apuntamiento / capture rate, annual + Jan-May).
+# FEEDS: descriptive_facts.tex Table 33 (apuntamiento / capture rate, annual + Jan-May).
 # CLAIM: Compute the apuntamiento (capture rate) — generation-weighted divided by
 #        arithmetic-mean DA price — per technology per year, on a FULL hour grid
 #        with proper handling of sparse A75 (left-join, zero-fill so night hours

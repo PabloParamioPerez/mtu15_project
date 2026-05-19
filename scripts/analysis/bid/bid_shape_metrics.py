@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §3 (Setup: bid-shape metrics)
+# FEEDS: descriptive_facts.tex §3 (Setup: bid-shape metrics)
 # CLAIM: Comprehensive per-cell bid-shape metrics for DA and IDA sell bids.
 #        For each (date, period, unit) compute:
 #          - mw_in_band     = MW in [MCP-h, MCP+h], h=50 EUR/MWh (steepness proxy)

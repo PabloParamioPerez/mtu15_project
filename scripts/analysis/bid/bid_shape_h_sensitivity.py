@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §3.3 (band-width sensitivity)
+# FEEDS: descriptive_facts.tex §3.3 (band-width sensitivity)
 # CLAIM: Re-compute per-cell mw_in_band and the share metric at three half-widths
 #        (h = 25, 50, 100 EUR/MWh) and tabulate side-by-side for the DA market.
 #        Tests whether the reform-window pattern is robust to band-width choice.

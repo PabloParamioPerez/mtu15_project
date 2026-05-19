@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §2 (CNMC-style marginal-tech share)
+# FEEDS: descriptive_facts.tex §2 (CNMC-style marginal-tech share)
 # CLAIM: CNMC's "marginal tech share" metric (% of hours where a given
 #        technology is the marginal-cost cleared technology) applied to
 #        our 5 reform-window regimes. CNMC reports this metric for

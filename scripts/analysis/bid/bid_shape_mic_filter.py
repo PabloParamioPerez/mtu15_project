@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §3.3 (MIC-filtered descriptive)
+# FEEDS: descriptive_facts.tex §3.3 (MIC-filtered descriptive)
 # CLAIM: Apply Portela Phase 1 (empirical equivalent) — drop unit-days
 #        where pdbc shows 0 cleared MWh across the entire day. These are
 #        units rejected by MIC, indivisibility, exclusivity, or paradoxical

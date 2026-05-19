@@ -9,11 +9,11 @@
 % session-choice for IDA, etc.) are still being iterated, and the user has
 % flagged that the descriptive foundations must come first. The numbers here
 % are the current state of play; they may be revised or replaced once the
-% descriptive companion (bidding_internal.tex) settles the design language.
+% descriptive companion (descriptive_facts.tex) settles the design language.
 %
 % Content was migrated 2026-05-17 from thesis/paper/provisional.tex section 1.
 % The descriptive bidding-pattern content from that file lives in the sibling
-% document thesis/provisional/bidding_internal.tex.
+% document thesis/provisional/descriptive_facts.tex.
 
 \PassOptionsToPackage{table}{xcolor}
 \usepackage{amsmath, amssymb, amsthm, mathtools}
@@ -41,7 +41,7 @@
 \begin{document}
 \maketitle
 
-\noindent\emph{\textbf{Status.} This file collects the current reform-window DDD outputs. The identification design is being iterated --- the descriptive foundations live in the sibling file \code{thesis/provisional/bidding_internal.tex} and the framing of "heterogeneity vs treatment/control", covariate choice, and session-choice for the IDA outcomes is still in flux. Read the numbers here as the current state of play, not as final results.}
+\noindent\emph{\textbf{Status.} This file collects the current reform-window DDD outputs. The identification design is being iterated --- the descriptive foundations live in the sibling file \code{thesis/provisional/descriptive_facts.tex} and the framing of "heterogeneity vs treatment/control", covariate choice, and session-choice for the IDA outcomes is still in flux. Read the numbers here as the current state of play, not as final results.}
 
 \tableofcontents
 
@@ -333,7 +333,7 @@ The cross-reform DDD runs on disaggregated period-level data, not on hourly aggr
 The within-hour quarter index is not used as a treatment-defining variable: ex ante there is no reason firms should bid more aggressively in a particular within-hour quarter regardless of clock-hour (e.g., they do not systematically bid less aggressively in the first quarter of every hour). The granularity is exploited as residual heterogeneity that the FE absorb, not as a treatment dimension. Post-reform cross-section descriptive use of the 15-min data (the $D_w$, $\Delta p$, $\Delta q$ histograms in the descriptive companion) is a separate complementary exercise.
 
 \paragraph{Supporting evidence elsewhere in the project.}
-See the sibling document \code{thesis/provisional/bidding_internal.tex} for: (i) RT2 channel characterisation (Part B: REE post-clearing CCGT inclusion, Path A: $+1\,044$ GWh/mo CCGT post-blackout); (ii) zonal concentration (Part B: GN-dominated Cataluña/Levante/Sur, GE-Galicia, IB-Centro); (iii) GN's 840 EUR/MWh bid plateau invariant across regime (Part B: DA bid prices on RT2-up days); (iv) CNMC 2019 sanction (Part B: Cournot reading + CNMC); (v) $q_1$ collapse same-cal-month CCGT-only with parallel-trends on the post-clearing gap (Part A: $q_1$ drop).
+See the sibling document \code{thesis/provisional/descriptive_facts.tex} for: (i) RT2 channel characterisation (Part B: REE post-clearing CCGT inclusion, Path A: $+1\,044$ GWh/mo CCGT post-blackout); (ii) zonal concentration (Part B: GN-dominated Cataluña/Levante/Sur, GE-Galicia, IB-Centro); (iii) GN's 840 EUR/MWh bid plateau invariant across regime (Part B: DA bid prices on RT2-up days); (iv) CNMC 2019 sanction (Part B: Cournot reading + CNMC); (v) $q_1$ collapse same-cal-month CCGT-only with parallel-trends on the post-clearing gap (Part A: $q_1$ drop).
 
 % \paragraph{Source data.}
 % \code{scripts/analysis/firm/reform_windows_timeline.py} (timeline);

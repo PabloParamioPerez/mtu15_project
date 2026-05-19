@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §3.4 (parallel-trends descriptive check, DA-side)
+# FEEDS: descriptive_facts.tex §3.4 (parallel-trends descriptive check, DA-side)
 # CLAIM: Extend per-(entity, date, period) PC-score panel back to 2022-01-01
 #        to enable descriptive parallel-trends checks. Place pre-existing
 #        fPCA basis (pc_basis_<tech>.npz, fit on 2024-2026 sample) is reused

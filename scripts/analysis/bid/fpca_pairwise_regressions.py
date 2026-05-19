@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §3.4 (pairwise reform-window fPCA regressions)
+# FEEDS: descriptive_facts.tex §3.4 (pairwise reform-window fPCA regressions)
 # CLAIM: Per (tech, firm, pairwise reform) run OLS of each PC score on a post
 #        dummy × hour_class, with Fourier seasonal controls (sin/cos of doy
 #        for k=1,2,3) plus calendar-month + day-of-week + hour + quarter FE.

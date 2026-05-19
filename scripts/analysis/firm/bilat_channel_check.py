@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-19
-# FEEDS: bidding_internal.tex §4 (bilateral channel sanity check).
+# FEEDS: descriptive_facts.tex §4 (bilateral channel sanity check).
 # CLAIM: Build the per-(tech, regime) bilateral channel volume (PDBF - PDBC)
 #        sanity-check table for Part B.
 #

@@ -1603,4 +1603,75 @@ Year & Firm / Plant & Expediente & LSE article & Sanction \\
 
 In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17, GN 5, others) under Art 65.8 of the LSE, for \textbf{voltage-control violations} on April 28, 2025 (the day of the blackout). This is a \emph{distinct regulatory channel}: it concerns failure to provide reactive support during the blackout sequence, not auction-shaping in DA. We flag it for completeness; the two channels are not conflated here. Source: \texttt{docs/regulation/spain/cnmc\_blackout\_expedientes\_2026.csv}.
 
+
+% =============================================================================
+\part{Part C --- Synthesis}\label{sec:prov:synthesis}
+% =============================================================================
+
+\noindent\emph{Reading guide.} This Part summarises in plain prose what the descriptive evidence in Parts A and B shows, so that a reader unfamiliar with the Spanish market can follow the mechanism and the firm-level incentives without rereading the technical sections. Numbers cited here are reproduced from the tables and figures above; section anchors are kept in case the reader wants to drill in.
+
+% =====================================================================
+\section{What this document studies}\label{sec:prov:synthesis:setting}
+% =====================================================================
+
+Between June 2024 and October 2025 the Spanish wholesale electricity market went through three sequential reforms that progressively shortened the unit of trading and settlement from one hour to fifteen minutes. The day-ahead auction, the intraday auctions, the continuous intraday platform, and the imbalance-settlement layer were all affected in different combinations and at different dates. Overlaid on this reform sequence are two other shocks: the system-wide blackout of April 28, 2025, and the reinforced-operation stance (\emph{operación reforzada}) that the system operator REE adopted in its aftermath, which mandates the physical availability of additional combined-cycle gas (CCGT) units in voltage-fragile zones regardless of whether they cleared the day-ahead market.
+
+This document is a descriptive companion to the thesis. It does not estimate average treatment effects of any of the three reforms. It documents bidding patterns (Part A), the regulatory and cost cascade that surrounds them (Part B), and provides the institutional context that any subsequent identification strategy must rest on. The regressions and statistics that appear in the text are instrumental --- they serve to characterise patterns, not to deliver causal effects.
+
+% =====================================================================
+\section{Headline empirical phenomenon}\label{sec:prov:synthesis:phenomenon}
+% =====================================================================
+
+The headline fact, documented in \S\ref{sec:prov:q1_drop} and reinforced throughout Part B, is that the volume of electricity supplied by CCGT plants of the four largest Spanish firms through the day-ahead auction collapsed by roughly $80\%$ between late 2024 and late 2025 (Table~\ref{tab:q1_drop_by_tech}: 1{,}444 GWh in December 2024 against 244 GWh in December 2025, in the same calendar month). Every other technology --- nuclear, hydro, wind, solar PV, pumped storage --- either grew or stayed flat over the same window. The collapse is therefore specific to CCGT, and specific to the Big-4 incumbents (Iberdrola, Endesa, Naturgy, Naturgy's successor entities, and EDP).
+
+What happened to the production that left the day-ahead auction is not that the CCGTs stopped running. The difference between the post-intraday dispatch program (PHF) and the day-ahead-plus-bilateral baseline (PDBF) --- the volume that REE adds back after the auctions clear --- rose by roughly $1{,}000$ GWh per month for CCGT alone in the post-blackout window (Table~\ref{tab:gap_pretrends}), while every other technology lost volume on the same channel. Bilateral contracts cancel out in this difference and the per-firm decomposition (Table~\ref{tab:phf_pdbf_alltech}) confirms that every Big-4 CCGT firm at least doubles its post-clearing gap; Naturgy alone gains $+534$ GWh per month. The CCGT output is simply being absorbed elsewhere in the program chain.
+
+% =====================================================================
+\section{The mechanism, step by step}\label{sec:prov:synthesis:mechanism}
+% =====================================================================
+
+The decoupling of where CCGTs offer (day-ahead) and where they are paid (REE redispatch) makes the day-ahead auction a non-binding step for these units. The chain reads as follows:
+
+\begin{enumerate}\setlength{\itemsep}{2pt}
+\item \textbf{The unit stays out of day-ahead.} The CCGT bids at or near the technical price cap (\S\ref{sec:prov:bid_vs_rt2}: Naturgy at $\sim 840$ EUR/MWh, near-constant across days). At those prices the unit does not clear the auction. The bid price is invariant, so the firm can plausibly argue ``we always offered the same price; the market did not clear us.'' Adjustment happens on the quantity margin, not the price margin. This is the empirical signature of a Cournot strategy implemented through quantity withholding (\S\ref{sec:prov:cournot_cnmc:cournot}).
+
+\item \textbf{REE recalls the unit through the post-clearing redispatch.} The reinforced-operation stance requires that certain CCGTs be physically available in the southern corridor (Sur, Levante, Cataluña) and Galicia for voltage support and contingency cover (\S\ref{sec:prov:geo}). Once the day-ahead auction has cleared without those units, REE adds them back through the Phase~I post-clearing redispatch market and through real-time technical restrictions.
+
+\item \textbf{Phase~I is pay-as-bid.} Unlike the day-ahead auction (which clears at a single marginal price), Phase~I accepts each offer at its own submitted price. A CCGT in a voltage-fragile zone that REE has to call faces effectively no competition: its bid sets its own payment. The Phase~I-up price averaged $\texteuro 168$ per MWh in the most recent regime, against a bottom-up estimate of CCGT short-run marginal cost in the $\texteuro 100$--$110$ range (Table~\ref{tab:mc_ccgt_premium}). The implied mark-up of roughly $30$--$60\%$ over marginal cost is captured pay-as-bid by zonally-dominant units. After adjusting for start-up amortisation the rent estimate narrows to $+45$ to $+55$ EUR/MWh.
+
+\item \textbf{Zonal dominance closes the loop.} Whether a firm can exploit the chain depends on whether it operates the CCGT that REE has to call in a given zone. In the Sur, Levante, and Cataluña corridors that map drives a single firm to capture most of the rent: Naturgy collects roughly $50\%$ of the Big-4's post-clearing CCGT revenue in every regime (Table~\ref{tab:ccgt_post_clearing_rev}), corresponding to about $\texteuro 2$ million per day pre-reforzada and $\texteuro 5$--$8$ million per day post-reforzada.
+\end{enumerate}
+
+This is not novel conduct. The 2019 CNMC sanction SNC-DE-175-17 (Table~\ref{tab:cnmc_sanctions}) found Naturgy guilty of exactly the same practice --- ``abnormal day-ahead offers'' at plants in the southern corridor --- over October 2016 to January 2017, with an estimated benefit of \texteuro 13 million over four months. The 2024--26 evidence in this document is the same practice continuing, now operating at fleet-wide scale and leveraging the new fifteen-minute granularity as an additional instrument.
+
+% =====================================================================
+\section{What this implies for the cost cascade and the reforms}\label{sec:prov:synthesis:cascade}
+% =====================================================================
+
+The total per-day cost of the ajuste services REE pays for to keep the system feasible rose from \texteuro 16.1 million per day under ISP15-winter to \texteuro 21.1 million per day under the most recent regime (Table in \S\ref{sec:prov:full_cascade:perday}), a $+31\%$ increase. The composition of the increase is the diagnostic part: Phase~I cost rose $+145\%$ (\texteuro 5.3M $\to$ \texteuro 13.0M per day) while real-time technical-restrictions cost fell $-69\%$ (\texteuro 5.8M $\to$ \texteuro 1.8M per day). REE is paying CCGTs more, but earlier in the program chain (pre-IDA Phase~I) rather than in real-time emergency redispatch. The retail-side decomposition of the PVPC regulated tariff (\S\ref{sec:prov:full_cascade:pvpc}) confirms the same picture from the consumer side: the Phase~I component nearly triples and the real-time component falls by half.
+
+Of the three reforms, the descriptive evidence supports three different verdicts (\S\ref{sec:prov:full_cascade:efficiency}):
+
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{ISP15 (settlement granularity, December 2024)} is the cleanest reform identification we have. The outcome variable --- absolute imbalance volume per settlement cell --- moved by about $60\%$, of which roughly $50\%$ is the mechanical variance-reduction effect of finer-grained measurement and the residual $\sim 10$ percentage points is a behavioural response. The widening of the dual-price spread (the asymmetric reward/penalty for being on the right/wrong side of system imbalance) supports the behavioural reading.
+
+\item \textbf{MTU15-IDA (intraday clearing granularity, March 2025)} delivered the largest single efficiency channel: real-time technical-restriction cost fell from \texteuro 5.8M per day to \texteuro 2.9M per day. The mechanism is that finer-grained intraday clearing absorbs within-hour scarcity that would previously have spilled over into real-time restriction. The real-time restriction price approximately halved.
+
+\item \textbf{MTU15-DA (day-ahead clearing granularity, October 2025)} delivered an additional but smaller efficiency dividend (a further \texteuro 1.1M per day in real-time savings and a roughly $50\%$ reduction in the capacity-reserve price) but was implemented contemporaneously with the reinforced-operation policy that drove Phase~I cost up by $+\texteuro 2.5M$ per day. The two effects are confounded in the aggregate data. The descriptive evidence is consistent with a positive but modest efficiency gain swamped by the parallel cost growth in the redispatch channel.
+\end{itemize}
+
+% =====================================================================
+\section{What the bidding-pattern evidence in Part A adds}\label{sec:prov:synthesis:partA}
+% =====================================================================
+
+Part A characterises the bid-curve shape itself. Three regularities matter for the synthesis. First, the share of periods where a sell-side CCGT bid step is partially accepted at the day-ahead clearing price is small and falling --- around $3\%$ in late 2025 for CCGT, against $9\%$ under the naive metric used in regulator reports (\S\ref{sec:prov:pricesetter_da}). Most CCGT at-clearing-price offers are deactivated by the MIC rule rather than partially accepted, so the regulator-style metric overstates CCGT price-setting role by a factor of three for that technology. Second, bid-curve concentration around the clearing price (the $D_w$ near-clearing metric) and the within-hour price/quantity decomposition both show that the CCGT bid stack is essentially insensitive to within-hour quarter conditions: the same near-cap step ladder is repeated across the four quarters of an hour, irrespective of whether residual demand rises, falls, or stays flat (\S\ref{sec:prov:dw_tables}). The granular auction is not being used to price-discriminate across within-hour quarters by CCGTs in the post-reform window. Third, the functional principal-component analysis of the bid curve (\S\ref{sec:prov:fpca}) confirms that the largest changes in the bid-curve shape across regimes are in the high-price tail of the curve (PC1) and align with the dates of the reform, and that placebo comparisons against the same calendar months in 2022 and 2023 do not generate movements of similar magnitude.
+
+% =====================================================================
+\section{What we did not do, and why}\label{sec:prov:synthesis:scope}
+% =====================================================================
+
+The descriptive scope is deliberate. The three reforms are time-overlapping (the post-MTU15-IDA window is the same window where the reinforced-operation policy starts, with the only intersection being a 40-day pre-blackout sub-window of borderline statistical power), and the day-ahead clearing-granularity reform shares its window entirely with the most cost-intensive year of the reinforced-operation policy. Any single-equation estimate of ``the effect of MTU15-DA'' would, in this dataset, conflate the genuine clearing-granularity efficiency channel with the reinforced-operation cost growth that is logically independent of clearing granularity. We therefore characterise outcomes one at a time and document, for each, what the descriptive evidence supports and what it does not.
+
+The CNMC sanction precedent and the new April-2026 expediente cohort (\S\ref{sec:prov:cournot_cnmc:sanctions}, \S\ref{sec:prov:cournot_cnmc:blackout}) provide the external regulatory check on the descriptive reading: the pattern documented here is the one Spanish regulators have already pursued as a market-conduct case in 2019 and are pursuing again at fleet scale in 2026.
+
 \end{document}

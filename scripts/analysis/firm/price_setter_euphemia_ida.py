@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-17
-# FEEDS: bidding_internal.tex §2.2 (IDA price-setter shares)
+# FEEDS: descriptive_facts.tex §2.2 (IDA price-setter shares)
 # CLAIM: At-the-money partial-acceptance price-setter identification for the
 #        Spanish IDA market — direct analogue of price_setter_euphemia.py but
 #        with IDA data: marginalpibc (clearing), idet+icab (bid stack),

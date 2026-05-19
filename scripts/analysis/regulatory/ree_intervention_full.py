@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §6 / §7 (full REE-intervention picture beyond RT2 strict)
+# FEEDS: descriptive_facts.tex §6 / §7 (full REE-intervention picture beyond RT2 strict)
 # CLAIM: System-aggregate monthly REE-coordinated energy by channel.
 #        ESIOS archive 28 (totalrp48preccierre). Channel labels use ONLY
 #        codes that appear in the project-canonical reference (parser

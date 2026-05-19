@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §8 (extends ree_full_cascade.py with REE-published costs + PVPC components + per-zone TR)
+# FEEDS: descriptive_facts.tex §8 (extends ree_full_cascade.py with REE-published costs + PVPC components + per-zone TR)
 # CLAIM: Uses the now-available tier-F indicators (709/712/724/1373--1376/1723--1726/899/2127/2129)
 #        to report REE-published costs directly (instead of price×volume reconstruction).
 #        Adds:

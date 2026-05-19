@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-17
-# FEEDS: thesis/provisional/bidding_internal.tex (§Who price-sets)
+# FEEDS: thesis/provisional/descriptive_facts.tex (§Who price-sets)
 # CLAIM: Price-setter identification for the Spanish DA market using the
 #        at-the-money partial-acceptance rule consistent with how EUPHEMIA
 #        treats stepwise orders. For each (date, period), a unit is a

@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §8 (Full ancillary-service cascade)
+# FEEDS: descriptive_facts.tex §8 (Full ancillary-service cascade)
 # CLAIM: For each of the 5 reform-window regimes, compute per-service:
 #   (a) MW-weighted UP/DN price (from ESIOS indicator prices)
 #   (b) UP/DN volume (from existing parquet)

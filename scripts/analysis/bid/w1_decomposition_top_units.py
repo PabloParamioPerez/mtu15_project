@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-17
-# FEEDS: bidding_internal.tex §2 (within-hour strategic bidding by firm × tech)
+# FEEDS: descriptive_facts.tex §2 (within-hour strategic bidding by firm × tech)
 # CLAIM: Within-hour Δp / Δq decomposition (kernel-band Wasserstein-1)
 #        applied to a targeted set of top units across CCGT, Wind, Hydro,
 #        Hydro_pump in DA15/ID15 (the only regime with quarter DA bids).

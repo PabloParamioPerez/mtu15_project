@@ -4,7 +4,7 @@ Master's thesis (CEMFI, 2026) on the Spanish wholesale electricity market reform
 
 The empirical work is currently organised in two layers:
 
-- **Descriptive evidence** (the primary deliverable at this stage) — bid-shape, price-setter, $D_w$, functional-PCA, and pairwise reform-window descriptive readings, plus the post-clearing cascade and zonal-concentration evidence. Lives in [`thesis/provisional/bidding_internal.tex`](thesis/provisional/bidding_internal.tex) → [`bidding_internal.pdf`](thesis/provisional/bidding_internal.pdf).
+- **Descriptive evidence** (the primary deliverable at this stage) — bid-shape, price-setter, $D_w$, functional-PCA, and pairwise reform-window descriptive readings, plus the post-clearing cascade and zonal-concentration evidence. Lives in [`thesis/provisional/descriptive_facts.tex`](thesis/provisional/descriptive_facts.tex) → [`descriptive_facts.pdf`](thesis/provisional/descriptive_facts.pdf).
 - **Identification design** (deferred until the descriptive foundation is stable) — pairwise reform-window comparisons with calendar-shifted placebo years (DA-side), functional PCA score regressions with parametric Fourier(doy) seasonal control, and the regression-based reform-window evidence in [`thesis/provisional/regression_results.tex`](thesis/provisional/regression_results.tex).
 
 The thesis paper itself, [`thesis/paper/paper.tex`](thesis/paper/paper.tex) → [`paper.pdf`](thesis/paper/paper.pdf), is the public-facing single-file deliverable; the provisional directory is a working set where the design is iterated before being folded into the paper.
@@ -16,7 +16,7 @@ The thesis paper itself, [`thesis/paper/paper.tex`](thesis/paper/paper.tex) → 
 | Where to look | What you'll find |
 |---|---|
 | [`thesis/paper/paper.tex`](thesis/paper/paper.tex) → [`paper.pdf`](thesis/paper/paper.pdf) | The thesis paper itself. Single-file LaTeX (sections, not chapters). |
-| [`thesis/provisional/bidding_internal.tex`](thesis/provisional/bidding_internal.tex) → [`bidding_internal.pdf`](thesis/provisional/bidding_internal.pdf) | The main descriptive-evidence document. Part A (bid-shape, price-setter, $D_w$, fPCA + parallel-trends placebos); Part B (REE post-clearing cascade, geographic concentration, system-cost view, apuntamiento, CNMC enforcement). |
+| [`thesis/provisional/descriptive_facts.tex`](thesis/provisional/descriptive_facts.tex) → [`descriptive_facts.pdf`](thesis/provisional/descriptive_facts.pdf) | The main descriptive-evidence document. Part A (bid-shape, price-setter, $D_w$, fPCA + parallel-trends placebos); Part B (REE post-clearing cascade, geographic concentration, system-cost view, apuntamiento, CNMC enforcement). |
 | [`thesis/provisional/regression_results.tex`](thesis/provisional/regression_results.tex) | Working regression results — reform-window pairwise designs and BA-vs-DDD comparisons. |
 | [`CLAUDE.md`](CLAUDE.md) | Canonical project rules — data layers, OVB / seasonality protocols, file conventions, source-separation rule. |
 | [`docs/notes/SPANISH_MARKET_STRUCTURE.md`](docs/notes/SPANISH_MARKET_STRUCTURE.md) | Project reference for the sequential market structure (DA $\to$ IDA $\to$ continuous $\to$ balancing $\to$ P48), `tipo_redespacho` codes, TR cause-code dictionary, ESIOS indicator inventory. |
@@ -238,7 +238,7 @@ mtu15_project/
 │
 ├── thesis/
 │   ├── paper/                             # paper.tex + tables/, references.bib, paper.pdf — the deliverable
-│   ├── provisional/                       # bidding_internal.tex + regression_results.tex + advisor_memo.tex —
+│   ├── provisional/                       # descriptive_facts.tex + regression_results.tex + advisor_memo.tex —
 │   │                                      # the working descriptive-evidence + identification-design layer
 │   └── presentations/                     # workshop decks
 │       ├── workshop_february_2026/
@@ -306,7 +306,7 @@ mtu15_project/
 
 OVB-robustness, good-vs-bad controls (the simultaneity / mediator-bias rules), seasonality + weather controls for cross-regime claims, and the power-vs-energy discipline (MW vs MWh under mixed-granularity samples) all live in [`CLAUDE.md`](CLAUDE.md) under the respective sections.
 
-The descriptive-evidence layer (`thesis/provisional/bidding_internal.tex`) explicitly flags identification problems by outcome variable but **does not estimate** ATT / ATE / treatment effects — regressions there are instrumental tools for extracting descriptive patterns, not for causal estimation. See `thesis/provisional/regression_results.tex` for the regression-based identification work, which is kept in a separate document precisely so that the descriptive foundation is read independently of the identification design.
+The descriptive-evidence layer (`thesis/provisional/descriptive_facts.tex`) explicitly flags identification problems by outcome variable but **does not estimate** ATT / ATE / treatment effects — regressions there are instrumental tools for extracting descriptive patterns, not for causal estimation. See `thesis/provisional/regression_results.tex` for the regression-based identification work, which is kept in a separate document precisely so that the descriptive foundation is read independently of the identification design.
 
 ---
 

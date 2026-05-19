@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §3.4 (fPCA descriptive of bid-shape changes)
+# FEEDS: descriptive_facts.tex §3.4 (fPCA descriptive of bid-shape changes)
 # CLAIM: For each technology, build per-cell (or per-firm-cell for high-cardinality RES)
 #        quantile representation of the bid supply curve, fit fPCA, project all
 #        curves onto the basis. Output: per-cell PC scores parquet for Step 4

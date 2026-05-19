@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-17
-# FEEDS: bidding_internal.tex §2 (price-setter / strategic bidding by tech and firm)
+# FEEDS: descriptive_facts.tex §2 (price-setter / strategic bidding by tech and firm)
 # CLAIM: Within-hour Δp / Δq decomposition (the same kernel-weighted
 #        Wasserstein-1 framework used for CCGT) applied to CCGT, Wind,
 #        Hydro, and Hydro_pump units, and to a broader firm set including

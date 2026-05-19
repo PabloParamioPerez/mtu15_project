@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §3.3 (normalized bid-shape robustness)
+# FEEDS: descriptive_facts.tex §3.3 (normalized bid-shape robustness)
 # CLAIM: Re-aggregate the bid-shape metric as the RATIO mw_in_band / mw_total
 #        (fraction of unit's offered MW falling within ±50 EUR/MWh of MCP).
 #        This isolates the STRATEGIC concentration near MCP from the unit's

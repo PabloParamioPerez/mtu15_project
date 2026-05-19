@@ -1,6 +1,6 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-18
-# FEEDS: bidding_internal.tex §3.4 (parallel-trends descriptive check, DA-side)
+# FEEDS: descriptive_facts.tex §3.4 (parallel-trends descriptive check, DA-side)
 # CLAIM: For each reform, run the same pairwise PC1 regression on the real
 #        post-period and on calendar-shifted placebo years (one and two years
 #        earlier). The descriptive question is whether the real-year
