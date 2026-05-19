@@ -103,7 +103,54 @@ EUPHEMIA & Day-ahead pan-European auction algorithm (clears DA market). \\
 \label{fig:bid_internal:timeline}
 \end{figure}
 
-\clearpage
+\bigskip
+
+% =====================================================================
+\subsection*{Calendar coverage and same-calendar baselines}\label{sec:bid_internal:calendar_discipline}
+% =====================================================================
+\addcontentsline{toc}{subsection}{Calendar coverage and same-calendar baselines}
+
+\noindent \textbf{Why this matters.} Spanish electricity is strongly seasonal: heating-driven demand peaks in winter, cooling in summer, hydro inflows peak in spring, solar production peaks at the summer solstice, wind blows hardest in winter. The five reform windows above do \emph{not} span the calendar uniformly --- each window covers a specific subset of calendar months, and these subsets differ across windows. Any cross-regime comparison that does not hold the calendar fixed therefore confounds the regime change with the seasonal pattern. \textbf{This applies to every variable in this document}: bid prices, $D_w$, $\Delta p$ / $\Delta q$, redispatch volumes, imbalance MWh, system-cost levels, RES capture rates. A reader who picks any table in this document should first read Table~\ref{tab:calendar_coverage} below to know which calendar months that regime covers and what comparator is available.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Calendar coverage of each reform window, and same-calendar baseline availability.} ``Calendar months covered'' is the set of clock months that fall inside the window. ``Days'' is the window length. ``Same-calendar pre-IDA placebo'' indicates whether a clean same-calendar baseline exists in the pre-IDA period (2018-06-14 through 2024-06-13), where no granularity reform was active. ``Reforzada overlay'' flags windows in which the post-blackout reinforced-operation policy (active 2025-04-28 onward) is also in effect.}
+\label{tab:calendar_coverage}
+\setlength{\tabcolsep}{4pt}
+\scriptsize
+\begin{tabular}{l l l c c p{4.5cm}}
+\toprule
+Regime & Calendar dates & Months covered & Days & Reforzada? & Same-calendar pre-IDA placebo \\
+\midrule
+\textbf{pre-IDA}             & $\le$ 2024-06-13       & all 12, multi-year     & --   & no  & N/A (is the baseline) \\
+\textbf{3-sess}              & 2024-06-14 -- 2024-11-30 & Jun--Nov               & 170  & no  & Clean (Jun--Nov 2018--2023) \\
+\textbf{ISP15-win}           & 2024-12-01 -- 2025-03-18 & Dec, Jan, Feb, Mar     & 108  & no  & Clean (Dec--Mar, 2018--2024) \\
+\textbf{MTU15-IDA pre-blk}   & 2025-03-19 -- 2025-04-27 & late Mar -- Apr        & 40   & no  & Clean (same 40 days, 2018--2024) \\
+\textbf{MTU15-IDA post-blk}  & 2025-04-28 -- 2025-09-30 & May -- Sep             & 156  & \textbf{yes} & Possible for granularity alone (May--Sep 2018--2023, pre-IDA), but NOT for reforzada (no pre-2025-04-28 reforzada in data) \\
+\textbf{DA15/ID15}           & 2025-10-01 -- present    & Oct, Nov, Dec, Jan, Feb, Mar, Apr, May (partial) & 220+ & \textbf{yes} & None clean. Calendar comparators in 2024-25 are themselves post-MTU15-IDA or ISP15-win regimes. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Three categories.} Each regime falls into one of three buckets for the purpose of cross-regime reading:
+
+\begin{enumerate}\setlength{\itemsep}{2pt}
+\item \textbf{Clean same-calendar placebo available.} \emph{3-sess, ISP15-win, MTU15-IDA pre-blk.} For each of these, we can restrict the pre-IDA baseline to the same calendar months in 2018--2024 (and average across years), and the difference (regime $-$ pre-IDA same-cal) is interpretable as the regime effect with seasonality differenced out. Any cross-regime reading that uses these windows defaults to this same-calendar comparison unless explicitly stated otherwise.
+
+\item \textbf{Reforzada-confounded, partial calendar-match available.} \emph{MTU15-IDA post-blk.} The window spans May--Sep 2025, which has clean same-calendar comparators in pre-IDA (May--Sep 2018--2023). But these comparators are pre-reforzada. So the difference (MTU15-IDA post-blk $-$ pre-IDA same-cal) confounds (a) the granularity reform, (b) operación reforzada, and (c) the post-blackout system state. There is no calendar period in the data in which reforzada is active but MTU15 is not, so reforzada cannot be differenced out via a same-calendar pre-reform window. For descriptive purposes, May--Sep 2025 is best read as ``post-MTU15-IDA $+$ reforzada $+$ post-blackout, jointly''; see \S\ref{sec:prov:phf_minus_pdbf} on disentangling these channels.
+
+\item \textbf{No clean calendar match.} \emph{DA15/ID15.} The window covers Oct 2025 onward. The same calendar months one year earlier (Oct 2024 -- May 2025) are themselves a mix of pre-MTU15-IDA, ISP15-win, MTU15-IDA pre-blk, and MTU15-IDA post-blk regimes --- so calendar-matching to ``one year ago'' does not produce a single-regime comparator. The cleanest available calendar comparators for DA15/ID15 are the same months in pre-IDA years (Oct 2023 -- May 2024 was largely pre-IDA, with the IDA-3 reform starting only mid-Jun 2024; Oct 2022 -- May 2023 and earlier are all pre-IDA). But even with pre-IDA same-calendar baselines, the reforzada overlay is unresolved by this comparator: DA15/ID15 is the union of MTU15-DA, MTU15-IDA, and reforzada in the same calendar window, and our data does not contain a period where any one of these three is active without the others. Therefore any DA15/ID15 reading should be flagged as descriptive only, with the three confounds explicitly named.
+\end{enumerate}
+
+\noindent\textbf{Discipline applied throughout this document.}
+
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Per-regime descriptive tables typically report the regime's level (mean per regime); for the regimes in bucket 1, we also report the same-calendar pre-IDA mean wherever the sample size permits, so the reader can read (regime $-$ same-cal pre-IDA) directly. Examples: $D_w$ table (\S\ref{sec:prov:dw_tables}), zonal-dominance bid table (\S\ref{sec:prov:geo:bid_by_dominance}), apuntamiento (\S\ref{sec:prov:apuntamiento}).
+\item For bucket-2 windows (MTU15-IDA post-blk), the descriptive reading is explicitly the joint effect of granularity $+$ reforzada $+$ post-blackout. We do not attempt to attribute the difference to any single channel without an out-of-data identification step.
+\item For bucket-3 (DA15/ID15), the descriptive reading combines all three reforms with reforzada. Wherever a DA15/ID15 number is reported, we name the confounds.
+\item The functional-PCA exercise in \S\ref{sec:prov:fpca} uses pairwise reform-window comparisons with calendar-shifted placebo years (2022, 2023) to explicitly difference out year-on-year seasonality within each placebo. That is the cleanest seasonality-control implementation in the document; we treat it as the benchmark, not the rule.
+\item Wherever a table in this document does not report a same-calendar baseline, the reader should consult Table~\ref{tab:calendar_coverage} to identify the regime's calendar window and bucket, and read the absolute level with the seasonal-mix caveat in mind.
+\end{itemize}
 
 \bigskip
 
