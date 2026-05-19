@@ -873,7 +873,7 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing the DA and IDA panels in Table~\ref{tab:bidshape_da_ida}: for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $44.0\%$ raw / {\color{seasoncol}41.3\% (SA)} vs IDA $77.5\%$ raw / {\color{seasoncol}76.5\% (SA)}. Nuclear in any regime: DA $\sim 6$--$20\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
 
-\paragraph{Per-(firm, tech) distribution view.} Hour-class means flatten the 11-hour critical band (morning ramp + evening peak combined), the 4-hour midday band, and the 3-hour flat band into one number each, and also collapse multimodal day-distributions into a single mean. Two complementary views replace the per-(firm, hour-class) cell means with finer information: (i) a 3D surface of the regime mean by hour-of-day; (ii) an estimated probability density of the daily in-band share across (unit, day, hour) cells.
+\paragraph{Per-(firm, tech) distribution view.} Hour-class means flatten the 11-hour critical band (morning ramp + evening peak combined), the 4-hour midday band, and the 3-hour flat band into one number each, and also collapse multimodal day-distributions into a single mean. Three complementary views replace the per-(firm, hour-class) cell means with finer information: (i) a 3D surface of the regime mean by hour-of-day; (ii) the aggregate-across-hours probability density of the daily in-band share per tech; (iii) the hour-conditional density at four representative hours --- 03 (flat), 07 (morning ramp, critical), 13 (midday), 19 (evening peak, critical) --- so the distribution shift at each time of day is directly visible.
 
 \begin{figure}[H]
 \centering
@@ -884,20 +884,35 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \begin{figure}[H]
 \centering
+\includegraphics[width=0.85\textwidth]{../../figures/working/bidshape_3d_hourly_CCGT.pdf}\\[2pt]
+\includegraphics[width=0.85\textwidth]{../../figures/working/bidshape_3d_hourly_Hydro.pdf}
+\caption{\textbf{CCGT (top) and Hydro (bottom) --- in-band share distribution sliced by hour-of-day.} Four panels per tech: hour 03 (flat), hour 07 (morning ramp, critical), hour 13 (midday), hour 19 (evening peak, critical). Each panel is a 3D ridge of the daily in-band share at THAT hour, with 5 regime ridges stacked along the $y$-axis. The cross-regime shift is large at critical hours (07, 19) --- visible mass migration from corner-0 to interior or corner-1 across reforms --- and is much smaller at hour 03 (everyone bids saturated at low overnight prices) and hour 13 (everyone bids above MCP at low midday prices). Hydro pump in Fig.~\ref{fig:bidshape_3d_hourly_hp}.}
+\label{fig:bidshape_3d_hourly}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../../figures/working/bidshape_3d_hourly_Hydro_pump.pdf}
+\caption{\textbf{Hydro pump in-band share distribution sliced by hour-of-day.} Companion to Fig.~\ref{fig:bidshape_3d_hourly}. Hydro pump has near-saturation mass at flat hour 03 across all regimes; the morning and evening peaks display the largest cross-regime spread.}
+\label{fig:bidshape_3d_hourly_hp}
+\end{figure}
+
+\begin{figure}[H]
+\centering
 \includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_bidshare_CCGT.pdf}\\[2pt]
 \includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_bidshare_Hydro.pdf}
-\caption{\textbf{Distribution of the daily in-band MW share, across regimes --- 3D ridge.} Estimated density of share-per-(unit, day, hour) cells. CCGT (top): the reform-window mass shifts rightward; bimodality visible post-MTU15-IDA (mass clustered near 0 vs near 1). Hydro (bottom): wider, more uniform distribution with smaller cross-regime shift. Hydro pump panel in Fig.~\ref{fig:bidshape_kde_hp}; per-firm 2D version on disk (\texttt{bidshape\_kde\_per\_firm\_tech.pdf}).}
+\caption{\textbf{Distribution of the daily in-band MW share, across regimes --- 3D ridge (aggregated across hours).} Estimated density of share-per-(unit, day, hour) cells. CCGT (top): the reform-window mass shifts rightward; bimodality visible post-MTU15-IDA (mass clustered near 0 vs near 1). Hydro (bottom): wider, more uniform distribution with smaller cross-regime shift. Hydro pump panel in Fig.~\ref{fig:bidshape_kde_hp}; per-firm 2D version on disk (\texttt{bidshape\_kde\_per\_firm\_tech.pdf}). Hour-of-day decomposition in Figs.~\ref{fig:bidshape_3d_hourly}--\ref{fig:bidshape_3d_hourly_hp}.}
 \label{fig:bidshape_kde}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_bidshare_Hydro_pump.pdf}
-\caption{\textbf{Hydro pump in-band share distribution, across regimes --- 3D ridge.} Companion to Fig.~\ref{fig:bidshape_kde}. Hydro pump distributions are sharper than hydro's, consistent with pumped storage's purer level-bidding posture and concentration around the high-share end of the band.}
+\caption{\textbf{Hydro pump in-band share distribution, across regimes --- 3D ridge (aggregated across hours).} Companion to Fig.~\ref{fig:bidshape_kde}. Hydro pump distributions are sharper than hydro's, consistent with pumped storage's purer level-bidding posture and concentration around the high-share end of the band.}
 \label{fig:bidshape_kde_hp}
 \end{figure}
 
-\paragraph{Reading the distribution.} The density plot exposes what neither hour-class means nor quantiles capture cleanly: \textbf{bimodality at the daily cell level}. CCGT bidding strategies are not noisy continuous deviations from a central mean; firms operate in two distinct postures (``saturated at MCP'' vs ``well above MCP'') and the relative weight of these postures shifts with the reform. REP CCGT under DA15/ID15 has a dominant mass near full-saturation; GN-CCGT has a dominant mass at zero with a long upper tail. HC CCGT under DA15/ID15 shows a more unimodal middle-mass distribution. The diurnal heatmap (Fig.~\ref{fig:bidshape_diurnal_heatmap}) shows the in-band concentration is hour-specific within critical hours: most firms' CCGT shares peak on the morning and evening ramps (hours 6--8 and 19--21) rather than mid-day-peak hours (10--14).
+\paragraph{Reading the distribution.} The density plot exposes what neither hour-class means nor quantiles capture cleanly: \textbf{bimodality at the daily cell level}. CCGT bidding strategies are not noisy continuous deviations from a central mean; firms operate in two distinct postures (``saturated at MCP'' vs ``well above MCP'') and the relative weight of these postures shifts with the reform. REP CCGT under DA15/ID15 has a dominant mass near full-saturation; GN-CCGT has a dominant mass at zero with a long upper tail. HC CCGT under DA15/ID15 shows a more unimodal middle-mass distribution. The diurnal heatmap (Fig.~\ref{fig:bidshape_diurnal_heatmap}) shows the in-band concentration is hour-specific within critical hours: most firms' CCGT shares peak on the morning and evening ramps (hours 6--8 and 19--21) rather than mid-day-peak hours (10--14). The hour-conditional ridges (Figs.~\ref{fig:bidshape_3d_hourly}--\ref{fig:bidshape_3d_hourly_hp}) sharpen this: hour 03 (flat) shows near-uniform regime alignment at corner-1 for CCGT and hydro pump --- everyone saturates when overnight prices are low; hour 13 (midday) shows the mirror image at corner-0 under DA15/ID15 (solar-driven low midday prices push CCGTs above MCP). The cross-regime distribution shift is concentrated at the two critical hours (07 morning ramp, 19 evening peak), where the bimodality is visibly stronger post-MTU15-IDA and post-DA15/ID15 than under the legacy 3-sess regime.
 
 \paragraph{Reading the DA table (Table~\ref{tab:bidshape_da_ida} (DA)) --- patterns and their seasonality robustness.}
 \begin{itemize}
