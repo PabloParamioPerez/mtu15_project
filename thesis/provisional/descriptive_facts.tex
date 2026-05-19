@@ -849,7 +849,7 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 \input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_IDA_by_regime_deseasonalized.tex}
 \end{table}
 
-\paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing Tables~\ref{tab:bidshape_da} (DA) and \ref{tab:bidshape_ida} (IDA): for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $44.0\%$ raw / {\color{seasoncol}40.9\% adjusted} vs IDA $77.4\%$ raw / {\color{seasoncol}79.6\% adjusted}. Nuclear in any regime: DA $\sim 5$--$20\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
+\paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing Tables~\ref{tab:bidshape_da} (DA) and \ref{tab:bidshape_ida} (IDA): for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $44.0\%$ raw / {\color{seasoncol}40.9\% (SA)} vs IDA $77.5\%$ raw / {\color{seasoncol}79.1\% (SA)}. Nuclear in any regime: DA $\sim 6$--$20\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
 
 \paragraph{Reading the DA table (Table~\ref{tab:bidshape_da}) --- patterns and their seasonality robustness.}
 \begin{itemize}
@@ -862,19 +862,19 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \paragraph{Reading the IDA table (Table~\ref{tab:bidshape_ida}) --- patterns and their seasonality robustness.}
 \begin{itemize}
-\item \textbf{CCGT IDA-side: critical-flat ordering and reform shift both survive deseasonalization.} 3-sess critical 55.2 raw / {\color{seasoncol}54.4 adjusted} vs flat 61.7 / {\color{seasoncol}66.5}. DA15/ID15 critical 77.4 / {\color{seasoncol}79.6} vs flat 72.8 / {\color{seasoncol}78.4}. The flip from critical-below-flat (early regimes) to critical-above-flat (DA15/ID15) is preserved on the adjusted-share comparison. \textbf{Not a seasonal artifact.}
-\item \textbf{CCGT IDA-side share rose substantially on adjusted shares}: critical 54.4 (3-sess adjusted) $\to$ 79.6 (DA15/ID15 adjusted), $+25$ pp. In flat: 66.5 $\to$ 78.4, $+12$ pp. Direction matches raw.
-\item \textbf{Nuclear IDA share is very high (80--99\%) and stable across regimes on adjusted shares} too. The structural pattern (nuclear IDA bids cluster at MCP) is not driven by seasonality.
-\item \textbf{Solar PV IDA: large differences between raw and adjusted in some cells.} Reform-window comparisons of Solar PV IDA shares should use the {\color{seasoncol}adjusted} columns.
-\item \textbf{Cogen IDA: low and stable} (10--30\% raw / similar adjusted), consistent across regimes.
+\item \textbf{CCGT IDA-side: critical-flat ordering and reform shift both survive deseasonalization.} 3-sess critical $47.3$ raw / {\color{seasoncol}$48.0$ (SA)} vs flat $64.3$ / {\color{seasoncol}$67.7$}. DA15/ID15 critical $77.5$ / {\color{seasoncol}$79.1$} vs flat $72.1$ / {\color{seasoncol}$77.4$}. The flip from critical-below-flat (early regimes) to critical-above-flat (DA15/ID15) is preserved on the SA comparison. \textbf{Not a seasonal artifact.}
+\item \textbf{CCGT IDA-side share rose substantially on SA shares}: critical $48.0$ (3-sess SA) $\to 79.1$ (DA15/ID15 SA), $+31$ pp. In flat: $67.7 \to 77.4$, $+10$ pp. Direction matches raw, magnitude even larger on critical.
+\item \textbf{Nuclear IDA share is very high (80--99\%) and stable across regimes on SA shares} too. The structural pattern (nuclear IDA bids cluster at MCP) is not driven by seasonality.
+\item \textbf{Solar PV IDA: large differences between raw and SA in some cells.} Reform-window comparisons of Solar PV IDA shares should use the {\color{seasoncol}(SA)} columns.
+\item \textbf{Cogen IDA: low and stable} (10--30\% raw / similar SA), consistent across regimes.
 \end{itemize}
 
 \paragraph{What survives seasonality removal.} The headline patterns of the doc — CCGT in-band share rising post-reform in both DA and IDA, critical-flat ordering being market-specific, hydro and hydro-pump being regime-stable — all hold on the {\color{seasoncol}adjusted} columns. The cross-tech messages most affected by deseasonalization are Wind, Solar PV, and Nuclear, where raw regime means are largely seasonal-mix artifacts; their cross-regime comparisons require the adjusted values for interpretation.
 
-\paragraph{Implication for identification, outcome-specific (descriptive flag).} The DA and IDA versions of ``CCGT in-band share'' give different cross-class signatures, so DiD readings of the reform-window change are market-specific:
+\paragraph{Implication for identification, outcome-specific (descriptive flag).} The DA and IDA versions of ``CCGT in-band share'' give different cross-class signatures, so DiD readings of the reform-window change are market-specific. SA values reported in brackets where they differ materially from raw:
 \begin{itemize}
-\item \textbf{DA outcome}: critical-flat gap widens from $13.9$ pp (3-sess) to $18.6$ pp (DA15/ID15), $+5$ pp shift in the joint MTU15-DA $+$ reforzada window. Flat hours absorbed a relatively larger reform-window shift in proportional terms, so the MTU15-DA component of that $+5$ pp is not pinned down by this DiD design.
-\item \textbf{IDA outcome}: critical-flat gap \emph{flips sign} from $-6.5$ pp (3-sess, critical below flat) to $+4.6$ pp (DA15/ID15, critical above flat), an $11$ pp shift. The flip is descriptively the cleaner signal across reforms.
+\item \textbf{DA outcome}: critical-flat gap widens from $12.7$ pp ({\color{seasoncol}$17.8$ SA}) at 3-sess to $19.6$ pp ({\color{seasoncol}$21.1$ SA}) at DA15/ID15. Shift: $+6.9$ pp raw, $+3.3$ pp on SA. Both hour-classes rise in level. The SA gap-widening is more modest than the raw, but the sign is preserved.
+\item \textbf{IDA outcome}: critical-flat gap \emph{flips sign} from $-17.0$ pp ({\color{seasoncol}$-19.7$ SA}, critical below flat) at 3-sess to $+5.4$ pp ({\color{seasoncol}$+1.7$ SA}, critical above flat) at DA15/ID15. Shift: $+22.4$ pp raw, $+21.4$ pp on SA. The sign flip is descriptively the cleaner signal across reforms.
 \end{itemize}
 The choice DA vs IDA is itself a methodologically substantive choice that any identification design will inherit. The fPCA score regressions (\S\ref{sec:prov:fpca}) currently work on DA bid stacks; an analogous IDA exercise is on the to-do list.
 
@@ -2031,7 +2031,8 @@ In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17,
 \begin{itemize}\setlength{\itemsep}{2pt}
 \item Midday hours (11h--14h) have intermediate within-hour residual-demand variance ($\sigma_{\text{within}} \in [468, 502]$ MW) and very low residual demand ($\sim 8.5$--$8.9$ GW) because solar dominates the marginal-pricing technology. We exclude midday from the critical-flat control set because pooling it would absorb both the strategic-bidding signal and the operational solar-vs-thermal differential.
 \item Outcome-side validation: post-MTU15-DA within-hour DA quarter-clearing-price std is $1.51$ EUR/MWh in midday vs $6.58$ in critical vs $2.13$ in flat. Midday is the \emph{tightest} hour-class --- granular pricing has even less room to discriminate than in flat hours (\S\ref{sec:prov:hour_class}).
-\item Where midday tells a distinct story: \textbf{solar PV bid-share concentrates in midday} (DA15/ID15: $48.3\%$ raw, $42.2\%$ adjusted, vs $25.5\%$ adjusted in critical and $61.1\%$ in flat) --- the solar-marginal regime, not the granularity-strategic regime. Midday rows in Tables~\ref{tab:bidshape_da}, \ref{tab:bidshape_ida} for the full picture.
+\item Where midday tells a distinct story: \textbf{solar PV bid-share is higher in non-critical hours} on SA values --- DA15/ID15 Solar PV: $25.5\%$ raw / $20.0\%$ {\color{seasoncol}(SA)} in critical, $47.9\%$ / $42.2\%$ {\color{seasoncol}(SA)} in midday, $61.1\%$ / $67.3\%$ {\color{seasoncol}(SA)} in flat (Table~\ref{tab:bidshape_da}). Solar concentrates near MCP precisely where CCGTs are not marginal: at midday (solar-marginal pricing) and in flat hours (low-demand overnight clearing). Critical hours, where CCGT competes for the margin, have the smallest solar in-band share.
+\item Where midday DOES NOT tell a new story: \textbf{CCGT bid-shape in midday is regime-stable on SA values} --- $16.6$ (3-sess) $\to 15.6$ (ISP15-win) $\to 7.4$ (MTU15-IDA post-blk) $\to 12.0$ (DA15/ID15) on the {\color{seasoncol}(SA)} column. No clean reform-window concentration shift in midday for CCGT (unlike critical, which shows +$18$ pp 3-sess$\to$DA15/ID15 SA). The granularity-strategic margin remains in critical hours.
 \end{itemize}
 
 % =====================================================================
