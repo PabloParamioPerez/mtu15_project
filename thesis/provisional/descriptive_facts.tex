@@ -2051,7 +2051,7 @@ In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17,
 \item Cleanest identification: imbalance volume per cell fell $\sim 60\%$ ($\sim 50\%$ mechanical variance-reduction $+ \sim 10$ pp behavioural; \S\ref{sec:prov:full_cascade:efficiency}).
 \item Dual-price spread widened $40/85 \to 70/110$ EUR/MWh.
 \item CI volume fell $-15\%$ {\color{seasoncol}(SA)}; leading reading is improved BRP forecasting (also consistent with TR \emph{volumes} falling; TR \emph{cost} rose only because the price wedge widened).
-\item CCGT bid-curve concentration rose mainly in flat hours, not critical (Fig.~\ref{fig:bidshape_3d_hourly}).
+\item CCGT in-band MW share rose mainly in flat hours, not critical (Fig.~\ref{fig:bidshape_3d_hourly}). Within-hour $D_w$ is not defined here (60-min IDA periods).
 \end{itemize}
 
 \textbf{MTU15-IDA (intraday granularity, Mar 2025).}
@@ -2060,6 +2060,7 @@ In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17,
 \item Mechanism: granular IDA absorbed within-hour scarcity that previously bled into real-time correction.
 \item CI volume halved: system $24.9 \to 11.4$ GWh/day {\color{seasoncol}(SA)}, CI share of OMIE $2.94\% \to 1.32\%$ {\color{seasoncol}(SA)} (Table~\ref{tab:ci_relative_system}).
 \item Within-hour quarter rebalancing capability appeared at this stage (Table~\ref{tab:ci_per_firm_within_hour}).
+\item First regime where within-hour bid-curve dissimilarity $D_w$ is defined. CCGT critical-hour $D_w > 0$ rate: $21.9\%$ pre-blackout $\to 44.7\%$ post-blackout (more than doubles, Fig.~\ref{fig:dw_3d_hourly_ccgt}).
 \end{itemize}
 
 \textbf{MTU15-DA (day-ahead granularity, Oct 2025).}
@@ -2068,40 +2069,43 @@ In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17,
 \item Confounded with reinforced-operation cost growth ($+\texteuro 2.5$M/day in Fase~I cost).
 \item Bid-side counterpart: RES CI activity grew (Wind volume $+36\%$, Solar PV $+108\%$ {\color{seasoncol}(SA)} vs MTU15-IDA post-blk; Table~\ref{tab:ci_volume_seasonality_adjusted}).
 \item Per-firm within-hour rebalancing intensity \emph{did not} jump under MTU15-DA --- capability existed already from MTU15-IDA (\S\ref{sec:prov:ci_seasonality_adjusted}).
+\item CCGT critical-hour $D_w > 0$ rate rises sharply again: $44.7\% \to 70.7\%$ (Fig.~\ref{fig:dw_3d_hourly_ccgt}). Hydro reservoir: $19.3\% \to 39.8\%$; Hydro pump: $24.4\% \to 32.4\%$ (Figs.~\ref{fig:dw_3d_hourly_hydro}--\ref{fig:dw_3d_hourly_hp}). Within-hour quarter-shaping spreads across all price-setting techs.
 \end{itemize}
 
 % =====================================================================
 \section{Tech and firm heterogeneity}\label{sec:prov:synthesis:het}
 % =====================================================================
 
-\textbf{Across technologies (within-hour bid-shape, \S\ref{sec:prov:dw_decomp}--\S\ref{sec:prov:dw_tables}):}
+\textbf{Across technologies (within-hour bid-shape, Figs.~\ref{fig:dw_3d_hourly_ccgt}--\ref{fig:dw_3d_hourly_hp}; per-cell IDA $D_w > 0$ share, critical hours, across the three IDA-MTU15 regimes pre-blk $\to$ post-blk $\to$ DA15/ID15):}
 \begin{itemize}\setlength{\itemsep}{2pt}
-\item \textbf{CCGT}: the only tech with non-trivial $D_w > 0$ rates. The reform-window response is concentrated here.
-\item \textbf{Hydro, hydro pump}: regime-stable; no reform response (Figs.~\ref{fig:bidshape_3d_hourly_hydro}--\ref{fig:bidshape_3d_hourly_hp}).
-\item \textbf{Nuclear}: no within-hour margin (near-zero share at MCP in every regime).
-\item \textbf{Wind, Solar PV}: weather-driven; raw cross-regime levels mostly seasonal-mix artifacts. Cross-regime claims require {\color{seasoncol}adjusted}/SA columns explicitly.
+\item \textbf{CCGT}: $21.9\% \to 44.7\% \to 70.7\%$. Roughly tripling over the three MTU15-IDA regimes; the strongest reform-window response.
+\item \textbf{Hydro}: $13.9\% \to 19.3\% \to 39.8\%$. Tripling at the long end --- the earlier ``regime-stable'' reading on in-band share concealed real within-hour shaping that the $D_w$ metric exposes.
+\item \textbf{Hydro pump}: $16.6\% \to 24.4\% \to 32.4\%$. Doubling.
+\item \textbf{Nuclear}: $13.1\% \to 19.7\% \to 98.5\%$. The jump to near-universal $D_w > 0$ under DA15/ID15 is mechanical, not strategic --- nuclear quarter-shaping in IDA is mostly the unit cycling between an at-MCP partial-acceptance block and a withdrawn block as the IDA MCP drifts within the hour, not within-band repricing.
+\item \textbf{Wind, Solar PV}: not in the price-setting fPCA scope; their cross-regime cross-market signature is captured in CI volume growth (\S\ref{sec:prov:synthesis:ci_brief}).
 \end{itemize}
 
-\textbf{Across firms (within CCGT; cal-matched Table~\ref{tab:bid_by_zonal_dominance}):}
+\textbf{Across firms (CCGT, IDA critical-hour $D_w > 0$ \% by regime; pre-blk $\to$ post-blk $\to$ DA15/ID15):}
 \begin{itemize}\setlength{\itemsep}{2pt}
-\item \textbf{GN}: uniform cap-padded $\texteuro 840$ ladder across all zones. $18\%$ of critical-hour DA cells $\Delta q$-active ($0.01\%$ $\Delta p$-active): Cournot-on-quantity, fixed-price strategy (Table~\ref{tab:dw_decomp}).
-\item \textbf{GE}: zone-specific bid level. Galicia $\texteuro 1{,}789$ vs non-dominant zones $\texteuro 445$ in 2025, $4\times$ ratio (cal-matched).
-\item \textbf{IB, HC}: bid near short-run marginal cost everywhere; no strategic differentiation.
+\item \textbf{HC}: $27.9\% \to 34.2\% \to 79.1\%$ --- the steepest jump under DA15/ID15.
+\item \textbf{GE}: $14.1\% \to 43.8\% \to 74.6\%$.
+\item \textbf{GN}: $30.5\% \to 53.8\% \to 71.6\%$. Highest pre-blackout (consistent with the cap-padded $\texteuro 840$ ladder strategy documented in Table~\ref{tab:bid_by_zonal_dominance}) but no longer the lone strategic CCGT firm under DA15/ID15.
+\item \textbf{IB}: $9.6\% \to 20.3\% \to 59.0\%$.
+\item \emph{Update vs the pre-extension reading.} Earlier prose in this document said within-hour shaping was concentrated at GN with IB/HC negligible. That reading was based on the pre-blackout 40-day window only; with all three MTU15-IDA regimes computed (commit \texttt{bbc3ae9}, $152{,}832$ cells), under DA15/ID15 all four CCGT firms are within-hour-active.
 \end{itemize}
 
-\textbf{Critical-flat asymmetry (essentially absolute):}
-\begin{itemize}\setlength{\itemsep}{2pt}
-\item Flat-hour $D_w \approx 0$ for every firm, every regime, every market (DA and IDA) --- Table~\ref{tab:dw_mass_median}.
-\item Critical-hour $D_w > 0$ rates: GN highest ($\sim 23\%$ in DA, $\sim 54\%$ in IDA), GE small price-channel, IB/HC negligible.
-\item Validates the hour-class taxonomy (\S\ref{sec:prov:hour_class}): granular pricing has economic content only where within-hour residual demand actually moves.
-\end{itemize}
+\textbf{Critical vs flat asymmetry --- still holds, more nuanced.} CCGT $D_w > 0$ share in flat hours under DA15/ID15 is $50.6\%$, vs $70.7\%$ in critical: same direction as before, but flat hours are no longer ``$\approx 0$'' on the $D_w$ metric. The hour-class taxonomy (\S\ref{sec:prov:hour_class}) still validates --- critical $>$ flat $>$ midday on $D_w$ active rates --- but the gap is a matter of degree, not category. Figs.~\ref{fig:dw_3d_hourly_ccgt}--\ref{fig:dw_3d_hourly_hp} show the hour 03 vs hour 19 contrast directly: hour 03 ridges hug zero, hour 19 ridges develop substantial right-tail mass under DA15/ID15.
 
-\textbf{Midday context (excluded from main critical-flat analysis, separate descriptive thread):}
+\textbf{Per-unit fPCA evidence (near-MCP, Figs.~\ref{fig:fpca_per_unit_3d_ccgt}--\ref{fig:fpca_per_unit_3d_hp}).} The within-firm-fleet heterogeneity is large. CCGT level-shift and tilt-magnitude distributions across units have visible mass on both signs of the shift under every reform: the firm-level scalars average over plants that often move in opposite directions. Hydro shows the same pattern with wider unit dispersion --- consistent with idiosyncratic reservoir / inflow constraints across river systems.
+
+\textbf{Post-DA gap, hour-conditional (Figs.~\ref{fig:post_da_gap_diurnal}--\ref{fig:post_da_gap_3d_hourly_hp}).} The CCGT reforzada signature is concentrated at critical hours 07 and 19, near-absent at flat hour 03 and midday hour 13. The cross-regime distribution shift visible in the aggregate ridges (Figs.~\ref{fig:post_da_gap_kde}--\ref{fig:post_da_gap_kde_hp}) is driven by these two critical hours.
+
+\textbf{Midday context.}
 \begin{itemize}\setlength{\itemsep}{2pt}
 \item Midday hours (11h--14h) have intermediate within-hour residual-demand variance ($\sigma_{\text{within}} \in [468, 502]$ MW) and very low residual demand ($\sim 8.5$--$8.9$ GW) because solar dominates the marginal-pricing technology. We exclude midday from the critical-flat control set because pooling it would absorb both the strategic-bidding signal and the operational solar-vs-thermal differential.
-\item Outcome-side validation: post-MTU15-DA within-hour DA quarter-clearing-price std is $1.51$ EUR/MWh in midday vs $6.58$ in critical vs $2.13$ in flat. Midday is the \emph{tightest} hour-class --- granular pricing has even less room to discriminate than in flat hours (\S\ref{sec:prov:hour_class}).
-\item Where midday tells a distinct story: \textbf{solar PV bid-share is higher in non-critical hours}. Solar concentrates near MCP precisely where CCGTs are not marginal: at midday (solar-marginal pricing) and in flat hours (low-demand overnight clearing). Critical hours, where CCGT competes for the margin, have the smallest solar in-band share.
-\item Where midday DOES NOT tell a new story: \textbf{CCGT bid-shape in midday is regime-stable on SA values} --- $16.6$ (3-sess) $\to 15.6$ (ISP15-win) $\to 7.4$ (MTU15-IDA post-blk) $\to 12.0$ (DA15/ID15) on the {\color{seasoncol}(SA)} column. No clean reform-window concentration shift in midday for CCGT (unlike critical, which shows +$18$ pp 3-sess$\to$DA15/ID15 SA). The granularity-strategic margin remains in critical hours.
+\item Outcome-side validation: post-MTU15-DA within-hour DA quarter-clearing-price std is $1.51$ EUR/MWh in midday vs $6.58$ in critical vs $2.13$ in flat. Midday is the \emph{tightest} hour-class --- granular pricing has less room to discriminate (\S\ref{sec:prov:hour_class}).
+\item Solar PV concentrates near MCP at midday (solar-marginal pricing) and in flat hours (low-demand overnight clearing); critical hours, where CCGT competes for the margin, have the smallest solar in-band share.
+\item CCGT midday $D_w > 0$ share moves $4.3\% \to 9.6\% \to 29.4\%$ across the three MTU15-IDA regimes, well below critical ($70.7\%$). The granularity-strategic margin is still located in critical hours.
 \end{itemize}
 
 % =====================================================================
