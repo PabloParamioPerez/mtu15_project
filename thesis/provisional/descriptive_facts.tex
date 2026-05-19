@@ -31,6 +31,9 @@
 \usepackage{caption}
 \captionsetup{font=small, labelfont=bf}
 
+% Color for seasonality-adjusted values shown alongside raw values in tables.
+\definecolor{seasoncol}{rgb}{0.10, 0.35, 0.65}
+
 % \code{...} -- monospace path with line-break-at-/-_-. (no \_ escaping needed)
 \usepackage{url}
 \urlstyle{tt}
@@ -839,6 +842,14 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 \label{tab:bidshape_ida}
 \setlength{\tabcolsep}{4pt}
 \input{../../results/regressions/bid/bid_shape/tex/tab_bidshape_IDA_by_regime_normalized.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{DA bid-shape, all hours: raw share alongside seasonality-adjusted share (in {\color{seasoncol}blue}).} Per (tech, regime) mean share (\%) of MW within $[\text{MCP} \pm 50]$ EUR/MWh, computed on the same daily-tech panel used by the regression below. The bracketed value in {\color{seasoncol}blue} is the regime's predicted share at \emph{average day-of-year}, taking the regime coefficient from the seasonality-only Frisch-Waugh-Lovell spec: $\text{logit}(\text{share}_t) = \alpha + \sum_r \beta_r \cdot \mathbf{1}\{\text{regime}_t = r\} + \sum_{k=1}^{4} \text{Fourier}_k(t) + \varepsilon_t$, fit on the pooled 2022-01 to 2026-05 panel with Newey-West HAC standard errors ($\text{maxlags}{=}14$). Differences between raw and adjusted indicate the seasonal-mix contribution to the regime mean: regimes spanning peak-seasonal months see large gaps (Wind MTU15-IDA pre-blk: raw 78.1\% vs adjusted 27.3\% — the small 40-day window happens to fall in late-March to April, a high-wind/low-clearing-price stretch). \emph{Methodology note}: Fourier basis on day-of-year is the standard seasonal smoother in the electricity time-series literature (Weron 2014); see \S\ref{sec:bid_internal:calendar_discipline} for context on why fixed effects don't work given non-overlapping regime windows. Source: \code{results/regressions/bid/seasonality\_adjusted/tab\_bidshape\_raw\_vs\_deseasonalized.tex}.}
+\label{tab:bidshape_da_deseasonalized}
+\setlength{\tabcolsep}{5pt}
+\input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_raw_vs_deseasonalized.tex}
 \end{table}
 
 \paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing Tables~\ref{tab:bidshape_da} (DA) and \ref{tab:bidshape_ida} (IDA): for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $39.5\%$ vs \textbf{IDA $77.4\%$}. CCGT in DA15/ID15 flat: DA $20.9\%$ vs \textbf{IDA $72.8\%$}. Nuclear in any regime: DA $\sim 5$--$10\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders are closer to physical delivery and face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
