@@ -881,6 +881,24 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 \input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_IDA_by_regime_deseasonalized.tex}
 \end{table}
 
+\paragraph{Per-(firm, tech, hour-class) disaggregation.} Tables~\ref{tab:bidshape_da} and \ref{tab:bidshape_ida} aggregate within tech, so within-tech firm heterogeneity is invisible. Tables~\ref{tab:bidshape_da_firm_hc} and \ref{tab:bidshape_ida_firm_hc} below split each cell by (firm, hour-class), keeping the same logit-link Fourier+DOW SA pipeline. Each row is a (tech, firm, hour-class) cell with $\ge 80$ daily observations; sparse cells fall back to raw-only without SA brackets.
+
+\begin{table}[H]
+\centering\tiny
+\caption{\textbf{DA bid-shape per (firm, tech, hour-class) and regime: raw \% / {\color{seasoncol}[SA \%]}.} Logit-link FWL on Fourier($K{=}4$, doy) + DOW dummies, pooled 2022--2026 daily-(firm, tech, hour-class) panel. Cells with no SA bracket had $<80$ in-sample days.}
+\label{tab:bidshape_da_firm_hc}
+\setlength{\tabcolsep}{3pt}
+\input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_DA_by_firm_hour_class_deseasonalized.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\tiny
+\caption{\textbf{IDA bid-shape per (firm, tech, hour-class) and regime: raw \% / {\color{seasoncol}[SA \%]}.} Same construction as Table~\ref{tab:bidshape_da_firm_hc}, IDA bid stack.}
+\label{tab:bidshape_ida_firm_hc}
+\setlength{\tabcolsep}{3pt}
+\input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_IDA_by_firm_hour_class_deseasonalized.tex}
+\end{table}
+
 \paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing Tables~\ref{tab:bidshape_da} (DA) and \ref{tab:bidshape_ida} (IDA): for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $44.0\%$ raw / {\color{seasoncol}41.3\% (SA)} vs IDA $77.5\%$ raw / {\color{seasoncol}76.5\% (SA)}. Nuclear in any regime: DA $\sim 6$--$20\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
 
 \paragraph{Reading the DA table (Table~\ref{tab:bidshape_da}) --- patterns and their seasonality robustness.}
@@ -1114,46 +1132,47 @@ where $X_i$ collects calendar-month FE, hour-of-day FE, and within-hour quarter 
 \caption{\textbf{CCGT near-MCP fPCA basis (functional-SA, $H=50$).} Left: mean $\tilde p = p - \text{MCP}$ across all CCGT in-band cells, running from $-50$ at $q=0.01$ to $+50$ at $q=0.99$ by construction. Right: first 3 eigenfunctions (91\%, 6\%, 1\% of variance). PC1 is a uniform shift of in-band bidding; PC2 captures cheap-vs-scarcity tilt within the band.}
 \end{figure}
 
-\paragraph{From the near-MCP exercise to per-(firm, hour-class).} A per-tech near-MCP fPCA already separates in-band repositioning from scarcity-tail behaviour, and an intermediate per-(tech, firm) view collapses across hour-classes; we present only the per-(firm, hour-class) results below since they preserve the hour-class divergence visible in the data while still delivering firm-specific bidding fingerprints. Per-(firm, hour-class) fPCA fits a separate basis per cell on the functionally-deseasonalised near-MCP curves; the reform shift within each cell is summarised by two scalars on the curve domain: \emph{Level shift} $=\langle \Delta f\rangle$ (average across $q$, MCP-centred EUR/MWh; positive $=$ firm bids higher relative to MCP) and \emph{Tilt magnitude} $=\operatorname{std}_q(\Delta f)$ (within-band spread; large tilt $=$ shape reshape, small tilt $=$ uniform level shift).
+\paragraph{Per-unit basis: maximum granularity.} A per-tech near-MCP fPCA separates in-band repositioning from scarcity-tail behaviour; firm- and firm-hour-aggregates hide within-firm-fleet heterogeneity (e.g., GN runs $\sim 10$ CCGT units in different zones with different bid postures, IB runs many hydro plants across river systems with idiosyncratic reservoir constraints). We push to the most granular level the data supports: fit a separate PCA basis \emph{per unit} on the functionally-deseasonalised near-MCP curves, then within each unit run a pairwise score regression per (reform, hour-class). The reform shift inside each (unit, reform, hour-class) cell is summarised by \emph{Level shift} $=\langle \Delta f\rangle$ (mean over band quantiles, MCP-centred EUR/MWh; positive = bid up) and \emph{Tilt magnitude} $=\operatorname{std}_q(\Delta f)$ (within-band spread). 67 units survive the $\ge 500$-cell threshold.
 
 \begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{Per-(firm, hour-class) near-MCP SA fPCA: own-basis EVR per cell.} Each row is one (tech, firm, hour-class) with its own PCA basis; PC$_k$ shares are not comparable across rows. ``$n$'' is the number of SA cells used to fit the basis (min 1{,}000 imposed). Empty hour-class rows indicate insufficient in-band cells.}
-\label{tab:fpca_nearmcp_perfirmhour_evr}
-\setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_firm_hour_evr.tex}
+\centering\tiny
+\caption{\textbf{Per-unit near-MCP SA fPCA: own-basis EVR per unit.} Each unit has its own PCA basis on its in-band SA curves; PC$_k$ shares are not comparable across units (different bases). Sorted by tech then firm.}
+\label{tab:fpca_nearmcp_perunit_evr}
+\setlength{\tabcolsep}{3pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_unit_evr.tex}
 \end{table}
 
 \begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{ISP15 near-MCP shifts per (firm, hour-class), MCP-centred EUR/MWh.} \emph{Level} = mean over band quantiles of the fitted curve shift; positive = bid up. \emph{Tilt} = within-band spread. Bases are firm-and-hour-class specific.}
-\label{tab:fpca_nearmcp_perfirmhour_isp15}
-\setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_firm_hour_ISP15.tex}
+\centering\tiny
+\caption{\textbf{ISP15 near-MCP shifts per (unit, hour-class), MCP-centred EUR/MWh.} \emph{Level} = mean over band quantiles of the fitted curve shift; positive = bid up. \emph{Tilt} = within-band spread. ``---'' = insufficient cells in the pre$+$post window for that (unit, hour-class).}
+\label{tab:fpca_nearmcp_perunit_isp15}
+\setlength{\tabcolsep}{3pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_unit_ISP15.tex}
 \end{table}
 
 \begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{MTU15-IDA near-MCP shifts per (firm, hour-class), MCP-centred EUR/MWh.}}
-\label{tab:fpca_nearmcp_perfirmhour_mtu15ida}
-\setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_firm_hour_MTU15-IDA.tex}
+\centering\tiny
+\caption{\textbf{MTU15-IDA near-MCP shifts per (unit, hour-class), MCP-centred EUR/MWh.}}
+\label{tab:fpca_nearmcp_perunit_mtu15ida}
+\setlength{\tabcolsep}{3pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_unit_MTU15-IDA.tex}
 \end{table}
 
 \begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{MTU15-DA near-MCP shifts per (firm, hour-class), MCP-centred EUR/MWh.}}
-\label{tab:fpca_nearmcp_perfirmhour_mtu15da}
-\setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_firm_hour_MTU15-DA.tex}
+\centering\tiny
+\caption{\textbf{MTU15-DA near-MCP shifts per (unit, hour-class), MCP-centred EUR/MWh.}}
+\label{tab:fpca_nearmcp_perunit_mtu15da}
+\setlength{\tabcolsep}{3pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_unit_MTU15-DA.tex}
 \end{table}
 
-\paragraph{Reading the per-(firm, hour-class) evidence.}
+\paragraph{Reading the per-unit evidence.} The per-unit decomposition reveals within-fleet heterogeneity that any firm-level aggregate averages out:
 \begin{itemize}\setlength{\itemsep}{2pt}
-\item \textbf{ISP15: critical-vs-flat sign-flip across firms.} For CCGT GN ($-15.6$ critical / $+6.2$ flat), CCGT HC ($-7.5$ / $+4.5$), Hydro IB ($-3.1$ / $+13.5$), Hydro\_pump IB ($-8.8$ / $+11.4$) and Hydro\_pump REP ($-7.6$ / $+13.3$), the same firm bids \emph{down} in critical hours and \emph{up} in flat hours under ISP15. Tightening the imbalance penalty pushes firms to bid more aggressively in critical hours (high residual-demand variance) but allows wider markups in low-variance flat hours where over-commitment is cheap; midday largely follows critical except for HC-Hydro.
-\item \textbf{MTU15-DA: CCGT IB/HC critical-up, flat-midday-down divergence.} IB-CCGT $+8.7/-14.2/-15.0$ across critical/flat/midday; HC-CCGT $+4.1/-10.8/-14.1$. They raise in-band bids in price-setting hours and lower them in inframarginal ones. GN-CCGT reverses the pattern ($-2.3/+2.6/+5.6$), and Hydro\_pump moves uniformly per firm (IB up across all three, REP down in flat/midday by $\sim 18$).
-\item \textbf{MTU15-IDA: hydro reshape dominates.} Hydro GE midday $+28.3$ (tilt $8.0$) is the largest single-cell shift; Hydro REP critical/midday $\sim -10$ with tilt $\sim 10$ in both. Endesa hydro repositions in-band sharply and disproportionately in midday hours.
-\item \textbf{EVR fingerprints by cell.} IB-CCGT flat-hour PC1 $=0.99$ (essentially single-mode); Hydro REP-critical PC1 $=0.69$ with PC2/PC3 $=0.14/0.06$ --- the most multi-modal cell. ``How many distinct modes does this firm-hour-class bid stack have'' is itself heterogeneous across cells.
+\item \textbf{Within-firm CCGT heterogeneity is large and reform-specific.} The firm-level scalars (e.g., IB-CCGT critical $+8.7$ under MTU15-DA) are portfolio means of the underlying unit cells, which often span both signs --- some plants in a firm raise their in-band bids sharply at MTU15-DA, others lower them. The per-unit tables expose this dispersion explicitly.
+\item \textbf{Hydro within-firm heterogeneity is larger still.} Hydro firms operate many idiosyncratic river-system units (different reservoir capacities, inflow regimes, ramp constraints). Per-unit critical-hour shifts under MTU15-IDA span both directions for IB-Hydro and HC-Hydro; the firm-level aggregates of those cells are close to zero from differencing.
+\item \textbf{Per-unit EVRs separate ``simple-strategy'' from ``multi-modal'' bidders.} Most units have PC1 $\ge 0.85$ on their own basis (the in-band level shift is the dominant mode). Smaller hydro reservoir units and some Hydro\_pump units have PC1 below $0.75$ with PC2 above $0.15$ --- their in-band bidding is genuinely multi-modal, not just a single level mode.
+\item \textbf{Coherent firm-level postures survive per-unit aggregation when they exist.} Where the firm-level shift is large and same-signed across the firm's units (e.g., GN CCGTs under ISP15 critical, all negative), the per-unit cells confirm it. Where the firm-level shift averages near zero, the per-unit cells expose underlying dispersion rather than a coherent posture.
+\item \textbf{Largest single-unit cells.} The most extreme per-unit shifts (curve-domain norm $\sim 40$--$50$ EUR/MWh) are several multiples of the firm-level scalars. These are individual plants making large in-band repositioning moves; in a structural follow-up the per-unit cells are the right level at which to model individual-firm-unit bidding strategy.
 \end{itemize}
 
 % Implementation: scripts/analysis/bid/fpca_per_tech.py (fPCA per tech)
@@ -1238,6 +1257,14 @@ where $X_i$ collects calendar-month FE, hour-of-day FE, and within-hour quarter 
 \textbf{Hydro} sell GWh/day & 4.0~{\color{seasoncol}\scriptsize[5.3]} & 4.2~{\color{seasoncol}\scriptsize[3.7]} & 2.4~{\color{seasoncol}\scriptsize[1.8]} & 2.0~{\color{seasoncol}\scriptsize[2.6]} & 2.6~{\color{seasoncol}\scriptsize[2.4]} \\
 \bottomrule
 \end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\tiny
+\caption{\textbf{Per-(firm, tech, hour-class) CI sell volume per regime, GWh/day.} Disaggregation of the per-tech rows in Table~\ref{tab:ci_volume_seasonality_adjusted}. Cells: raw mean / {\color{seasoncol}[Fourier+DOW SA prediction]}. SA fit per (firm, tech, hour-class) using the shared SA helper; cells with $<200$ days fall back to raw-only. Restricted to the three price-setting techs (CCGT, Hydro, Hydro pump); RES and Nuclear CI volumes are dominated by aggregate trades not allocable to identifiable strategic firms.}
+\label{tab:ci_volume_firm_tech_hc}
+\setlength{\tabcolsep}{3pt}
+\input{../../results/regressions/bid/ci_volume_per_firm_hour_class/tab_ci_volume_per_firm_tech_hc.tex}
 \end{table}
 
 \textbf{Reading the volume evidence.} Total system CI volume on deseasonalized values: $32 \to 27 \to 12 \to 18 \to 23$ GWh/day across the five reform regimes. \emph{The reforms reduced CI volume substantially}: from a $\sim 32$ GWh/day pre-reform baseline to $\sim 23$ GWh/day under DA15/ID15 (a $-29\%$ decrease), with the trough at $\sim 12$ GWh/day during the 40-day MTU15-IDA-only window ($-62\%$ vs baseline). The decrease applies to both critical hours ($15.8 \to 11.4$ GWh/day adjusted) and flat hours ($2.6 \to 1.6$). The per-tech decomposition shows Hydro CI activity falling ($5.3 \to 2.4$, more than halved), CCGT roughly stable around 2--3 GWh/day, Wind recovering after a dip, Solar PV rising under DA15/ID15. \emph{The decrease in CI volume is the mirror image of the granular auction absorbing scarcity that previously fell to XBID and real-time TR.}
