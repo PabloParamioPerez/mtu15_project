@@ -855,7 +855,7 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \paragraph{Methodological caveats (read before interpreting).}
 \begin{itemize}
-\item \textbf{Seasonality is controlled via Fourier-deseasonalized adjusted values in {\color{seasoncol}brackets}.} Each cell of the bid-shape tables (Tables~\ref{tab:bidshape_da}, \ref{tab:bidshape_ida}) shows the raw mean alongside the predicted share at \emph{average day-of-year} from a Frisch-Waugh-Lovell regression: $\text{logit}(\text{share}_t) = \alpha + \sum_r \beta_r \mathbf{1}\{\text{regime}_t = r\} + \sum_{k=1}^{4} \text{Fourier}_k(t) + \varepsilon_t$, fit on the pooled 2022-2026 daily-(tech, hour-class) panel. Month FE are not identified given non-overlapping regime windows (\S\ref{sec:bid_internal:calendar_discipline}); the Fourier basis on day-of-year handles seasonality smoothly across them.
+\item \textbf{Seasonality is controlled via Fourier-deseasonalized adjusted values in {\color{seasoncol}brackets}.} Each cell of the bid-shape tables (Table~\ref{tab:bidshape_da_ida}) shows the raw mean alongside the predicted share at \emph{average day-of-year} from a Frisch-Waugh-Lovell regression: $\text{logit}(\text{share}_t) = \alpha + \sum_r \beta_r \mathbf{1}\{\text{regime}_t = r\} + \sum_{k=1}^{4} \text{Fourier}_k(t) + \varepsilon_t$, fit on the pooled 2022-2026 daily-(tech, hour-class) panel. Month FE are not identified given non-overlapping regime windows (\S\ref{sec:bid_internal:calendar_discipline}); the Fourier basis on day-of-year handles seasonality smoothly across them.
 \item \textbf{Band width $h = 50$ EUR/MWh is a modelling choice.} It matches the kernel band used for $D_w$. A wider band ($h = 100$) captures more of the scarcity-priced CCGT tail; a narrower band ($h = 25$) focuses on the immediately-marginal layer. We report a sensitivity below (Table~\ref{tab:bidshape_da_h_sensitivity}): the qualitative reform-window pattern is robust across $h \in \{25, 50, 100\}$.
 \item \textbf{Per-cell share has a denominator-effect floor for techs with very low total bidding.} Units that submit only a single block of MW pre-priced near MCP will have share $\to 1$ trivially. This affects the absolute level of the share for some tech-firm combinations (e.g., GST wind aggregators with single-block strategies, see \S\ref{sec:prov:pricesetter_da}) but does not invalidate cross-regime comparisons within a given (tech, firm).
 \item \textbf{The fPCA in \S\ref{sec:prov:fpca} is the cleaner version of the same exercise}: it works in quantile space (naturally normalised, monotone-preserving) and runs regressions with seasonal controls. Read the share tables here as a quick orientation; the fPCA is the methodologically tighter complement.
@@ -864,24 +864,14 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 \paragraph{Day-ahead bid shape across regimes, normalised.} The metric reported is the share $\text{MW}_{\text{band}} / \text{MW}_{\text{total}}$ of the unit's offered MW falling within $[\text{MCP} \pm 50]$ EUR/MWh, aggregated per (tech, firm, year-month, hour-class), averaged across months within regime.
 
 \begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{DA bid-shape per regime: raw share alongside {\color{seasoncol}seasonality-adjusted share}.} Each cell: raw mean share (\%) of unit's offered MW within $[\text{MCP}\pm 50]$ EUR/MWh / {\color{seasoncol}[bracketed adjusted share]}. The bracketed value is the predicted share at \emph{average day-of-year}, from $\text{logit}(\text{share}_t) = \alpha + \sum_r \beta_r \mathbf{1}\{\text{regime}_t = r\} + \sum_{k=1}^{4} \text{Fourier}_k(t) + \varepsilon_t$ fit on the pooled 2022-2026 daily-(tech, hour-class) panel. See \S\ref{sec:bid_internal:calendar_discipline} for the SA spec and why month FE are not identified given non-overlapping regime windows.}
-% Source: results/regressions/bid/seasonality_adjusted/tab_bidshape_DA_by_regime_deseasonalized.tex
-\label{tab:bidshape_da}
-\setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_DA_by_regime_deseasonalized.tex}
+\centering\tiny
+\caption{\textbf{DA and IDA bid-shape per regime: raw share / {\color{seasoncol}seasonality-adjusted share}.} Each cell: raw mean share (\%) of unit's offered MW within $[\text{MCP}\pm 50]$ EUR/MWh / {\color{seasoncol}[bracketed adjusted share]}. Predicted share at \emph{average day-of-year}, from $\text{logit}(\text{share}_t) = \alpha + \sum_r \beta_r \mathbf{1}\{\text{regime}_t = r\} + \sum_{k=1}^{4} \text{Fourier}_k(t) + \varepsilon_t$ fit on the pooled 2022--2026 daily-(tech, hour-class) panel. DA bid stack: cab+det, $\pm 50$ EUR/MWh band around DA MCP. IDA bid stack: idet+icab, all sessions pooled per ISP, $\pm 50$ EUR/MWh band around IDA MCP. See \S\ref{sec:bid_internal:calendar_discipline} for the SA spec.}
+\label{tab:bidshape_da_ida}
+\setlength{\tabcolsep}{2pt}
+\input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_DA_IDA_combined.tex}
 \end{table}
 
-\begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{IDA bid-shape per regime: raw share alongside {\color{seasoncol}seasonality-adjusted share}.} Same construction as Table~\ref{tab:bidshape_da}, applied to the IDA bid stack (idet+icab, all sessions pooled per ISP, $\pm 50$ EUR/MWh band around the IDA clearing price).}
-% Source: results/regressions/bid/seasonality_adjusted/tab_bidshape_IDA_by_regime_deseasonalized.tex
-\label{tab:bidshape_ida}
-\setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_IDA_by_regime_deseasonalized.tex}
-\end{table}
-
-\paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing Tables~\ref{tab:bidshape_da} (DA) and \ref{tab:bidshape_ida} (IDA): for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $44.0\%$ raw / {\color{seasoncol}41.3\% (SA)} vs IDA $77.5\%$ raw / {\color{seasoncol}76.5\% (SA)}. Nuclear in any regime: DA $\sim 6$--$20\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
+\paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing the DA and IDA panels in Table~\ref{tab:bidshape_da_ida}: for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $44.0\%$ raw / {\color{seasoncol}41.3\% (SA)} vs IDA $77.5\%$ raw / {\color{seasoncol}76.5\% (SA)}. Nuclear in any regime: DA $\sim 6$--$20\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
 
 \paragraph{Per-(firm, tech) distribution view.} Hour-class means flatten the 11-hour critical band (morning ramp + evening peak combined), the 4-hour midday band, and the 3-hour flat band into one number each, and also collapse multimodal day-distributions into a single mean. Two complementary views replace the per-(firm, hour-class) cell means with finer information: (i) a diurnal heatmap of the regime mean by hour-of-day; (ii) an estimated probability density of the daily in-band share across (unit, day, hour) cells.
 
@@ -901,7 +891,7 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \paragraph{Reading the distribution.} The density plot exposes what neither hour-class means nor quantiles capture cleanly: \textbf{bimodality at the daily cell level}. CCGT bidding strategies are not noisy continuous deviations from a central mean; firms operate in two distinct postures (``saturated at MCP'' vs ``well above MCP'') and the relative weight of these postures shifts with the reform. REP CCGT under DA15/ID15 has a dominant mass near full-saturation; GN-CCGT has a dominant mass at zero with a long upper tail. HC CCGT under DA15/ID15 shows a more unimodal middle-mass distribution. The diurnal heatmap (Fig.~\ref{fig:bidshape_diurnal_heatmap}) shows the in-band concentration is hour-specific within critical hours: most firms' CCGT shares peak on the morning and evening ramps (hours 6--8 and 19--21) rather than mid-day-peak hours (10--14).
 
-\paragraph{Reading the DA table (Table~\ref{tab:bidshape_da}) --- patterns and their seasonality robustness.}
+\paragraph{Reading the DA table (Table~\ref{tab:bidshape_da_ida} (DA)) --- patterns and their seasonality robustness.}
 \begin{itemize}
 \item \textbf{CCGT DA-side critical $>$ flat throughout, and the gap survives deseasonalization.} In DA15/ID15: 44.0\% raw / {\color{seasoncol}41.3 adjusted} (critical) vs 24.4\% raw / {\color{seasoncol}23.6 adjusted} (flat). In 3-sess: 22.8 raw / {\color{seasoncol}23.5 adjusted} (critical) vs 10.1 raw / {\color{seasoncol}6.5 adjusted} (flat). The critical-flat gap is $\sim$18 pp across regimes on adjusted shares --- \textbf{the pattern is not driven by seasonal-mix differences in the regime windows}.
 \item \textbf{CCGT DA-side in-band share rose post-reform on adjusted shares too.} Critical: ISP15-win 25.0 raw / {\color{seasoncol}24.0 adjusted} $\to$ DA15/ID15 44.0 / {\color{seasoncol}41.3}, a $+17$ pp shift on adjusted shares. Flat hours: 10.3 / {\color{seasoncol}13.6} $\to$ 24.4 / {\color{seasoncol}23.6}, $+10$ pp on adjusted shares. Both moves are direction-preserving after seasonality removal --- \textbf{the reform-window concentration of CCGT bids near MCP is a real shift, not a seasonal artifact.}
@@ -910,7 +900,7 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 \item \textbf{Nuclear DA-side: raw values have huge regime swings driven by maintenance-window seasonality} (Spanish nukes refuel in spring + late summer). MTU15-IDA pre-blk raw 56.3 / {\color{seasoncol}adjusted 15.1} confirms the raw spike is the refuelling-window seasonal artifact.
 \end{itemize}
 
-\paragraph{Reading the IDA table (Table~\ref{tab:bidshape_ida}) --- patterns and their seasonality robustness.}
+\paragraph{Reading the IDA table (Table~\ref{tab:bidshape_da_ida} (IDA)) --- patterns and their seasonality robustness.}
 \begin{itemize}
 \item \textbf{CCGT IDA-side: critical-flat ordering and reform shift both survive deseasonalization.} 3-sess critical $47.3$ raw / {\color{seasoncol}$48.8$ (SA)} vs flat $64.3$ / {\color{seasoncol}$64.4$}. DA15/ID15 critical $77.5$ / {\color{seasoncol}$76.5$} vs flat $72.1$ / {\color{seasoncol}$71.3$}. The flip from critical-below-flat (early regimes) to critical-above-flat (DA15/ID15) is preserved on the SA comparison. \textbf{Not a seasonal artifact.}
 \item \textbf{CCGT IDA-side share rose substantially on SA shares}: critical $48.0$ (3-sess SA) $\to 79.1$ (DA15/ID15 SA), $+31$ pp. In flat: $67.7 \to 77.4$, $+10$ pp. Direction matches raw, magnitude even larger on critical.
@@ -958,29 +948,21 @@ The choice DA vs IDA is itself a methodologically substantive choice that any id
 \paragraph{Conditional bid shape (cleared days only).} Re-running the steepness metric on the MIC-filtered sample (= unit-days where the unit operated):
 
 \begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{DA bid-shape share (\%) of offered MW within [MCP$\pm 50$] EUR/MWh, MIC-filtered (conditional on unit clearing $>0$ MWh that day).} Same metric as Table~\ref{tab:bidshape_da} (share of unit-period offered MW falling within the band) but on the MIC-filtered subsample, i.e., excluding unit-days dropped by Portela's Phase 1 filter (Table~\ref{tab:mic_drop_rates}). Numbers in this table represent the bid shape \emph{conditional on operational activity}; the unfiltered Table~\ref{tab:bidshape_da} represents \emph{unconditional} strategic submission. Both are valid: the first captures what bids actually constrain clearing; the second captures what firms submit.}
-\label{tab:bidshape_da_mic}
-\setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/bid_shape/tex/tab_bidshape_DA_by_regime_mic.tex}
+\centering\tiny
+\caption{\textbf{DA and IDA bid-shape share (\%), MIC-filtered (conditional on unit clearing $>0$ MWh that day).} Same metric as Table~\ref{tab:bidshape_da_ida} but on the MIC-filtered subsample (Portela's Phase 1 filter; drop rates in Table~\ref{tab:mic_drop_rates}). Numbers represent the bid shape \emph{conditional on operational activity}; the unfiltered Table~\ref{tab:bidshape_da_ida} captures \emph{unconditional} strategic submission. Both are valid: the first captures what bids actually constrain clearing; the second captures what firms submit.}
+\label{tab:bidshape_mic}
+\setlength{\tabcolsep}{2pt}
+\input{../../results/regressions/bid/bid_shape/tex/tab_bidshape_DA_IDA_mic_combined.tex}
 \end{table}
 
-\begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{IDA bid-shape share (\%), MIC-filtered.} Same as Table~\ref{tab:bidshape_da_mic} for IDA.}
-\label{tab:bidshape_ida_mic}
-\setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/bid_shape/tex/tab_bidshape_IDA_by_regime_mic.tex}
-\end{table}
-
-\paragraph{Reading the MIC-filtered tables.} Both Table~\ref{tab:bidshape_da_mic} (DA) and Table~\ref{tab:bidshape_ida_mic} (IDA) now report the \emph{share} (in \%) of a unit's offered MW that falls inside the $\text{MCP}\pm 50$ EUR/MWh band, on the operationally-active subsample. The relevant comparison is each cell against its unfiltered counterpart in Tables~\ref{tab:bidshape_da} and~\ref{tab:bidshape_ida}. Drop rates of the MIC filter on the bid-shape per-cell sample are in Table~\ref{tab:mic_drop_rates}: CCGT $77$--$97\%$, Hydro $22$--$29\%$, Hydro pump $8$--$23\%$, Nuclear/RES $\le 7\%$.
+\paragraph{Reading the MIC-filtered tables.} Table~\ref{tab:bidshape_mic} now report the \emph{share} (in \%) of a unit's offered MW that falls inside the $\text{MCP}\pm 50$ EUR/MWh band, on the operationally-active subsample. The relevant comparison is each cell against its unfiltered counterpart in Table~\ref{tab:bidshape_da_ida}. Drop rates of the MIC filter on the bid-shape per-cell sample are in Table~\ref{tab:mic_drop_rates}: CCGT $77$--$97\%$, Hydro $22$--$29\%$, Hydro pump $8$--$23\%$, Nuclear/RES $\le 7\%$.
 \begin{itemize}
 \item \textbf{DA, CCGT: the MIC filter raises in-band share substantially.} In the unfiltered DA table, CCGT in-band share in critical hours rises from $24.5\%$ (3-sess) to $39.5\%$ (DA15/ID15); in the MIC-filtered DA table the same cells go from $27.6\%$ to \textbf{$62.1\%$} ($+34.5$ pp across the reform window vs $+15.0$ pp unfiltered). In flat hours: $10.6\to 20.9\%$ unfiltered, $24.0\to 54.6\%$ filtered. Because the CCGT MIC drop rate is high (77--97\% of bid-shape cells), the unfiltered share dilutes a small operationally-active core in a large silent-bid majority. Conditioning on operational activity recovers the operationally-relevant bid-shape, which is much closer to MCP.
 \item \textbf{DA, Hydro shows the opposite pattern: filtering \emph{lowers} share.} Hydro DA critical-hour share is $26.7\%$ (3-sess) $\to 24.3\%$ (DA15/ID15) unfiltered, falling to $23.9\to 19.0\%$ filtered. Even though the Hydro DA drop rate is modest ($22$--$29\%$), the dropped Hydro cells have higher in-band share than the retained ones --- consistent with reservoir bids being concentrated near MCP on days the unit is bid-only-not-cleared (then dispatched elsewhere via shutdown / inflow constraints), and more spread out on days it actually operates.
 \item \textbf{DA, Nuclear / Wind / Solar PV / Solar Thermal / Cogen} are nearly unchanged between the two tables --- their MIC drop rates are at or below $\sim 7\%$, so the filter is a near-identity.
 \item \textbf{DA, Hydro pump} shifts upward under filtering: $63.6\to 66.6\%$ unfiltered, $71.7\to 80.0\%$ filtered in critical hours. With an $\sim 8$--$23\%$ drop rate, the dropped pumped-storage cells have systematically lower in-band share, so the conditional share moves up.
 \item \textbf{IDA, share differences are tiny across the filter.} CCGT IDA critical: $55.2\to 77.4\%$ unfiltered vs $56.5\to 78.2\%$ filtered --- essentially the same. CCGT IDA flat: $61.7\to 72.8\%$ vs $62.3\to 73.7\%$. The IDA bid stack already concentrates the bulk of submitted MW near MCP (bidders enter IDA after DA clearing, so MCP uncertainty is much smaller); the MIC filter has little marginal information to add.
-\item \textbf{Cross-class ordering signal preserved.} The DA CCGT critical-vs-flat gap visible in Table~\ref{tab:bidshape_da} (gap $13.9$ pp 3-sess $\to 18.6$ pp DA15/ID15) widens further under MIC filtering ($3.6$ pp $\to 7.5$ pp). The IDA CCGT cross-class sign flip noted under Table~\ref{tab:bidshape_ida} (critical $<$ flat in 3-sess, $>$ flat in DA15/ID15) is also preserved under filtering ($56.5 < 62.3$ vs $78.2 > 73.7$).
+\item \textbf{Cross-class ordering signal preserved.} The DA CCGT critical-vs-flat gap visible in Table~\ref{tab:bidshape_da_ida} (DA) (gap $13.9$ pp 3-sess $\to 18.6$ pp DA15/ID15) widens further under MIC filtering ($3.6$ pp $\to 7.5$ pp). The IDA CCGT cross-class sign flip noted under Table~\ref{tab:bidshape_da_ida} (IDA) (critical $<$ flat in 3-sess, $>$ flat in DA15/ID15) is also preserved under filtering ($56.5 < 62.3$ vs $78.2 > 73.7$).
 \item \textbf{Choice for the main reading.} Both versions are useful. The unfiltered tables report what firms \emph{submit} into casación; the MIC-filtered tables report bid shape \emph{conditional on operational activity}. For DA-side CCGT (where drop rates are large), the two diverge by tens of percentage points and the qualitative regime pattern sharpens under conditioning. For IDA-side (where drop rates are smaller in the operationally-relevant cells), the two essentially coincide.
 \end{itemize}
 % Implementation: scripts/analysis/bid/bid_shape_mic_filter.py
@@ -1056,7 +1038,7 @@ For each (tech, firm) and each pairwise reform, we restrict the sample to pre $+
 \end{align*}
 where $X_i$ collects calendar-month FE, hour-of-day FE, and within-hour quarter FE. \emph{No} Fourier-on-doy and \emph{no} DOW FE here: the functional pre-deseasonalisation already removed those at the curve level, so adding them in the score regression would be a redundant near-zero block. Post-effect on Critical hours is $\beta_{0,k}$; on Flat hours $\beta_{0,k} + \beta_{\text{Flat},k}$; on Midday $\beta_{0,k} + \beta_{\text{Mid},k}$. Reference: pre regime $\times$ Critical hour. This is the cleanest single-shock descriptive read of bid-shape change the data supports per reform.
 
-\paragraph{Headline tables.} Each cell is the pre-post change of PC$_k$ projected back onto the curve domain via $\widehat\beta_k \cdot \phi_k$ (EUR/MWh, summed across quantiles). Tables~\ref{tab:fpca_pc123_isp15}--\ref{tab:fpca_pc123_mtu15da} report PC1, PC2, PC3 critical-hour coefficients across all eight techs; PC1 picks up the level shift, PC2 the cheap-vs-scarcity tilt, PC3 finer scarcity-tail shape. The figure below shows the full $\sum_k \widehat\beta_k \phi_k(q)$ curve shift for CCGT (firm: GN) under the functional-SA pipeline; analogous per-tech figures live on disk.
+\paragraph{Headline tables.} Each cell is the pre-post change of PC$_k$ projected back onto the curve domain via $\widehat\beta_k \cdot \phi_k$ (EUR/MWh, summed across quantiles). Table~\ref{tab:fpca_pc123_all} report PC1, PC2, PC3 critical-hour coefficients across all eight techs; PC1 picks up the level shift, PC2 the cheap-vs-scarcity tilt, PC3 finer scarcity-tail shape. The figure below shows the full $\sum_k \widehat\beta_k \phi_k(q)$ curve shift for CCGT (firm: GN) under the functional-SA pipeline; analogous per-tech figures live on disk.
 % Score regressions output: coeffs_pairwise.csv.
 
 \begin{figure}[H]
@@ -1077,26 +1059,10 @@ where $X_i$ collects calendar-month FE, hour-of-day FE, and within-hour quarter 
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{ISP15 pairwise PC1, PC2, PC3 coefficients (functional-SA), critical hours, all techs.} Cells in EUR/MWh on the curve domain (post coefficient projected via $\beta_k \phi_k(q)$, summed). RES techs (Wind, Solar PV, Cogen, Solar Thermal) are aggregated per firm into ``OTH'' (RES has too many small distributed units for per-firm fPCA).}
-\label{tab:fpca_pc123_isp15}
-\setlength{\tabcolsep}{6pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_ISP15_sa_pc123.tex}
-\end{table}
-
-\begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{MTU15-IDA pairwise PC1, PC2, PC3 coefficients (functional-SA), critical hours, all techs.} 40-day post window.}
-\label{tab:fpca_pc123_mtu15ida}
-\setlength{\tabcolsep}{6pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_MTU15-IDA_sa_pc123.tex}
-\end{table}
-
-\begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{MTU15-DA pairwise PC1, PC2, PC3 coefficients (functional-SA), critical hours, all techs.}}
-\label{tab:fpca_pc123_mtu15da}
-\setlength{\tabcolsep}{6pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_MTU15-DA_sa_pc123.tex}
+\caption{\textbf{Pairwise PC1, PC2, PC3 coefficients across all three reforms (functional-SA), critical hours.} Cells in EUR/MWh on the curve domain (post coefficient projected via $\beta_k \phi_k(q)$, summed). The MTU15-IDA panel uses a 40-day post window. RES techs (Wind, Solar PV, Cogen, Solar Thermal) are aggregated per firm into ``OTH'' (RES has too many small distributed units for per-firm fPCA).}
+\label{tab:fpca_pc123_all}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_all_reforms_sa_pc123.tex}
 \end{table}
 
 \paragraph{Reading the PC1/PC2/PC3 evidence.}
@@ -1594,7 +1560,7 @@ where $P_{\text{gas}}$ is the natural-gas spot price (EUR/MWh-thermal, LHV basis
 
 \textbf{Identification note on ESIOS id 705.} ESIOS indicator 705 (\emph{Precio medio restricciones Fase I subir}) is the \textbf{accepted-energy pay-as-bid price} (\texteuro/MWh delivered), the average across all Fase~I-up subasta acceptances on the day. It is \emph{not} a capacity / band reservation price (those live in the aFRR-reserve series id 634/2130, ``banda secundaria"). The opportunity-cost benchmark is therefore the unit's SRMC, which is what we compute here. The OMIE / OS definition is in REE PO 3.2 read with CNMC Resolución 8 Sep 2022 settling Fase~I.
 
-\textbf{Result.} Monthly aggregates with the central parameters give CCGT marginal cost in the range \texteuro 100--130/MWh-elec across the reform-window months, against DA spot \texteuro 53--120/MWh and Fase~I-up pay-as-bid \texteuro 145--261/MWh (Tables~\ref{tab:cascade_prices_up}--\ref{tab:bidshape_da}):
+\textbf{Result.} Monthly aggregates with the central parameters give CCGT marginal cost in the range \texteuro 100--130/MWh-elec across the reform-window months, against DA spot \texteuro 53--120/MWh and Fase~I-up pay-as-bid \texteuro 145--261/MWh (Table~\ref{tab:cascade_prices_up}):
 
 \begin{table}[H]
 \centering\scriptsize
@@ -2109,7 +2075,7 @@ In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17,
 \item Cleanest identification: imbalance volume per cell fell $\sim 60\%$ ($\sim 50\%$ mechanical variance-reduction $+ \sim 10$ pp behavioural; \S\ref{sec:prov:full_cascade:efficiency}).
 \item Dual-price spread widened $40/85 \to 70/110$ EUR/MWh.
 \item CI volume fell $-15\%$ {\color{seasoncol}(SA)}; leading reading is improved BRP forecasting (also consistent with TR \emph{volumes} falling; TR \emph{cost} rose only because the price wedge widened).
-\item CCGT bid-curve concentration rose mainly in flat hours, not critical (Table~\ref{tab:bidshape_da}).
+\item CCGT bid-curve concentration rose mainly in flat hours, not critical (Table~\ref{tab:bidshape_da_ida} (DA)).
 \end{itemize}
 
 \textbf{MTU15-IDA (intraday granularity, Mar 2025).}
@@ -2135,7 +2101,7 @@ In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17,
 \textbf{Across technologies (within-hour bid-shape, \S\ref{sec:prov:dw_decomp}--\S\ref{sec:prov:dw_tables}):}
 \begin{itemize}\setlength{\itemsep}{2pt}
 \item \textbf{CCGT}: the only tech with non-trivial $D_w > 0$ rates. The reform-window response is concentrated here.
-\item \textbf{Hydro, hydro pump}: regime-stable; no reform response (Tables~\ref{tab:bidshape_da}, \ref{tab:bidshape_ida}).
+\item \textbf{Hydro, hydro pump}: regime-stable; no reform response (Table~\ref{tab:bidshape_da_ida}).
 \item \textbf{Nuclear}: no within-hour margin (near-zero share at MCP in every regime).
 \item \textbf{Wind, Solar PV}: weather-driven; raw cross-regime levels mostly seasonal-mix artifacts. Cross-regime claims require {\color{seasoncol}adjusted}/SA columns explicitly.
 \end{itemize}
@@ -2158,7 +2124,7 @@ In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17,
 \begin{itemize}\setlength{\itemsep}{2pt}
 \item Midday hours (11h--14h) have intermediate within-hour residual-demand variance ($\sigma_{\text{within}} \in [468, 502]$ MW) and very low residual demand ($\sim 8.5$--$8.9$ GW) because solar dominates the marginal-pricing technology. We exclude midday from the critical-flat control set because pooling it would absorb both the strategic-bidding signal and the operational solar-vs-thermal differential.
 \item Outcome-side validation: post-MTU15-DA within-hour DA quarter-clearing-price std is $1.51$ EUR/MWh in midday vs $6.58$ in critical vs $2.13$ in flat. Midday is the \emph{tightest} hour-class --- granular pricing has even less room to discriminate than in flat hours (\S\ref{sec:prov:hour_class}).
-\item Where midday tells a distinct story: \textbf{solar PV bid-share is higher in non-critical hours} on SA values --- DA15/ID15 Solar PV: $25.5\%$ raw / $20.0\%$ {\color{seasoncol}(SA)} in critical, $47.9\%$ / $42.2\%$ {\color{seasoncol}(SA)} in midday, $61.1\%$ / $67.3\%$ {\color{seasoncol}(SA)} in flat (Table~\ref{tab:bidshape_da}). Solar concentrates near MCP precisely where CCGTs are not marginal: at midday (solar-marginal pricing) and in flat hours (low-demand overnight clearing). Critical hours, where CCGT competes for the margin, have the smallest solar in-band share.
+\item Where midday tells a distinct story: \textbf{solar PV bid-share is higher in non-critical hours} on SA values --- DA15/ID15 Solar PV: $25.5\%$ raw / $20.0\%$ {\color{seasoncol}(SA)} in critical, $47.9\%$ / $42.2\%$ {\color{seasoncol}(SA)} in midday, $61.1\%$ / $67.3\%$ {\color{seasoncol}(SA)} in flat (Table~\ref{tab:bidshape_da_ida} (DA)). Solar concentrates near MCP precisely where CCGTs are not marginal: at midday (solar-marginal pricing) and in flat hours (low-demand overnight clearing). Critical hours, where CCGT competes for the margin, have the smallest solar in-band share.
 \item Where midday DOES NOT tell a new story: \textbf{CCGT bid-shape in midday is regime-stable on SA values} --- $16.6$ (3-sess) $\to 15.6$ (ISP15-win) $\to 7.4$ (MTU15-IDA post-blk) $\to 12.0$ (DA15/ID15) on the {\color{seasoncol}(SA)} column. No clean reform-window concentration shift in midday for CCGT (unlike critical, which shows +$18$ pp 3-sess$\to$DA15/ID15 SA). The granularity-strategic margin remains in critical hours.
 \end{itemize}
 
