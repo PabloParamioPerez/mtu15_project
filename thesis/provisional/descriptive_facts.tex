@@ -1297,6 +1297,44 @@ Sur      & 13 & 5\,563 & 4 & \textbf{GN}     & 42.5 & 3\,040 \\
 
 \textit{Verdict.} GN's zonal dominance in the southern-Mediterranean corridor (Sur, Levante, Cataluña, plus Centro through IB) maps directly onto the post-clearing intervention story in \S\ref{sec:prov:phf_minus_pdbf}. Pay-as-bid Fase~I / TR $+$ zonal dominance is a local-monopoly channel that does not require flow-through to the DA auction. \emph{Caveats}: zone $=$ plant city (a conservative proxy for the REE PO 3.2 zonal book); capacity share is a static proxy; the ESIOS \texttt{tech\_restrictions\_volumes\_*} families (Fase~I and tiempo-real per zone) would let us test this directly once the per-zone Fase~I dump is fully ingested.
 
+\subsection{Bid-side heterogeneity by zonal dominance}\label{sec:prov:geo:bid_by_dominance}
+
+The capacity-based zonal map (Table~\ref{tab:zonal_concentration}) says \emph{where} firms could exercise local market power; the question this subsection answers is \emph{whether they bid differently when they hold dominance versus when they do not}. We split each CCGT unit into ``dominant in its zone'' (the firm holds the largest within-zone capacity share) versus ``non-dominant'' and compare the median day-ahead sell-bid price per firm per regime.
+
+\textbf{Variable.} For each (CCGT unit, day) the median day-ahead sell-bid price across the day's quarters (EUR/MWh). Aggregated by (firm, regime, dominant flag) with the median across (unit, day) cells. \textbf{Sources}: bid stack from \texttt{cab\_all.parquet}+\texttt{det\_all.parquet}; unit-firm-zone bridge from \texttt{data/external/ccgt\_zonal\_map.csv}. ``Pre" $=$ 2024 same-calendar; ``post" $=$ post-blackout window 2025-05 onward.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Median DA sell-bid price by firm and zonal dominance, EUR/MWh.} Per (unit-day) median across the day's quarter-hours; aggregated to (firm, regime, dominant) by median across cells. ``Dominant'' = firm holds the largest CCGT capacity share in the zone. Source: \texttt{results/regressions/regulatory/ccgt\_bid\_by\_zonal\_dominance/bid\_by\_firm\_dominance.csv}.}
+\label{tab:bid_by_zonal_dominance}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l r r r r r r r r}
+\toprule
+ & \multicolumn{4}{c}{Pre (2024 same-cal)} & \multicolumn{4}{c}{Post (2025-05+ reforzada)} \\
+ \cmidrule(lr){2-5} \cmidrule(lr){6-9}
+Firm & Dom & Non-dom & Diff & ratio & Dom & Non-dom & Diff & ratio \\
+\midrule
+GN & 844 & 866  & $-22$  & 0.97 & 840 & 852  & $-12$  & 0.99 \\
+GE & \textbf{2{,}680} & 2{,}381 & $+299$ & 1.13 & \textbf{1{,}789} & 445  & \textbf{$+1{,}344$} & \textbf{4.02} \\
+IB & 156 & 170  & $-14$  & 0.92 & 147 & 196  & $-49$  & 0.75 \\
+HC & --  & 156  & --     & --   & --  & 163  & --     & --   \\
+\bottomrule
+\multicolumn{9}{p{14.5cm}}{\footnotesize{GN unit-counts: 15 dominant (Sur/Levante/Cataluña), 2 non-dominant. GE unit-counts: 1 dominant (Galicia: PGR5), 4 non-dominant (Cataluña: BES3/BES5; Sur: COL4/SROQ2). IB: 1 dominant (Centro), 9 non-dominant. HC has no dominant-zone CCGT in this taxonomy.}}
+\end{tabular}
+\end{table}
+
+\textit{Reading.} Three distinct bidding strategies surface across the four firms:
+
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{GN: cap-padded ladder applied uniformly.} GN bids at \texteuro 840--870/MWh in \emph{every} zone, dominant or not, in both regimes. The bid level barely shifts post-blackout. This is the empirical signature of a fleet-wide Cournot-on-quantity strategy applied as company policy --- not a per-zone tactical adjustment --- consistent with the headline reading in \S\ref{sec:prov:bid_vs_rt2}.
+
+\item \textbf{GE: zone-specific bid level, sharply asymmetric.} GE bids \texteuro 2{,}680/MWh in Galicia (its dominant zone, with PGR5 the sole flagship unit) pre-reform and \texteuro 1{,}789/MWh post; in non-dominant zones, the same firm bids \texteuro 2{,}381 pre and collapses to \texteuro 445 post --- a $-81\%$ drop, $4\times$ ratio between dominant and non-dominant zones in 2025. GE's unit-level detail (\texttt{per\_unit\_median.csv}) confirms this: PGR5 in Galicia holds \texteuro 1{,}789 in 2025; BES3 in Cataluña drops from \texteuro 1{,}346 to \texteuro 473; COL4 in Sur drops from \texteuro 2{,}476 to \texteuro 109. GE concentrates the deep-withholding posture on the units where its zonal-Fase~I outside option is largest, and lets the non-dominant-zone units clear DA at low prices.
+
+\item \textbf{IB and HC: bid near short-run marginal cost everywhere.} IB bids \texteuro 150--220/MWh and HC \texteuro 150--165, both close to bottom-up CCGT marginal cost (\S\ref{sec:prov:phf_minus_pdbf:mc}). IB has only one dominant-zone unit (Centro) and shows no dominant-vs-non-dominant differential. HC has no dominant-zone CCGT.
+\end{itemize}
+
+\textit{Verdict.} Per-zone bidding behaviour confirms the local-market-power reading rather than refuting it. The two firms with strong zonal dominance (GN in the southern corridor, GE in Galicia) display the most aggressive withholding-style bid posture, with GE additionally showing strong \emph{within-firm} differentiation between dominant and non-dominant zones. The two firms with thin or no dominant footprint (IB outside Centro, HC) bid near competitive levels everywhere. This complements the capacity-based concentration evidence (Table~\ref{tab:zonal_concentration}) with a bid-side observation: dominance is exercised. The CNMC's 2019 Naturgy sanction precedent (\S\ref{sec:prov:cournot_cnmc:sanctions}) covered exactly the GN southern-corridor plants whose flat \texteuro 840 ladder is documented here.
+
 
 % =====================================================================
 \section{System cost cascade: the full ajuste view}\label{sec:prov:full_cascade}
@@ -1495,6 +1533,86 @@ The three sequential reforms (ISP15 settlement, MTU15-IDA clearing, MTU15-DA cle
 \item \textbf{MTU15-IDA} is the biggest single channel: $-$\texteuro 2.9M/day in TR cost.
 \item \textbf{MTU15-DA} delivers genuine TR $+$ aFRR savings of $\sim$\texteuro 1.5M/day but is dominated in raw aggregates by the parallel operational-reforzada policy.
 \end{enumerate}
+
+
+% =====================================================================
+\section{Continuous-intraday repositioning per technology}\label{sec:prov:ci_per_tech}
+% =====================================================================
+
+\textbf{Why this matters.} The system-cost evidence in \S\ref{sec:prov:full_cascade} documents the redistribution of expenditure between TR (real-time technical restrictions) and Fase~I (pre-IDA pay-as-bid redispatch). What the cascade view does not show is the bidding-side mechanism through which the cost reallocation materialises. The hypothesis is that finer-grained intraday clearing absorbs within-hour scarcity that previously spilled into real-time correction; if true, this should be visible in the volume of repositioning that technologies do in the post-IDA continuous market (XBID). We characterise per-technology continuous-intraday (CI) activity across the reform regimes.
+
+\textbf{Variable.} Each XBID matched trade in \texttt{trades\_all.parquet} pairs a buyer unit and a seller unit (with a contract quantity in MW for a delivery period of \texttt{mtu\_minutes} length). For each (delivery date, technology) we sum the MWh of CI trades on the sell side (the technology of the seller unit) and on the buy side (the technology of the buyer unit), then average per day within each regime. The \emph{gross} CI activity per tech is the sum of sells and buys; the \emph{net} CI position is sells minus buys. \textbf{Sources}: trades from \texttt{trades\_all.parquet}; unit-to-technology mapping from \texttt{lista\_unidades.csv}.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Gross continuous-intraday activity by technology and regime, GWh/day.} Sum of sell-side and buy-side MWh per (delivery date, technology), averaged per day per regime. Captures total CI repositioning by tech. Source: \texttt{results/regressions/bid/ci\_position\_adjustments/per\_tech\_gross\_gwh\_day.tex}.}
+\label{tab:ci_gross_per_tech}
+\setlength{\tabcolsep}{4pt}
+\scriptsize
+\input{../../results/regressions/bid/ci_position_adjustments/per_tech_gross_gwh_day.tex}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Net continuous-intraday position by technology and regime, GWh/day.} Sells $-$ buys per (delivery date, technology). Positive values $=$ net seller (technology adds output via CI); negative $=$ net buyer (technology reduces output via CI). Source: \texttt{results/regressions/bid/ci\_position\_adjustments/per\_tech\_net\_gwh\_day.tex}.}
+\label{tab:ci_net_per_tech}
+\setlength{\tabcolsep}{4pt}
+\scriptsize
+\input{../../results/regressions/bid/ci_position_adjustments/per_tech_net_gwh_day.tex}
+\end{table}
+
+\textit{Reading.}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{System-wide gross CI activity falls during MTU15-IDA, then recovers under MTU15-DA.} The sum across techs of the gross CI volume (sells side) drops from $\sim$20 GWh/day pre-reforms to $\sim$13 GWh/day during the MTU15-IDA-only window (Mar--Sep 2025) and recovers to $\sim$19 GWh/day after MTU15-DA. The drop is consistent with the auction-based IDA15 absorbing intra-hour scarcity that previously fell to XBID. The recovery is consistent with the finer-grained DA15 producing more per-quarter mismatch that XBID is structurally well placed to close.
+
+\item \textbf{Wind doubles its CI activity under MTU15-DA.} Wind onshore gross CI volume goes from 3.5--3.6 GWh/day in the MTU15-IDA-only window to 7.5 GWh/day under MTU15-DA --- the largest tech-specific increase in the table. Forecast-error correction at quarter-hour resolution is the natural reading: granular DA + granular CI lets wind units re-balance against their forecast at each ISP, where the pre-MTU15-DA infrastructure forced them to bundle into hourly settlement cells.
+
+\item \textbf{CCGTs are systematic net SELLERS in CI in every regime.} The net-position column (Table~\ref{tab:ci_net_per_tech}) shows CCGT at $+0.8$ to $+2.5$ GWh/day across regimes; the firm adds output via the continuous market in the typical day. This is consistent with the headline ``DA-stay-out, re-enter via post-clearing channels'' narrative in \S\ref{sec:prov:q1_drop}--\S\ref{sec:prov:bid_vs_rt2}: CCGTs that did not clear DA can rejoin via XBID (or via Fase~I redispatch), and the bid-side observable for the XBID side is the net-positive CI sell flow.
+
+\item \textbf{Nuclear is the systematic net BUYER, especially in the post-blackout window.} Nuclear net-buys $-1.7$ to $-2.9$ GWh/day in the operational-reforzada window (a position reduction relative to DA-clearing). The mechanism is the RES-curtailment $+$ system-rebalancing regime that forced nuclear to back off when the grid favoured forced-on CCGTs.
+
+\item \textbf{Hydro pumped storage shrinks in CI under reforms.} Pumped storage gross CI activity falls from $\sim 2.2$ GWh/day (3-sess) to $\sim 1.0$ GWh/day (DA15/ID15). Some of this activity likely migrates to balancing-reserve markets (aFRR, mFRR), where pumped storage has a comparative advantage as the fast-response fleet.
+
+\item \textbf{Solar PV CI activity is moderate and roughly stable in net terms.} Solar PV net CI position oscillates around zero ($-0.3$ to $+0.1$ GWh/day) across regimes; the technology uses CI for both incremental sales (over-forecast hours) and buy-backs (under-forecast hours) without a structural directional bias.
+\end{itemize}
+
+\textit{Verdict.} The MTU15 efficiency reading from the cost side (\S\ref{sec:prov:full_cascade:efficiency}) maps onto a clear bidding-side pattern: technologies with high within-hour forecast variability (wind, solar PV) use the finer-grained CI more after MTU15-DA, and the inframarginal dispatchable fleet (CCGT, nuclear) uses CI in the direction that complements its post-clearing position --- CCGTs net-sell back into the program after staying out of DA, nuclear net-buys to absorb curtailment-driven displacement. The CI volume reduction in the MTU15-IDA-only window is the empirical face of the TR-channel savings documented in Table~\ref{tab:efficiency_gains}: granular IDA absorbs the scarcity that previously fell to XBID and to real-time TR. The CI recovery under MTU15-DA tracks the new granular DA generating more per-quarter rebalancing demand.
+
+
+% =====================================================================
+\section{Within-hour variance and ISP15 settlement exposure}\label{sec:prov:isp15_per_tech}
+% =====================================================================
+
+\textbf{Why this matters.} The ISP15 settlement reform (60-min $\to$ 15-min ISP, effective 2024-12-01) was previously documented in \S\ref{sec:prov:full_cascade:efficiency} at the system level: average absolute imbalance volume fell $\sim 60\%$ from $\sim$810 MW/hour to $\sim$325 MW/ISP, with the dual-price spread widening from \texteuro 40/85 to \texteuro 70/110 per MWh. The aggregate read is that ISP15 made the settlement markedly more punitive. The differential question this section addresses is \emph{across which technologies} the settlement burden of ISP15 falls. Under the old ISP60, within-hour deviations of any technology's actual generation from its hourly schedule averaged out within the hour and produced zero settlement load. Under ISP15, each 15-minute cell is settled separately, so the within-hour variance of generation becomes a direct per-MWh imbalance exposure.
+
+\textbf{Variable.} For each (date, clock-hour, technology) we compute $\sigma_{\text{within}}(d, h, \text{tech})$ as the within-hour standard deviation of the four 15-minute actual-generation values from ENTSO-E A75 (per PSR type, 15-min ISP resolution). The per-regime mean $\sigma_{\text{within}}$ in MW measures the structural within-hour ``churn'' of each technology. Implied monthly imbalance-exposure cost per technology is the product $\sigma_{\text{within}} \times \text{spread}_{\text{regime}} \times 720~\text{hours/month}$, where the spread is the per-regime dual-price spread (mean of cobro-up and pago-dn). \textbf{Sources}: ENTSO-E A75 \texttt{gen\_actual\_per\_type\_all.parquet}; spreads from ESIOS indicators 686 / 687 reproduced in \S\ref{sec:prov:full_cascade:efficiency}.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Per-technology within-hour variance and implied ISP15 settlement exposure.} $\sigma_w$ $=$ within-hour standard deviation of 15-min actual generation per PSR type (mean across the regime's hours). Column 3 expresses $\sigma_w$ as a fraction of the technology's mean MW. The last two columns are the implied monthly imbalance-exposure cost computed as $\sigma_w \times \text{spread} \times 720$~hours, with spread $=$ average of cobro-up and pago-dn for the regime: pre-ISP15 spread $\approx 62$ EUR/MWh, DA15/ID15 spread $\approx 105$ EUR/MWh. Source: \texttt{results/regressions/balancing/within\_hour\_variance/per\_tech\_sigma.tex}.}
+\label{tab:isp15_per_tech}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/balancing/within_hour_variance/per_tech_sigma.tex}
+\end{table}
+
+\textit{Reading.}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{Solar PV bears the largest absolute exposure.} Within-hour $\sigma_w$ for solar PV is $\sim 660$ MW under DA15/ID15 (7.6\% of its 8.6 GW mean) --- the highest in MW terms of any technology. The implied monthly imbalance-exposure cost rises from \texteuro 25M/month under pre-ISP15 settlement to \texteuro 50M/month under DA15/ID15, a near-doubling. This is the channel through which ISP15 falls hardest on solar: large within-hour swings (cloud-cover transitions, especially during morning ramp and evening fade) are now settled on the 15-min ISP grid rather than netted within the hour.
+
+\item \textbf{Hydro pumped storage has the largest \emph{relative} variance.} Pumped storage $\sigma_w/\bar{Q}$ runs $\sim 19\%$ (vs $\sim 7.6\%$ for solar PV) --- the highest variance fraction of any large-capacity technology. Total MW are smaller (1.6 GW mean), so absolute exposure is modest at \texteuro 23M/month under DA15/ID15, but the technology operates at high variance by design (pump $\leftrightarrow$ turbine switching). ISP15 increases its per-MWh settlement burden mechanically.
+
+\item \textbf{Wind onshore is the lowest-variance large RES.} Wind $\sigma_w/\bar{Q} \approx 2.1\%$ --- much smaller than solar PV. Wind generation is structurally smoother than solar within the hour (no analogue of cloud-cover transitions or solar-fade ramps at sub-hour timescales), so wind's per-MW imbalance exposure is roughly $4\times$ smaller than solar PV at the same generation level. The monthly exposure rises from \texteuro 7M to \texteuro 12M between pre-ISP15 and DA15/ID15 ($\times 1.75$).
+
+\item \textbf{Nuclear is near-flat by design.} Nuclear $\sigma_w/\bar{Q} \approx 0.37\%$, the smallest in the panel. Baseload operation means within-hour variance is dominated by trip / curtailment events rather than by structural generation profile. Implied monthly exposure is small (\texteuro 1--2M).
+
+\item \textbf{CCGT $\sigma_w/\bar{Q} \approx 3.4\%$, intermediate.} CCGT plants ramp under load-following control with $\sigma_w \sim 200$ MW at $\sim 6$ GW mean dispatch. Monthly exposure rises from \texteuro 8M (pre-ISP15) to \texteuro 16M (DA15/ID15), almost doubling. The CCGT exposure is structural (ramp-following) plus driven by the post-clearing redispatch documented in \S\ref{sec:prov:phf_minus_pdbf}.
+
+\item \textbf{The renewable-penalty channel is concentrated in solar PV, not wind.} Across the table, the absolute monthly-exposure increase from pre-ISP15 to DA15/ID15 is \texteuro 25M for solar PV vs only \texteuro 5M for wind. Wind onshore is structurally smoother and falls in the same bracket as CCGT in per-MWh imbalance exposure. The ``ISP15 penalises renewables more'' framing in the energy-policy discussion is specifically a \emph{solar} channel under our measurement: $\sigma_w$ for solar PV is $\sim 4\times$ that of wind at similar installed bases.
+\end{itemize}
+
+\textit{Verdict.} ISP15 settlement makes per-MWh imbalance exposure proportional to within-hour generation variance. Solar PV has by far the largest within-hour variance in absolute MW terms (cloud-cover ramps at sub-hour timescales) and therefore bears the largest absolute monthly exposure under the post-ISP15 settlement regime. Wind onshore, despite the policy-discussion framing as ``the variable RES'', is structurally much smoother and faces an exposure profile closer to dispatchable thermal plants. Hydro pumped storage has the highest variance \emph{fraction} but small absolute scale. Nuclear and biomass face negligible exposure. The cross-tech ranking is broadly stable across regimes; what changes between pre- and post-ISP15 is the dual-price spread that multiplies the variance into monetary exposure --- the channel by which the cost falls on RES is the price wedge, not the variance itself.
+
+\emph{Caveat (measurement scope).} The exposure estimates above use $\sigma_w \times \text{spread}$ as the \emph{theoretical per-MWh exposure}, multiplied by 720 hours/month. The actual ESIOS-published imbalance volumes (id 762, system-level) move from $\sim$810 MW/hour pre-ISP15 to $\sim$325 MW/ISP post-ISP15 (\S\ref{sec:prov:full_cascade:efficiency}); the implied system-wide imbalance settlement is therefore not directly recoverable from these per-tech variance numbers without a within-BRP netting adjustment, which is not available at unit-level. The interpretation in the table is comparative across techs, not absolute aggregate.
 
 
 % =====================================================================
