@@ -884,8 +884,10 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{../../figures/working/bidshape_kde_per_firm_tech.pdf}
-\caption{\textbf{Estimated probability density of the daily in-band MW share per (tech, firm), regimes overlaid.} Gaussian KDE across (unit, day, hour) cells per (firm, tech, regime). \textbf{Bimodality visible} for several CCGT firms under DA15/ID15 --- mass clustered both near 0 (firm did not have MW close to MCP that day) and near 1 (firm fully in-band, often a single block at MCP). REP-CCGT under DA15/ID15 has clear bimodality with a large mass near 1, while GN-CCGT has most mass near 0. The reform-window shift to right tail is visible in the right-shifting curve across regimes for IB, GE, HC and REP CCGT.}
+\includegraphics[width=0.7\textwidth]{../../figures/working/distribution_3d_bidshare_CCGT.pdf}
+\includegraphics[width=0.7\textwidth]{../../figures/working/distribution_3d_bidshare_Hydro.pdf}
+\includegraphics[width=0.7\textwidth]{../../figures/working/distribution_3d_bidshare_Hydro_pump.pdf}
+\caption{\textbf{Distribution of the daily in-band MW share per tech, across regimes — 3D ridge.} Estimated density of share-per-(unit, day, hour) cells. The reform-window mass shift is whole-distribution: under DA15/ID15 the share distribution moves rightward relative to 3-sess for CCGT and Hydro. \textbf{Bimodality} visible in CCGT post-MTU15-IDA regimes — mass clustered near 0 (firm did not have MW close to MCP) and near 1 (firm fully in-band, often a single block at MCP); a 2D version (\texttt{bidshape\_kde\_per\_firm\_tech.pdf}) splits this per firm on disk.}
 \label{fig:bidshape_kde}
 \end{figure}
 
@@ -1047,15 +1049,28 @@ where $X_i$ collects calendar-month FE, hour-of-day FE, and within-hour quarter 
 \caption{\textbf{CCGT pairwise reform-window fitted bid-curve shifts on functionally-deseasonalised curves (firm: GN).} Each row $=$ a reform; each column $=$ hour-class. The fitted shift is $\sum_k \beta_k \phi_k(q)$. Positive ordinate $=$ bid curve shifts up under the reform.}
 \end{figure}
 
-\paragraph{Explained variance: raw vs functional-SA.} Both pipelines deliver near-identical eigenstructure (Table~\ref{tab:fpca_evr_raw_vs_sa}). The seasonal cycle is a small share of \emph{total} curve variance --- the within-tech bid-stack shape dominates --- but it does shift \emph{which} variation gets projected onto PC1, and several pairwise coefficients flip sign relative to a naive raw-PCA reading.
+\paragraph{Distribution of PC scores per tech, across regimes.} Rather than reporting aggregate explained-variance ratios (which collapse all observations to a single eigenvalue per PC), we plot the \emph{distribution} of PC1, PC2, PC3 scores across all (unit, day, period) cells per regime. The 3D ridge plots below show, per tech, the regime-wise estimated density of each PC score. The reform-window shift of the WHOLE distribution is the substantive object; eigenvalues are just one moment of it.
 
-\begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{fPCA explained-variance ratios per tech: raw curves vs functionally-deseasonalised curves.}}
-\label{tab:fpca_evr_raw_vs_sa}
-\setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_evr_raw_vs_sa.tex}
-\end{table}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../../figures/working/distribution_3d_PCscores_CCGT.pdf}
+\caption{\textbf{CCGT: distribution of functional-SA PC scores across regimes.} Each panel is a 3D ridge plot of one principal component score; one curve per regime, stacked along the $y$-axis. Bimodality emerges post-MTU15-IDA on PC1 and PC2 (firms with cap-padded ladders vs firms bidding near MCP).}
+\label{fig:dist_3d_pc_ccgt}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../../figures/working/distribution_3d_PCscores_Hydro.pdf}
+\caption{\textbf{Hydro: distribution of functional-SA PC scores across regimes.} Hydro PC1 distributions are wider and more multi-modal than CCGT's, consistent with the reservoir-spilling vs scarcity-bidding split being a real second margin for hydro.}
+\label{fig:dist_3d_pc_hydro}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../../figures/working/distribution_3d_PCscores_Hydro_pump.pdf}
+\caption{\textbf{Hydro pump: distribution of functional-SA PC scores across regimes.} Hydro\_pump distributions are sharper than hydro (more concentrated PC1 mass), consistent with pumped storage's purer level-bidding posture.}
+\label{fig:dist_3d_pc_hydropump}
+\end{figure}
 
 \begin{table}[H]
 \centering\scriptsize
@@ -1084,29 +1099,13 @@ where $X_i$ collects calendar-month FE, hour-of-day FE, and within-hour quarter 
 
 \paragraph{Spec.} For each (unit/firm, date, period), keep only tranches with $|p - \text{MCP}| \le H$, $H=50$ EUR/MWh (matches the in-band kernel used in \S\ref{sec:prov:steepness}). Reparameterise the curve in MCP-centred price coordinates: $f_i^{\text{band}}(q)$ returns $\tilde p = p - \text{MCP}$ at quantile $q$ of cumulative in-band MW, $q \in \{0.01, \ldots, 0.99\}$. Filter cells with fewer than three in-band tranches (the 99-point quantile curve is artefacts otherwise). Apply the same functional-SA and PCA pipeline as the full-curve case.
 
-\begin{table}[H]
-\centering\scriptsize
-\caption{\textbf{Near-MCP fPCA explained-variance ratios, raw vs functional-SA, $H=50$ EUR/MWh.} Curves restricted to $|p-\text{MCP}|\le 50$. PC1 captures the level of in-band bidding; PC2 the cheap-vs-scarcity tilt \emph{within} the band; PC3 finer shape.}
-\label{tab:fpca_evr_nearmcp}
-\setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_evr_nearmcp_H50_raw_vs_sa.tex}
-\end{table}
-
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../../figures/working/fpca_eigenfuncs_CCGT_nearmcp_H50_sa.pdf}
 \caption{\textbf{CCGT near-MCP fPCA basis (functional-SA, $H=50$).} Left: mean $\tilde p = p - \text{MCP}$ across all CCGT in-band cells, running from $-50$ at $q=0.01$ to $+50$ at $q=0.99$ by construction. Right: first 3 eigenfunctions (91\%, 6\%, 1\% of variance). PC1 is a uniform shift of in-band bidding; PC2 captures cheap-vs-scarcity tilt within the band.}
 \end{figure}
 
-\paragraph{Per-unit basis: maximum granularity.} A per-tech near-MCP fPCA separates in-band repositioning from scarcity-tail behaviour; firm- and firm-hour-aggregates hide within-firm-fleet heterogeneity (e.g., GN runs $\sim 10$ CCGT units in different zones with different bid postures, IB runs many hydro plants across river systems with idiosyncratic reservoir constraints). We push to the most granular level the data supports: fit a separate PCA basis \emph{per unit} on the functionally-deseasonalised near-MCP curves, then within each unit run a pairwise score regression per (reform, hour-class). The reform shift inside each (unit, reform, hour-class) cell is summarised by \emph{Level shift} $=\langle \Delta f\rangle$ (mean over band quantiles, MCP-centred EUR/MWh; positive = bid up) and \emph{Tilt magnitude} $=\operatorname{std}_q(\Delta f)$ (within-band spread). 67 units survive the $\ge 500$-cell threshold.
-
-\begin{table}[H]
-\centering\tiny
-\caption{\textbf{Per-unit near-MCP SA fPCA: own-basis EVR per unit.} Each unit has its own PCA basis on its in-band SA curves; PC$_k$ shares are not comparable across units (different bases). Sorted by tech then firm.}
-\label{tab:fpca_nearmcp_perunit_evr}
-\setlength{\tabcolsep}{3pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_nearmcp_per_unit_evr.tex}
-\end{table}
+\paragraph{Per-unit basis: maximum granularity.} A per-tech near-MCP fPCA separates in-band repositioning from scarcity-tail behaviour; firm- and firm-hour-aggregates hide within-firm-fleet heterogeneity (e.g., GN runs $\sim 10$ CCGT units in different zones with different bid postures, IB runs many hydro plants across river systems with idiosyncratic reservoir constraints). We push to the most granular level the data supports: fit a separate PCA basis \emph{per unit} on the functionally-deseasonalised near-MCP curves, then within each unit run a pairwise score regression per (reform, hour-class). The reform shift inside each (unit, reform, hour-class) cell is summarised by \emph{Level shift} $=\langle \Delta f\rangle$ (mean over band quantiles, MCP-centred EUR/MWh; positive = bid up) and \emph{Tilt magnitude} $=\operatorname{std}_q(\Delta f)$ (within-band spread). 67 units survive the $\ge 500$-cell threshold. Per-unit EVR data is on disk under \texttt{results/regressions/bid/fpca/per\_unit/}.
 
 \begin{table}[H]
 \centering\tiny
@@ -1515,8 +1514,10 @@ Path A is the workhorse measurement throughout this section. Paths B and C provi
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{../../figures/working/post_da_gap_kde_per_firm_tech.pdf}
-\caption{\textbf{Estimated probability density of the daily post-DA gap per (tech, firm), regimes overlaid.} Gaussian KDE across daily (date, firm, tech) cells per regime. \textbf{The reform shifts the whole distribution rightward}, not just a few extreme days: under DA15/ID15 (purple) every CCGT firm's density mass sits to the right of pre-MTU15 regimes. CCGT GN's reform-window shift is the largest; Hydro and Hydro\_pump show smaller shifts. Right-tail thickening for GN-CCGT and IB-CCGT under DA60/ID15 post-blk and DA15/ID15 is the reforzada signature.}
+\includegraphics[width=0.7\textwidth]{../../figures/working/distribution_3d_postdagap_CCGT.pdf}
+\includegraphics[width=0.7\textwidth]{../../figures/working/distribution_3d_postdagap_Hydro.pdf}
+\includegraphics[width=0.7\textwidth]{../../figures/working/distribution_3d_postdagap_Hydro_pump.pdf}
+\caption{\textbf{Distribution of the daily post-DA gap per tech, across regimes — 3D ridge.} Estimated density of GWh/day per (firm, tech, date) cell. \textbf{The reform shifts the whole CCGT distribution rightward}, not just the tail: under DA15/ID15 the CCGT density mass sits to the right of pre-MTU15 regimes. Hydro and Hydro\_pump distributions shift modestly. A per-firm 2D version is on disk (\texttt{post\_da\_gap\_kde\_per\_firm\_tech.pdf}).}
 \label{fig:post_da_gap_kde}
 \end{figure}
 

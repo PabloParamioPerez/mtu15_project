@@ -136,9 +136,10 @@ def main():
     n_techs = len(TECHS)
     n_firms = len(FIRMS)
     fig, axes = plt.subplots(n_techs, n_firms, figsize=(15, 8), sharex=True, sharey=True)
-    fig.suptitle("In-band MW share ($\\pm$50 EUR/MWh around DA MCP) — estimated density per (tech, firm), regimes overlaid", fontsize=11)
+    fig.suptitle("In-band MW share ($\\pm$50 EUR/MWh around DA MCP) — estimated density per (tech, firm), regimes overlaid (y-axis capped at 4 to reveal middle of distribution)", fontsize=11)
 
     x = np.linspace(0.001, 0.999, 200)
+    YMAX = 4.0  # cap to make middle of distribution visible past the 0/1 spikes
     for i, tech in enumerate(TECHS):
         for j, firm in enumerate(FIRMS):
             ax = axes[i, j] if n_techs > 1 else axes[j]
@@ -151,7 +152,11 @@ def main():
                 vals = np.clip(vals, 0.001, 0.999)
                 try:
                     kde = gaussian_kde(vals, bw_method=0.08)
-                    ax.plot(x, kde(x), color=color, lw=1.5, label=r_disp)
+                    z = kde(x)
+                    # Clip y for plotting (preserves the tail-mass info qualitatively;
+                    # the cap reveals the middle of the distribution).
+                    z_plot = np.clip(z, 0, YMAX * 1.05)
+                    ax.plot(x, z_plot, color=color, lw=1.4, label=r_disp)
                 except (np.linalg.LinAlgError, ValueError):
                     pass
             if i == 0:
@@ -161,10 +166,11 @@ def main():
             if i == n_techs - 1:
                 ax.set_xlabel("In-band share")
             ax.set_xlim(0, 1)
+            ax.set_ylim(0, YMAX)
             ax.grid(alpha=0.25, lw=0.4)
             if i == 0 and j == n_firms - 1:
                 ax.legend(loc="upper right", fontsize=7)
-    plt.tight_layout(rect=[0, 0, 1, 0.96])
+    plt.tight_layout(rect=[0, 0, 1, 0.95])
     out = FIG_DIR / "bidshape_kde_per_firm_tech.pdf"
     fig.savefig(out, bbox_inches="tight", dpi=120)
     plt.close(fig)
