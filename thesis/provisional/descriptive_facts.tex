@@ -990,21 +990,30 @@ truncated at small $K$, replaces each (functional) bid curve by $K$ scalar score
 
 \paragraph{Why quantile space, and why pool per-tech.} We represent supply curves in quantile space ($S^{-1}(q)$ as a function of $q$) rather than price-quantity space ($Q(p)$ as a function of $p$). Quantile space has three concrete advantages for our setting: (i) it is naturally monotone (each $f_i$ is a non-decreasing function on $[0,1]$, in the same direction across all units), so the mean function $\bar f$ is itself a well-formed supply curve and the PCs admit a sensible shift / tilt interpretation; (ii) it is scale-normalised --- each unit's curve is parameterised by its own quantile of cumulative MW, so a 400 MW CCGT and a 10 MW solar plant produce $f_i$ on the same domain $[0,1]$ regardless of nameplate size --- the curve shape is what fPCA decomposes, not the level; (iii) it removes the integer-versus-continuous mismatch that bedevils price-space analyses (different units submit different numbers of price tranches; quantile space handles arbitrary tranche counts uniformly). Pooling per tech (one fPCA per tech) is necessary because the mean function $\bar f$ for CCGT (an L-shaped curve hugging low-to-moderate prices with a sharp scarcity tail) is very different from the mean function for hydro (steeper across the entire curve) or for solar PV (most mass at zero with a small uplift near MCP); a single pooled PCA would mostly pick up the cross-tech mean differences in PC1 and leave the within-tech variation we care about for higher PCs. Per-tech pooling lets the within-tech reform-window shape changes dominate the eigenfunctions.
 
-\paragraph{From scores to regime effects.} Once each curve $f_i$ has $K$ scalar scores $\xi_{ik}$, the cross-regime change in curve shape becomes a regression of scores on regime indicators (with seasonality controls). For each PC index $k$, we fit:
+\paragraph{Functional pre-deseasonalisation (default).} A naive fPCA on raw bid curves contaminates PC1 with the seasonal cycle: the dominant ``level shift'' mode mixes winter-vs-summer pricing with the reform's structural shift. We instead deseasonalise the curves \emph{functionally} before extracting the PCs --- the eigenfunctions then describe only the variation orthogonal to the within-year calendar cycle.
+
+For each tech and each quantile grid point $q \in \{0.01, \ldots, 0.99\}$ independently, regress the price at that quantile point on the same FWL spec used for scalar SA (Sec.~\ref{sec:bid_internal:calendar_discipline}):
 \[
-\xi_{ik} \;=\; \alpha_k \;+\; \sum_{r \in \mathcal{R} \setminus \{0\}} \gamma_{k,r}\, \mathbf{1}\{\text{regime}(t_i) = r\} \;+\; \sum_{j=1}^{J} \left[\nu_{k,j}\, c_j(t_i) + \mu_{k,j}\, s_j(t_i)\right] \;+\; u_{ik},
+f_i(q) \;=\; \alpha(q) \;+\; \sum_{r \in \mathcal{R}\setminus\{0\}} \beta_r(q)\,\mathbf{1}\{\text{regime}(t_i){=}r\}
+ \;+\; \sum_{k=1}^{4} \left[a_k(q)\, c_k(t_i) + b_k(q)\, s_k(t_i)\right]
+ \;+\; \sum_{j=1}^{6} \delta_j(q)\, \mathbf{1}\{\operatorname{dow}(t_i){=}j\}
+ \;+\; e_i(q).
 \]
-which is the same FWL structure as the SA spec for scalar outcomes (\S\ref{sec:bid_internal:calendar_discipline}) but applied to each principal-component score in turn. The estimated $\widehat\gamma_{k,r}$ is the change in the score along PC$_k$ in regime $r$, after partialling out seasonality. The headline tables in this section project $\widehat\gamma_{1,r}$ back onto the curve domain via $\widehat\gamma_{1,r} \cdot \phi_1$ to express the reform effect in EUR/MWh on the bid curve, integrated across quantiles.
-
-\paragraph{Functional pre-deseasonalization (alternative ordering).} The spec above does fPCA on \emph{raw} curves and pushes the seasonal control into the \emph{score regression}. A sharper alternative is to deseasonalize the curves \emph{functionally} \emph{before} extracting the PCs --- letting the eigenfunctions describe only the variation that survives seasonality control. Concretely, for each tech and each quantile grid point $q \in \{0.01, \ldots, 0.99\}$ separately, regress the price at that quantile point on a Fourier-doy basis:
+Collect the seasonality-only fitted part
+\(
+\widehat{\text{seas}}_i(q) = \sum_k [\widehat a_k(q)\, c_k(t_i) + \widehat b_k(q)\, s_k(t_i)] + \sum_j \widehat\delta_j(q)\, \mathbf{1}\{\operatorname{dow}(t_i){=}j\}
+\),
+keep the regime variation in the curve, and define
 \[
-f_i(q) \;=\; \alpha(q) \;+\; \sum_{r \in \mathcal{R}\setminus\{0\}} \beta_r(q)\,\mathbf{1}\{\text{regime}(t_i){=}r\} \;+\; \sum_{j=1}^{J} \left[a_j(q)\, c_j(t_i) + b_j(q)\, s_j(t_i)\right] \;+\; e_i(q),
+f_i^{\text{SA}}(q) \;=\; f_i(q) - \widehat{\text{seas}}_i(q).
 \]
-collect the seasonality-only fitted part $\widehat{\text{seas}}_i(q) = \sum_j [\widehat a_j(q)\, c_j(t_i) + \widehat b_j(q)\, s_j(t_i)]$, and define the deseasonalized curve $f_i^{\text{SA}}(q) = f_i(q) - \widehat{\text{seas}}_i(q)$. Then run fPCA on $\{f_i^{\text{SA}}\}$, and regress the resulting scores on regime indicators only (no Fourier in the score step, since the seasonal cycle is already removed at the curve level). The reform effect on PC$_k$ in regime $r$ is read directly off the regime dummy.
+Then run fPCA on $\{f_i^{\text{SA}}\}$; PC1 is by construction orthogonal to the calendar cycle. Computationally cheap: 99 small OLS regressions per tech, solved jointly via SVD-based least-squares in float64. Implementation is in the script that builds the SA quantile-curves parquet alongside the raw ones; the raw fPCA outputs are kept as a baseline diagnostic.
 
-Intuitively: with the current ordering, PC1 mixes a level-shift mode that is partially seasonal (winter prices higher than summer) with the reform's structural shift; the score regression then tries to disentangle them with a low-order Fourier basis. The pre-deseasonalized version makes PC1 by construction orthogonal to the calendar cycle, so the eigenfunctions are shape modes \emph{conditional on} season, and $\widehat\gamma_{k,r}$ is closer to a clean reform read.
-
-This is a worth-running robustness on the headline pairwise tables; we keep the current ordering as the workhorse here, and flag this functional-SA alternative as the natural next implementation. The two orderings will deliver the same answer in the limit where the seasonal cycle is well captured by the chosen Fourier basis at every quantile point --- typically a good approximation for daily prices on $K=3$--$4$ harmonics --- but the deseasonalized-curves variant is more transparent about what variance the PCs are actually decomposing.
+\paragraph{From scores to regime effects.} Once each SA curve $f_i^{\text{SA}}$ has $K$ scalar scores $\xi_{ik}$, the cross-regime change in curve shape is a regression of scores on regime indicators. With seasonality already absorbed at the curve level, the score regression does \emph{not} add Fourier or DOW terms (they would be redundant near-zero columns). For each PC index $k$, we fit:
+\[
+\xi_{ik} \;=\; \alpha_k \;+\; \sum_{r \in \mathcal{R} \setminus \{0\}} \gamma_{k,r}\, \mathbf{1}\{\text{regime}(t_i) = r\} \;+\; \text{(month, hour-of-day, quarter FE)} \;+\; u_{ik}.
+\]
+The estimated $\widehat\gamma_{k,r}$ is the change in the SA score along PC$_k$ in regime $r$. The headline tables in this section project $\widehat\gamma_{1,r}$ back onto the curve domain via $\widehat\gamma_{1,r} \cdot \phi_1$ to express the reform effect in EUR/MWh on the bid curve, integrated across quantiles. The month/hour/quarter FE absorb residual non-seasonal calendar structure (idiosyncratic month-level macro shocks, hour-of-day baselines) that the within-year Fourier basis does not absorb.
 
 \paragraph{Method.} We represent each curve in \emph{quantile} space (price as a function of cumulative MW): $S^{-1}(q)$ on a fixed grid $q \in \{0.01, 0.02, \ldots, 0.99\}$. This is naturally monotone, scale-normalised (each unit's curve spans $[0, $ unit capacity$]$), and matches the geometry used by Portela (2017) for Iberian residual demand curves. Pooled per tech (so that CCGT, hydro, etc. are not mixed), we fit fPCA via singular-value decomposition on a stratified sample of 1{,}000 curves per (regime $\times$ calendar-month) cell. Then we project all per-(unit/firm, date, period) curves onto the basis to obtain scores $\xi_{ik}$ for $k = 1, \ldots, 5$.
 
@@ -1048,39 +1057,39 @@ Reform & Pre-window & Post-window \\
 \bottomrule
 \end{tabular}
 \end{center}
-For each (tech, firm) and each pairwise reform, we restrict the sample to pre $+$ post regimes only and run, separately for each PC $k$:
+For each (tech, firm) and each pairwise reform, we restrict the sample to pre $+$ post regimes only and run, separately for each PC $k$, on the \emph{SA scores} $\{\xi^{\text{SA}}_{i,k}\}$:
 \begin{align*}
-\xi_{i,k} = \alpha &+ \beta_{0,k}\, \mathds{1}[\text{post}_i]
- + \!\sum_{h \in \{\text{Flat}, \text{Mid}\}}\! \beta_{h,k}\, \mathds{1}[\text{post}_i]\,\mathds{1}[\text{hour}_i = h] \\
- &+ \!\sum_{m=1}^{3}\! \left(a_{m,k} \sin\!\tfrac{2\pi m\, \text{doy}_i}{365} + b_{m,k} \cos\!\tfrac{2\pi m\, \text{doy}_i}{365}\right) + \gamma_k\, X_i + \varepsilon_{i,k}
+\xi^{\text{SA}}_{i,k} = \alpha &+ \beta_{0,k}\, \mathds{1}[\text{post}_i]
+ + \!\sum_{h \in \{\text{Flat}, \text{Mid}\}}\! \beta_{h,k}\, \mathds{1}[\text{post}_i]\,\mathds{1}[\text{hour}_i = h]
+ + \gamma_k\, X_i + \varepsilon_{i,k},
 \end{align*}
-where the Fourier basis on day-of-year (3 harmonics, 6 columns) provides a \emph{parametric seasonal control} on top of calendar-month FE inside $X_i$ --- finite-dimensional and fully parametric; we choose 3 harmonics as a fixed modelling choice, not via a data-driven smoother. The post-effect on Critical hours is $\beta_{0, k}$; on Flat hours $\beta_{0, k} + \beta_{\text{Flat}, k}$; on Midday $\beta_{0, k} + \beta_{\text{Mid}, k}$. Reference: pre regime $\times$ Critical hour. This is the cleanest single-shock identification the data supports per reform.
+where $X_i$ collects calendar-month FE, hour-of-day FE, and within-hour quarter FE. \emph{No} Fourier-on-doy and \emph{no} DOW FE here: the functional pre-deseasonalisation already removed those at the curve level, so adding them in the score regression would be a redundant near-zero block. Post-effect on Critical hours is $\beta_{0,k}$; on Flat hours $\beta_{0,k} + \beta_{\text{Flat},k}$; on Midday $\beta_{0,k} + \beta_{\text{Mid},k}$. Reference: pre regime $\times$ Critical hour. This is the cleanest single-shock descriptive read of bid-shape change the data supports per reform.
 
 \paragraph{Headline tables, PC1 only.} Each cell is the pre-post change of PC$_k$ projected onto the curve domain via $\beta \cdot \phi_1$; PC1 captures 86\% of CCGT bid-curve variance (mostly a uniform level shift), so positive $=$ bid curve shifts up, negative $=$ shifts down. Higher-order PCs are recorded in the accompanying score-regression output.
 % Score regressions output: coeffs_pairwise.csv.
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{Pairwise ISP15 effect (3-sess $\to$ ISP15-win), PC1 coefficient.} Outcome: PC$_1$ score of the bid curve. Positive $=$ bid curve shifts up under the reform; negative $=$ shifts down. Conditional on Fourier(doy), month, day-of-week, hour, quarter FE.}
+\caption{\textbf{Pairwise ISP15 effect (3-sess $\to$ ISP15-win), PC1 coefficient on functionally-deseasonalised bid curves.} Outcome: PC$_1$ score of the SA bid curve. Positive $=$ bid curve shifts up under the reform; negative $=$ shifts down. Score regression: post $+$ post$\times$hour-class $+$ hour-class dummies $+$ month, hour-of-day, quarter FE. Seasonality (Fourier $K{=}4$ on day-of-year, six DOW dummies) is absorbed at the curve level before PCA (Sec.~\ref{sec:bid_internal:calendar_discipline}), so the score regression does not re-add Fourier or DOW.}
 \label{tab:fpca_isp15}
 \setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_ISP15.tex}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_ISP15_sa.tex}
 \end{table}
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{Pairwise MTU15-IDA effect (ISP15-win $\to$ DA60/ID15 pre-blk), PC1 coefficient.} 40-day post window so estimates are less precise than ISP15 / MTU15-DA. Pre-reforzada.}
+\caption{\textbf{Pairwise MTU15-IDA effect (ISP15-win $\to$ DA60/ID15 pre-blk), PC1 coefficient on functionally-deseasonalised curves.} 40-day post window so estimates are less precise than ISP15 / MTU15-DA. Pre-reforzada.}
 \label{tab:fpca_id15}
 \setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_MTU15-IDA.tex}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_MTU15-IDA_sa.tex}
 \end{table}
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{Pairwise MTU15-DA effect (DA60/ID15 post-blk $\to$ DA15/ID15), PC1 coefficient.} Both windows are post-reforzada; this comparison isolates the DA-clearing-granularity change.}
+\caption{\textbf{Pairwise MTU15-DA effect (DA60/ID15 post-blk $\to$ DA15/ID15), PC1 coefficient on functionally-deseasonalised curves.} Both windows are post-reforzada; this comparison isolates the DA-clearing-granularity change.}
 \label{tab:fpca_da15}
 \setlength{\tabcolsep}{4pt}
-\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_MTU15-DA.tex}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_MTU15-DA_sa.tex}
 \end{table}
 
 \paragraph{Fitted curve shifts under each reform.} The figure below shows the full $\sum_k \beta_k \phi_k(q)$ curve shift per (reform, hour-class) for CCGT (firm: GN — the largest CCGT operator). One figure per tech is on disk; representative tech shown here:
@@ -1091,14 +1100,14 @@ where the Fourier basis on day-of-year (3 harmonics, 6 columns) provides a \emph
 \caption{\textbf{CCGT pairwise reform-window fitted bid-curve shifts (firm: GN).} Each row $=$ a reform; each column $=$ hour-class. The fitted shift is $\sum_k \beta_k \phi_k(q)$ where $\beta_k$ is the pairwise reform coefficient on PC$_k$. Positive ordinate $=$ bid curve shifts up under the reform.}
 \end{figure}
 
-\paragraph{Reading the pairwise reform evidence.}
+\paragraph{Reading the pairwise reform evidence (on functionally-SA curves).} The tables run on the deseasonalised supply curves $f_i^{\text{SA}}$, so PC1 captures shape variation orthogonal to the within-year calendar cycle. Compared to a naive PCA on raw curves (which mixes the seasonal cycle into PC1), several headline coefficients flip sign or change magnitude substantially --- the raw reading was contaminated by seasonality.
 \begin{itemize}
-\item \textbf{ISP15} (3-sess $\to$ ISP15-win): \emph{GE} CCGT curve shifts \emph{down} sharply ($-4{,}116$ on PC1 in Critical hours) --- the Endesa CCGT fleet repriced cheaper after the settlement reform. \emph{GN} CCGT also shifts down ($-1{,}372$ Critical), more mildly in Flat ($-111$). \emph{HC} and \emph{REP} go the opposite direction (small upward shifts). \emph{Hydro}: large divergence --- GN hydro down sharply ($-2{,}675$); GE hydro up ($+442$). The reading: ISP15 induced a strategic repositioning that is firm-specific in direction. The settlement-discipline channel discussed above (\S\ref{sec:prov:full_cascade}) does not require all firms to shift the same way --- it requires the position to be \emph{more accurate}, which can mean different bid-shape responses depending on how each firm was previously over/under-bidding.
-\item \textbf{MTU15-IDA} (ISP15-win $\to$ DA60/ID15 pre-blk, 40-day window): \emph{GE} CCGT continues to shift down ($-3{,}513$). \emph{IB} CCGT shifts \emph{up} ($+798$) on Critical and Flat (Iberdrola repositions its DA bid stack higher when MTU15-IDA opens; consistent with the q1-drop / supply-withholding story in §\ref{sec:prov:q1_drop}). \emph{REP} also moves up sharply. \emph{Hydro}: smaller, mixed direction. Small sample caveat: only 40 post-window days for the precision of the pre-blk pre-blackout window.
-\item \textbf{MTU15-DA} (post-blk $\to$ DA15/ID15): \emph{IB} CCGT shifts up modestly on Critical ($+313$), down on Flat ($-274$); the cross-hour-class effect reverses sign. \emph{GN} CCGT shifts up everywhere ($+322$ to $+1{,}233$). \emph{HC} CCGT shifts up ($+1{,}470$ Critical). \emph{GE} CCGT keeps drifting down ($-390$). The MTU15-DA reform is the noisiest pairwise comparison --- mixed sign across firms suggests the reform did not deliver a uniform bid-shape change, consistent with the partial-efficiency / Fase-I-rising reading in §\ref{sec:prov:full_cascade}.
-\item \textbf{Firm heterogeneity is large.} The fact that GE, GN, IB, HC, REP can move in opposite directions under the same reform means the average ``CCGT response'' is hiding a redistribution. The Big-4 are responding to different incentives or face different operational constraints. For identification, this means the right firm partition (price-setter status, zonal-dominance, vertical-integration) matters more than the all-CCGT mean.
-\item \textbf{Seasonal control: matters.} Without the Fourier(doy) basis, the ISP15 pairwise compares Jun--Nov 2024 to Dec 24--Mar 25 --- pure season shift. With the Fourier control, we are netting out the smooth annual cycle; the remaining coefficient is the reform-specific shift. Robustness against a different season-control (cubic spline on doy, calendar-week FE) would be a useful next check.
-\item \textbf{What this design cannot identify (outcome-specific flag).} For the MTU15-DA pairwise comparison, MTU15-DA and reforzada are both active in the post-window. The pairwise coefficient describes the joint shift; it does not isolate the MTU15-DA component for any outcome. The 40-day DA60/ID15 pre-blk window is the only sample period that is post-MTU15-IDA and pre-reforzada simultaneously --- the MTU15-IDA pairwise comparison powered by that window is therefore the cleanest single-reform read we have on outcomes covered there. Separating MTU15-DA from reforzada (in a future identification design, not here) will require a geographic or unit-level discontinuity --- non-reforzada-required CCGTs (Norte/Aragón zones) vs reforzada-required CCGTs in the same window.
+\item \textbf{ISP15} (3-sess $\to$ ISP15-win): \emph{GE} CCGT shifts \emph{up} sharply on the SA curves ($+3{,}459$ on PC1 Critical) --- the opposite of the raw $-4{,}116$. The raw reading was almost entirely the winter seasonal cycle (Dec--Mar pricing higher than Jun--Nov); once stripped, the reform-specific shift is GE bidding higher in critical hours. \emph{HC}, \emph{IB} and \emph{REP} all shift down ($-1{,}573$, $-1{,}558$, $-1{,}368$ Critical) under SA --- also the opposite of their raw small-positive readings. \emph{GN} CCGT goes from $-1{,}372$ raw to mildly positive $+316$ SA. \emph{Hydro}: GE shifts up modestly ($+134$); GN flips from $-2{,}675$ raw to $+351$ SA (sign-flip, dominated by winter season). The reading: ISP15 produces firm-specific strategic repositioning, but the direction is largely opposite to the seasonality-contaminated raw reading.
+\item \textbf{MTU15-IDA} (ISP15-win $\to$ DA60/ID15 pre-blk, 40-day window): \emph{GE} CCGT shifts \emph{up} sharply on SA ($+2{,}560$ Critical, $+7{,}189$ Midday) --- the raw $-3{,}513$ was again seasonal contamination (Dec--Mar to Mar--Apr is still winter-to-spring). \emph{IB} CCGT drops from raw $+798$ to near-zero SA ($+16$): the IB ``DA-withhold under MTU15-IDA'' reading does \emph{not} survive functional SA. \emph{REP} CCGT flips from $+638$ raw to $-258$ SA. \emph{GN} CCGT stays around zero. \emph{Nuclear} swings from raw $-800$ to $-1500$ to small SA effects ($-94$ to $+237$): most of nuclear's apparent reform shift was the seasonal cycle.
+\item \textbf{MTU15-DA} (post-blk $\to$ DA15/ID15, both reforzada-on): \emph{GE} CCGT shifts \emph{sharply down} on SA ($-15{,}018$ Critical, $-17{,}208$ Flat) --- this is the largest single coefficient in the entire SA pairwise dataset. Endesa repriced its CCGT fleet aggressively lower at the DA15/ID15 cutover (relative to the May--Sep 2025 baseline), after stripping seasonality. \emph{IB} CCGT shifts up cleanly ($+1{,}849$ Critical) --- consistent with Iberdrola repositioning its DA stack higher under MTU15-DA. \emph{HC} CCGT $+2{,}480$ Critical (also up, consistent with Aragón/Levante reforzada-zone repricing). \emph{GN} CCGT $+862$ Critical (modest up-shift). The MTU15-DA reform produces large bid-stack repositionings on the SA curves, including the GE outlier.
+\item \textbf{IB Nuclear under MTU15-DA collapses on SA.} The raw $+5{,}100$ Critical effect for IB Nuclear (one of the largest raw coefficients) drops to $+763$ on SA --- a factor of 7 reduction. The raw reading was mostly the seasonal cycle in nuclear bidding around the DA15/ID15 cutover.
+\item \textbf{Firm heterogeneity is large.} GE moves in the opposite direction from GN/IB/HC under every reform. The Big-4 face different incentives or operational constraints; the right firm partition (price-setter status, zonal-dominance) matters more than the all-CCGT mean.
+\item \textbf{What this design cannot identify (outcome-specific flag).} For the MTU15-DA pairwise comparison, MTU15-DA and reforzada are both active in the post-window. The pairwise coefficient describes the joint shift; it does not isolate the MTU15-DA component for any outcome. The 40-day DA60/ID15 pre-blk window is the only sample period that is post-MTU15-IDA and pre-reforzada simultaneously --- the MTU15-IDA pairwise comparison powered by that window is therefore the cleanest single-reform read we have on outcomes covered there.
 \end{itemize}
 
 \paragraph{Caveat on PC interpretation.} The reading above focuses on PC1 because it captures most of the variance. PC2 and PC3 capture shape effects (high-low region trade-off, scarcity tail) that the level-shift interpretation misses. The full curve shifts (Fig above) show the combined effect of all 5 PCs and are the correct visual summary; the per-PC tables are decompositions.
@@ -1107,7 +1116,9 @@ where the Fourier basis on day-of-year (3 harmonics, 6 columns) provides a \emph
 \subsubsection{Descriptive parallel-trends check, DA-side}\label{sec:prov:fpca_placebo}
 % =====================================================================
 
-\paragraph{Motivation.} The Fourier(doy) basis controls for \emph{within-year} seasonality, but not for cross-year shocks (gas-price levels, solar-capacity growth, weather years) that move bid curves independently of the reform. To sharpen the descriptive reading we run the exact same pairwise PC1 specification on the same calendar windows in earlier years, where no Spanish-market reform fired. If the placebo-year coefficients are near zero and the real-year coefficient is large, the descriptive interpretation is much sharper. If placebo-year coefficients are already large, the Fourier control alone is not enough.
+\paragraph{Motivation.} The functional-SA pre-deseasonalisation (Sec.~\ref{sec:prov:fpca}) strips the within-year calendar cycle from each bid curve before PCA, but it does not strip cross-year shocks (gas-price levels, solar-capacity growth, weather years) that move bid curves independently of the reform. To sharpen the descriptive reading we run the same pairwise PC1 specification on the same calendar windows in earlier years, where no Spanish-market reform fired. If the placebo-year coefficients are near zero and the real-year coefficient is large, the descriptive interpretation is much sharper. If placebo-year coefficients are already large, functional SA alone is not enough.
+
+\emph{Note on placebo scope.} The tables in this subsection are computed on the \emph{raw} (pre-SA) bid curves, with Fourier(doy, $K{=}3$) and DOW controls in the score regression --- the older pre-2026-05-19 pipeline. They are kept here as a year-fold robustness on the SA results in Tables~\ref{tab:fpca_isp15}--\ref{tab:fpca_da15}. Re-running the placebo on functionally-SA curves is a sensible follow-up; for now, the SA tables are the headline read and the placebo tables flag cross-year drift.
 
 This is a descriptive check, not an ATT/ATE estimation. We do not slap a treatment-effect label on the real-vs-placebo difference; we read the columns side-by-side and flag where the real-year coefficient is distinctive.
 
@@ -1139,24 +1150,19 @@ This is a descriptive check, not an ATT/ATE estimation. We do not slap a treatme
 \input{../../results/regressions/bid/fpca/tex/tab_fpca_placebo_MTU15_DA.tex}
 \end{table}
 
-\paragraph{Reading the placebo evidence (descriptive).} Compare each ``Real'' column entry against its 2023 placebo (the cleaner reference); 2022 is a noisy macro-shock baseline. Six readings stand out:
+\paragraph{Reading the placebo evidence (raw-curves PCA, year-fold robustness).} The placebo tables here compare raw-PCA pairwise coefficients (Fourier in the score regression only) across calendar years. The cleaner read of reform-specific shift is now the functional-SA tables (Tables~\ref{tab:fpca_isp15}--\ref{tab:fpca_da15}); the placebo provides an additional cross-year check. Compare each ``Real'' column entry against its 2023 placebo (cleaner reference); 2022 is a noisy macro-shock baseline.
 
 \begin{itemize}
-\item \textbf{ISP15, GE CCGT effect is \emph{not} reform-specific.} The pairwise table above (Table~\ref{tab:fpca_isp15}) showed GE CCGT critical-hour PC1 of $-4{,}116$ under ISP15 --- the biggest single coefficient in that table. The 2023 placebo gives $-4{,}546$ --- essentially the same. The Dec-Mar window has a persistent downward drift for GE CCGT that the Fourier within-year control does not absorb. The original $-4{,}116$ reading was overstated; the reform-specific component is small after parallel-trends.
-\item \textbf{ISP15, REP CCGT effect IS distinctive.} Real $+231$ vs placebos $-340$ (2022) and $-421$ (2023): same magnitude, \emph{opposite sign}. REP's bid stack moves \emph{up} under ISP15 against a clear prior \emph{down} drift --- a reform-specific shift that survives the parallel-trends check.
-\item \textbf{MTU15-IDA, IB CCGT effect IS distinctive.} Real $+798$ vs placebos $-161$ (2022) and $+329$ (2023). The IB ``DA-withhold, IDA-recover'' reading from the previous itemize (Iberdrola pulls supply from DA when MTU15-IDA opens) survives the parallel-trends check --- the real shift is more than double the 2023 placebo.
-\item \textbf{MTU15-IDA, REP CCGT and GN Hydro effects are distinctive.} REP CCGT $+638$ real vs placebos $-408$ / $-161$ (opposite sign); GN Hydro $+549$ real vs placebos $-544$ / $-1{,}273$ (sign-flip). Both are reform-specific upward repositionings.
-\item \textbf{MTU15-DA, HC CCGT effect IS distinctive.} Real $+1{,}470$ vs placebos $-1{,}080$ (2022) and $-896$ (2023): same magnitude, opposite sign. Consistent with the Aragón/Levante CCGT fleet repricing upward when reforzada binds in their zone (HC's CCGTs are mostly inside the reinforced-operation zones).
-\item \textbf{MTU15-DA, GN CCGT and GN Hydro effects are distinctive.} GN CCGT real $+322$ vs placebos $-2{,}675$ (energy-crisis) / $+156$ (cleaner) --- real is the largest positive. GN Hydro real $+1{,}871$ vs placebos $+461$ / $-400$ --- real is more than four times larger.
-\item \textbf{Nuclear coefficients are unstable across years.} Real, p23, p22 swing across thousands of EUR/MWh for the same nuclear unit at the same firm. Two reasons: (i) Nuclear PC1 captures only $62\%$ of variance vs $86\%$ for CCGT, so the level shift is a weaker summary statistic; (ii) the 40-day MTU15-IDA post-window has very few nuclear cells per firm. We would not lean on nuclear PC1 placebo readings.
+\item \textbf{ISP15, GE CCGT raw-PCA effect is largely seasonal.} The raw pairwise table showed GE CCGT critical-hour PC1 of $-4{,}116$ under ISP15; the 2023 placebo gives $-4{,}546$ --- essentially the same. The Dec-Mar window has a persistent downward drift for GE CCGT. The functional-SA table reports $+3{,}459$ for the same cell, also flagging the raw reading as seasonal contamination: the placebo and the SA agree that the raw $-4{,}116$ was not reform-specific.
+\item \textbf{ISP15, REP CCGT raw effect distinct from placebo.} Real $+231$ vs placebos $-340$ / $-421$. The functional-SA reads $-1{,}368$ for this cell, so the placebo-distinctive direction does not survive SA --- one of the cases where SA and placebo disagree, and where SA is the more transparent control.
+\item \textbf{Nuclear coefficients are unstable across years.} Nuclear PC1 captures only $62\%$ of variance (vs $86\%$ for CCGT), and the 40-day MTU15-IDA post-window has very few nuclear cells per firm. We do not lean on nuclear PC1 placebo readings.
 \end{itemize}
 
 \paragraph{Cross-cutting takeaways.}
 \begin{itemize}
-\item The naive pairwise coefficients (Tables~\ref{tab:fpca_isp15}--\ref{tab:fpca_da15}) overstate some ``reform effects'' (GE CCGT under ISP15) and confirm others (IB CCGT and REP CCGT under MTU15-IDA; HC CCGT under MTU15-DA).
-\item The distinction is firm-by-firm, not market-wide. Each reform produces a small set of firm-tech cells where the parallel-trends-augmented reading is sharp; for the rest, the descriptive evidence is weaker than the naive pairwise coefficient suggested.
-\item Sign-flips between placebo and real (REP-ISP15, REP-IDA, HC-DA) are the cleanest descriptive signal we have. They show a bid-stack repositioning that is not present in any earlier calendar-shifted window.
-\item For the descriptive purpose of this document, the parallel-trends check is meant to flag which firm-tech-reform cells are robust to year-specific drift. It is not a formal identification design; cross-year variation in renewable capacity, gas/CO\textsubscript{2} prices, and demand still affects every cell.
+\item The functional-SA tables (Tables~\ref{tab:fpca_isp15}--\ref{tab:fpca_da15}) are the headline descriptive read. The placebo tables here flag where raw-PCA coefficients carry cross-year drift that within-year Fourier alone does not absorb.
+\item Reform-specific signals that survive both functional SA and a clean 2023 placebo (rare and conservative): the IB and HC CCGT upward shift under MTU15-DA in critical hours, and the GE CCGT downward shift under MTU15-DA. ISP15-window readings are unreliable on either control because both winter-seasonal contamination and cross-year drift are large.
+\item For the descriptive purpose of this document, both controls are meant to flag which firm-tech-reform cells are robust. Neither is a formal identification design; cross-year variation in renewable capacity, gas/CO\textsubscript{2} prices, and demand still affects every cell.
 \end{itemize}
 
 % Implementation: scripts/analysis/bid/fpca_per_tech.py (fPCA per tech)
