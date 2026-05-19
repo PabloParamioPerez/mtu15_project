@@ -1,9 +1,10 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-19
-# CLAIM: Hour-conditional 3D ridge plots — for each tech, for a small set of
-#        representative hours of day, plot the cross-regime distribution of
-#        the daily in-band MW share at THAT hour. Reveals how each hour's
-#        distribution shifts across regimes (rather than aggregating hours).
+# CLAIM: Hour-conditional 3D ridge plots of the SA daily in-band MW share —
+#        for each tech, for a small set of representative hours of day, plot
+#        the cross-regime distribution of the SA daily in-band MW share at
+#        THAT hour. Reads the SA panel built by bidshape_sa_daily_panel.py
+#        (per-(unit, hour) FWL on logit(share) with Fourier(K=4)+DOW stripped).
 #
 #        Hours chosen: 03 (flat), 07 (morning ramp), 13 (midday), 19 (evening
 #        peak) — one from each hour-class plus a second critical-hour.
@@ -12,7 +13,6 @@
 #      4 panels per PDF, one per representative hour)
 
 from pathlib import Path
-import duckdb
 import numpy as np
 import pandas as pd
 from scipy.stats import gaussian_kde
@@ -23,16 +23,9 @@ from matplotlib.collections import PolyCollection
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 
 REPO = Path(__file__).resolve().parents[3]
-DET = REPO / "data/processed/omie/mercado_diario/ofertas/det_all.parquet"
-CAB = REPO / "data/processed/omie/mercado_diario/ofertas/cab_all.parquet"
-MPDBC = REPO / "data/processed/omie/mercado_diario/precios/marginalpdbc_all.parquet"
-UNITS = REPO / "data/external/omie_reference/lista_unidades.csv"
+SA_PANEL = REPO / "data/derived/panels/bidshape_sa_daily.parquet"
 FIG_DIR = REPO / "figures/working"
 FIG_DIR.mkdir(parents=True, exist_ok=True)
-
-H = 50.0
-START = "2024-06-14"
-END = "2026-05-15"
 
 REGIME_DATES = [
     ("3sess",         pd.Timestamp("2024-06-14"), pd.Timestamp("2024-11-30"), "3-sess",          "#1f77b4"),
@@ -50,72 +43,14 @@ HOURS_REPRESENTATIVE = [
 ]
 
 
-def tech_bucket(t):
-    if t is None: return "Other"
-    t = str(t).lower()
-    if "ciclo combinado" in t: return "CCGT"
-    if "hidráulica generación" in t: return "Hydro"
-    if "bombeo" in t: return "Hydro_pump"
-    return "Other"
-
-
-def build_panel():
-    """Per (date, tech, unit_code, clock_hour) daily in-band share."""
-    con = duckdb.connect()
-    con.execute("SET memory_limit='12GB'")
-    con.execute("SET threads=4")
-    units = pd.read_csv(UNITS)
-    units["tech"] = units["technology"].apply(tech_bucket)
-    units = units[units["tech"].isin(TECHS)][["unit_code", "tech"]].drop_duplicates("unit_code")
-    con.register("u", units)
-    sql = f"""
-    WITH cab_last AS (
-      SELECT CAST(date AS DATE) AS d, offer_code, unit_code,
-             ROW_NUMBER() OVER (PARTITION BY CAST(date AS DATE), offer_code, unit_code
-                                ORDER BY version DESC) AS rn
-      FROM read_parquet('{CAB}')
-      WHERE date >= '{START}' AND date <= '{END}' AND buy_sell='V'
-    ),
-    cab_l AS (SELECT d, offer_code, unit_code FROM cab_last WHERE rn=1),
-    det AS (
-      SELECT CAST(date AS DATE) AS d, offer_code, period,
-             price_eur_mwh AS p, quantity_mw AS q, COALESCE(mtu_minutes, 60) AS mtu
-      FROM read_parquet('{DET}')
-      WHERE date >= '{START}' AND date <= '{END}' AND quantity_mw > 0
-    ),
-    mp AS (
-      SELECT CAST(date AS DATE) AS d, period, price_es_eur_mwh AS p_clear,
-             COALESCE(mtu_minutes, 60) AS mtu_p
-      FROM read_parquet('{MPDBC}')
-      WHERE date >= '{START}' AND date <= '{END}' AND price_es_eur_mwh IS NOT NULL
-    ),
-    joined AS (
-      SELECT mp.d, mp.period, c.unit_code, dv.q, mp.p_clear,
-             (dv.p BETWEEN mp.p_clear - {H} AND mp.p_clear + {H})::INT AS in_band,
-             COALESCE(mp.mtu_p, dv.mtu) AS mtu_minutes,
-             CASE WHEN COALESCE(mp.mtu_p, dv.mtu) = 60 THEN mp.period - 1
-                  ELSE CAST(FLOOR((mp.period - 1) / 4.0) AS INT) END AS clock_hour
-      FROM det dv JOIN cab_l c ON dv.d=c.d AND dv.offer_code=c.offer_code
-        JOIN mp ON mp.d=dv.d AND mp.period=dv.period
-    ),
-    per_cell AS (
-      SELECT d, clock_hour, period, unit_code,
-             SUM(q * mtu_minutes/60.0) AS mw_total,
-             SUM(q * mtu_minutes/60.0 * in_band) AS mw_in
-      FROM joined GROUP BY 1, 2, 3, 4
-    )
-    SELECT p.d, u.tech, p.unit_code, p.clock_hour,
-           p.mw_in / NULLIF(p.mw_total, 0) AS in_band_share
-    FROM per_cell p JOIN u ON p.unit_code = u.unit_code
-    WHERE p.mw_total > 0
-    """
-    df = con.execute(sql).fetchdf()
+def load_panel():
+    df = pd.read_parquet(SA_PANEL)
     df["d"] = pd.to_datetime(df["d"])
     df["regime"] = "other"
     for label, lo, hi, _, _ in REGIME_DATES:
         m = (df["d"] >= lo) & (df["d"] <= hi)
         df.loc[m, "regime"] = label
-    df = df[df["regime"] != "other"].copy()
+    df = df[(df["regime"] != "other") & df["in_band_share_sa"].notna()].copy()
     return df
 
 
@@ -154,23 +89,23 @@ def ridge_3d(ax, data_by_regime, x_range, title, xlabel, ymax=4.0):
 
 
 def main():
-    print("Building per (date, tech, unit, hour) bidshare panel...")
-    df = build_panel()
-    print(f"  {len(df):,} cells")
+    print(f"Loading SA panel {SA_PANEL.name}...")
+    df = load_panel()
+    print(f"  {len(df):,} cells with SA share")
 
     for tech in TECHS:
         sub_t = df[df["tech"] == tech]
         if sub_t.empty:
             continue
-        fig = plt.figure(figsize=(15, 11))
-        fig.suptitle(f"{tech.replace('_',' ')}: in-band MW share distribution across regimes — sliced by hour-of-day", fontsize=11)
+        fig = plt.figure(figsize=(16, 9.2))
+        fig.suptitle(f"{tech.replace('_',' ')}: SA in-band MW share distribution across regimes — sliced by hour-of-day", fontsize=12)
         for idx, (h, h_label) in enumerate(HOURS_REPRESENTATIVE):
             ax = fig.add_subplot(2, 2, idx + 1, projection="3d")
             sub = sub_t[sub_t["clock_hour"] == h]
-            data_by_regime = {r[0]: sub[sub["regime"] == r[0]]["in_band_share"].dropna().values
+            data_by_regime = {r[0]: sub[sub["regime"] == r[0]]["in_band_share_sa"].dropna().values
                               for r in REGIME_DATES}
-            ridge_3d(ax, data_by_regime, (0, 1), title=h_label, xlabel="In-band share")
-        plt.tight_layout(rect=[0, 0, 1, 0.96])
+            ridge_3d(ax, data_by_regime, (0, 1), title=h_label, xlabel="SA in-band share")
+        plt.tight_layout(rect=[0, 0, 1, 0.95])
         out = FIG_DIR / f"bidshape_3d_hourly_{tech}.pdf"
         fig.savefig(out, bbox_inches="tight", dpi=110)
         plt.close(fig)

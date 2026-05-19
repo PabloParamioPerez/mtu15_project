@@ -28,6 +28,7 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage{geometry}
 \geometry{a4paper, margin=2.5cm}
+\usepackage{pdflscape}
 \usepackage{caption}
 \captionsetup{font=small, labelfont=bf}
 
@@ -873,42 +874,54 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing the DA and IDA panels in Table~\ref{tab:bidshape_da_ida}: for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $44.0\%$ raw / {\color{seasoncol}41.3\% (SA)} vs IDA $77.5\%$ raw / {\color{seasoncol}76.5\% (SA)}. Nuclear in any regime: DA $\sim 6$--$20\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
 
-\paragraph{Per-(firm, tech) distribution view.} Hour-class means flatten the 11-hour critical band (morning ramp + evening peak combined), the 4-hour midday band, and the 3-hour flat band into one number each, and also collapse multimodal day-distributions into a single mean. Three complementary views replace the per-(firm, hour-class) cell means with finer information: (i) a 3D surface of the regime mean by hour-of-day; (ii) the aggregate-across-hours probability density of the daily in-band share per tech; (iii) the hour-conditional density at four representative hours --- 03 (flat), 07 (morning ramp, critical), 13 (midday), 19 (evening peak, critical) --- so the distribution shift at each time of day is directly visible.
+\paragraph{Per-(firm, tech) distribution view.} Hour-class means flatten the 11-hour critical band (morning ramp + evening peak combined), the 4-hour midday band, and the 3-hour flat band into one number each, and also collapse multimodal day-distributions into a single mean. Three complementary views replace the per-(firm, hour-class) cell means with finer information: (i) a 3D surface of the regime mean by hour-of-day; (ii) the aggregate-across-hours probability density of the {\color{seasoncol}SA daily in-band share} per tech; (iii) the hour-conditional density at four representative hours --- 03 (flat), 07 (morning ramp, critical), 13 (midday), 19 (evening peak, critical) --- so the distribution shift at each time of day is directly visible. The density-based views (ii) and (iii) use the {\color{seasoncol}per-(unit, hour) functional FWL spec from \texttt{sa\_fwl.py}} (logit link, $K=4$ annual harmonics, six day-of-week dummies, regime-pooled seasonality with the 40-day MTU15-IDA pre-blk window pooled rather than identified separately), so cross-regime comparisons strip the calendar-mix component from the in-band-share residual.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{../../figures/working/bidshape_3d_surface.pdf}
-\caption{\textbf{In-band MW share (\%, $\pm 50$ EUR/MWh around DA MCP) per (tech, firm) hour-of-day, by regime --- 3D surface.} $x$-axis: hour 0--23; $y$-axis: (tech, firm) row; $z$-axis: regime-mean in-band share. One panel per regime. Morning ramp (05--08) and evening peak (18--22) within ``critical hours'' have distinct intensities for several firms; midday CCGT shares for IB/GE under DA15/ID15 collapse to near zero (solar-rich periods price low) while spiking on the morning/evening boundaries. Heatmap version on disk (\texttt{bidshape\_diurnal\_heatmap.pdf}).}
+\caption{\textbf{In-band MW share (\%, $\pm 50$ EUR/MWh around DA MCP) per (tech, firm) hour-of-day, by regime --- 3D surface (raw means).} $x$-axis: hour 0--23; $y$-axis: (tech, firm) row; $z$-axis: regime-mean in-band share. One panel per regime. Morning ramp (05--08) and evening peak (18--22) within ``critical hours'' have distinct intensities for several firms; midday CCGT shares for IB/GE under DA15/ID15 collapse to near zero (solar-rich periods price low) while spiking on the morning/evening boundaries. Heatmap version on disk (\texttt{bidshape\_diurnal\_heatmap.pdf}).}
 \label{fig:bidshape_diurnal_heatmap}
 \end{figure}
 
+\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../../figures/working/bidshape_3d_hourly_CCGT.pdf}\\[2pt]
-\includegraphics[width=0.85\textwidth]{../../figures/working/bidshape_3d_hourly_Hydro.pdf}
-\caption{\textbf{CCGT (top) and Hydro (bottom) --- in-band share distribution sliced by hour-of-day.} Four panels per tech: hour 03 (flat), hour 07 (morning ramp, critical), hour 13 (midday), hour 19 (evening peak, critical). Each panel is a 3D ridge of the daily in-band share at THAT hour, with 5 regime ridges stacked along the $y$-axis. The cross-regime shift is large at critical hours (07, 19) --- visible mass migration from corner-0 to interior or corner-1 across reforms --- and is much smaller at hour 03 (everyone bids saturated at low overnight prices) and hour 13 (everyone bids above MCP at low midday prices). Hydro pump in Fig.~\ref{fig:bidshape_3d_hourly_hp}.}
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bidshape_3d_hourly_CCGT.pdf}
+\caption{\textbf{CCGT --- {\color{seasoncol}SA} in-band share distribution sliced by hour-of-day.} Four panels: hour 03 (flat), hour 07 (morning ramp, critical), hour 13 (midday), hour 19 (evening peak, critical). Each panel is a 3D ridge of the SA daily in-band share at THAT hour, with 5 regime ridges stacked along the $y$-axis. SA values are the per-cell residual after stripping the per-(unit, hour) Fourier(K=4)+DOW seasonal component on logit-share. The cross-regime shift is large at critical hours (07, 19) --- visible mass migration across reforms once the seasonal-mix component is removed --- and is much smaller at hour 03 (everyone bids near saturation under low overnight prices) and hour 13 (everyone bids above MCP under low midday prices). Hydro in Fig.~\ref{fig:bidshape_3d_hourly_hydro}, Hydro pump in Fig.~\ref{fig:bidshape_3d_hourly_hp}.}
 \label{fig:bidshape_3d_hourly}
 \end{figure}
+\end{landscape}
 
+\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../../figures/working/bidshape_3d_hourly_Hydro_pump.pdf}
-\caption{\textbf{Hydro pump in-band share distribution sliced by hour-of-day.} Companion to Fig.~\ref{fig:bidshape_3d_hourly}. Hydro pump has near-saturation mass at flat hour 03 across all regimes; the morning and evening peaks display the largest cross-regime spread.}
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bidshape_3d_hourly_Hydro.pdf}
+\caption{\textbf{Hydro --- {\color{seasoncol}SA} in-band share distribution sliced by hour-of-day.} Companion to Fig.~\ref{fig:bidshape_3d_hourly}. Hydro has wider, more uniform distributions than CCGT; the cross-regime shift is smaller but visible at the critical hours.}
+\label{fig:bidshape_3d_hourly_hydro}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bidshape_3d_hourly_Hydro_pump.pdf}
+\caption{\textbf{Hydro pump --- {\color{seasoncol}SA} in-band share distribution sliced by hour-of-day.} Companion to Fig.~\ref{fig:bidshape_3d_hourly}. Hydro pump has near-saturation SA mass at flat hour 03 across all regimes; the morning and evening peaks display the largest cross-regime spread.}
 \label{fig:bidshape_3d_hourly_hp}
 \end{figure}
+\end{landscape}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_bidshare_CCGT.pdf}\\[2pt]
 \includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_bidshare_Hydro.pdf}
-\caption{\textbf{Distribution of the daily in-band MW share, across regimes --- 3D ridge (aggregated across hours).} Estimated density of share-per-(unit, day, hour) cells. CCGT (top): the reform-window mass shifts rightward; bimodality visible post-MTU15-IDA (mass clustered near 0 vs near 1). Hydro (bottom): wider, more uniform distribution with smaller cross-regime shift. Hydro pump panel in Fig.~\ref{fig:bidshape_kde_hp}; per-firm 2D version on disk (\texttt{bidshape\_kde\_per\_firm\_tech.pdf}). Hour-of-day decomposition in Figs.~\ref{fig:bidshape_3d_hourly}--\ref{fig:bidshape_3d_hourly_hp}.}
+\caption{\textbf{Distribution of the {\color{seasoncol}SA} daily in-band MW share, across regimes --- 3D ridge (aggregated across hours).} Estimated density of SA share-per-(unit, day, hour) cells, $y$-axis stacks regimes. CCGT (top): the reform-window mass shifts rightward on SA shares; bimodality visible post-MTU15-IDA. Hydro (bottom): wider, more uniform distribution with smaller cross-regime shift. Hydro pump panel in Fig.~\ref{fig:bidshape_kde_hp}. Hour-of-day decomposition in Figs.~\ref{fig:bidshape_3d_hourly}--\ref{fig:bidshape_3d_hourly_hp}.}
 \label{fig:bidshape_kde}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_bidshare_Hydro_pump.pdf}
-\caption{\textbf{Hydro pump in-band share distribution, across regimes --- 3D ridge (aggregated across hours).} Companion to Fig.~\ref{fig:bidshape_kde}. Hydro pump distributions are sharper than hydro's, consistent with pumped storage's purer level-bidding posture and concentration around the high-share end of the band.}
+\caption{\textbf{Hydro pump {\color{seasoncol}SA} in-band share distribution, across regimes --- 3D ridge (aggregated across hours).} Companion to Fig.~\ref{fig:bidshape_kde}. Hydro pump SA distributions are sharper than hydro's, consistent with pumped storage's purer level-bidding posture and concentration around the high-share end of the band.}
 \label{fig:bidshape_kde_hp}
 \end{figure}
 
@@ -1537,14 +1550,14 @@ Path A is the workhorse measurement throughout this section. Paths B and C provi
 \centering
 \includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_postdagap_CCGT.pdf}\\[2pt]
 \includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_postdagap_Hydro.pdf}
-\caption{\textbf{Distribution of the daily post-DA gap, across regimes --- 3D ridge.} Estimated density of GWh/day per (firm, tech, date) cell. CCGT (top): the reform-window mass shifts rightward whole-distribution rather than tail-driven; the reforzada signature is the whole density translation, not a few extreme days. Hydro (bottom): modest cross-regime shift. Hydro pump panel in Fig.~\ref{fig:post_da_gap_kde_hp}; per-firm 2D version on disk (\texttt{post\_da\_gap\_kde\_per\_firm\_tech.pdf}).}
+\caption{\textbf{Distribution of the {\color{seasoncol}SA} daily post-DA gap, across regimes --- 3D ridge.} Estimated density of SA GWh/day per (firm, tech, date) cell. SA values are the per-cell residual after stripping the per-(firm, tech) Fourier(K=4)+DOW seasonal component on the signed gap (identity link). CCGT (top): the reform-window mass shifts rightward whole-distribution rather than tail-driven once seasonality is removed; the reforzada signature is the whole density translation, not a few extreme days. Hydro (bottom): modest cross-regime shift. Hydro pump panel in Fig.~\ref{fig:post_da_gap_kde_hp}.}
 \label{fig:post_da_gap_kde}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{../../figures/working/distribution_3d_postdagap_Hydro_pump.pdf}
-\caption{\textbf{Hydro pump post-DA gap distribution, across regimes --- 3D ridge.} Companion to Fig.~\ref{fig:post_da_gap_kde}.}
+\caption{\textbf{Hydro pump {\color{seasoncol}SA} post-DA gap distribution, across regimes --- 3D ridge.} Companion to Fig.~\ref{fig:post_da_gap_kde}.}
 \label{fig:post_da_gap_kde_hp}
 \end{figure}
 

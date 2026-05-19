@@ -29,10 +29,28 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 
 REPO = Path(__file__).resolve().parents[3]
 FPCA_DIR = REPO / "results/regressions/bid/fpca"
-BIDSHAPE_CSV = REPO / "results/regressions/bid/bidshape_diurnal/per_firm_tech_hour_regime.csv"
-POSTDA_CSV   = REPO / "results/regressions/regulatory/pdbf_to_phf_diurnal/per_firm_tech_hour_regime.csv"
+BIDSHAPE_SA_PANEL = REPO / "data/derived/panels/bidshape_sa_daily.parquet"
+POSTDA_SA_PANEL = REPO / "data/derived/panels/post_da_gap_sa_daily.parquet"
 FIG_DIR = REPO / "figures/working"
 FIG_DIR.mkdir(parents=True, exist_ok=True)
+
+REGIME_RANGES = [
+    ("3sess",         pd.Timestamp("2024-06-14"), pd.Timestamp("2024-11-30")),
+    ("ISP15win",      pd.Timestamp("2024-12-01"), pd.Timestamp("2025-03-18")),
+    ("MTU15IDA_pre",  pd.Timestamp("2025-03-19"), pd.Timestamp("2025-04-27")),
+    ("MTU15IDA_post", pd.Timestamp("2025-04-28"), pd.Timestamp("2025-09-30")),
+    ("DA15_ID15",     pd.Timestamp("2025-10-01"), pd.Timestamp("2026-05-15")),
+]
+
+
+def _assign_regime(df):
+    df = df.copy()
+    df["d"] = pd.to_datetime(df["d"])
+    df["regime"] = "other"
+    for label, lo, hi in REGIME_RANGES:
+        m = (df["d"] >= lo) & (df["d"] <= hi)
+        df.loc[m, "regime"] = label
+    return df[df["regime"] != "other"].copy()
 
 REGIME_ORDER = [
     ("3sess",         "3-sess",          "#1f77b4"),
@@ -110,17 +128,19 @@ def plot_pc_scores_per_tech():
 
 
 def plot_bidshare_per_tech():
-    """3D ridge of in-band share across regimes, per tech."""
-    df = pd.read_csv(BIDSHAPE_CSV)
+    """3D ridge of SA daily in-band share across regimes, per tech.
+    Reads the per-(unit, date, hour) SA panel and uses in_band_share_sa."""
+    df = _assign_regime(pd.read_parquet(BIDSHAPE_SA_PANEL))
+    df = df[df["in_band_share_sa"].notna()].copy()
     for tech in TECHS:
         sub = df[df["tech"] == tech]
         if sub.empty:
             continue
-        data_by_regime = {r_lab: sub[sub["regime"] == r_lab]["in_band_share"].dropna().values
+        data_by_regime = {r_lab: sub[sub["regime"] == r_lab]["in_band_share_sa"].dropna().values
                           for r_lab, _, _ in REGIME_ORDER}
         fig = plt.figure(figsize=(7, 5))
         ax = fig.add_subplot(111, projection="3d")
-        ridge_3d(ax, data_by_regime, (0, 1), title=f"{tech.replace('_',' ')}", xlabel="In-band share")
+        ridge_3d(ax, data_by_regime, (0, 1), title=f"{tech.replace('_',' ')}", xlabel="SA in-band share")
         plt.tight_layout()
         out = FIG_DIR / f"distribution_3d_bidshare_{tech}.pdf"
         fig.savefig(out, bbox_inches="tight", dpi=110)
@@ -129,18 +149,21 @@ def plot_bidshare_per_tech():
 
 
 def plot_postdagap_per_tech():
-    df = pd.read_csv(POSTDA_CSV)
+    """3D ridge of SA daily post-DA gap across regimes, per tech.
+    Reads the per-(firm, tech, date) SA panel and uses gap_gwh_sa."""
+    df = _assign_regime(pd.read_parquet(POSTDA_SA_PANEL))
+    df = df[df["gap_gwh_sa"].notna()].copy()
     for tech in TECHS:
         sub = df[df["tech"] == tech]
         if sub.empty:
             continue
-        data_by_regime = {r_lab: sub[sub["regime"] == r_lab]["gap_gwh"].dropna().values
+        data_by_regime = {r_lab: sub[sub["regime"] == r_lab]["gap_gwh_sa"].dropna().values
                           for r_lab, _, _ in REGIME_ORDER}
-        vals_all = sub["gap_gwh"].dropna().values
-        q01, q99 = np.quantile(vals_all, [0.005, 0.995])
+        vals_all = sub["gap_gwh_sa"].dropna().values
+        q01, q99 = np.quantile(vals_all, [0.01, 0.99])
         fig = plt.figure(figsize=(7, 5))
         ax = fig.add_subplot(111, projection="3d")
-        ridge_3d(ax, data_by_regime, (q01, q99), title=f"{tech.replace('_',' ')} post-DA gap", xlabel="Gap GWh/day")
+        ridge_3d(ax, data_by_regime, (q01, q99), title=f"{tech.replace('_',' ')} post-DA gap (SA)", xlabel="SA gap GWh/day")
         plt.tight_layout()
         out = FIG_DIR / f"distribution_3d_postdagap_{tech}.pdf"
         fig.savefig(out, bbox_inches="tight", dpi=110)
