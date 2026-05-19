@@ -1212,8 +1212,72 @@ This is a descriptive check, not an ATT/ATE estimation. We do not slap a treatme
 \item For the descriptive purpose of this document, both controls are meant to flag which firm-tech-reform cells are robust. Neither is a formal identification design; cross-year variation in renewable capacity, gas/CO\textsubscript{2} prices, and demand still affects every cell.
 \end{itemize}
 
+% =====================================================================
+\subsubsection{Near-MCP fPCA: bid shape inside the price-setting band}\label{sec:prov:fpca_nearmcp}
+% =====================================================================
+
+\paragraph{Scope.} This exercise is for the \emph{price-setting techs}: CCGT, Hydro, Hydro pump. Renewables and nuclear are inframarginal block-bidders --- their bid stacks rarely have three or more tranches within $\pm H$ of MCP, so the near-MCP fPCA is empty or noise for them. The full-curve fPCA above is the right lens for those techs (it captures withholding-tail behaviour); this subsection looks at where strategic in-band repositioning shows up.
+
+\paragraph{Motivation.} The full-curve fPCA puts each bid stack on the quantile-of-total-MW domain, so PC1 mixes the strategic-withholding tail (parking unused MW at the 4{,}000 EUR/MWh cap) with the in-band bidding region (tranches that actually compete with MCP). Several headline full-curve coefficients turn out to be entirely scarcity-tail phenomena --- e.g., the CCGT GE $-15{,}018$ shift under MTU15-DA. To isolate the strategic in-band margin we restrict to tranches near MCP and re-run.
+
+\paragraph{Spec.} For each (unit/firm, date, period), keep only tranches with $|p - \text{MCP}| \le H$, $H=50$ EUR/MWh (matches the in-band kernel used in \S\ref{sec:prov:steepness}). Reparameterise the curve in MCP-centred price coordinates: $f_i^{\text{band}}(q)$ returns $\tilde p = p - \text{MCP}$ at quantile $q$ of cumulative in-band MW, $q \in \{0.01, \ldots, 0.99\}$. Filter cells with fewer than three in-band tranches (the 99-point quantile curve is artefacts otherwise). Apply the same functional-SA and PCA pipeline as the full-curve case.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{Near-MCP fPCA explained-variance ratios, raw vs functional-SA, $H=50$ EUR/MWh.} Curves restricted to $|p-\text{MCP}|\le 50$. PC1 captures the level of in-band bidding; PC2 the cheap-vs-scarcity tilt \emph{within} the band; PC3 finer shape.}
+\label{tab:fpca_evr_nearmcp}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_evr_nearmcp_H50_raw_vs_sa.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{Near-MCP pairwise PC1, PC2, PC3 coefficients (functional-SA), critical hours, $H=50$ EUR/MWh.} Coefficients in MCP-centred EUR/MWh on the curve domain. CCGT-ISP15 GE row absent (insufficient in-band cells in the 3-sess pre-window).}
+\label{tab:fpca_pc123_nearmcp_isp15}
+\setlength{\tabcolsep}{6pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_ISP15_nearmcp_H50_sa_pc123.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{Near-MCP pairwise PC1, PC2, PC3 coefficients under MTU15-IDA (functional-SA), critical hours, $H=50$.}}
+\label{tab:fpca_pc123_nearmcp_mtu15ida}
+\setlength{\tabcolsep}{6pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_MTU15-IDA_nearmcp_H50_sa_pc123.tex}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{\textbf{Near-MCP pairwise PC1, PC2, PC3 coefficients under MTU15-DA (functional-SA), critical hours, $H=50$.}}
+\label{tab:fpca_pc123_nearmcp_mtu15da}
+\setlength{\tabcolsep}{6pt}
+\input{../../results/regressions/bid/fpca/tex/tab_fpca_pairwise_MTU15-DA_nearmcp_H50_sa_pc123.tex}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../../figures/working/fpca_eigenfuncs_CCGT_nearmcp_H50_sa.pdf}
+\caption{\textbf{CCGT near-MCP fPCA basis (functional-SA, $H=50$).} Left: mean $\tilde p = p - \text{MCP}$ across all CCGT in-band cells, running from $-50$ at $q=0.01$ to $+50$ at $q=0.99$ by construction. Right: first 3 eigenfunctions (91\%, 6\%, 1\% of variance). PC1 is a uniform shift of in-band bidding; PC2 captures cheap-vs-scarcity tilt within the band. PC1 dominance is sharper here than on the full curve because the scarcity-tail variance has been removed.}
+\end{figure}
+
+\paragraph{Reading the near-MCP evidence (price-setting techs only).} The key result is that several full-curve headline coefficients split into two very different stories: \emph{what's happening at the scarcity tail} (full-curve PC1) vs \emph{what's happening in the bid band where MCP is set} (near-MCP PC1, PC2).
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{CCGT GE under MTU15-DA: the headline full-curve $-15{,}018$ was at the scarcity tail, not at MCP.} Near-MCP PC1 is only $+44$ EUR/MWh with PC2 $+39$ (same sign). Endesa's MTU15-DA repositioning was a massive downward shift of its high-price withholding tranches, \emph{not} a change in how aggressively it bids near MCP --- where, if anything, GE moved \emph{up} modestly.
+\item \textbf{CCGT GE under MTU15-IDA: enormous PC2 tilt inside the band.} Near-MCP PC1 is only $+30$ but PC2 is $-415$ EUR/MWh --- the largest single PC2 coefficient in the near-MCP tables. Endesa reshaped how its in-band MW were distributed near MCP (a within-band cheap-vs-scarcity rebalance) without moving the average. This is invisible both to PC1 and to the in-band MW share scalar.
+\item \textbf{CCGT IB, HC, REP under MTU15-DA: in-band level up, PC1 and PC2 reinforce.} Full-curve readings showed PC1 positive with PC2 negative (opposite-sign tilt at the scarcity tail). Near-MCP gives PC1 $+77, +33, +53$ with PC2 $+47, +33, +3$ --- all same-sign. Inside the band, these three firms moved the average MCP-relative bid up uniformly; the opposite-sign full-curve tilt was at the scarcity tail, not where they actually price-set.
+\item \textbf{CCGT under ISP15: all four firms shifted down in-band.} GN, HC, IB, OTH all have negative near-MCP PC1 ($-153, -78, -152, -180$). Under ISP15, CCGTs bid \emph{more aggressively inside the band} on average --- a different signal from the full-curve ISP15 reading (which mixed in tail behaviour and showed firm-specific directions).
+\item \textbf{Hydro\_pump IB under MTU15-DA: very large near-MCP shift ($+158$).} The largest single price-setter near-MCP coefficient at MTU15-DA. The full-curve PC1 here was $-57$ --- a sign-flip caused by scarcity-tail behaviour swamping the in-band signal.
+\item \textbf{Hydro GN under ISP15: $+167$ in-band level shift.} Naturgy's hydro bids near MCP move up under ISP15; this is consistent with the ISP15 settlement-discipline reading at the in-band margin.
+\item \textbf{Hydro: more PC2 structure than CCGT.} Hydro PC1 captures $82\%$ of in-band variance vs $91\%$ for CCGT (Table~\ref{tab:fpca_evr_nearmcp}); $10\%$ sits in PC2 (cheap-vs-scarcity tilt within $\pm 50$ of MCP). Within-band tilt is a meaningful margin for hydro (consistent with the reservoir-spilling vs scarcity-bidding split).
+\end{itemize}
+
+\paragraph{Verdict on near-MCP vs full-curve.} The two exercises measure different strategic margins on the same bid stack and should be read together. The full-curve fPCA captures withholding-tail behaviour (the 4{,}000 EUR/MWh cap region), where the largest reform coefficients sit. The near-MCP fPCA captures in-band repositioning, where the bid actually competes with MCP. The substantive split: most of CCGT GE's apparent MTU15-DA collapse was tail behaviour, while CCGT GE's MTU15-IDA reshape was an in-band tilt invisible to PC1; CCGT IB/HC/REP moved up uniformly in-band under MTU15-DA whereas the full-curve added an opposite-sign tail tilt; Hydro\_pump IB's MTU15-DA in-band move ($+158$) is hidden by the full-curve sign-flip. Both readings are descriptive; together they describe a richer firm-by-firm and reform-by-reform pattern than either alone.
+
 % Implementation: scripts/analysis/bid/fpca_per_tech.py (fPCA per tech)
 % scripts/analysis/bid/fpca_pairwise_regressions.py (pairwise with Fourier seasonal control)
+% scripts/analysis/bid/fpca_functional_sa.py (functional pre-deseasonalisation of curves)
+% scripts/analysis/bid/fpca_pairwise_regressions_sa.py (pairwise on SA scores)
+% scripts/analysis/bid/fpca_near_mcp.py (near-MCP variant: curves restricted to |p-MCP| <= 50, full pipeline)
 % scripts/analysis/bid/fpca_placebo_extend.py (placebo PC-score builder, DA-only, 2022-2024)
 % scripts/analysis/bid/fpca_placebo_pairwise.py (placebo pairwise regression, real vs placebo)
 % Implementation: scripts/analysis/bid/bid_shape_metrics.py (builds per-cell)
