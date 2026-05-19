@@ -1451,7 +1451,15 @@ DA clearing (D-1, 12:00) & \textbf{PDBC} & OMIE marginal-price DA cleared MW & D
 \input{../../results/regressions/firm/q1_drop/tab_q1_drop_by_tech.tex}
 \end{table}
 
-\textit{Reading.} (i) CCGT $q_1$ Big-4 fleet: Dec 2024 = 1\,444 GWh $\to$ Dec 2025 = 244 GWh (\textbf{$-83$\%}). Nov same comparison: $-80$\%. (ii) Nuclear, Wind, Hydro\_pump, Solar PV \emph{grow} in the same window. (iii) The intensive margin (per-cell mean MWh \emph{conditional} on being cleared) is stable for CCGT at $\approx$300 MWh; what collapses is the extensive margin (number of unit-day-hours cleared at all). (iv) Renewables do not ``wait for RT2'' because REE does not call them up in PO 3.2 (their increase offers are constrained by primary energy availability per the REE \emph{Guía}, \S5); nuclear does not because it is baseload-must-clear. Only CCGT has the strategic option to stay out of DA and rejoin via the post-clearing redispatch.
+\begin{table}[H]
+\centering\tiny
+\caption{\textbf{$q_1$ per-firm, per-hour-class same-calendar-month decomposition (mean DA-cleared MWh per unit-period-cell).} Disaggregation of Table~\ref{tab:q1_drop_by_tech} to (tech, firm, hour-class). Same Dec24/Dec25, Nov24/Nov25, Aug24/Aug25 month pairs. CCGT critical-hour drops are uniform across firms (IB $-11\%$, GE $-6\%$, GN $-10\%$, HC $-18\%$ Dec24$\to$25); CCGT flat-hour drops are larger (GN $-30\%$, HC $-50\%$). Solar PV collapses uniformly ($-75$ to $-99\%$) across firms in critical hours; HC Solar PV grows ($+90$ to $+279\%$) --- the firm-class-hour signal would be invisible at the per-tech aggregate.}
+\label{tab:q1_drop_per_firm_hour_class}
+\setlength{\tabcolsep}{3pt}
+\input{../../results/regressions/firm/q1_drop/tab_q1_drop_per_firm_hour_class.tex}
+\end{table}
+
+\textit{Reading.} (i) CCGT $q_1$ Big-4 fleet: Dec 2024 = 1\,444 GWh $\to$ Dec 2025 = 244 GWh (\textbf{$-83$\%}). Nov same comparison: $-80$\%. (ii) Nuclear, Wind, Hydro\_pump, Solar PV \emph{grow} in the same window. (iii) The intensive margin (per-cell mean MWh \emph{conditional} on being cleared) is stable for CCGT at $\approx$300 MWh; what collapses is the extensive margin (number of unit-day-hours cleared at all). (iv) Renewables do not ``wait for RT2'' because REE does not call them up in PO 3.2 (their increase offers are constrained by primary energy availability per the REE \emph{Guía}, \S5); nuclear does not because it is baseload-must-clear. Only CCGT has the strategic option to stay out of DA and rejoin via the post-clearing redispatch. (v) The per-firm-hour-class decomposition (Table~\ref{tab:q1_drop_per_firm_hour_class}) shows the $q_1$ drop is broadly uniform within CCGT firms across hour-classes (no firm bidding-out only in critical hours and clearing in flat); Solar PV collapses uniformly across IB/GE/GN while HC Solar PV grows.
 
 \textit{Verdict.} The $q_1$ drop is mechanism-specific: CCGT firms with strong post-clearing backstop (zonal dominance, \S\ref{sec:prov:geo}) increasingly bid above DA clearing under \emph{operación reforzada}, are rescued by REE through pay-as-bid Fase~I (\S\ref{sec:prov:phf_minus_pdbf}), and post a near-constant cap-padded DA bid ladder (\S\ref{sec:prov:bid_vs_rt2}). The collapse is the empirical face of the practice CNMC sanctioned in 2019 (\S\ref{sec:prov:cournot_cnmc}), now at fleet-wide scale.
 
@@ -1532,7 +1540,15 @@ Path A is the workhorse measurement throughout this section. Paths B and C provi
 \input{../../results/regressions/regulatory/pdbf_to_phf_alltech/tab_pdbf_to_phf_alltech.tex}
 \end{table}
 
-\textit{Reading.} (i) Every CCGT firm doubles its post-DA gap; GN gains the most ($+534$ GWh/mo). (ii) The mirror decrease in Wind / Solar / Hydro / Nuclear shows that REE substitutes CCGT for clean tech post-PDBF. (iii) Cross-checking against the system view in Figure~\ref{fig:ree_intervention_full}: the two largest delivered-energy channels in 2024-2026 are the PO 3.2 system-security restrictions (code 61, $\sim$12 TWh each direction) and the catch-all code 81 ($\sim$12 TWh each direction; the latter's exact content is not documented in the project reference and we treat it as not interpretable at the channel level). Among the documented channels, only code 61 is pay-as-bid \emph{and} local-grid binding --- the combination that yields zonal market power.
+\begin{table}[H]
+\centering\tiny
+\caption{\textbf{Per-(firm, tech, hour-class) post-DA gap (PHF$_{\text{last}}$ $-$ PDBC) by regime, GWh/day.} Disaggregation of Table~\ref{tab:phf_pdbf_alltech}'s monthly per-firm view to the hour-class dimension. Critical hours capture the bulk of the gap for every CCGT firm: GN critical $+16.6$ GWh/day at DA15/ID15 vs flat $+3.6$ vs midday $+5.1$. The reform-window increase in post-DA inclusion is concentrated in critical hours, consistent with the price-setting-region withholding story.}
+\label{tab:post_da_gap_firm_tech_hc}
+\setlength{\tabcolsep}{3pt}
+\input{../../results/regressions/regulatory/pdbf_to_phf_per_firm_hour_class/tab_post_da_gap_per_firm_tech_hc.tex}
+\end{table}
+
+\textit{Reading.} (i) Every CCGT firm doubles its post-DA gap; GN gains the most ($+534$ GWh/mo). (ii) The mirror decrease in Wind / Solar / Hydro / Nuclear shows that REE substitutes CCGT for clean tech post-PDBF. (iii) Cross-checking against the system view in Figure~\ref{fig:ree_intervention_full}: the two largest delivered-energy channels in 2024-2026 are the PO 3.2 system-security restrictions (code 61, $\sim$12 TWh each direction) and the catch-all code 81 ($\sim$12 TWh each direction; the latter's exact content is not documented in the project reference and we treat it as not interpretable at the channel level). Among the documented channels, only code 61 is pay-as-bid \emph{and} local-grid binding --- the combination that yields zonal market power. (iv) Table~\ref{tab:post_da_gap_firm_tech_hc} resolves the gap to the hour-class level: for every CCGT firm, critical hours carry $\sim 3$--$5\times$ the per-day gap of flat or midday. The reform-window inclusion is critical-hour-loaded, consistent with bidding-out-of-DA-in-critical-hours-then-clearing-via-PO 3.2.
 
 \textit{Verdict.} Pay-as-bid pricing of RT-forced volume $\times$ zonal dominance (\S\ref{sec:prov:geo}) is a local-monopoly channel. The aFRR / mFRR / GD / RR channels in Figure~\ref{fig:ree_intervention_full} are reported for completeness but they are competitively priced (system-marginal clearing on PICASSO / MARI / TERRE) and not subject to local-zone bargaining. Only PO 3.2 system-security TR (code 61) carries the pay-as-bid $+$ local-grid binding combination.
 
