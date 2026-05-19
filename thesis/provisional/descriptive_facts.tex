@@ -2027,6 +2027,13 @@ In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17,
 \item Validates the hour-class taxonomy (\S\ref{sec:prov:hour_class}): granular pricing has economic content only where within-hour residual demand actually moves.
 \end{itemize}
 
+\textbf{Midday context (excluded from main critical-flat analysis, separate descriptive thread):}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Midday hours (11h--14h) have intermediate within-hour residual-demand variance ($\sigma_{\text{within}} \in [468, 502]$ MW) and very low residual demand ($\sim 8.5$--$8.9$ GW) because solar dominates the marginal-pricing technology. We exclude midday from the critical-flat control set because pooling it would absorb both the strategic-bidding signal and the operational solar-vs-thermal differential.
+\item Outcome-side validation: post-MTU15-DA within-hour DA quarter-clearing-price std is $1.51$ EUR/MWh in midday vs $6.58$ in critical vs $2.13$ in flat. Midday is the \emph{tightest} hour-class --- granular pricing has even less room to discriminate than in flat hours (\S\ref{sec:prov:hour_class}).
+\item Where midday tells a distinct story: \textbf{solar PV bid-share concentrates in midday} (DA15/ID15: $48.3\%$ raw, $42.2\%$ adjusted, vs $25.5\%$ adjusted in critical and $61.1\%$ in flat) --- the solar-marginal regime, not the granularity-strategic regime. Midday rows in Tables~\ref{tab:bidshape_da}, \ref{tab:bidshape_ida} for the full picture.
+\end{itemize}
+
 % =====================================================================
 \section{Continuous market and channel mix}\label{sec:prov:synthesis:ci_brief}
 % =====================================================================
