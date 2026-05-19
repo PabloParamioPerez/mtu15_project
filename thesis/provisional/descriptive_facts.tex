@@ -846,7 +846,8 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{\textbf{DA bid-shape, all hours: raw share alongside seasonality-adjusted share (in {\color{seasoncol}blue}).} Per (tech, regime) mean share (\%) of MW within $[\text{MCP} \pm 50]$ EUR/MWh, computed on the same daily-tech panel used by the regression below. The bracketed value in {\color{seasoncol}blue} is the regime's predicted share at \emph{average day-of-year}, taking the regime coefficient from the seasonality-only Frisch-Waugh-Lovell spec: $\text{logit}(\text{share}_t) = \alpha + \sum_r \beta_r \cdot \mathbf{1}\{\text{regime}_t = r\} + \sum_{k=1}^{4} \text{Fourier}_k(t) + \varepsilon_t$, fit on the pooled 2022-01 to 2026-05 panel with Newey-West HAC standard errors ($\text{maxlags}{=}14$). Differences between raw and adjusted indicate the seasonal-mix contribution to the regime mean: regimes spanning peak-seasonal months see large gaps (Wind MTU15-IDA pre-blk: raw 78.1\% vs adjusted 27.3\% — the small 40-day window happens to fall in late-March to April, a high-wind/low-clearing-price stretch). \emph{Methodology note}: Fourier basis on day-of-year is the standard seasonal smoother in the electricity time-series literature (Weron 2014); see \S\ref{sec:bid_internal:calendar_discipline} for context on why fixed effects don't work given non-overlapping regime windows. Source: \code{results/regressions/bid/seasonality\_adjusted/tab\_bidshape\_raw\_vs\_deseasonalized.tex}.}
+\caption{\textbf{DA bid-shape, all hours: raw share alongside seasonality-adjusted share (in {\color{seasoncol}blue}).} Per (tech, regime) mean share (\%) of MW within $[\text{MCP} \pm 50]$ EUR/MWh. The bracketed value in {\color{seasoncol}blue} is the regime's predicted share at \emph{average day-of-year}, taking the regime coefficient from the seasonality-only Frisch-Waugh-Lovell spec: $\text{logit}(\text{share}_t) = \alpha + \sum_r \beta_r \cdot \mathbf{1}\{\text{regime}_t = r\} + \sum_{k=1}^{4} \text{Fourier}_k(t) + \varepsilon_t$, fit on the pooled 2022-01 to 2026-05 daily-tech panel with Newey-West HAC standard errors ($\text{maxlags}{=}14$). Differences between raw and adjusted indicate the seasonal-mix contribution: regimes spanning peak-seasonal months see large gaps (Wind MTU15-IDA pre-blk: raw 78.1\% vs adjusted 27.3\% --- the 40-day window happens to fall in late-March to April, a high-wind / low-clearing-price stretch). \emph{Methodology note}: Fourier basis on day-of-year is the standard seasonal smoother in the electricity time-series literature (Weron 2014); see \S\ref{sec:bid_internal:calendar_discipline} for why fixed effects do not work given non-overlapping regime windows.}
+% Source: results/regressions/bid/seasonality_adjusted/tab_bidshape_raw_vs_deseasonalized.tex
 \label{tab:bidshape_da_deseasonalized}
 \setlength{\tabcolsep}{5pt}
 \input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_raw_vs_deseasonalized.tex}
@@ -1458,6 +1459,10 @@ REE's adjustment markets, in order of pre-physical-delivery time-stamp (REE \emp
 \end{figure}
 
 \subsection{Per-day equivalents (the headline)}\label{sec:prov:full_cascade:perday}
+% Deseasonalized values in [seasoncol] brackets are predicted M EUR/day at average day-of-year
+% from the Spec A regression in seasonality_adjusted_all_outcomes.py (logit/log + Fourier(K=4),
+% HAC SE, pooled 2022-2026 daily panel). Larger raw-vs-bracketed gaps indicate stronger
+% seasonal-mix contribution to that regime's mean (winter regimes inflate, summer regimes deflate).
 \begin{center}\scriptsize
 \begin{tabular}{l r r r r r}
 \toprule
@@ -1465,9 +1470,10 @@ REE's adjustment markets, in order of pre-physical-delivery time-stamp (REE \emp
 Length (days)              & $\sim$170 & $\sim$108 & 40 & $\sim$155 & 92 \\
 Total cost (\texteuro M)   & 2\,163 & 1\,735 & 520 & 2\,741 & 1\,944 \\
 \textbf{Per day (\texteuro M)} & 12.7 & \textbf{16.1} & 13.0 & \textbf{17.7} & \textbf{21.1} \\
-\textbf{Fase~I up / day} & 5.0 & 5.3 & 7.6 & 10.5 & \textbf{13.0} \\
-\textbf{TR up / day}     & 3.9 & 5.8 & 3.7 & 2.9 & 1.8 \\
+\textbf{Fase~I up / day} & 5.0~{\color{seasoncol}\scriptsize[6.3]} & 5.3~{\color{seasoncol}\scriptsize[4.5]} & 7.6~{\color{seasoncol}\scriptsize[5.0]} & 10.5~{\color{seasoncol}\scriptsize[12.1]} & \textbf{13.0}~{\color{seasoncol}\scriptsize[13.5]} \\
+\textbf{TR up / day}     & 3.9~{\color{seasoncol}\scriptsize[2.8]} & 5.8~{\color{seasoncol}\scriptsize[4.4]} & 3.7~{\color{seasoncol}\scriptsize[4.1]} & 2.9~{\color{seasoncol}\scriptsize[2.4]} & 1.8~{\color{seasoncol}\scriptsize[0.8]} \\
 \bottomrule
+\multicolumn{6}{p{14cm}}{\scriptsize{\color{seasoncol}[bracketed]} values are seasonality-adjusted (Fourier $K{=}4$ on day-of-year, regime dummies, HAC SE). For Fase~I up: ISP15-win raw 5.3 vs adjusted 4.5 (winter mean is partly seasonal); DA15/ID15 raw 13.0 vs adjusted 13.5 (the reform-window jump survives deseasonalization). For TR up: ISP15-win raw 5.8 vs adjusted 4.4 (same seasonal direction); DA15/ID15 raw 1.8 vs adjusted 0.8 ($-56\%$ below the all-doy-average baseline). The TR-channel collapse is sharper after seasonality removal.} \\
 \end{tabular}
 \end{center}
 
