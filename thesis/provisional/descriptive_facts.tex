@@ -881,46 +881,25 @@ The numerator uses the same kernel-band half-width $h$ as $D_w$ (\S\ref{sec:prov
 \input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_IDA_by_regime_deseasonalized.tex}
 \end{table}
 
-\paragraph{Per-(firm, tech, hour-class) disaggregation.} Tables~\ref{tab:bidshape_da} and \ref{tab:bidshape_ida} aggregate within tech, so within-tech firm heterogeneity is invisible. Tables~\ref{tab:bidshape_da_firm_hc} and \ref{tab:bidshape_ida_firm_hc} below split each cell by (firm, hour-class), keeping the same logit-link Fourier+DOW SA pipeline. Each row is a (tech, firm, hour-class) cell with $\ge 80$ daily observations; sparse cells fall back to raw-only without SA brackets.
-
-\begin{table}[H]
-\centering\tiny
-\caption{\textbf{DA bid-shape per (firm, tech, hour-class) and regime: raw \% / {\color{seasoncol}[SA \%]}.} Logit-link FWL on Fourier($K{=}4$, doy) + DOW dummies, pooled 2022--2026 daily-(firm, tech, hour-class) panel. Cells with no SA bracket had $<80$ in-sample days.}
-\label{tab:bidshape_da_firm_hc}
-\setlength{\tabcolsep}{3pt}
-\input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_DA_by_firm_hour_class_deseasonalized.tex}
-\end{table}
-
-\begin{table}[H]
-\centering\tiny
-\caption{\textbf{IDA bid-shape per (firm, tech, hour-class) and regime: raw \% / {\color{seasoncol}[SA \%]}.} Same construction as Table~\ref{tab:bidshape_da_firm_hc}, IDA bid stack.}
-\label{tab:bidshape_ida_firm_hc}
-\setlength{\tabcolsep}{3pt}
-\input{../../results/regressions/bid/seasonality_adjusted/tab_bidshape_IDA_by_firm_hour_class_deseasonalized.tex}
-\end{table}
-
 \paragraph{Cross-market pattern: IDA shares are systematically larger than DA shares.} Comparing Tables~\ref{tab:bidshape_da} (DA) and \ref{tab:bidshape_ida} (IDA): for nearly every (tech, regime, hour-class) cell the IDA share is $1.5$--$3\times$ the corresponding DA share. CCGT in DA15/ID15 critical: DA $44.0\%$ raw / {\color{seasoncol}41.3\% (SA)} vs IDA $77.5\%$ raw / {\color{seasoncol}76.5\% (SA)}. Nuclear in any regime: DA $\sim 6$--$20\%$ vs IDA $80$--$99\%$. This is a structural fact about the two markets, not a reform effect: IDA bidders face less MCP uncertainty than DA bidders, so they concentrate a larger fraction of their MW near MCP. IDA bidding curves are mechanically ``steeper'' in the kernel-band sense than DA curves.
 
-\paragraph{Within-tech firm heterogeneity is large.} Table~\ref{tab:bidshape_da_firm_hc} disaggregates the per-tech DA table to (tech, firm, hour-class). CCGT in DA15/ID15 critical now reads as IB 50.7\% / {\color{seasoncol}48.3 SA}, GE 60.0 / {\color{seasoncol}58.7}, GN 25.4 / {\color{seasoncol}22.5}, HC 31.4 / {\color{seasoncol}34.7}, REP 77.5 / {\color{seasoncol}82.3}, OTH 39.1 / {\color{seasoncol}34.9} --- a $\sim 50$-pp spread across firms that the 44\%-tech-aggregate completely hides. REP CCGT especially: its DA15/ID15 critical in-band share is 77\% (the most concentrated), driven by SROQ2/PGR5-style cap-padded ladders. GN CCGT is the least concentrated (25\%), consistent with its high-price scarcity-tail bidding posture. Table~\ref{tab:bidshape_ida_firm_hc} shows the IDA analogue: most firms cluster around 70--90\% in-band share, but heterogeneity remains (and IB-CCGT IDA critical drops slightly from the firm-level read because of the per-firm SA estimation).
-
-\paragraph{Diurnal pattern and within-cell distribution.} Hour-class means flatten the 11-hour critical band (morning ramp + evening peak combined), the 4-hour midday band, and the 3-hour flat band into one number each. Two complementary views replace the mean with finer information:
+\paragraph{Per-(firm, tech) distribution view.} Hour-class means flatten the 11-hour critical band (morning ramp + evening peak combined), the 4-hour midday band, and the 3-hour flat band into one number each, and also collapse multimodal day-distributions into a single mean. Two complementary views replace the per-(firm, hour-class) cell means with finer information: (i) a diurnal heatmap of the regime mean by hour-of-day; (ii) an estimated probability density of the daily in-band share across (unit, day, hour) cells.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{../../figures/working/bidshape_diurnal_heatmap.pdf}
-\caption{\textbf{In-band MW share (\%, $\pm 50$ EUR/MWh around DA MCP) per (tech, firm) and hour-of-day, by regime.} Rows: (tech, firm); columns: hours 0--23; colour: regime mean of daily in-band share at that cell. Red lines mark critical hours; green lines mark midday hours. Shows the full diurnal pattern that the Critical/Flat/Midday columns of Table~\ref{tab:bidshape_da_firm_hc} aggregate over. Two patterns visible only at this resolution: the morning ramp (05--08) and evening peak (18--22) within critical hours have distinct intensities for several firms; midday CCGT shares for IB/GE under DA15/ID15 collapse to near zero (no bid concentration when solar-rich periods price low) while CCGT shares spike on the morning/evening boundaries.}
+\caption{\textbf{In-band MW share (\%, $\pm 50$ EUR/MWh around DA MCP) per (tech, firm) and hour-of-day, by regime.} Rows: (tech, firm); columns: hours 0--23; colour: regime mean of daily in-band share at that cell. Red lines mark critical hours; green lines mark midday hours. Morning ramp (05--08) and evening peak (18--22) within ``critical hours'' have distinct intensities for several firms; midday CCGT shares for IB/GE under DA15/ID15 collapse to near zero (solar-rich periods price low) while spiking on the morning/evening boundaries.}
 \label{fig:bidshape_diurnal_heatmap}
 \end{figure}
 
-\begin{table}[H]
-\centering\tiny
-\caption{\textbf{Quantiles of daily in-band MW share (\%) per (tech, firm, regime), across (unit, day, hour) cells.} Replaces the mean with the empirical distribution. The mean can be misleading for bimodal cells: REP CCGT under DA15/ID15 has p25 $=$ 16, p50 $=$ 90, p75 $=$ 96 --- a saturated-at-MCP distribution; the cell-mean read of 77\% would suggest a unimodal posture. GN CCGT under DA15/ID15 has p10 $=$ p50 $=$ 0, p75 $=$ 20, p90 $=$ 57 --- median day has ZERO in-band MW, the cell-mean is dragged by $\sim 10\%$ of days. Hour-class means hide both bimodality and heavy tails.}
-\label{tab:bidshape_quantiles}
-\setlength{\tabcolsep}{3pt}
-\input{../../results/regressions/bid/bidshape_diurnal/tab_bidshape_quantiles_per_firm_tech_regime.tex}
-\end{table}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../../figures/working/bidshape_kde_per_firm_tech.pdf}
+\caption{\textbf{Estimated probability density of the daily in-band MW share per (tech, firm), regimes overlaid.} Gaussian KDE across (unit, day, hour) cells per (firm, tech, regime). \textbf{Bimodality visible} for several CCGT firms under DA15/ID15 --- mass clustered both near 0 (firm did not have MW close to MCP that day) and near 1 (firm fully in-band, often a single block at MCP). REP-CCGT under DA15/ID15 has clear bimodality with a large mass near 1, while GN-CCGT has most mass near 0. The reform-window shift to right tail is visible in the right-shifting curve across regimes for IB, GE, HC and REP CCGT.}
+\label{fig:bidshape_kde}
+\end{figure}
 
-\paragraph{Reading the distribution.} The headline finding from the quantiles: \textbf{several firm-tech-regime cells are bimodal at the day level} (a fat mass at 0\% MW in-band and a fat mass at 90--100\%), and the mean fails as a summary. REP CCGT and GN CCGT are the cleanest cases. In contrast HC CCGT shows a more unimodal distribution (p10 $=$ 0, p50 $=$ 22--32 across regimes, p90 $=$ 60--75) --- HC bids in-band roughly half the time. The diurnal heatmap (Fig.~\ref{fig:bidshape_diurnal_heatmap}) shows further that the in-band concentration is hour-specific even within critical hours: most firms' CCGT in-band shares peak on the morning and evening ramps (hours 6--8 and 19--21) rather than mid-day-peak hours (10--14).
+\paragraph{Reading the distribution.} The density plot exposes what neither hour-class means nor quantiles capture cleanly: \textbf{bimodality at the daily cell level}. CCGT bidding strategies are not noisy continuous deviations from a central mean; firms operate in two distinct postures (``saturated at MCP'' vs ``well above MCP'') and the relative weight of these postures shifts with the reform. REP CCGT under DA15/ID15 has a dominant mass near full-saturation; GN-CCGT has a dominant mass at zero with a long upper tail. HC CCGT under DA15/ID15 shows a more unimodal middle-mass distribution. The diurnal heatmap (Fig.~\ref{fig:bidshape_diurnal_heatmap}) shows the in-band concentration is hour-specific within critical hours: most firms' CCGT shares peak on the morning and evening ramps (hours 6--8 and 19--21) rather than mid-day-peak hours (10--14).
 
 \paragraph{Reading the DA table (Table~\ref{tab:bidshape_da}) --- patterns and their seasonality robustness.}
 \begin{itemize}
@@ -1561,30 +1540,21 @@ Path A is the workhorse measurement throughout this section. Paths B and C provi
 \input{../../results/regressions/regulatory/pdbf_to_phf_alltech/tab_pdbf_to_phf_alltech.tex}
 \end{table}
 
-\begin{table}[H]
-\centering\tiny
-\caption{\textbf{Per-(firm, tech, hour-class) post-DA gap (PHF$_{\text{last}}$ $-$ PDBC) by regime, GWh/day.} Disaggregation of Table~\ref{tab:phf_pdbf_alltech}'s monthly per-firm view to the hour-class dimension. Critical hours capture the bulk of the gap for every CCGT firm: GN critical $+16.6$ GWh/day at DA15/ID15 vs flat $+3.6$ vs midday $+5.1$. The reform-window increase in post-DA inclusion is concentrated in critical hours, consistent with the price-setting-region withholding story.}
-\label{tab:post_da_gap_firm_tech_hc}
-\setlength{\tabcolsep}{3pt}
-\input{../../results/regressions/regulatory/pdbf_to_phf_per_firm_hour_class/tab_post_da_gap_per_firm_tech_hc.tex}
-\end{table}
-
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{../../figures/working/post_da_gap_diurnal_heatmap.pdf}
-\caption{\textbf{Post-DA gap diurnal heatmap, GWh/day per (tech, firm) hour, by regime.} Rows: (tech, firm); columns: hours 0--23; colour: mean post-DA gap GWh/day at that cell, red = up (PHF $>$ PDBC, REE adds the unit), blue = down. The reform-window inclusion is concentrated in critical hours (red vertical lines) for CCGT firms; the diurnal profile sharpens visibly from 3-sess to DA15/ID15. The peak in the evening hours (18--22) is larger than the morning ramp peak for IB/GN/HC CCGT.}
+\caption{\textbf{Post-DA gap (PHF$_{\text{last}}$ $-$ PDBC, GWh/day) per (tech, firm) hour-of-day, by regime.} Rows: (tech, firm); columns: hours 0--23; colour: regime-mean post-DA gap GWh/day at that cell (red $=$ up, REE adds the unit; blue $=$ down). Reform-window inclusion concentrates in critical hours (red vertical lines) for CCGT firms; the diurnal profile sharpens from 3-sess to DA15/ID15. Evening peak (18--22) is larger than morning ramp peak for IB/GN/HC CCGT.}
 \label{fig:post_da_gap_diurnal}
 \end{figure}
 
-\begin{table}[H]
-\centering\tiny
-\caption{\textbf{Distribution of daily post-DA gap (GWh/day) per (tech, firm, regime), quantiles across (day, hour) cells.} Replaces the per-cell mean with the empirical distribution. The mean is dominated by the upper-tail days/hours (post-blackout reforzada). For GN-CCGT under DA15/ID15: p10 $+0.52$, p50 $+1.38$, p90 $+2.23$ GWh/day (cell-mean reading would lose this spread). For IB-CCGT 3-sess vs DA15/ID15 the median moves $+0.18 \to +0.53$, the p90 moves $+0.54 \to +0.97$, both same direction — the reform shifts the WHOLE distribution upward, not just a few extreme days.}
-\label{tab:post_da_gap_quantiles}
-\setlength{\tabcolsep}{3pt}
-\input{../../results/regressions/regulatory/pdbf_to_phf_diurnal/tab_post_da_gap_quantiles.tex}
-\end{table}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../../figures/working/post_da_gap_kde_per_firm_tech.pdf}
+\caption{\textbf{Estimated probability density of the daily post-DA gap per (tech, firm), regimes overlaid.} Gaussian KDE across daily (date, firm, tech) cells per regime. \textbf{The reform shifts the whole distribution rightward}, not just a few extreme days: under DA15/ID15 (purple) every CCGT firm's density mass sits to the right of pre-MTU15 regimes. CCGT GN's reform-window shift is the largest; Hydro and Hydro\_pump show smaller shifts. Right-tail thickening for GN-CCGT and IB-CCGT under DA60/ID15 post-blk and DA15/ID15 is the reforzada signature.}
+\label{fig:post_da_gap_kde}
+\end{figure}
 
-\textit{Reading.} (i) Every CCGT firm doubles its post-DA gap; GN gains the most ($+534$ GWh/mo). (ii) The mirror decrease in Wind / Solar / Hydro / Nuclear shows that REE substitutes CCGT for clean tech post-PDBF. (iii) Cross-checking against the system view in Figure~\ref{fig:ree_intervention_full}: the two largest delivered-energy channels in 2024-2026 are the PO 3.2 system-security restrictions (code 61, $\sim$12 TWh each direction) and the catch-all code 81 ($\sim$12 TWh each direction; the latter's exact content is not documented in the project reference and we treat it as not interpretable at the channel level). Among the documented channels, only code 61 is pay-as-bid \emph{and} local-grid binding --- the combination that yields zonal market power. (iv) Table~\ref{tab:post_da_gap_firm_tech_hc} resolves the gap to the hour-class level: for every CCGT firm, critical hours carry $\sim 3$--$5\times$ the per-day gap of flat or midday. The reform-window inclusion is critical-hour-loaded, consistent with bidding-out-of-DA-in-critical-hours-then-clearing-via-PO 3.2.
+\textit{Reading.} (i) Every CCGT firm doubles its post-DA gap; GN gains the most ($+534$ GWh/mo). (ii) The mirror decrease in Wind / Solar / Hydro / Nuclear shows that REE substitutes CCGT for clean tech post-PDBF. (iii) Cross-checking against the system view in Figure~\ref{fig:ree_intervention_full}: the two largest delivered-energy channels in 2024-2026 are the PO 3.2 system-security restrictions (code 61, $\sim$12 TWh each direction) and the catch-all code 81 ($\sim$12 TWh each direction; the latter's exact content is not documented in the project reference and we treat it as not interpretable at the channel level). Among the documented channels, only code 61 is pay-as-bid \emph{and} local-grid binding --- the combination that yields zonal market power. (iv) Figures~\ref{fig:post_da_gap_diurnal} and \ref{fig:post_da_gap_kde} resolve the gap below the hour-class mean: critical hours carry $\sim 3$--$5\times$ the per-day gap of flat or midday for every CCGT firm, and the reform-window density shift is whole-distribution rather than tail-driven.
 
 \textit{Verdict.} Pay-as-bid pricing of RT-forced volume $\times$ zonal dominance (\S\ref{sec:prov:geo}) is a local-monopoly channel. The aFRR / mFRR / GD / RR channels in Figure~\ref{fig:ree_intervention_full} are reported for completeness but they are competitively priced (system-marginal clearing on PICASSO / MARI / TERRE) and not subject to local-zone bargaining. Only PO 3.2 system-security TR (code 61) carries the pay-as-bid $+$ local-grid binding combination.
 
