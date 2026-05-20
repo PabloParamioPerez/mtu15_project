@@ -103,17 +103,30 @@ def build_csv() -> pd.DataFrame:
 
 
 def main():
-    df = build_csv()
+    # Recompute from ENTSO-E parquets when available; otherwise fall back to
+    # the cached CSV (e.g. when the external SSD holding data/processed is
+    # not mounted). The metrics are a structural feature of the within-day
+    # pattern, not regime-specific, so the cached values are stable.
+    if LOAD.exists() and WIND_SOLAR.exists():
+        df = build_csv()
+    else:
+        print(f"ENTSO-E parquets not mounted; using cached {CSV}")
+        df = pd.read_csv(CSV)
     df["class"] = df["hour"].apply(cls)
     df = df.sort_values("hour")
+    # Coefficient of variation: within-hour SD relative to the residual-demand
+    # level. sigma in MW, residual demand in GW -> CV in %. Both the absolute
+    # within-hour swing (sigma) and the level (residual demand) matter; CV is
+    # the level-normalised version of sigma.
+    df["cv_pct"] = df["sigma_netload_mw"] / (df["netload_gw"] * 1000.0) * 100.0
     tex = []
-    tex.append(r"\begin{tabular}{l r r r r r r l}")
+    tex.append(r"\begin{tabular}{l r r r r r r r l}")
     tex.append(r"\toprule")
     # Two-line column headers so the table fits on the page without resizebox.
     tex.append(
         r"Clock-hour & \makecell{Demand\\(GW)} & \makecell{Solar\\(GW)} & \makecell{Wind\\(GW)} & "
         r"\makecell{Residual\\demand (GW)} & \makecell{$\sigma_{\text{within}}$\\(MW)} & "
-        r"\makecell{$\Delta$ demand\\(MW)} & Class \\"
+        r"\makecell{CV\\(\%)} & \makecell{$\Delta$ demand\\(MW)} & Class \\"
     )
     tex.append(r"\midrule")
     for _, r in df.iterrows():
@@ -130,6 +143,7 @@ def main():
         line = (f"{prefix}{emph}{hh}{end} & {r['load_gw']:.1f} & {r['solar_gw']:.1f} & "
                 f"{r['wind_gw']:.1f} & "
                 f"{r['netload_gw']:.1f} & {r['sigma_netload_mw']:.0f} & "
+                f"{r['cv_pct']:.1f} & "
                 f"{delta_str} & \\textit{{{r['class']}}} \\\\")
         tex.append(line)
     tex.append(r"\bottomrule")
