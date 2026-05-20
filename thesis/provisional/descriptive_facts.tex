@@ -490,15 +490,15 @@ The bolded $h=50$ column is the working choice for the headline tables that foll
 
 \bigskip
 
-\paragraph{Cell-level aggregation: max vs mean across the 6 within-hour pairs.}
-A cell has 4 within-hour quarters and therefore $\binom{4}{2} = 6$ pairwise dissimilarities $D_w^{(i,j)}$. We aggregate to a single cell-level statistic by taking the \emph{maximum}:
+\paragraph{Cell-level aggregation: mean across the 6 within-hour pairs.}
+A cell has 4 within-hour quarters and therefore $\binom{4}{2} = 6$ pairwise dissimilarities $D_w^{(i,j)}$. We aggregate to a single cell-level statistic by taking the \emph{mean}:
 \[
- D^{\text{cell}}_w \;=\; \max_{1\le i<j\le 4}\,D^{(i,j)}_w.
+ D^{\text{cell}}_w \;=\; \tfrac{1}{6}\!\sum_{1\le i<j\le 4}\,D^{(i,j)}_w.
 \]
-The choice between max and mean matters in two different ways:
+The choice between mean and max matters in two different ways:
 \begin{itemize}
-\item For the \emph{binary flag} $D^{\text{cell}}_w > 0$ (the metric in the operational-vs-strategic table below, in the IDA pre/post-blackout table, and in the $\Delta p$/$\Delta q$-active shares in Table~\ref{tab:dw_decomp}), the max-vs-mean choice is \textbf{irrelevant}: a cell has any pair $> 0$ if and only if max $> 0$ if and only if mean $> 0$. The flag rates reported in Tables~\ref{tab:prov:operational_strategic_asym}, \ref{tab:ida_pre_post}, \ref{tab:dw_decomp} therefore do not depend on this choice.
-\item For the \emph{conditional intensity} (e.g.\ the median $D_w$ rows in Table~\ref{tab:dw_mass_median}), the choice does matter: max picks the most-different pair and biases toward the upper tail of pair-wise dissimilarities; mean averages over all 6 pairs and dampens outlier-pair effects. We report max because the substantive question is ``did any within-hour shaping occur in this cell, and if so, how large was the most-different pair?''; a mean-aggregated companion (``how large is the typical pair?'') is a worthwhile robustness and is flagged for the next pass.
+\item For the \emph{binary flag} $D^{\text{cell}}_w > 0$ (the metric in the operational-vs-strategic table below, in the IDA pre/post-blackout table, and in the $\Delta p$/$\Delta q$-active shares in Table~\ref{tab:dw_decomp}), the choice is \textbf{irrelevant}: a cell has any pair $> 0$ if and only if mean $> 0$ if and only if max $> 0$.
+\item For the \emph{conditional intensity} (e.g.\ the median $D_w$ rows in Table~\ref{tab:dw_mass_median}, and the 3D ridges in Figs.~\ref{fig:dw_3d_hourly_ccgt}--\ref{fig:dw_3d_hourly_hp}), the choice does matter: max picks the most-different pair and biases toward the upper tail of pair-wise dissimilarities; mean averages over all 6 pairs and reads as ``how large is the typical within-hour pair?''. We report mean because the granularity-exploitation interpretation is most naturally read as a typical-pair shift, not a single-pair outlier shift. The earlier draft of this document used max; the conditional-intensity reporting has since been switched to mean (the binary-flag rates are unaffected).
 \end{itemize}
 
 \paragraph{Decomposition into price and quantity channels.}
@@ -508,7 +508,7 @@ We split the within-band variation into a price channel and a quantity channel:
  \qquad
  \Delta p_{ij} \;=\; \frac{1}{\min(M_i, M_j)}\int_{0}^{\min(M_i, M_j)}\!\!\big|S_i^{-1}(Q) - S_j^{-1}(Q)\big|\,dQ\;\;[\text{EUR/MWh}].
 \]
-$\Delta p$ captures the mean price shift on the common-mass portion --- a price-only adjustment with band-mass totals held fixed, in EUR/MWh. $\Delta q$ captures band-mass mismatch --- a quantity-only adjustment with prices on the common-mass portion held fixed, in MWh. Cell-level $\Delta p$, $\Delta q$ are the max over the 6 pairs (same caveats as above).
+$\Delta p$ captures the mean price shift on the common-mass portion --- a price-only adjustment with band-mass totals held fixed, in EUR/MWh. $\Delta q$ captures band-mass mismatch --- a quantity-only adjustment with prices on the common-mass portion held fixed, in MWh. Cell-level $\Delta p$, $\Delta q$ are the mean over the 6 pairs, consistent with the $D_w$ aggregation above.
 
 \paragraph{Caveat on $\Delta q$: this number is coarse on its own.}
 $\Delta q_{ij} = |M_i - M_j|$ is the \emph{absolute} difference between the two quarters' total band-mass (in MWh). The choice is dictated by the Wasserstein upper-bound proof below --- without exactly this $\Delta q$, the bound $W^{\text{band}}_1 \le \Delta p_{ij}\,M_i + 2h\,\Delta q_{ij}$ does not hold and the decomposition is not consistent. But \textbf{on its own, raw $\Delta q$ is uninformative without context}: 10 MWh of asymmetric mass between quarters is huge in a 20 MWh band-mass cell and negligible in a 500 MWh one. The tables below currently report $\Delta q$ in raw MWh; a relative version $\Delta q / \bar M$ where $\bar M = (M_i + M_j)/2$ is the mean band-mass would scale-normalise it, and is flagged for the next pass. In the empirical reading below we lean on the \emph{active/inactive} distinction ($\Delta q > 0$ vs $\Delta q = 0$) and on the loose-bound diagnostic at the end of this section, both of which are robust to the scale issue. (A further weakness: \emph{two quarters with identical total band-mass but different curve shapes get $\Delta q = 0$ even though the quantity channel is non-trivial.} What survives is the price channel $\Delta p$; the decomposition then attributes all shape variation to price, even when it is properly a shape difference in quantity.)
@@ -763,19 +763,45 @@ HC & flat & 549 & 0.00 & 0.00 & --- & --- \\
 % =====================================================================
 \paragraph{$D_w$ distributions across firms, technologies, and regimes.}\label{sec:prov:dw_distributions}
 
-\subparagraph{DA --- per firm $\times$ technology.}
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.98\textwidth]{../../figures/working/fig_dw_loghist_da.pdf}
-\caption{\textbf{DA Oct--Dec 2025.} Per-(firm $\times$ tech) overlaid log-histograms of $D_w$, critical (red), midday (green), flat (blue), positive values only on $\log_{10}(D_w)$, bin width $= 0.1$ (factor $\approx 1.26$). Mass at $D_w = 0$ in the legend.}
-\end{figure}
+\subparagraph{DA --- per (firm, tech), hour-class ridges.} The figure substitutes the earlier dense overlay log-histograms with per-tech landscape 3D ridges; each tech gets one page with 4 panels (CCGT firms IB, GE, GN, HC) and 3 hour-class ridges (critical, flat, midday) stacked on the y-axis per panel.
 
-\subparagraph{IDA --- pre- vs post-blackout, side-by-side.}
+\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.98\textwidth]{../../figures/working/fig_dw_loghist_ida_merged.pdf}
-\caption{\textbf{IDA $D_w$ histograms, pre- vs post-blackout merged.} Rows = firms; columns = (CCGT pre, CCGT post, Hydro pre, Hydro post). Per panel: critical (red), midday (green), flat (blue); mass-at-zero in the legend.}
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/dw_3d_per_firm_CCGT_DA.pdf}
+\caption{\textbf{CCGT --- DA Oct--Dec 2025 within-hour $\bar D_w$ distribution, by firm and hour-class.} Per-(firm, hour-class) 3D ridges of $\log(1+\bar D_w)$. $\bar D_w$ is the mean of the 6 pairwise quarter dissimilarities (\S\ref{sec:prov:dw_decomp}); Epanechnikov kernel, $H = 50$ EUR/MWh, centred at hour-mean DA clearing price. Substitutes the prior overlay log-histograms.}
+\label{fig:dw_3d_per_firm_ccgt_da}
 \end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/dw_3d_per_firm_Hydro_DA.pdf}
+\caption{\textbf{Hydro --- DA Oct--Dec 2025 within-hour $\bar D_w$ distribution, by firm and hour-class.} Companion to Fig.~\ref{fig:dw_3d_per_firm_ccgt_da}.}
+\label{fig:dw_3d_per_firm_hydro_da}
+\end{figure}
+\end{landscape}
+
+\subparagraph{IDA --- per (firm, tech), regime ridges (critical hours).} For the IDA, the cross-regime comparison is the substantive object (3 MTU15-IDA regimes have $D_w$ data: DA60/ID15 pre-blackout, DA60/ID15 post-blackout, DA15/ID15). The IDA figures stack the 3 regimes per firm-tech panel, restricted to critical hours (the pre-blackout window has too few flat-hour cells for a reliable density).
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/dw_3d_per_firm_CCGT_IDA.pdf}
+\caption{\textbf{CCGT --- IDA within-hour $\bar D_w$ distribution, critical hours, by firm and IDA-MTU15 regime.} The cross-regime progression is visible in every firm: pre-blackout (green) sits near zero; post-blackout (red) develops moderate right-tail mass; DA15/ID15 (purple) develops substantial mass at the high $\bar D_w$ end.}
+\label{fig:dw_3d_per_firm_ccgt_ida}
+\end{figure}
+\end{landscape}
+
+\begin{landscape}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/dw_3d_per_firm_Hydro_IDA.pdf}
+\caption{\textbf{Hydro --- IDA within-hour $\bar D_w$ distribution, critical hours, by firm and IDA-MTU15 regime.} Companion to Fig.~\ref{fig:dw_3d_per_firm_ccgt_ida}.}
+\label{fig:dw_3d_per_firm_hydro_ida}
+\end{figure}
+\end{landscape}
 
 \begin{table}[H]
 \centering\scriptsize

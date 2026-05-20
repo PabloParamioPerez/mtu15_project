@@ -102,7 +102,11 @@ def main():
     print(f"  {len(df):,} (unit, day, hour) cells across {df['regime'].nunique()} regimes")
 
     # log1p transform so the spike at 0 doesn't dominate; keep zeros visible at left
-    df["log_dw"] = np.log1p(df["d_max_w"])
+    # NOTE 2026-05-21: switched aggregator from d_max_w to d_mean_w (mean of the 6
+    # pairwise quarter dissimilarities). Identical for the binary flag D_w > 0;
+    # smoother conditional distribution and a "typical within-hour pair" reading
+    # rather than the outlier-pair reading the max gave.
+    df["log_dw"] = np.log1p(df["d_mean_w"])
 
     for tech in TECHS:
         sub_t = df[df["tech_group"] == tech]
