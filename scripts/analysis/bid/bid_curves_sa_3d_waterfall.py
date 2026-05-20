@@ -134,69 +134,85 @@ def build_surfaces_per_tech(tech):
 
 
 def plot_surface_per_firm(tech, surfaces, mcp_by_regime, firm):
-    """One figure per (firm, tech). 2x3 grid: 5 regime subplots + 1 empty slot.
+    """One figure per (firm, tech). 2x3 grid: 5 regime panels + 1 empty slot.
 
-    Each panel: light-grey shaded bid surface + translucent red MCP plane at
-    z = MCP(h, regime), constant across the quantile axis.
+    Bid surface as a smooth lit surface (no mesh edges), z-axis clipped
+    aggressively so the strategic band around MCP dominates the visual
+    rather than the price-cap-padding plateau. MCP overlaid as an opaque
+    red plane at z = MCP(h, regime).
     """
     keys = [(firm, r_lab) for r_lab, _, _, _ in REGIME_DATES if (firm, r_lab) in surfaces]
     if not keys:
         return False
 
-    all_z = np.concatenate([
-        surfaces[(firm, r_lab)].ravel() for r_lab, _, _, _ in REGIME_DATES
-        if (firm, r_lab) in surfaces
-    ])
-    all_z = all_z[np.isfinite(all_z)]
-    z_max_data = float(min(Z_CLIP, np.nanquantile(all_z, 0.98))) if len(all_z) else Z_CLIP
-    z_min_data = float(max(0.0, np.nanquantile(all_z, 0.02))) if len(all_z) else 0.0
+    all_mcp = np.concatenate([m for m in mcp_by_regime.values() if m is not None])
+    all_mcp = all_mcp[np.isfinite(all_mcp)]
+    mcp_max = float(np.nanmax(all_mcp)) if len(all_mcp) else 100.0
+
+    # Tight z-clip: 2 x max MCP, floored at 200, so the relevant strategic
+    # band (bid prices near and just above MCP) dominates the visual.
+    # Cap-padded bids well above this plateau visually at z_top, which is
+    # the correct reading -- "bid > MCP by a lot".
+    z_top = float(max(200.0, mcp_max * 2.0))
+    z_bot = 0.0
 
     Xq, Yh = np.meshgrid(QUANTILES, HOURS)
 
-    fig = plt.figure(figsize=(17, 10.5))
+    fig = plt.figure(figsize=(20, 12))
     fig.suptitle(
         f"{tech.replace('_',' ')} --- {firm}: SA aggregate bid surfaces, "
         f"24-hour $\\times$ 99-quantile, one panel per regime "
-        f"(translucent red plane = DA MCP).",
-        fontsize=12)
+        f"(red plane = DA MCP; $z$ capped at {int(z_top)} EUR/MWh).",
+        fontsize=13, y=0.97)
 
     for idx, (r_lab, _, _, r_disp) in enumerate(REGIME_DATES):
         ax = fig.add_subplot(2, 3, idx + 1, projection="3d")
         key = (firm, r_lab)
         if key not in surfaces:
-            ax.set_title(f"{r_disp} (no data)", fontsize=10)
+            ax.set_title(f"{r_disp} (no data)", fontsize=11)
             ax.set_axis_off()
             continue
-        Z = np.clip(surfaces[key], None, Z_CLIP)
+        Z = np.clip(surfaces[key], None, z_top)
         Zp = np.where(np.isfinite(Z), Z, np.nan)
 
-        # Monochrome shaded bid surface
-        ax.plot_surface(Xq, Yh, Zp,
-                        color="lightsteelblue",
-                        edgecolor="dimgray", linewidth=0.25,
-                        rstride=2, cstride=4, alpha=0.85,
-                        shade=True, antialiased=True)
-
-        # MCP reference plane: z = MCP(h, regime), constant across q
+        # MCP plane drawn FIRST so the bid surface renders on top of it.
         mcp_arr = mcp_by_regime.get(r_lab, np.full(24, np.nan))
-        MCP_Z = np.tile(np.clip(mcp_arr, None, Z_CLIP)[:, None], (1, 99))
+        MCP_Z = np.tile(np.clip(mcp_arr, None, z_top)[:, None], (1, 99))
         MCP_Z = np.where(np.isfinite(MCP_Z), MCP_Z, np.nan)
         ax.plot_surface(Xq, Yh, MCP_Z,
-                        color="crimson", edgecolor="none",
-                        alpha=0.30, shade=False, antialiased=False)
+                        color="#d62728",
+                        edgecolor="none",
+                        rstride=1, cstride=1,
+                        alpha=0.70,
+                        shade=False, antialiased=True)
+
+        # Smooth monochrome bid surface, alpha slightly reduced so the MCP
+        # plane stays visible where the bid surface clips below it.
+        ax.plot_surface(Xq, Yh, Zp,
+                        color="#9ec3e6",
+                        edgecolor="none",
+                        linewidth=0,
+                        rstride=1, cstride=1,
+                        alpha=0.85,
+                        shade=True, antialiased=True)
 
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 23)
-        ax.set_zlim(z_min_data, z_max_data)
-        ax.set_xlabel("Quantile $q$", fontsize=9)
-        ax.set_ylabel("Hour", fontsize=9)
-        ax.set_zlabel("SA price (EUR/MWh)", fontsize=9)
+        ax.set_zlim(z_bot, z_top)
+        ax.set_xlabel("Quantile $q$", fontsize=10, labelpad=4)
+        ax.set_ylabel("Hour", fontsize=10, labelpad=4)
+        ax.set_zlabel("SA price (EUR/MWh)", fontsize=10, labelpad=4)
+        ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0])
         ax.set_yticks([0, 6, 12, 18, 23])
-        ax.set_title(r_disp, fontsize=10)
-        ax.view_init(elev=24, azim=-58)
+        ax.tick_params(axis="both", labelsize=8, pad=0)
+        ax.set_title(r_disp, fontsize=12, pad=10)
+        ax.view_init(elev=30, azim=-55)
+        for pane in (ax.xaxis.pane, ax.yaxis.pane, ax.zaxis.pane):
+            pane.set_edgecolor("lightgray")
+            pane.set_alpha(0.10)
 
-    fig.subplots_adjust(left=0.03, right=0.97, top=0.92, bottom=0.04,
-                        wspace=0.08, hspace=0.10)
+    fig.subplots_adjust(left=0.02, right=0.98, top=0.92, bottom=0.04,
+                        wspace=0.10, hspace=0.18)
     out = FIG_DIR / f"bid_curves_sa_3d_{tech}_{firm}.pdf"
     fig.savefig(out, bbox_inches="tight", dpi=110)
     plt.close(fig)
