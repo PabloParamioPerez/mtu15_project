@@ -230,7 +230,7 @@ In tables, SA values sit in {\color{seasoncol}coloured brackets} next to the raw
 \part{Part A --- Bidding and trading patterns}
 % =============================================================================
 
-\noindent\emph{Reading guide for Part A.} Three setup sections come first. \S\ref{sec:prov:hour_class} defines the \textbf{hour-class taxonomy} (critical / flat / midday) used to slice every table and figure that follows. \S\ref{sec:prov:pricesetter} characterises \textbf{who price-sets} in the day-ahead market (\S\ref{sec:prov:pricesetter_da}) and, methodologically, in the intraday markets (\S\ref{sec:prov:pricesetter_ida}). \S\ref{sec:prov:dw_decomp} then defines the \textbf{bid-shape metrics} ($D_w$, $\Delta p$, $\Delta q$), the choice of band centre $c$ and half-width $h$, and the cell-level aggregator. Visual results (per tech $\times$ firm $\times$ quarter bid curves with mean clearing prices overlaid) come in \S\ref{sec:prov:bid_graphs}; quantitative tables and histograms ($D_w > 0$ rates, $\Delta p / \Delta q$ channel shares, within-hour shaping by firm $\times$ tech) come in \S\ref{sec:prov:dw_tables}.
+\noindent\emph{Reading guide for Part A.} Three setup sections come first. \S\ref{sec:prov:hour_class} defines the \textbf{hour-class taxonomy} (critical / flat / midday) used to slice every table and figure that follows. \S\ref{sec:prov:pricesetter} characterises \textbf{who price-sets} in the day-ahead market (\S\ref{sec:prov:pricesetter_da}) and, methodologically, in the intraday markets (\S\ref{sec:prov:pricesetter_ida}). \S\ref{sec:prov:dw_decomp} then defines the \textbf{bid-shape metrics} in two families: \emph{per-curve functionals} (one scalar per single bid curve --- $\sigma_p$, $N_{\text{eff}}$, the fPCA scores) and \emph{pairwise divergences} (a statistic of two curves --- $D_w$, $\Delta p$, $\Delta q$). Visual results (per tech $\times$ firm $\times$ quarter bid curves with mean clearing prices overlaid) come in \S\ref{sec:prov:bid_graphs}; quantitative tables come in \S\ref{sec:prov:dw_tables}.
 
 % =====================================================================
 \section{Hour-class taxonomy: critical, flat, midday}\label{sec:prov:hour_class}
@@ -467,7 +467,29 @@ Other RES & 1.0 & 1.1 & 1.7 & 0.0 & 3.1 & 0.7 & 2.4 & 0.2 & 0.6 & 0.4 \\
 
 
 % =====================================================================
-\section{Setup: bid-shape metrics ($D_w$, $\Delta p$, $\Delta q$)}\label{sec:prov:dw_decomp}
+\section{Bid-curve shape: per-curve functionals and pairwise divergences}\label{sec:prov:dw_decomp}
+% =====================================================================
+
+\noindent We measure bid-curve shape with two conceptually distinct families of statistics, and keep them separate throughout.
+\begin{itemize}\setlength{\itemsep}{3pt}
+\item \textbf{Family 1 --- per-curve functionals.} A functional maps a \emph{single} bid curve to a scalar, $T: f \mapsto T(f) \in \mathbb{R}$; no comparison between curves enters its definition. Cross-regime, cross-firm and cross-hour reading is then done by comparing the \emph{values} $T(f)$ across curves. This family holds the price spread $\sigma_p$ and the effective tranche count $N_{\text{eff}}$ (\S\ref{sec:prov:per_curve_def}), and the functional-PCA level/tilt scores $\xi_{ik}$ of \S\ref{sec:prov:fpca} --- the score $\xi_{ik} = \langle f_i - \bar f,\, \phi_k\rangle$ is itself a per-curve functional, a shape coordinate of the single curve $f_i$. \textbf{This is the primary descriptive object}: it asks what one bid curve looks like, and how that value moves across regimes.
+\item \textbf{Family 2 --- pairwise divergences.} A divergence is a statistic of \emph{two} curves, $D(f_i, f_j)$: it does not summarise either curve on its own, it measures how far apart they are. This family holds $D_w$ and its $\Delta p$ / $\Delta q$ channel decomposition (\S\ref{sec:prov:dw_decomp_def}). We use it for one comparison only --- a unit's four within-hour quarter curves against each other --- as a within-hour-shaping diagnostic, secondary to Family~1.
+\end{itemize}
+\noindent The distinction is the one the advisor asked for: characterise each bid curve by its own value (Family~1), rather than by divergences between curves (Family~2). Family~2 is retained only because the within-hour quarter comparison has no single-curve analogue.
+
+% =====================================================================
+\subsection{Family 1 --- per-curve functionals: $\sigma_p$ and $N_{\text{eff}}$}\label{sec:prov:per_curve_def}
+% =====================================================================
+
+\noindent For each (unit, date, market-period) sell bid curve, restricted to the strategic band $|p - \text{MCP}| \le 50$ EUR/MWh, we compute two scalars:
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{Price functional --- price spread $\sigma_p$}: the MW-weighted standard deviation of the in-band tranche prices (EUR/MWh). It measures how much the unit \emph{varies its price} across the MW it offers near the clearing price. A single flat block $\Rightarrow \sigma_p = 0$; a graded ladder spanning the band $\Rightarrow \sigma_p$ large.
+\item \textbf{Quantity functional --- effective tranche count $N_{\text{eff}}$}: the inverse Herfindahl of the tranche MW shares, $N_{\text{eff}} = (\sum_t q_t)^2 / \sum_t q_t^2$. It measures how the unit \emph{splits its quantity}: $N_{\text{eff}} = 1$ means all in-band MW sits in one block, larger $N_{\text{eff}}$ means the MW is divided into more comparable pieces.
+\end{itemize}
+\noindent Both are per-curve and require no curve-to-curve comparison, and are computed on the \emph{raw} bid curve (seasonality is handled at the aggregation step, by reading the values within calendar-matched windows). The two decouple: a unit can split into many tranches at nearly one price (high $N_{\text{eff}}$, low $\sigma_p$) or place two blocks far apart (low $N_{\text{eff}}$, high $\sigma_p$). The fPCA scores of \S\ref{sec:prov:fpca} are the third member of this family --- a multivariate per-curve functional that lets the data choose the modes of shape variation rather than fixing them a priori.
+
+% =====================================================================
+\subsection{Family 2 --- pairwise divergences: $D_w$, $\Delta p$, $\Delta q$}\label{sec:prov:dw_decomp_def}
 % =====================================================================
 
 \paragraph{$D_w$, in full.}
@@ -587,17 +609,12 @@ The grids below stack rows = Big-4 firms (Iberdrola, Endesa, Naturgy, EDP-Spain)
 
 
 % =====================================================================
-\subsection{Per-curve bid-shape metrics, and the $D_w$ complement}\label{sec:prov:dw_tables}
+\subsection{Results: per-curve functionals, and the pairwise $D_w$ diagnostic}\label{sec:prov:dw_tables}
 
-\noindent The results below quantify what the bid-curve figures in \S\ref{sec:prov:bid_graphs} show visually. The primary metrics are defined \textbf{on each single bid curve} --- not from a comparison between two curves --- so that cross-regime, cross-firm and cross-hour reading is done by aggregating per-curve scalars rather than by differencing curves.
+\noindent The results below quantify what the bid-curve figures in \S\ref{sec:prov:bid_graphs} show visually: first the Family-1 per-curve functionals ($\sigma_p$, $N_{\text{eff}}$, defined in \S\ref{sec:prov:per_curve_def}), then the Family-2 pairwise $D_w$ diagnostic (\S\ref{sec:prov:dw_decomp_def}).
 
-\paragraph{Two per-curve metrics: price spread and effective tranche count.}
-For each (unit, date, market-period) day-ahead sell bid curve, restricted to the strategic band $|p - \text{MCP}| \le 50$ EUR/MWh, we compute two scalars:
-\begin{itemize}\setlength{\itemsep}{2pt}
-\item \textbf{Price metric --- price spread $\sigma_p$}: the MW-weighted standard deviation of the in-band tranche prices (EUR/MWh). It measures how much the unit \emph{varies its price} across the MW it offers near the clearing price. A single flat block $\Rightarrow \sigma_p = 0$; a graded ladder spanning the band $\Rightarrow \sigma_p$ large.
-\item \textbf{Quantity metric --- effective tranche count $N_{\text{eff}}$}: the inverse Herfindahl of the tranche MW shares, $N_{\text{eff}} = (\sum_t q_t)^2 / \sum_t q_t^2$. It measures how the unit \emph{splits its quantity}: $N_{\text{eff}} = 1$ means all in-band MW sits in one block, larger $N_{\text{eff}}$ means the MW is divided into more comparable pieces.
-\end{itemize}
-Both are per-curve and require no curve-to-curve comparison. They are computed on the \emph{raw} bid curves: the curve itself is not deseasonalised: any seasonality concern is handled at the aggregation step by reading the metrics within the calendar-matched reform windows, not by deseasonalising the supply curve. The two metrics decouple --- a unit can split into many tranches at nearly one price (high $N_{\text{eff}}$, low $\sigma_p$) or place two blocks far apart (low $N_{\text{eff}}$, high $\sigma_p$).
+\paragraph{Per-curve functionals: price spread and effective tranche count.}
+Table~\ref{tab:per_curve_metrics} and Figure~\ref{fig:per_curve_metrics} report $\sigma_p$ and $N_{\text{eff}}$ averaged over (unit, date, period) day-ahead sell-bid curves, by tech, hour-class and regime --- the cross-regime reading is a comparison of per-curve \emph{values}, with no differencing of curves.
 
 \begin{table}[H]
 \centering\footnotesize
@@ -614,7 +631,7 @@ Both are per-curve and require no curve-to-curve comparison. They are computed o
 \label{fig:per_curve_metrics}
 \end{figure}
 
-\paragraph{The $D_w$ complement (pairwise).} The $D_w$ / $\Delta p$ / $\Delta q$ statistics below are the older \emph{pairwise} construction --- they compare a unit's four within-hour quarter curves to each other. They remain a useful within-hour-shaping diagnostic, but the per-curve metrics above are the primary descriptive object. We report (i) the per-cell binary flag $D_w > 0$ across techs and firms (operational vs strategic decomposition, IDA pre/post-blackout) and (ii) the $\Delta p / \Delta q$ channel-shares and intensity tables.
+\paragraph{The pairwise $D_w$ diagnostic (Family 2).} The $D_w$ / $\Delta p$ / $\Delta q$ statistics below are the Family-2 \emph{pairwise} construction (\S\ref{sec:prov:dw_decomp_def}) --- they compare a unit's four within-hour quarter curves to each other. They remain a useful within-hour-shaping diagnostic, but the per-curve functionals above are the primary descriptive object. We report (i) the per-cell binary flag $D_w > 0$ across techs and firms (operational vs strategic decomposition, IDA pre/post-blackout) and (ii) the $\Delta p / \Delta q$ channel-shares and intensity tables.
 
 \paragraph{DA Oct--Dec 2025: operational vs strategic decomposition by (tech, firm).}\label{sec:prov:operational_strategic}
 \textit{Reading} (\textbf{mixed}). The original main-paper framing reported a critical--flat asymmetry with the interpretation ``only Naturgy CCGT shows the strategic signature''. The IDA pre/post-blackout analysis (below) and the multitech within-hour shaping table (at the end of this subsection) complicate this: GN's CCGT $D_w$ activity is real and large, IB hydro and pump-storage are also highly active, and under reforzada all four firms show the IDA-side strategic signature, not just Naturgy.
@@ -677,7 +694,7 @@ HC & 27.9 & 20.7 & $+7.2$ & 34.2 & 21.2 & $+13.0$ \\
 
 % =====================================================================
 \paragraph{$\Delta p$ / $\Delta q$ channel shares (CCGT, DA Oct--Dec 2025).}\label{sec:prov:dw_decomp_results}
-\emph{Methodology and decomposition: see the setup intro of \S\ref{sec:prov:dw_decomp}. Outcomes below are the share of cells where each channel is active and the median value conditional on active. Caveat: raw $\Delta q$ in MWh is coarse on its own --- see ``Caveat on $\Delta q$'' in the setup intro.}
+\emph{Methodology and decomposition: see \S\ref{sec:prov:dw_decomp_def}. Outcomes below are the share of cells where each channel is active and the median value conditional on active. Caveat: raw $\Delta q$ in MWh is coarse on its own --- see the $\Delta q$ caveat in \S\ref{sec:prov:dw_decomp_def}.}
 
 \begin{table}[H]
 \centering
@@ -779,7 +796,7 @@ Pump-st. & \textbf{GE (MLTG)} & 1 & 418 & \textbf{86.1} & 91.6 & 3.44 & 195 \\
 \subsection{Functional PCA of bid-curve shape changes across regimes}\label{sec:prov:fpca}
 % =====================================================================
 
-\paragraph{Motivation and method.} The scalar bid-shape metrics in \S\ref{sec:prov:dw_tables} ($\sigma_p$, $N_{\text{eff}}$, $\Delta p$, $\Delta q$, $D_w$) are interpretable individually but ad-hoc collectively. Functional PCA (fPCA) instead treats each per-(unit, date, period) sell bid stack as a functional observation --- the inverse supply curve $f_i(q) = S_i^{-1}(q)$ on cumulative-MW quantiles $q \in [0,1]$ --- and extracts orthogonal modes of shape variation. With sample mean $\bar f$, fPCA finds an orthonormal basis $\{\phi_k\}$ with uncorrelated scores
+\paragraph{Motivation and method.} The two per-curve functionals of \S\ref{sec:prov:per_curve_def} ($\sigma_p$, $N_{\text{eff}}$) fix the shape coordinate in advance. Functional PCA (fPCA) is the data-driven member of the same Family~1: it still maps each single curve to scalars, but lets the data choose the modes. It treats each per-(unit, date, period) sell bid stack as a functional observation --- the inverse supply curve $f_i(q) = S_i^{-1}(q)$ on cumulative-MW quantiles $q \in [0,1]$ --- and extracts orthogonal modes of shape variation. With sample mean $\bar f$, fPCA finds an orthonormal basis $\{\phi_k\}$ with uncorrelated scores
 \[
 \xi_{ik} \;=\; \langle f_i - \bar f,\, \phi_k\rangle_{L^2} \;=\; \int_0^1 \left[f_i(q) - \bar f(q)\right] \phi_k(q)\, dq,
 \]
