@@ -1,35 +1,45 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-21
 # CLAIM: 3D surface plots of seasonality-adjusted (SA) aggregate bid curves
-#        per (firm, tech), one panel per regime. The surface is the full
-#        2D function bid_price(q, h) with x = quantile of cumulative MW
-#        (q in [0.01, 0.99]), y = clock-hour (0..23), z = SA bid price
-#        (EUR/MWh). User feedback 2026-05-21: include all 24 hours to form
-#        a continuous "plane", not a 4-hour stack of ribbons.
+#        per (firm, tech), one panel per regime. Surface = bid_price(q, h)
+#        with x = quantile of cumulative MW (q in [0.01, 0.99]),
+#        y = clock-hour (0..23), z = SA bid price (EUR/MWh).
 #
-#        The SA bid curves come from the functional pre-deseasonalisation
-#        pipeline (fpca_functional_sa.py), which writes per-cell
-#        f_i^SA(q) on a fixed 99-point quantile grid into
-#        results/regressions/bid/fpca/quantile_curves_<tech>_sa.parquet.
-#        Entity -> firm via lista_unidades.csv; clock_hour derived from
-#        period (MTU60 pre-MTU15-DA, MTU15 post). Aggregate by
-#        (firm, tech, clock_hour, regime) -> mean SA quantile curve, then
-#        plot one 3D surface per regime in a 2x3 grid (5 regimes, 1 empty
-#        slot reserved for the colorbar).
+#        The SA bid curves come from fpca_functional_sa.py
+#        (quantile_curves_<tech>_sa.parquet). Per-cell SA curves are
+#        non-monotone (functional deseasonalisation breaks monotonicity);
+#        the per-(firm, tech, hour, regime) MEAN curve is monotone to
+#        within ~0.1 EUR/MWh, and we apply a monotone rearrangement
+#        (sort along q -- Chernozhukov-Fernandez-Val-Galichon 2010) to
+#        guarantee a valid supply curve.
+#
+#        The DA MCP overlay is itself seasonality-adjusted (per-clock-hour
+#        FWL on the daily clearing price: regime + Fourier(K=4) + DOW,
+#        regime SA value at annual-mean Fourier and within-week DOW mean)
+#        so the bid x MCP comparison is SA-vs-SA, not SA-vs-raw.
+#
+#        The bid x MCP intersection is drawn ONLY where the bid surface
+#        genuinely crosses the MCP plane. Hours where the whole bid curve
+#        is above MCP (clears nothing) or below MCP (clears everything)
+#        have no intersection and are left as a gap in the curve.
 #
 # OUT: figures/working/bid_curves_sa_3d_<tech>_<firm>.pdf
 
 from pathlib import Path
+import sys
+
 import numpy as np
 import pandas as pd
+import statsmodels.api as sm
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib import cm
-import matplotlib.colors as mcolors
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 
 REPO = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(REPO / "src"))
+from mtu.analysis.sa_fwl import fourier_terms, dow_dummies, DEFAULT_K  # noqa: E402
+
 FPCA_DIR = REPO / "results/regressions/bid/fpca"
 UNITS_CSV = REPO / "data/external/omie_reference/lista_unidades.csv"
 MPDBC = REPO / "data/processed/omie/mercado_diario/precios/marginalpdbc_all.parquet"
@@ -47,7 +57,12 @@ TECHS = ["CCGT", "Hydro", "Hydro_pump"]
 FIRMS = ["IB", "GE", "GN", "HC"]
 QUANTILES = np.linspace(0.01, 0.99, 99)
 HOURS = np.arange(24)
-Z_CLIP = 400.0  # EUR/MWh hard cap so scarcity-tail spikes don't crush the visible band
+K = DEFAULT_K
+
+# Palette: neutral surface, distinct MCP plane, contrasting intersection.
+COL_SURFACE = "#b9b9bd"   # neutral grey -- shape reads from shading alone
+COL_MCP     = "#4d9aa8"   # muted teal MCP plane
+COL_CROSS   = "#e6550d"   # orange intersection curve
 
 
 def firm_bucket(o):
@@ -75,11 +90,11 @@ def assign_regime(d):
 
 
 def mcp_crossing_quantile(bid_curve, mcp_val):
-    """Quantile q* where the (monotone) bid curve crosses MCP.
+    """Quantile q* where the monotone bid curve crosses MCP.
 
-    Returns None if MCP is not finite or the bid curve is all-NaN.
-    Returns 0.0 if the whole bid curve is above MCP (nothing clears),
-    1.0 if the whole bid curve is below MCP (everything clears).
+    Returns None when there is NO genuine crossing -- i.e. the whole bid
+    curve is above MCP (clears nothing) or below MCP (clears everything).
+    A returned value is a real intersection of the two surfaces.
     """
     if not np.isfinite(mcp_val):
         return None
@@ -89,10 +104,8 @@ def mcp_crossing_quantile(bid_curve, mcp_val):
         return None
     q = QUANTILES[finite]
     bc = bc[finite]
-    if np.all(bc >= mcp_val):
-        return float(q[0])
-    if np.all(bc <= mcp_val):
-        return float(q[-1])
+    if np.all(bc >= mcp_val) or np.all(bc <= mcp_val):
+        return None  # no genuine crossing
     diff = bc - mcp_val
     sign_change = np.where(np.diff(np.sign(diff)) != 0)[0]
     if len(sign_change) == 0:
@@ -106,8 +119,13 @@ def mcp_crossing_quantile(bid_curve, mcp_val):
     return float(q_lo + frac * (q_hi - q_lo))
 
 
-def build_mcp_surfaces():
-    """Return dict[regime] -> 24-vector of mean DA clearing price (EUR/MWh)."""
+def build_mcp_sa():
+    """Per-(regime, clock_hour) seasonality-adjusted DA clearing price.
+
+    For each clock-hour, FWL on the daily MCP: regime + Fourier(K=4) + DOW.
+    SA regime value = const + beta_regime + within-week DOW mean, at
+    annual-mean Fourier (zero). Mirrors sa_fwl.py (identity link).
+    """
     df = pd.read_parquet(MPDBC, columns=["date", "period", "price_es_eur_mwh", "mtu_minutes"])
     df["date"] = pd.to_datetime(df["date"])
     df = df[df["price_es_eur_mwh"].notna()].copy()
@@ -116,20 +134,42 @@ def build_mcp_surfaces():
     df["clock_hour"] = np.where(df["mtu_minutes"].fillna(60) == 60,
                                 df["period"] - 1,
                                 (df["period"] - 1) // 4)
-    g = df.groupby(["regime", "clock_hour"])["price_es_eur_mwh"].mean().reset_index()
-    out = {}
-    for r_lab, _, _, _ in REGIME_DATES:
-        arr = np.full(24, np.nan)
-        for _, row in g[g["regime"] == r_lab].iterrows():
-            h = int(row["clock_hour"])
-            if 0 <= h < 24:
-                arr[h] = float(row["price_es_eur_mwh"])
-        out[r_lab] = arr
+    # daily mean MCP per (date, clock_hour)
+    daily = df.groupby(["date", "clock_hour"])["price_es_eur_mwh"].mean().reset_index()
+    doy = daily["date"].dt.dayofyear.values
+    fk = fourier_terms(doy, K)
+    dw = dow_dummies(daily["date"])
+    daily = pd.concat([daily.reset_index(drop=True),
+                       fk.reset_index(drop=True), dw.reset_index(drop=True)], axis=1)
+    regime_labels = [r[0] for r in REGIME_DATES]
+    for label, lo, hi, _ in REGIME_DATES:
+        daily[f"D_{label}"] = ((daily["date"] >= lo) & (daily["date"] <= hi)).astype(float)
+
+    fourier_cols = [f"{p}_{k}" for k in range(1, K + 1) for p in ("cos", "sin")]
+    dow_cols = [f"dow_{i}" for i in range(1, 7)]
+    regime_cols = [f"D_{lab}" for lab in regime_labels]
+
+    out = {lab: np.full(24, np.nan) for lab in regime_labels}
+    for h in range(24):
+        sub = daily[daily["clock_hour"] == h]
+        if len(sub) < 80:
+            continue
+        y = sub["price_es_eur_mwh"].astype(float).values
+        X = sm.add_constant(sub[regime_cols + fourier_cols + dow_cols].astype(float).values)
+        try:
+            fit = sm.OLS(y, X, hasconst=True).fit()
+        except (np.linalg.LinAlgError, ValueError):
+            continue
+        params = fit.params
+        const = params[0]
+        dow_mean = float(np.sum(params[1 + len(regime_cols) + len(fourier_cols):])) / 7.0
+        for ri, lab in enumerate(regime_labels):
+            out[lab][h] = const + params[1 + ri] + dow_mean
     return out
 
 
 def build_surfaces_per_tech(tech):
-    """Return dict[(firm, regime)] -> 2D array Z[h=0..23, q=0..98] of SA price."""
+    """dict[(firm, regime)] -> monotone 2D array Z[h=0..23, q=0..98]."""
     path = FPCA_DIR / f"quantile_curves_{tech}_sa.parquet"
     df = pd.read_parquet(path)
     df["date"] = pd.to_datetime(df["date"])
@@ -141,7 +181,6 @@ def build_surfaces_per_tech(tech):
     df["clock_hour"] = np.where(period_max_per_date <= 25,
                                 df["period"] - 1,
                                 (df["period"] - 1) // 4)
-
     df["regime"] = df["date"].apply(assign_regime)
     df = df[df["regime"] != "other"].copy()
 
@@ -160,33 +199,22 @@ def build_surfaces_per_tech(tech):
             for _, row in sub.iterrows():
                 h = int(row["clock_hour"])
                 if 0 <= h < 24:
-                    Z[h, :] = row[qcols].values.astype(float)
+                    # monotone rearrangement: sort the mean SA curve along q
+                    Z[h, :] = np.sort(row[qcols].values.astype(float))
             surfaces[(firm, r_lab)] = Z
     return surfaces
 
 
-def plot_surface_per_firm(tech, surfaces, mcp_by_regime, firm):
-    """One figure per (firm, tech). 2x3 grid: 5 regime panels + 1 empty slot.
-
-    Bid surface as a smooth lit surface (no mesh edges), z-axis clipped
-    aggressively so the strategic band around MCP dominates the visual
-    rather than the price-cap-padding plateau. MCP overlaid as an opaque
-    red plane at z = MCP(h, regime).
-    """
+def plot_surface_per_firm(tech, surfaces, mcp_sa, firm):
+    """One figure per (firm, tech). 2x3 grid: 5 regime panels + 1 empty slot."""
     keys = [(firm, r_lab) for r_lab, _, _, _ in REGIME_DATES if (firm, r_lab) in surfaces]
     if not keys:
         return False
 
-    all_mcp = np.concatenate([m for m in mcp_by_regime.values() if m is not None])
+    all_mcp = np.concatenate([m for m in mcp_sa.values() if m is not None])
     all_mcp = all_mcp[np.isfinite(all_mcp)]
     mcp_max = float(np.nanmax(all_mcp)) if len(all_mcp) else 100.0
-
-    # Tight z-clip: 2 x max MCP, floored at 200, so the relevant strategic
-    # band (bid prices near and just above MCP) dominates the visual.
-    # Cap-padded bids well above this plateau visually at z_top, which is
-    # the correct reading -- "bid > MCP by a lot".
     z_top = float(max(200.0, mcp_max * 2.0))
-    z_bot = 0.0
 
     Xq, Yh = np.meshgrid(QUANTILES, HOURS)
 
@@ -194,8 +222,8 @@ def plot_surface_per_firm(tech, surfaces, mcp_by_regime, firm):
     fig.suptitle(
         f"{tech.replace('_',' ')} --- {firm}: SA aggregate bid surfaces, "
         f"24-hour $\\times$ 99-quantile, one panel per regime "
-        f"(red plane = DA MCP; gold curve = bid$\\times$MCP intersection, the "
-        f"marginal quantile; $z$ capped at {int(z_top)} EUR/MWh).",
+        f"(teal plane = SA DA MCP; orange curve = bid$\\times$MCP intersection; "
+        f"$z$ capped at {int(z_top)} EUR/MWh).",
         fontsize=12, y=0.97)
 
     for idx, (r_lab, _, _, r_disp) in enumerate(REGIME_DATES):
@@ -207,48 +235,47 @@ def plot_surface_per_firm(tech, surfaces, mcp_by_regime, firm):
             continue
         Z = np.clip(surfaces[key], None, z_top)
         Zp = np.where(np.isfinite(Z), Z, np.nan)
+        mcp_arr = mcp_sa.get(r_lab, np.full(24, np.nan))
 
-        # MCP plane drawn FIRST so the bid surface renders on top of it.
-        mcp_arr = mcp_by_regime.get(r_lab, np.full(24, np.nan))
+        # SA MCP plane (drawn first; bid surface renders on top)
         MCP_Z = np.tile(np.clip(mcp_arr, None, z_top)[:, None], (1, 99))
         MCP_Z = np.where(np.isfinite(MCP_Z), MCP_Z, np.nan)
-        ax.plot_surface(Xq, Yh, MCP_Z,
-                        color="#d62728",
-                        edgecolor="none",
-                        rstride=1, cstride=1,
-                        alpha=0.70,
+        ax.plot_surface(Xq, Yh, MCP_Z, color=COL_MCP, edgecolor="none",
+                        rstride=1, cstride=1, alpha=0.55,
                         shade=False, antialiased=True)
 
-        # Smooth monochrome bid surface, alpha slightly reduced so the MCP
-        # plane stays visible where the bid surface clips below it.
-        ax.plot_surface(Xq, Yh, Zp,
-                        color="#9ec3e6",
-                        edgecolor="none",
-                        linewidth=0,
-                        rstride=1, cstride=1,
-                        alpha=0.85,
+        # SA bid surface, neutral grey, shading reveals shape
+        ax.plot_surface(Xq, Yh, Zp, color=COL_SURFACE, edgecolor="none",
+                        linewidth=0, rstride=1, cstride=1, alpha=0.88,
                         shade=True, antialiased=True)
 
-        # Intersection curve: the marginal quantile q*(h) where the bid
-        # surface crosses the MCP plane. MW below q* clear, MW above do not.
-        cross_q, cross_h, cross_z = [], [], []
+        # Intersection: only genuine crossings; gaps where bid never crosses MCP.
+        # qstar is None where the whole bid curve is above MCP (clears nothing)
+        # or below MCP (clears everything) -- those hours are left blank.
+        qstar_by_h = {}
         for h in range(24):
-            bc = surfaces[key][h, :]
-            qstar = mcp_crossing_quantile(bc, mcp_arr[h])
-            if qstar is not None:
-                cross_q.append(qstar)
-                cross_h.append(h)
-                cross_z.append(min(float(mcp_arr[h]), z_top))
-        if len(cross_q) >= 2:
-            ax.plot(cross_q, cross_h, cross_z,
-                    color="#111111", lw=2.6, zorder=10)
-            ax.scatter(cross_q, cross_h, cross_z,
-                       color="#ffd000", edgecolors="#111111", linewidths=0.5,
-                       s=18, zorder=11, depthshade=False)
+            qs = mcp_crossing_quantile(surfaces[key][h, :], mcp_arr[h])
+            if qs is not None:
+                qstar_by_h[h] = qs
+        if qstar_by_h:
+            # connect consecutive hours with a line; markers at every crossing
+            hs = sorted(qstar_by_h)
+            seg_h, seg_q, seg_z = [], [], []
+            for h in hs:
+                seg_h.append(h); seg_q.append(qstar_by_h[h]); seg_z.append(float(mcp_arr[h]))
+            # draw line only between adjacent hours
+            for a, b in zip(hs[:-1], hs[1:]):
+                if b - a == 1:
+                    ax.plot([qstar_by_h[a], qstar_by_h[b]], [a, b],
+                            [float(mcp_arr[a]), float(mcp_arr[b])],
+                            color=COL_CROSS, lw=2.4, zorder=11)
+            ax.scatter(seg_q, seg_h, seg_z, color=COL_CROSS,
+                       edgecolors="#3a1602", linewidths=0.6, s=40,
+                       depthshade=False, zorder=12)
 
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 23)
-        ax.set_zlim(z_bot, z_top)
+        ax.set_zlim(0, z_top)
         ax.set_xlabel("Quantile $q$", fontsize=10, labelpad=4)
         ax.set_ylabel("Hour", fontsize=10, labelpad=4)
         ax.set_zlabel("SA price (EUR/MWh)", fontsize=10, labelpad=4)
@@ -271,8 +298,8 @@ def plot_surface_per_firm(tech, surfaces, mcp_by_regime, firm):
 
 
 def main():
-    print("Building per-regime MCP curves from marginalpdbc...")
-    mcp_by_regime = build_mcp_surfaces()
+    print("Building SA DA MCP curves (per-clock-hour FWL)...")
+    mcp_sa = build_mcp_sa()
     for tech in TECHS:
         path = FPCA_DIR / f"quantile_curves_{tech}_sa.parquet"
         if not path.exists():
@@ -281,7 +308,7 @@ def main():
         print(f"Aggregating SA surfaces for {tech}...")
         surfaces = build_surfaces_per_tech(tech)
         for firm in FIRMS:
-            plot_surface_per_firm(tech, surfaces, mcp_by_regime, firm)
+            plot_surface_per_firm(tech, surfaces, mcp_sa, firm)
 
 
 if __name__ == "__main__":

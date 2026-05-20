@@ -30,8 +30,9 @@ OUTDIR = REPO / "results" / "regressions" / "firm" / "gap_weekly"
 OUTDIR.mkdir(parents=True, exist_ok=True)
 FIGDIR = REPO / "figures" / "working"
 
-START = "2024-01-01"
-END   = "2026-03-01"
+START = "2023-01-01"
+END   = "2026-01-09"
+IDA_REFORM = pd.Timestamp("2024-06-14")
 MTU15_IDA = pd.Timestamp("2025-03-19")
 BLACKOUT  = pd.Timestamp("2025-04-28")
 MTU15_DA  = pd.Timestamp("2025-10-01")
@@ -130,6 +131,7 @@ def plot_stacked(df: pd.DataFrame, groups: list, group_label: str, fname: str, n
         ax.fill_between(x, da + bi, da + bi + ida_rt, color="tab:red", alpha=0.7,
                           label="IDA $+$ REE-RT (PHF $-$ PDBF)")
         ax.plot(x, sub["phf_gwh"], color="black", lw=0.9, label="$q_{final}$ (PHF total)")
+        ax.axvline(IDA_REFORM, color="purple", ls=":", lw=0.9)
         ax.axvline(MTU15_IDA, color="gray", ls=":", lw=0.9)
         ax.axvline(BLACKOUT,  color="black", ls="-.", lw=0.9)
         ax.axvline(MTU15_DA,  color="red",   ls="--", lw=1.0)
