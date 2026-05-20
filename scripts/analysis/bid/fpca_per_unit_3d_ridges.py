@@ -27,9 +27,10 @@ FIG_DIR = REPO / "figures/working"
 FIG_DIR.mkdir(parents=True, exist_ok=True)
 
 REFORMS = [
-    ("ISP15",     "ISP15 (Dec 2024)",       "#1f77b4"),
-    ("MTU15-IDA", "MTU15-IDA (Mar 2025)",   "#ff7f0e"),
-    ("MTU15-DA",  "MTU15-DA (Oct 2025)",    "#2ca02c"),
+    ("ISP15",     "ISP15 (Dec 2024)",         "#1f77b4"),
+    ("MTU15-IDA", "MTU15-IDA (Mar 2025)",     "#ff7f0e"),
+    ("Reforzada", "Reforzada (Apr 2025)",     "#d62728"),
+    ("MTU15-DA",  "MTU15-DA (Oct 2025)",      "#2ca02c"),
 ]
 HOUR_CLASSES = ["Critical", "Flat", "Midday"]
 METRICS = [

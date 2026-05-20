@@ -55,6 +55,9 @@ REGIME_DATES = [
 PAIRS = [
     ("ISP15",      "3sess",          "ISP15win"),
     ("MTU15-IDA",  "ISP15win",       "MTU15IDA_pre"),
+    # Blackout / reforzada onset: granularity held constant (both MTU15-IDA),
+    # only the post-blackout reinforced-operation stance changes.
+    ("Reforzada",  "MTU15IDA_pre",   "MTU15IDA_post"),
     ("MTU15-DA",   "MTU15IDA_post",  "DA15_ID15"),
 ]
 
