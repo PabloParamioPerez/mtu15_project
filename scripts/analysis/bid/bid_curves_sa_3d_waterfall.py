@@ -1,23 +1,21 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-21
-# CLAIM: 3D waterfall plots of seasonality-adjusted (SA) aggregate bid
-#        curves per (firm, tech), with 4 representative-hour ribbons
-#        stacked along the y-axis and 5 regime overlays per ribbon
-#        (color-coded). Substitutes the 2D per-quarter bid-curve grids
-#        in the descriptive companion.
+# CLAIM: 3D surface plots of seasonality-adjusted (SA) aggregate bid curves
+#        per (firm, tech), one panel per regime. The surface is the full
+#        2D function bid_price(q, h) with x = quantile of cumulative MW
+#        (q in [0.01, 0.99]), y = clock-hour (0..23), z = SA bid price
+#        (EUR/MWh). User feedback 2026-05-21: include all 24 hours to form
+#        a continuous "plane", not a 4-hour stack of ribbons.
 #
 #        The SA bid curves come from the functional pre-deseasonalisation
 #        pipeline (fpca_functional_sa.py), which writes per-cell
 #        f_i^SA(q) on a fixed 99-point quantile grid into
 #        results/regressions/bid/fpca/quantile_curves_<tech>_sa.parquet.
-#        We map entity -> firm via lista_unidades.csv, derive clock_hour
-#        from period (MTU60 pre-MTU15-DA, MTU15 post), and aggregate by
-#        (firm, tech, clock_hour, regime) -> mean SA quantile curve.
-#
-#        x-axis: quantile of cumulative MW (q in [0.01, 0.99])
-#        y-axis: representative hour (03, 07, 13, 19) stacked
-#        z-axis: SA bid price (EUR/MWh)
-#        Color: regime (5 ridges per hour-ribbon)
+#        Entity -> firm via lista_unidades.csv; clock_hour derived from
+#        period (MTU60 pre-MTU15-DA, MTU15 post). Aggregate by
+#        (firm, tech, clock_hour, regime) -> mean SA quantile curve, then
+#        plot one 3D surface per regime in a 2x3 grid (5 regimes, 1 empty
+#        slot reserved for the colorbar).
 #
 # OUT: figures/working/bid_curves_sa_3d_<tech>_<firm>.pdf
 
@@ -27,6 +25,8 @@ import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib import cm
+import matplotlib.colors as mcolors
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 
 REPO = Path(__file__).resolve().parents[3]
@@ -35,23 +35,18 @@ UNITS_CSV = REPO / "data/external/omie_reference/lista_unidades.csv"
 FIG_DIR = REPO / "figures/working"
 FIG_DIR.mkdir(parents=True, exist_ok=True)
 
-# 5 regimes with palette consistent with the rest of the doc
 REGIME_DATES = [
-    ("3sess",         pd.Timestamp("2024-06-14"), pd.Timestamp("2024-11-30"), "3-sess",          "#1f77b4"),
-    ("ISP15win",      pd.Timestamp("2024-12-01"), pd.Timestamp("2025-03-18"), "ISP15-win",       "#ff7f0e"),
-    ("MTU15IDA_pre",  pd.Timestamp("2025-03-19"), pd.Timestamp("2025-04-27"), "DA60/ID15 pre",   "#2ca02c"),
-    ("MTU15IDA_post", pd.Timestamp("2025-04-28"), pd.Timestamp("2025-09-30"), "DA60/ID15 post",  "#d62728"),
-    ("DA15_ID15",     pd.Timestamp("2025-10-01"), pd.Timestamp("2026-05-15"), "DA15/ID15",       "#9467bd"),
+    ("3sess",         pd.Timestamp("2024-06-14"), pd.Timestamp("2024-11-30"), "3-sess"),
+    ("ISP15win",      pd.Timestamp("2024-12-01"), pd.Timestamp("2025-03-18"), "ISP15-win"),
+    ("MTU15IDA_pre",  pd.Timestamp("2025-03-19"), pd.Timestamp("2025-04-27"), "DA60/ID15 pre"),
+    ("MTU15IDA_post", pd.Timestamp("2025-04-28"), pd.Timestamp("2025-09-30"), "DA60/ID15 post"),
+    ("DA15_ID15",     pd.Timestamp("2025-10-01"), pd.Timestamp("2026-05-15"), "DA15/ID15"),
 ]
 TECHS = ["CCGT", "Hydro", "Hydro_pump"]
 FIRMS = ["IB", "GE", "GN", "HC"]
-HOURS_REPRESENTATIVE = [
-    (3,  "Hour 03  (Flat)"),
-    (7,  "Hour 07  (Morning ramp, Critical)"),
-    (13, "Hour 13  (Midday)"),
-    (19, "Hour 19  (Evening peak, Critical)"),
-]
 QUANTILES = np.linspace(0.01, 0.99, 99)
+HOURS = np.arange(24)
+Z_CLIP = 400.0  # EUR/MWh hard cap so scarcity-tail spikes don't crush the visible band
 
 
 def firm_bucket(o):
@@ -72,21 +67,14 @@ def load_unit_map():
 
 
 def assign_regime(d):
-    for label, lo, hi, _, _ in REGIME_DATES:
+    for label, lo, hi, _ in REGIME_DATES:
         if lo <= d <= hi:
             return label
     return "other"
 
 
-def clock_hour_from_period(period, max_period):
-    """1-based period in {1..24} (MTU60) or {1..96} (MTU15) -> 0..23 clock-hour."""
-    if max_period <= 25:  # MTU60
-        return period - 1
-    return (period - 1) // 4
-
-
-def build_sa_curves_per_group(tech):
-    """Return aggregated SA curves: dict[(firm, hour, regime)] -> array of 99 quantile values."""
+def build_surfaces_per_tech(tech):
+    """Return dict[(firm, regime)] -> 2D array Z[h=0..23, q=0..98] of SA price."""
     path = FPCA_DIR / f"quantile_curves_{tech}_sa.parquet"
     df = pd.read_parquet(path)
     df["date"] = pd.to_datetime(df["date"])
@@ -94,7 +82,6 @@ def build_sa_curves_per_group(tech):
     df["firm"] = df["entity"].map(unit_to_firm).fillna("OTH")
     df = df[df["firm"].isin(FIRMS)].copy()
 
-    # Map period -> clock_hour. Period range varies per (date) due to MTU60/MTU15 mix.
     period_max_per_date = df.groupby("date")["period"].transform("max")
     df["clock_hour"] = np.where(period_max_per_date <= 25,
                                 df["period"] - 1,
@@ -108,60 +95,76 @@ def build_sa_curves_per_group(tech):
     grouped = (df.groupby(["firm", "clock_hour", "regime"], observed=True)[qcols]
                  .mean().reset_index())
 
-    out = {}
-    for _, row in grouped.iterrows():
-        key = (row["firm"], int(row["clock_hour"]), row["regime"])
-        out[key] = row[qcols].values.astype(float)
-    return out
-
-
-def plot_waterfall_per_firm(tech, sa_curves, firm):
-    """3D waterfall: ribbons stacked along y=hour, regime overlays per ribbon."""
-    fig = plt.figure(figsize=(15, 9))
-    ax = fig.add_subplot(111, projection="3d")
-    fig.suptitle(
-        f"{tech.replace('_',' ')} --- {firm}: SA aggregate bid curves, "
-        f"4 representative hours $\\times$ 5 regimes",
-        fontsize=12)
-
-    n_hours = len(HOURS_REPRESENTATIVE)
-    y_offsets = np.arange(n_hours)
-
-    z_max = 0
-    has_data = False
-    for hi, (h, h_label) in enumerate(HOURS_REPRESENTATIVE):
-        y_val = y_offsets[hi]
-        for r_lab, _, _, r_disp, col in REGIME_DATES:
-            key = (firm, h, r_lab)
-            if key not in sa_curves:
+    surfaces = {}
+    for firm in FIRMS:
+        for r_lab, _, _, _ in REGIME_DATES:
+            sub = grouped[(grouped["firm"] == firm) & (grouped["regime"] == r_lab)]
+            if sub.empty:
                 continue
-            curve = sa_curves[key]
-            # x = quantile q, y = hour offset, z = SA price
-            x = QUANTILES
-            y = np.full_like(x, y_val, dtype=float)
-            z = curve
-            ax.plot(x, y, z, color=col, lw=1.6, alpha=0.85,
-                    label=r_disp if hi == 0 else None)
-            z_max = max(z_max, float(np.nanmax(z)))
-            has_data = True
-    if not has_data:
-        plt.close(fig)
+            Z = np.full((24, 99), np.nan)
+            for _, row in sub.iterrows():
+                h = int(row["clock_hour"])
+                if 0 <= h < 24:
+                    Z[h, :] = row[qcols].values.astype(float)
+            surfaces[(firm, r_lab)] = Z
+    return surfaces
+
+
+def plot_surface_per_firm(tech, surfaces, firm):
+    """One figure per (firm, tech). 2x3 grid: 5 regime subplots + 1 colorbar slot."""
+    keys = [(firm, r_lab) for r_lab, _, _, _ in REGIME_DATES if (firm, r_lab) in surfaces]
+    if not keys:
         return False
 
-    ax.set_xlabel("Quantile of cumulative offered MW", fontsize=10)
-    ax.set_ylabel("Clock hour", fontsize=10)
-    ax.set_zlabel("SA bid price (EUR/MWh)", fontsize=10)
-    ax.set_xlim(0, 1)
-    ax.set_ylim(-0.5, n_hours - 0.5)
-    ax.set_yticks(y_offsets)
-    ax.set_yticklabels([h_label.split("(")[0].strip() for h, h_label in HOURS_REPRESENTATIVE], fontsize=8)
-    # Clip z to a sensible domain so price-cap padding doesn't crush the visible band
-    z_clip = min(z_max * 1.05, 400.0) if z_max > 0 else 200.0
-    ax.set_zlim(0, z_clip)
-    ax.view_init(elev=22, azim=-58)
-    ax.grid(alpha=0.3)
-    ax.legend(loc="upper left", fontsize=8, framealpha=0.7)
+    # Determine common z-range across regimes for comparability
+    all_z = np.concatenate([
+        surfaces[(firm, r_lab)].ravel() for r_lab, _, _, _ in REGIME_DATES
+        if (firm, r_lab) in surfaces
+    ])
+    all_z = all_z[np.isfinite(all_z)]
+    z_max_data = float(np.nanmin([Z_CLIP, np.nanquantile(all_z, 0.98)])) if len(all_z) else Z_CLIP
+    z_min_data = float(max(0.0, np.nanquantile(all_z, 0.02))) if len(all_z) else 0.0
 
+    norm = mcolors.Normalize(vmin=z_min_data, vmax=z_max_data)
+    cmap = cm.viridis
+
+    Xq, Yh = np.meshgrid(QUANTILES, HOURS)
+
+    fig = plt.figure(figsize=(17, 10.5))
+    fig.suptitle(
+        f"{tech.replace('_',' ')} --- {firm}: SA aggregate bid curves, "
+        f"24-hour $\\times$ 99-quantile surface, one panel per regime",
+        fontsize=12)
+
+    for idx, (r_lab, _, _, r_disp) in enumerate(REGIME_DATES):
+        ax = fig.add_subplot(2, 3, idx + 1, projection="3d")
+        key = (firm, r_lab)
+        if key not in surfaces:
+            ax.set_title(f"{r_disp} (no data)", fontsize=10)
+            ax.set_axis_off()
+            continue
+        Z = np.clip(surfaces[key], None, Z_CLIP)
+        Zp = np.where(np.isfinite(Z), Z, np.nan)
+        surf = ax.plot_surface(Xq, Yh, Zp, cmap=cmap, norm=norm,
+                               edgecolor="none", rstride=1, cstride=1, alpha=0.95,
+                               antialiased=True)
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 23)
+        ax.set_zlim(z_min_data, z_max_data)
+        ax.set_xlabel("Quantile $q$", fontsize=9)
+        ax.set_ylabel("Hour", fontsize=9)
+        ax.set_zlabel("SA price (EUR/MWh)", fontsize=9)
+        ax.set_yticks([0, 6, 12, 18, 23])
+        ax.set_title(r_disp, fontsize=10)
+        ax.view_init(elev=24, azim=-58)
+
+    # Single colorbar in slot 6
+    cax = fig.add_axes([0.74, 0.10, 0.20, 0.02])
+    fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), cax=cax,
+                 orientation="horizontal", label="SA bid price (EUR/MWh)")
+
+    fig.subplots_adjust(left=0.03, right=0.97, top=0.93, bottom=0.06,
+                        wspace=0.08, hspace=0.10)
     out = FIG_DIR / f"bid_curves_sa_3d_{tech}_{firm}.pdf"
     fig.savefig(out, bbox_inches="tight", dpi=110)
     plt.close(fig)
@@ -175,10 +178,10 @@ def main():
         if not path.exists():
             print(f"  SKIP {tech}: {path} missing")
             continue
-        print(f"Aggregating SA curves for {tech}...")
-        sa_curves = build_sa_curves_per_group(tech)
+        print(f"Aggregating SA surfaces for {tech}...")
+        surfaces = build_surfaces_per_tech(tech)
         for firm in FIRMS:
-            plot_waterfall_per_firm(tech, sa_curves, firm)
+            plot_surface_per_firm(tech, surfaces, firm)
 
 
 if __name__ == "__main__":
