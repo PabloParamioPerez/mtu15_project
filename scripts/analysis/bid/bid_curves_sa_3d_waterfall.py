@@ -74,6 +74,38 @@ def assign_regime(d):
     return "other"
 
 
+def mcp_crossing_quantile(bid_curve, mcp_val):
+    """Quantile q* where the (monotone) bid curve crosses MCP.
+
+    Returns None if MCP is not finite or the bid curve is all-NaN.
+    Returns 0.0 if the whole bid curve is above MCP (nothing clears),
+    1.0 if the whole bid curve is below MCP (everything clears).
+    """
+    if not np.isfinite(mcp_val):
+        return None
+    bc = np.asarray(bid_curve, dtype=float)
+    finite = np.isfinite(bc)
+    if finite.sum() < 2:
+        return None
+    q = QUANTILES[finite]
+    bc = bc[finite]
+    if np.all(bc >= mcp_val):
+        return float(q[0])
+    if np.all(bc <= mcp_val):
+        return float(q[-1])
+    diff = bc - mcp_val
+    sign_change = np.where(np.diff(np.sign(diff)) != 0)[0]
+    if len(sign_change) == 0:
+        return None
+    i = sign_change[0]
+    p_lo, p_hi = bc[i], bc[i + 1]
+    q_lo, q_hi = q[i], q[i + 1]
+    if p_hi == p_lo:
+        return float(q_lo)
+    frac = (mcp_val - p_lo) / (p_hi - p_lo)
+    return float(q_lo + frac * (q_hi - q_lo))
+
+
 def build_mcp_surfaces():
     """Return dict[regime] -> 24-vector of mean DA clearing price (EUR/MWh)."""
     df = pd.read_parquet(MPDBC, columns=["date", "period", "price_es_eur_mwh", "mtu_minutes"])
@@ -162,8 +194,9 @@ def plot_surface_per_firm(tech, surfaces, mcp_by_regime, firm):
     fig.suptitle(
         f"{tech.replace('_',' ')} --- {firm}: SA aggregate bid surfaces, "
         f"24-hour $\\times$ 99-quantile, one panel per regime "
-        f"(red plane = DA MCP; $z$ capped at {int(z_top)} EUR/MWh).",
-        fontsize=13, y=0.97)
+        f"(red plane = DA MCP; gold curve = bid$\\times$MCP intersection, the "
+        f"marginal quantile; $z$ capped at {int(z_top)} EUR/MWh).",
+        fontsize=12, y=0.97)
 
     for idx, (r_lab, _, _, r_disp) in enumerate(REGIME_DATES):
         ax = fig.add_subplot(2, 3, idx + 1, projection="3d")
@@ -195,6 +228,23 @@ def plot_surface_per_firm(tech, surfaces, mcp_by_regime, firm):
                         rstride=1, cstride=1,
                         alpha=0.85,
                         shade=True, antialiased=True)
+
+        # Intersection curve: the marginal quantile q*(h) where the bid
+        # surface crosses the MCP plane. MW below q* clear, MW above do not.
+        cross_q, cross_h, cross_z = [], [], []
+        for h in range(24):
+            bc = surfaces[key][h, :]
+            qstar = mcp_crossing_quantile(bc, mcp_arr[h])
+            if qstar is not None:
+                cross_q.append(qstar)
+                cross_h.append(h)
+                cross_z.append(min(float(mcp_arr[h]), z_top))
+        if len(cross_q) >= 2:
+            ax.plot(cross_q, cross_h, cross_z,
+                    color="#111111", lw=2.6, zorder=10)
+            ax.scatter(cross_q, cross_h, cross_z,
+                       color="#ffd000", edgecolors="#111111", linewidths=0.5,
+                       s=18, zorder=11, depthshade=False)
 
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 23)
