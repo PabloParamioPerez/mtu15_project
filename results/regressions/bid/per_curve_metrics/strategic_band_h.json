@@ -1,0 +1,8 @@
+{
+  "h_eur_mwh": 230.0,
+  "near_mcp_peak_eur_mwh": 25.0,
+  "cap_cluster_present": true,
+  "in_band_mw_share": 0.6241177321052365,
+  "rule": "antimode of MW-weighted |p_bid - MCP| density, pooled over regimes and the three price-setting techs",
+  "window": "2024-06-14..2026-05-15"
+}
