@@ -605,122 +605,86 @@ The upper bound $W^{\text{band}}_1 \le \Delta p_{ij}\,M_i + 2h\,\Delta q_{ij}$ i
 % =====================================================================
 \subsection{Bid graphs by tech, firm, and within-hour quarter}\label{sec:prov:bid_graphs}
 
-\noindent The figures in this subsection display per-(firm, tech) seasonality-adjusted aggregate bid curves as 3D surfaces, plus a translucent reference plane at the DA market clearing price. Axes: $x$ = quantile of cumulative offered MW ($q \in [0.01, 0.99]$); $y$ = clock-hour ($h \in \{0, \ldots, 23\}$); $z$ = SA bid price (EUR/MWh, capped at 400 so the price-cap-padding tail does not crush the visible band). Each (firm, tech) figure has \textbf{five panels arranged in a 2$\times$3 grid, one per reform regime} (3-sess, ISP15-win, DA60/ID15 pre, DA60/ID15 post, DA15/ID15). The grey shaded surface is the SA bid surface for that (firm, tech, regime); the teal plane is the \emph{seasonality-adjusted} DA MCP at $z = \overline{\text{MCP}}^{\text{SA}}(h, r)$, constant across the quantile axis and varying with hour and regime. Both the bid curves and the MCP are deseasonalised with the same FWL spec, so the comparison is SA-vs-SA. Where the bid surface sits above the teal plane, the firm's mean bid for those MW exceeds the mean clearing price (stay-out side); where it sits below, the mean bid is inframarginal. The \textbf{orange curve marks where the two plotted surfaces intersect}. \emph{Caveat on the intersection:} it is the crossing of the two \emph{aggregate} surfaces (mean bid curve, mean MCP). It is a descriptive feature of the plotted means, not the average marginal quantity --- by Jensen, the crossing of the means differs from the mean of the per-cell crossings; the figure should be read as ``does the typical bid curve clear at the typical MCP, and where'', not as a per-day clearing statistic. The bid curves are the per-cell functionally-deseasonalised $f_i^{\text{SA}}(q)$ from the fPCA SA pipeline (\S\ref{sec:prov:fpca}; per-quantile FWL with Fourier($K{=}4$) and DOW dummies), averaged per (firm, tech, clock\_hour, regime) and monotone-rearranged; the SA MCP is a per-clock-hour FWL on \texttt{marginalpdbc\_all.parquet}.
+\noindent The figures in this subsection display the aggregate within-hour quarter bid (or demand) curves, broken down by firm and hour-class. Each curve overlays the mean DA (or IDA) clearing price as a reference so the strategic-band $|p - c| \le 50$ EUR/MWh region is visible. Aggregation: average across $\sim$92 dates per (firm, hour, quarter) cell for the DA Oct--Dec 2025 window. Day-specific quarter dispersion is smoothed by this construction; the per-curve price and quantity metrics in \S\ref{sec:prov:dw_tables} are the right quantitative complement.
 
-\paragraph{CCGT: per-firm SA surfaces across regimes.} The 4 CCGT firms (IB, GE, GN, HC). Where the surface shapes diverge across the 5 regime panels, the firm's bidding posture shifted; where they coincide, posture was regime-stable.
+\paragraph{CCGT (DA): aggregate per-firm quarter curves, critical vs flat.}
+\textit{Reading} (\textbf{mixed}). The aggregate construction smooths per-day strategic shaping; the per-curve metric distributions at the end of \S\ref{sec:prov:dw_tables} are the right systematic measure.
 
-\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bid_curves_sa_3d_CCGT_IB.pdf}
-\caption{\textbf{Iberdrola CCGT --- SA bid-curve surface.} Five regime ridges per representative-hour ribbon.}
-\label{fig:bid_curves_sa_ib_ccgt}
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt.pdf}
+\caption{Critical hours (05:00--09:00, 16:00--23:00)}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt_flat.pdf}
+\caption{Flat hours (01:00--04:00) --- falsification}
+\end{subfigure}
+\caption{Aggregate DA supply curves by quarter, CCGT, Oct--Dec 2025. Aggregated across $\sim$92 dates per (firm, hour, quarter) cell; day-specific quarter dispersion is smoothed in this visual.}
 \end{figure}
-\end{landscape}
 
-\begin{landscape}
+\paragraph{CCGT (IDA): per-firm + quarter overlays.}\label{sec:prov:ida_ccgt}
+\textit{Reading} (\textbf{supportive}). In the post-MTU15-DA window the IDA pattern matches DA: dispersion concentrated in Naturgy and visible only in critical hours.
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bid_curves_sa_3d_CCGT_GE.pdf}
-\caption{\textbf{Endesa CCGT --- SA bid-curve surface.} Companion to Fig.~\ref{fig:bid_curves_sa_ib_ccgt}.}
-\label{fig:bid_curves_sa_ge_ccgt}
+\includegraphics[width=0.95\textwidth]{fig_per_firm_bid_curves_ida.pdf}
+\caption{Aggregate IDA supply curves by pivotal firm and clock-hour, CCGT, Oct--Dec 2025.}
 \end{figure}
-\end{landscape}
 
-\begin{landscape}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bid_curves_sa_3d_CCGT_GN.pdf}
-\caption{\textbf{Naturgy CCGT --- SA bid-curve surface.} Companion to Fig.~\ref{fig:bid_curves_sa_ib_ccgt}. GN's cap-padded $\sim$~\texteuro 840 ladder shows as the bid surface sitting overwhelmingly above the teal SA-MCP plane across all quantiles in every regime --- the visual signature of stay-out bidding (few or no orange intersection markers, because the bid surface rarely crosses MCP). The DA60/ID15 pre-blackout panel has a noticeable ``valley'' where the bid surface dips toward the MCP plane at some hours, that the other regimes do not have.}
-\label{fig:bid_curves_sa_gn_ccgt}
-\end{figure}
-\end{landscape}
-
-\begin{landscape}
-\begin{figure}[H]
+\begin{subfigure}[t]{0.49\textwidth}
 \centering
-\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bid_curves_sa_3d_CCGT_HC.pdf}
-\caption{\textbf{EDP-Spain CCGT --- SA bid-curve surface.} Companion to Fig.~\ref{fig:bid_curves_sa_ib_ccgt}.}
-\label{fig:bid_curves_sa_hc_ccgt}
-\end{figure}
-\end{landscape}
-
-\paragraph{Hydro: per-firm SA surfaces across regimes.} Hydro curves are flatter near the low quantiles (reservoir water-value sits at the merit-order edge) and rise more gradually at the high end than CCGT.
-
-\begin{landscape}
-\begin{figure}[H]
+\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt_ida.pdf}
+\caption{Critical hours (05:00--09:00, 16:00--23:00)}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
 \centering
-\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bid_curves_sa_3d_Hydro_IB.pdf}
-\caption{\textbf{Iberdrola Hydro --- SA bid-curve surface.}}
-\label{fig:bid_curves_sa_ib_hydro}
+\includegraphics[width=\textwidth]{fig_per_firm_bid_curves_quarters_ccgt_ida_flat.pdf}
+\caption{Flat hours (01:00--04:00)}
+\end{subfigure}
+\caption{Aggregate IDA supply curves by quarter, CCGT, Oct--Dec 2025.}
 \end{figure}
-\end{landscape}
-
-\begin{landscape}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bid_curves_sa_3d_Hydro_GE.pdf}
-\caption{\textbf{Endesa Hydro --- SA bid-curve surface.}}
-\label{fig:bid_curves_sa_ge_hydro}
-\end{figure}
-\end{landscape}
-
-\begin{landscape}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bid_curves_sa_3d_Hydro_GN.pdf}
-\caption{\textbf{Naturgy Hydro --- SA bid-curve surface.}}
-\label{fig:bid_curves_sa_gn_hydro}
-\end{figure}
-\end{landscape}
-
-\begin{landscape}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bid_curves_sa_3d_Hydro_HC.pdf}
-\caption{\textbf{EDP-Spain Hydro --- SA bid-curve surface.}}
-\label{fig:bid_curves_sa_hc_hydro}
-\end{figure}
-\end{landscape}
-
-\paragraph{Hydro pump: per-firm SA surfaces across regimes.} EDP-Spain has no hydro-pump units; the per-firm panel covers IB, GE, GN.
-
-\begin{landscape}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bid_curves_sa_3d_Hydro_pump_IB.pdf}
-\caption{\textbf{Iberdrola Hydro pump --- SA bid-curve surface.}}
-\label{fig:bid_curves_sa_ib_hp}
-\end{figure}
-\end{landscape}
-
-\begin{landscape}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bid_curves_sa_3d_Hydro_pump_GE.pdf}
-\caption{\textbf{Endesa Hydro pump --- SA bid-curve surface.}}
-\label{fig:bid_curves_sa_ge_hp}
-\end{figure}
-\end{landscape}
-
-\begin{landscape}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth, height=0.85\textheight, keepaspectratio]{../../figures/working/bid_curves_sa_3d_Hydro_pump_GN.pdf}
-\caption{\textbf{Naturgy Hydro pump --- SA bid-curve surface.}}
-\label{fig:bid_curves_sa_gn_hp}
-\end{figure}
-\end{landscape}
-
 
 % =====================================================================
 \paragraph{Pump-storage demand bids (DA + IDA).}\label{sec:prov:pump_storage_quarters}
 \textit{Reading} (\textbf{mixed}). Aggregate-construction pump-storage demand curves look broadly symmetric across quarters in this picture, but the within-hour shaping table at the end of \S\ref{sec:prov:dw_tables} shows that on the supply side both IB (MUEL) and GE (MLTG) pump-storage are highly $\Delta p$-active (86--88\% of cells) once we look per-day and per-firm rather than at the aggregate.
 
-% Compact multi-tech grids (firm x tech x quarter, single-regime quarter overlays)
-% removed 2026-05-21: the per-(firm, tech) SA bid-curve surfaces above and the per-(firm,
-% tech) Dw 3D ridges in \S\ref{sec:prov:dw_tables} now cover the same ground at
-% finer granularity (all 5 regimes per cell, SA-deseasonalised).
+\paragraph{Compact multi-tech grids: firm $\times$ tech $\times$ quarter, all techs side by side.}\label{sec:prov:compact_grids}
+The grids below stack rows = Big-4 firms (Iberdrola, Endesa, Naturgy, EDP-Spain) against columns = techs (CCGT, Hydro, Nuclear, Wind, Solar PV). Each panel overlays the 4 within-hour quarter supply curves (Q1 blue $\to$ Q4 red) with the mean DA / IDA clearing price as a dotted horizontal line. \emph{Reading}: the same-quarter overlap in flat hours is the falsification; visible quarter spread in critical hours is the strategic signal.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_bid_curves_grid_per_quarter.pdf}
+\caption{DA, critical hours.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_bid_curves_grid_per_quarter_flat.pdf}
+\caption{DA, flat hours --- falsification.}
+\end{subfigure}
+\caption{\textbf{DA compact grid (firms $\times$ techs $\times$ quarter), DA15/ID15.} Quarter overlap in flat hours is essentially complete; critical-hour spread is visible for GN CCGT and Endesa Hydro.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_bid_curves_grid_per_quarter_ida.pdf}
+\caption{IDA, critical hours.}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{fig_bid_curves_grid_per_quarter_ida_flat.pdf}
+\caption{IDA, flat hours.}
+\end{subfigure}
+\caption{\textbf{IDA compact grid (firms $\times$ techs $\times$ quarter), DA15/ID15.} IDA-side analogue; quarter spread on the supply side is more visible than in DA.}
+\end{figure}
 
 \begin{figure}[H]
 \centering
@@ -760,9 +724,34 @@ The upper bound $W^{\text{band}}_1 \le \Delta p_{ij}\,M_i + 2h\,\Delta q_{ij}$ i
 
 
 % =====================================================================
-\subsection{$D_w$ near clearing, $\Delta p$ / $\Delta q$ tables and histograms}\label{sec:prov:dw_tables}
+\subsection{Per-curve bid-shape metrics, and the $D_w$ complement}\label{sec:prov:dw_tables}
 
-\noindent The results below quantify what the bid-curve figures in \S\ref{sec:prov:bid_graphs} show visually. We report (i) the per-cell binary flag $D_w > 0$ across techs and firms (operational vs strategic decomposition, IDA pre/post-blackout) and (ii) the $\Delta p / \Delta q$ channel-shares and intensity tables (CCGT DA, full multitech DA15/ID15) plus $D_w$ log-histograms across the full firm $\times$ tech $\times$ regime grid.
+\noindent The results below quantify what the bid-curve figures in \S\ref{sec:prov:bid_graphs} show visually. The primary metrics are defined \textbf{on each single bid curve} --- not from a comparison between two curves --- so that cross-regime, cross-firm and cross-hour reading is done by aggregating per-curve scalars rather than by differencing curves.
+
+\paragraph{Two per-curve metrics: price spread and effective tranche count.}
+For each (unit, date, market-period) day-ahead sell bid curve, restricted to the strategic band $|p - \text{MCP}| \le 50$ EUR/MWh, we compute two scalars:
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{Price metric --- price spread $\sigma_p$}: the MW-weighted standard deviation of the in-band tranche prices (EUR/MWh). It measures how much the unit \emph{varies its price} across the MW it offers near the clearing price. A single flat block $\Rightarrow \sigma_p = 0$; a graded ladder spanning the band $\Rightarrow \sigma_p$ large.
+\item \textbf{Quantity metric --- effective tranche count $N_{\text{eff}}$}: the inverse Herfindahl of the tranche MW shares, $N_{\text{eff}} = (\sum_t q_t)^2 / \sum_t q_t^2$. It measures how the unit \emph{splits its quantity}: $N_{\text{eff}} = 1$ means all in-band MW sits in one block, larger $N_{\text{eff}}$ means the MW is divided into more comparable pieces.
+\end{itemize}
+Both are per-curve and require no curve-to-curve comparison. They are computed on the \emph{raw} bid curves: the curve itself is not deseasonalised: any seasonality concern is handled at the aggregation step by reading the metrics within the calendar-matched reform windows, not by deseasonalising the supply curve. The two metrics decouple --- a unit can split into many tranches at nearly one price (high $N_{\text{eff}}$, low $\sigma_p$) or place two blocks far apart (low $N_{\text{eff}}$, high $\sigma_p$).
+
+\begin{table}[H]
+\centering\footnotesize
+\caption{\textbf{Per-curve bid-shape metrics by tech, hour-class and regime} (DA sell bids, in-band $|p-\text{MCP}|\le 50$, mean over (unit, date, period) curves). $\sigma_p$ = MW-weighted price spread (EUR/MWh); $N_{\text{eff}}$ = effective in-band tranche count. $452{,}762$ in-band curves.}
+\label{tab:per_curve_metrics}
+\setlength{\tabcolsep}{4pt}
+\input{../../results/regressions/bid/per_curve_metrics/tex/tab_per_curve_metrics.tex}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../../figures/working/per_curve_metrics.pdf}
+\caption{\textbf{Per-curve bid-shape metrics across regimes} (DA, in-band). Left: price spread $\sigma_p$; right: effective tranche count $N_{\text{eff}}$. Each line is a (tech, hour-class) cell; solid = critical hours, dashed = flat. Hydro carries the widest price spread (water-value bidding spans a range); CCGT's $\sigma_p$ is consistently larger in critical than flat hours --- the strategic signal. $N_{\text{eff}}$ rises across the reform sequence for all three price-setting techs.}
+\label{fig:per_curve_metrics}
+\end{figure}
+
+\paragraph{The $D_w$ complement (pairwise).} The $D_w$ / $\Delta p$ / $\Delta q$ statistics below are the older \emph{pairwise} construction --- they compare a unit's four within-hour quarter curves to each other. They remain a useful within-hour-shaping diagnostic, but the per-curve metrics above are the primary descriptive object. We report (i) the per-cell binary flag $D_w > 0$ across techs and firms (operational vs strategic decomposition, IDA pre/post-blackout) and (ii) the $\Delta p / \Delta q$ channel-shares and intensity tables.
 
 \paragraph{DA Oct--Dec 2025: operational vs strategic decomposition by (tech, firm).}\label{sec:prov:operational_strategic}
 \textit{Reading} (\textbf{mixed}). The original main-paper framing reported a critical--flat asymmetry with the interpretation ``only Naturgy CCGT shows the strategic signature''. The IDA pre/post-blackout analysis (below) and the multitech within-hour shaping table (at the end of this subsection) complicate this: GN's CCGT $D_w$ activity is real and large, IB hydro and pump-storage are also highly active, and under reforzada all four firms show the IDA-side strategic signature, not just Naturgy.
