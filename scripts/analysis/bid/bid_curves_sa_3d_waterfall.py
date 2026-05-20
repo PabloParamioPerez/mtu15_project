@@ -32,6 +32,7 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 REPO = Path(__file__).resolve().parents[3]
 FPCA_DIR = REPO / "results/regressions/bid/fpca"
 UNITS_CSV = REPO / "data/external/omie_reference/lista_unidades.csv"
+MPDBC = REPO / "data/processed/omie/mercado_diario/precios/marginalpdbc_all.parquet"
 FIG_DIR = REPO / "figures/working"
 FIG_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -73,6 +74,28 @@ def assign_regime(d):
     return "other"
 
 
+def build_mcp_surfaces():
+    """Return dict[regime] -> 24-vector of mean DA clearing price (EUR/MWh)."""
+    df = pd.read_parquet(MPDBC, columns=["date", "period", "price_es_eur_mwh", "mtu_minutes"])
+    df["date"] = pd.to_datetime(df["date"])
+    df = df[df["price_es_eur_mwh"].notna()].copy()
+    df["regime"] = df["date"].apply(assign_regime)
+    df = df[df["regime"] != "other"].copy()
+    df["clock_hour"] = np.where(df["mtu_minutes"].fillna(60) == 60,
+                                df["period"] - 1,
+                                (df["period"] - 1) // 4)
+    g = df.groupby(["regime", "clock_hour"])["price_es_eur_mwh"].mean().reset_index()
+    out = {}
+    for r_lab, _, _, _ in REGIME_DATES:
+        arr = np.full(24, np.nan)
+        for _, row in g[g["regime"] == r_lab].iterrows():
+            h = int(row["clock_hour"])
+            if 0 <= h < 24:
+                arr[h] = float(row["price_es_eur_mwh"])
+        out[r_lab] = arr
+    return out
+
+
 def build_surfaces_per_tech(tech):
     """Return dict[(firm, regime)] -> 2D array Z[h=0..23, q=0..98] of SA price."""
     path = FPCA_DIR / f"quantile_curves_{tech}_sa.parquet"
@@ -110,30 +133,31 @@ def build_surfaces_per_tech(tech):
     return surfaces
 
 
-def plot_surface_per_firm(tech, surfaces, firm):
-    """One figure per (firm, tech). 2x3 grid: 5 regime subplots + 1 colorbar slot."""
+def plot_surface_per_firm(tech, surfaces, mcp_by_regime, firm):
+    """One figure per (firm, tech). 2x3 grid: 5 regime subplots + 1 empty slot.
+
+    Each panel: light-grey shaded bid surface + translucent red MCP plane at
+    z = MCP(h, regime), constant across the quantile axis.
+    """
     keys = [(firm, r_lab) for r_lab, _, _, _ in REGIME_DATES if (firm, r_lab) in surfaces]
     if not keys:
         return False
 
-    # Determine common z-range across regimes for comparability
     all_z = np.concatenate([
         surfaces[(firm, r_lab)].ravel() for r_lab, _, _, _ in REGIME_DATES
         if (firm, r_lab) in surfaces
     ])
     all_z = all_z[np.isfinite(all_z)]
-    z_max_data = float(np.nanmin([Z_CLIP, np.nanquantile(all_z, 0.98)])) if len(all_z) else Z_CLIP
+    z_max_data = float(min(Z_CLIP, np.nanquantile(all_z, 0.98))) if len(all_z) else Z_CLIP
     z_min_data = float(max(0.0, np.nanquantile(all_z, 0.02))) if len(all_z) else 0.0
-
-    norm = mcolors.Normalize(vmin=z_min_data, vmax=z_max_data)
-    cmap = cm.viridis
 
     Xq, Yh = np.meshgrid(QUANTILES, HOURS)
 
     fig = plt.figure(figsize=(17, 10.5))
     fig.suptitle(
-        f"{tech.replace('_',' ')} --- {firm}: SA aggregate bid curves, "
-        f"24-hour $\\times$ 99-quantile surface, one panel per regime",
+        f"{tech.replace('_',' ')} --- {firm}: SA aggregate bid surfaces, "
+        f"24-hour $\\times$ 99-quantile, one panel per regime "
+        f"(translucent red plane = DA MCP).",
         fontsize=12)
 
     for idx, (r_lab, _, _, r_disp) in enumerate(REGIME_DATES):
@@ -145,9 +169,22 @@ def plot_surface_per_firm(tech, surfaces, firm):
             continue
         Z = np.clip(surfaces[key], None, Z_CLIP)
         Zp = np.where(np.isfinite(Z), Z, np.nan)
-        surf = ax.plot_surface(Xq, Yh, Zp, cmap=cmap, norm=norm,
-                               edgecolor="none", rstride=1, cstride=1, alpha=0.95,
-                               antialiased=True)
+
+        # Monochrome shaded bid surface
+        ax.plot_surface(Xq, Yh, Zp,
+                        color="lightsteelblue",
+                        edgecolor="dimgray", linewidth=0.25,
+                        rstride=2, cstride=4, alpha=0.85,
+                        shade=True, antialiased=True)
+
+        # MCP reference plane: z = MCP(h, regime), constant across q
+        mcp_arr = mcp_by_regime.get(r_lab, np.full(24, np.nan))
+        MCP_Z = np.tile(np.clip(mcp_arr, None, Z_CLIP)[:, None], (1, 99))
+        MCP_Z = np.where(np.isfinite(MCP_Z), MCP_Z, np.nan)
+        ax.plot_surface(Xq, Yh, MCP_Z,
+                        color="crimson", edgecolor="none",
+                        alpha=0.30, shade=False, antialiased=False)
+
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 23)
         ax.set_zlim(z_min_data, z_max_data)
@@ -158,12 +195,7 @@ def plot_surface_per_firm(tech, surfaces, firm):
         ax.set_title(r_disp, fontsize=10)
         ax.view_init(elev=24, azim=-58)
 
-    # Single colorbar in slot 6
-    cax = fig.add_axes([0.74, 0.10, 0.20, 0.02])
-    fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), cax=cax,
-                 orientation="horizontal", label="SA bid price (EUR/MWh)")
-
-    fig.subplots_adjust(left=0.03, right=0.97, top=0.93, bottom=0.06,
+    fig.subplots_adjust(left=0.03, right=0.97, top=0.92, bottom=0.04,
                         wspace=0.08, hspace=0.10)
     out = FIG_DIR / f"bid_curves_sa_3d_{tech}_{firm}.pdf"
     fig.savefig(out, bbox_inches="tight", dpi=110)
@@ -173,6 +205,8 @@ def plot_surface_per_firm(tech, surfaces, firm):
 
 
 def main():
+    print("Building per-regime MCP curves from marginalpdbc...")
+    mcp_by_regime = build_mcp_surfaces()
     for tech in TECHS:
         path = FPCA_DIR / f"quantile_curves_{tech}_sa.parquet"
         if not path.exists():
@@ -181,7 +215,7 @@ def main():
         print(f"Aggregating SA surfaces for {tech}...")
         surfaces = build_surfaces_per_tech(tech)
         for firm in FIRMS:
-            plot_surface_per_firm(tech, surfaces, firm)
+            plot_surface_per_firm(tech, surfaces, mcp_by_regime, firm)
 
 
 if __name__ == "__main__":
