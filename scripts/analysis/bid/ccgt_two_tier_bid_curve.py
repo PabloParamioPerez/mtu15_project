@@ -27,6 +27,10 @@ FIG.parent.mkdir(parents=True, exist_ok=True)
 REGIME = ("DA15/ID15", "2025-10-01", "2026-05-15")
 BINW = 5.0
 FIRMS = {"IB": "#1f77b4", "GE": "#2ca02c", "GN": "#d62728", "HC": "#9467bd"}
+# Bottom-up CCGT short-run marginal cost for the DA15/ID15 window (EUR/MWh),
+# from the gas + CO2 calculation in descriptive_facts.tex sec 6.5 (tab
+# mc_ccgt_premium, DA15/ID15 row): the competitive benchmark.
+MC_LO, MC_HI = 100.0, 110.0
 
 
 def tech_bucket(t):
@@ -103,7 +107,12 @@ def main():
                    edgecolors="black", linewidths=0.4)
 
     ax.axhline(mcp, color="black", ls="--", lw=1.1)
-    ax.text(0.012, mcp + 26, f"mean day-ahead clearing price $\\approx$ {mcp:.0f} EUR/MWh",
+    ax.text(0.012, mcp - 48, f"mean day-ahead clearing price $\\approx$ {mcp:.0f} EUR/MWh",
+            fontsize=8.5)
+    # CCGT marginal-cost band: the competitive benchmark.
+    ax.axhspan(MC_LO, MC_HI, color="#7a7a7a", alpha=0.30, zorder=0, lw=0)
+    ax.text(0.012, MC_HI + 14,
+            f"CCGT marginal cost $\\approx$ {MC_LO:.0f}--{MC_HI:.0f} EUR/MWh",
             fontsize=8.5)
     ax.set_ylim(-60, 1150)
     ax.set_xlim(0, 1)
