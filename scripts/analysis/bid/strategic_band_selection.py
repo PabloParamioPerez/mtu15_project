@@ -108,32 +108,25 @@ def build_histogram() -> pd.DataFrame:
     return con.execute(sql).fetchdf()
 
 
-def find_antimode(dist: np.ndarray, dens: np.ndarray):
-    """Antimode = the valley that closes the near-MCP competing cluster.
+def find_band_edge(dist: np.ndarray, dens: np.ndarray):
+    """Band edge = the upper edge of the near-MCP competing cluster.
 
-    Smooth the MW-weighted density, locate the near-MCP peak, walk out until
-    the density has fallen below 20% of that peak (the competing cluster has
-    ended), then take the first local minimum: the floor of the valley before
-    the next, sparser cluster. This is the band edge -- where in-contention
-    bidding gives way to the scarcity-tail region.
+    Smooth the MW-weighted density, locate the near-MCP peak, and walk out to
+    where the density has fallen below 20% of that peak: the competing cluster
+    has ended. An earlier draft used the \"antimode\" -- the valley floor
+    further out -- but that valley sits ABOVE the realised clearing-price
+    ceiling (the day-ahead price never exceeds ~250 EUR/MWh; see main()), so
+    bids in the valley are soft-withholding, not in contention. The
+    competing-cluster edge is the right band edge.
     """
-    # Moving-average smooth (window ~ 25 EUR/MWh).
-    k = max(1, int(round(25.0 / BINW)))
+    k = max(1, int(round(25.0 / BINW)))               # ~25 EUR/MWh smooth
     kernel = np.ones(2 * k + 1) / (2 * k + 1)
     sm = np.convolve(dens, kernel, mode="same")
     peak_i = int(np.argmax(sm))                       # near-MCP peak
     thr = 0.20 * sm[peak_i]
-    below = np.where((sm < thr) & (dist > 30))[0]
-    cluster_end = int(below[0])
-    valley_i = cluster_end
-    for i in range(cluster_end + 1, len(sm) - 1):
-        if sm[i] <= sm[i - 1] and sm[i] < sm[i + 1]:
-            valley_i = i
-            break
-    # Confirm a denser cluster rises after the valley (genuine bimodality).
-    after = sm[valley_i:]
-    rises = after.max() > 1.30 * sm[valley_i]
-    return dist[valley_i], dist[peak_i], rises, sm
+    edge_i = int(np.where((sm < thr) & (dist > 30))[0][0])
+    rises = (sm[edge_i:].max() > 1.30 * sm[edge_i]) if edge_i < len(sm) - 1 else False
+    return dist[edge_i], dist[peak_i], rises, sm
 
 
 def main():
@@ -148,24 +141,47 @@ def main():
     pooled = np.sum([series[t] for t in TECHS], axis=0)
     pooled_dens = pooled / (pooled.sum() * BINW)
 
-    h_anti, peak, rises, sm = find_antimode(grid, pooled_dens)
+    h, peak, rises, sm = find_band_edge(grid, pooled_dens)
     total_mw = pooled.sum()
-    in_band = pooled[grid < h_anti].sum() / total_mw
+    in_band = pooled[grid < h].sum() / total_mw
+
+    # Cross-check against the clearing-price distribution: the band edge must
+    # not exceed the price range the auction actually produces.
+    mcp = duckdb.connect().execute(f"""
+        SELECT quantile_cont(price_es_eur_mwh, 0.50),
+               quantile_cont(price_es_eur_mwh, 0.99),
+               quantile_cont(price_es_eur_mwh, 0.999),
+               MAX(price_es_eur_mwh)
+        FROM read_parquet('{MPDBC}')
+        WHERE date >= '{START}' AND date <= '{END}'
+          AND price_es_eur_mwh IS NOT NULL
+    """).fetchone()
+    mcp_p50, mcp_p99, mcp_p999, mcp_max = mcp
     print(f"  near-MCP peak at |p-MCP| ~ {peak:.0f} EUR/MWh")
-    print(f"  ANTIMODE (band edge) h = {h_anti:.0f} EUR/MWh  "
-          f"(cap cluster rises afterwards: {rises})")
-    print(f"  share of sell-bid MW within +/- {h_anti:.0f}: {in_band:5.1%}")
+    print(f"  BAND EDGE h = {h:.0f} EUR/MWh (competing-cluster edge; "
+          f"cap cluster present: {rises})")
+    print(f"  share of sell-bid MW within +/- {h:.0f}: {in_band:5.1%}")
+    print(f"  clearing price: p50 {mcp_p50:.0f}  p99 {mcp_p99:.0f}  "
+          f"p99.9 {mcp_p999:.0f}  max {mcp_max:.0f} EUR/MWh")
+    print(f"  cross-check: median MCP + h = {mcp_p50 + h:.0f} ~ p99.9 of MCP "
+          f"({mcp_p999:.0f}) -- the band edge coincides with the price ceiling")
 
     OUT_JSON.write_text(json.dumps({
-        "h_eur_mwh": float(h_anti),
+        "h_eur_mwh": float(h),
+        "scarcity_threshold_eur_mwh": 200.0,
         "near_mcp_peak_eur_mwh": float(peak),
         "cap_cluster_present": bool(rises),
         "in_band_mw_share": float(in_band),
-        "rule": "antimode of MW-weighted |p_bid - MCP| density, pooled over "
-                "regimes and the three price-setting techs",
+        "clearing_price_p50": float(mcp_p50), "clearing_price_p99": float(mcp_p99),
+        "clearing_price_p999": float(mcp_p999), "clearing_price_max": float(mcp_max),
+        "rule": "upper edge of the near-MCP competing cluster in the MW-weighted "
+                "|p_bid - MCP| density; cross-checked against the clearing-price "
+                "distribution (median MCP + h ~ p99.9 of MCP). Scarcity threshold "
+                "200 EUR/MWh: the day-ahead price exceeds it in 0.1% of periods.",
         "window": f"{START}..{END}",
     }, indent=2))
     print(f"wrote {OUT_JSON}")
+    h_anti = h
 
     # ---- diagnostic figure -------------------------------------------------
     import matplotlib
@@ -183,9 +199,9 @@ def main():
                 label=tech.replace("_", " "))
     ax.axvline(h_anti, color="black", ls="--", lw=1.3)
     ax.text(h_anti + 12, ax.get_ylim()[1] * 0.85,
-            rf"antimode $h={h_anti:.0f}$", fontsize=9)
-    ax.axvline(50, color="grey", ls=":", lw=1.0)
-    ax.text(52, ax.get_ylim()[1] * 0.70, "old $h=50$", fontsize=8, color="grey")
+            rf"band edge $h={h_anti:.0f}$", fontsize=9)
+    ax.axvline(230, color="grey", ls=":", lw=1.0)
+    ax.text(232, ax.get_ylim()[1] * 0.70, "old $h=230$", fontsize=8, color="grey")
     ax.set_xlabel(r"$|p_{\mathrm{bid}} - \mathrm{MCP}|$ (EUR/MWh)", fontsize=10)
     ax.set_ylabel("MW-weighted density", fontsize=10)
     ax.set_title("Per-tech bid-distance density (zoom 0--1000)", fontsize=10)
@@ -204,8 +220,8 @@ def main():
                  fontsize=10)
     ax.legend(fontsize=8)
     ax.grid(alpha=0.3, lw=0.5, which="both")
-    fig.suptitle("Data-driven strategic band: antimode of the bid-to-clearing "
-                 "distance density", fontsize=11)
+    fig.suptitle("Data-driven strategic band: upper edge of the near-MCP "
+                 "competing cluster", fontsize=11)
     fig.tight_layout(rect=[0, 0, 1, 0.95])
     fig.savefig(FIG, bbox_inches="tight", dpi=130)
     plt.close(fig)

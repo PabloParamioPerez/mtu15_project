@@ -31,6 +31,9 @@ FIRMS = {"IB": "#1f77b4", "GE": "#2ca02c", "GN": "#d62728", "HC": "#9467bd"}
 # from the gas + CO2 calculation in descriptive_facts.tex sec 6.5 (tab
 # mc_ccgt_premium, DA15/ID15 row): the competitive benchmark.
 MC_LO, MC_HI = 100.0, 110.0
+# Withholding threshold (EUR/MWh): the day-ahead clearing price exceeds it in
+# 0.1% of periods (max ever 250), so a bid above it effectively cannot clear.
+SCARCITY = 200.0
 
 
 def tech_bucket(t):
@@ -114,6 +117,11 @@ def main():
     ax.text(0.012, MC_HI + 14,
             f"CCGT marginal cost $\\approx$ {MC_LO:.0f}--{MC_HI:.0f} EUR/MWh",
             fontsize=8.5)
+    # Withholding threshold: above the realised clearing-price ceiling.
+    ax.axhline(SCARCITY, color="#cc6600", ls="-.", lw=1.1)
+    ax.text(0.012, SCARCITY + 14,
+            f"withholding threshold $\\approx$ {SCARCITY:.0f} EUR/MWh "
+            "(clearing-price ceiling)", fontsize=8.5, color="#cc6600")
     ax.set_ylim(-60, 1150)
     ax.set_xlim(0, 1)
     ax.set_xlabel("cumulative share of the firm's offered CCGT MW", fontsize=10)
@@ -142,9 +150,9 @@ def main():
             continue
         tot = h["mw"].sum()
         below = h[h["pbin"] <= mcp]["mw"].sum() / tot
-        scarc = h[h["pbin"] >= 500]["mw"].sum() / tot
-        print(f"  {firm}: {below:5.1%} of offered MW bids <= MCP (DA tier), "
-              f"{scarc:5.1%} at >= 500 EUR/MWh (scarcity tier)")
+        scarc = h[h["pbin"] >= SCARCITY]["mw"].sum() / tot
+        print(f"  {firm}: {below:5.1%} of offered MW bids <= MCP (clears), "
+              f"{scarc:5.1%} at >= {SCARCITY:.0f} EUR/MWh (withheld)")
 
 
 if __name__ == "__main__":

@@ -1,8 +1,13 @@
 {
-  "h_eur_mwh": 230.0,
+  "h_eur_mwh": 140.0,
+  "scarcity_threshold_eur_mwh": 200.0,
   "near_mcp_peak_eur_mwh": 25.0,
-  "cap_cluster_present": true,
-  "in_band_mw_share": 0.6241177321052365,
-  "rule": "antimode of MW-weighted |p_bid - MCP| density, pooled over regimes and the three price-setting techs",
+  "cap_cluster_present": false,
+  "in_band_mw_share": 0.5740235064216684,
+  "clearing_price_p50": 65.0,
+  "clearing_price_p99": 161.42,
+  "clearing_price_p999": 204.48281999999804,
+  "clearing_price_max": 250.0,
+  "rule": "upper edge of the near-MCP competing cluster in the MW-weighted |p_bid - MCP| density; cross-checked against the clearing-price distribution (median MCP + h ~ p99.9 of MCP). Scarcity threshold 200 EUR/MWh: the day-ahead price exceeds it in 0.1% of periods.",
   "window": "2024-06-14..2026-05-15"
 }

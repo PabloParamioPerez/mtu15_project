@@ -3,10 +3,10 @@
 # CLAIM: Two scalar metrics defined ON EACH SINGLE bid curve (not from a
 #        comparison between curves -- per N. Fabra's advice, 2026-05-21).
 #        For each (unit, date, period) day-ahead sell bid curve, restricted
-#        to the DATA-DRIVEN strategic band |p - MCP| <= H. H is the antimode
-#        of the MW-weighted bid-to-clearing distance density (the valley that
-#        closes the near-MCP competing cluster), estimated once and frozen by
-#        strategic_band_selection.py -- see strategic_band_h.json. H = 230.
+#        to the DATA-DRIVEN strategic band |p - MCP| <= H. H is the upper
+#        edge of the near-MCP competing cluster in the |p_bid - MCP| density,
+#        frozen by strategic_band_selection.py; it coincides with the
+#        clearing-price ceiling (median MCP + H ~ p99.9 of MCP). H = 140.
 #
 #          PRICE metric  -- sigma_p: MW-weighted standard deviation of the
 #            in-band tranche prices (EUR/MWh). How much the firm varies
@@ -45,9 +45,14 @@ OUT = OUT_DIR / "per_curve_metrics_da.parquet"
 TEX_DIR = REPO / "results/regressions/bid/per_curve_metrics/tex"
 TEX_DIR.mkdir(parents=True, exist_ok=True)
 
-# Data-driven strategic-band half-width (EUR/MWh): antimode of the
-# MW-weighted |p_bid - MCP| density, frozen by strategic_band_selection.py.
-H = 230.0
+# Data-driven strategic-band half-width (EUR/MWh): the upper edge of the
+# near-MCP competing cluster in the |p_bid - MCP| density, frozen by
+# strategic_band_selection.py. Cross-checked against the clearing-price
+# distribution: median MCP + 140 ~ p99.9 of the clearing price (~205), so
+# the band edge sits at the price ceiling -- the day-ahead price never
+# exceeds ~250 EUR/MWh. (An earlier draft used 230, the antimode/valley,
+# which reached above the all-time-maximum clearing price.)
+H = 140.0
 START = "2024-06-14"
 END = "2026-05-15"
 
