@@ -68,10 +68,12 @@ The arrows trace **firm programs**, the checkpoints that each market produces an
 
 **Clearing:** D-1 at 12:00. Single uniform-price auction managed by OMIE under the EUPHEMIA algorithm (SDAC — Single Day-Ahead Coupling).
 
-**Bid types (Spec §5.1.4):**
+**Bid types (Spec §5.1.4, pre-MTU15-DA):**
 - Simple: 1–25 price-quantity pairs per unit per period.
 - Block: minimum-acceptance, multi-period, fill-or-kill.
-- Complex: load-gradient + minimum-income conditions.
+- Complex (**MIC** — *Minimum Income Condition*): load-gradient + minimum-income conditions.
+
+**Post-MTU15-DA (≥2025-10-01) — the MIC complex offer is ELIMINATED.** Per ACER decision of 25-Sep-2024 and CNMC Resolución de 28-Feb-2025 (BOE-A-2025-4908, repo: `20250228_cnmc_mtu15.pdf`, p. 33385), the new MIBEL DA offer typology is: **simple offer**, **Scalable Complex Orders (SCO)**, **Bloque Simple**, and **Grupo Exclusivo de Ofertas Bloque** — designed for lower impact on the SDAC algorithm under the 96-period clearing. Any post-MTU15-DA bid-shape analysis must therefore work with the new typology, not the old MIC. The acronym "MIC" is now overloaded — in the project's glossary §15.1 it is reused for *Mercado Intradiario Continuo*.
 
 **Time grid:** 60-min until **2025-09-30**, 15-min from **2025-10-01** onward.
 
@@ -139,7 +141,7 @@ Six regional Iberian sessions; managed Spain-Portugal interconnection plus Spain
 
 ### 2024-06-14 onward: 3 SIDC sessions
 
-Three European-coupled sessions. Schedule per CNMC Resolution 23-May-2024:
+Three European-coupled sessions. Schedule originally set by CNMC Resolución de 23-May-2024 (`20240523_cnmc_sidc_idas.pdf`, BOE-A-2024-11958), which governed IDA from 14-Jun-2024 until being **superseded by CNMC Resolución de 28-Feb-2025** (`20250228_cnmc_mtu15.pdf`, BOE-A-2025-4908, Resuelvo Segundo: *"Dejar sin efecto … las reglas aprobadas por Resolución de 23 de mayo de 2024"*). The 2025-02-28 resolution is the **consolidated source for both DA and IDA rules** from MTU15-DA go-live.
 - IDA-1, IDA-2, IDA-3 — exact times depend on SDAC/SIDC market calendar
 - Last clearing closes ~ 1 hour before delivery hour begins
 
@@ -274,9 +276,9 @@ Balance services
 - **Time horizon of action:** 20 s to 15 min
 - **European platforms (two distinct):**
   - **IGCC** — *imbalance netting*. Spain connected **October 2020**. Compensates aFRR-energy needs of opposite-signed control blocks before any actual aFRR activation, reducing total activation needs across the European interconnected system.
-  - **PICASSO** — *aFRR-energy activation*. First-country go-live June 2022; Spain connected **later** (date not specified in the REE 2024-12 guide; verify against current PO 7.2 if needed). Handles cross-border anonymised optimization of aFRR offers.
+  - **PICASSO** — *aFRR-energy activation*. First-country go-live June 2022; Spain's regulatory base set by CNMC Res 25-Apr-2024 (BOE-A-2024-11535, `20240425_cnmc_mari_picasso.pdf`); ENTSO-E reports Spain go-live in late 2024. Handles cross-border anonymised optimization of aFRR offers.
 - **Local market structure:** TWO-stage market:
-  - **Capacity (reservation) market:** Each day, REE communicates aFRR up/down reserve needs per quarter-hour. Providers submit offers before **16:00 D-1** (per REE §6.2; **footnote: in any case up to 75 min after PDVD publication** — the binding cutoff depends on PDVD timing; REE's guide uses the synonym PDVP here). Allocation independently for up and down per quarter-hour to minimize total system cost subject to PDBF security limits. Marginal-price clearing.
+  - **Capacity (reservation) market:** Each day, REE communicates aFRR up/down reserve needs per quarter-hour. Providers submit offers before **16:00 D-1** (per REE §6.2; **footnote: in any case up to 75 min after PDVD publication** — the binding cutoff depends on PDVD timing; REE's guide uses the synonym PDVP here). Per CNMC Res 25-Apr-2024 (BOE-A-2024-11535) both the **reserve-capacity market and the activation-energy market are split into independent UP and DOWN clearings, each with its own marginal price** ("*Se separa el mercado de activación de energía de regulación secundaria en mercado a subir y mercado a bajar, con dos precios marginales diferenciados e independientes*", p. 66288). Allocation per quarter-hour subject to PDBF security limits.
   - **Energy market:** Allocated providers must submit valid energy offers for activation in their assigned quarter-hours; voluntary offers exceeding allocated reserve also accepted. Offers updateable up to 25 min before delivery period start.
 
   **Caveat for thesis-grade citation:** the 16:00 D-1 capacity-offer cutoff was set by PO 7.2 prior to the SIDC IDA reorganisation of June 2024; verify against current PO 7.2 before citing the exact time.
@@ -308,7 +310,7 @@ Balance services
 - **Bid horizon:** offers up to 60 min before delivery period
 - **Offer types:** simple (divisible / indivisible) or complex (exclusivity, multipart, time-linked)
 - **Settlement:** marginal price set on TERRE platform
-- **PO mapping (corrected 2026-05-02):** RR is **NOT** under PO-7.4 (PO-7.4 is voltage control; see §11 / §12). The exact PO number for RR/TERRE in REE's current numbering scheme requires verification; cite as "REE guide §6.4 / TERRE platform" rather than a specific PO until confirmed.
+- **PO mapping:** RR is governed by **P.O. 3.3** — *"Activación de energías de balance procedentes del producto de reserva de sustitución (RR)"* (BOE-A-2022-4969, consolidated with BOE-A-2025-5342; repo: `PO_3_3_BOE-A-2022-4969-BOE-A-2025-5342.pdf`). NOT under PO-7.4 (PO-7.4 is voltage control; see §11 / §12).
 
 ### 7.5 SRAD — Servicio de Respuesta Activa de la Demanda (REE guide §6.5)
 
@@ -352,7 +354,7 @@ The **asymmetric-granularity window** is the period where ISP = 15 min but at le
 | **2024-12** | mFRR via MARI | mFRR connected to European MARI platform | (REE guide §6.3) |
 | **2025-03-19** | MTU15-IDA | IDA auctions + continuous market clock 60 → 15 min | `20250228_cnmc_mtu15.pdf` |
 | **2025-04-28** | Iberian blackout | System-wide blackout; REE adopts "operación reforzada" | `20260319_cnmc_informe_apagon.pdf` |
-| **2025-10-01** | MTU15-DA | Day-ahead market clock 60 → 15 min | `20250228_cnmc_mtu15.pdf` |
+| **2025-10-01** | MTU15-DA | Day-ahead market clock 60 → 15 min; MIC complex offer eliminated, replaced by SCO / Bloque Simple / Grupo Exclusivo de Ofertas Bloque | `20250228_cnmc_mtu15.pdf` (BOE-A-2025-4908; CNMC sets the rules, OMIE sets the go-live date per Resuelvo Primero — original target 11-Jun-2025, slipped to 2025-10-01) |
 
 These reform dates define the five regimes used throughout the project; the canonical constants live in `CLAUDE.md` (§ Reform dates) and in the analysis scripts directly.
 
@@ -474,10 +476,10 @@ Operación reforzada is a regime shift orthogonal to the MTU15 reform sequence. 
 | **P.O. 1.5** | Frequency-power reserve. Secondary band sizing now done quarterly; band enlarged under reforzada. |
 | **P.O. 3.1** | Scheduling process — where the GMS thresholds enter. |
 | **P.O. 3.2** | Real-time technical-restriction process (RRTT). The lever that forces CCGT/nuclear up under reforzada. |
-| **P.O. 3.3** | Balance energy activation (RR / mFRR; formerly "gestión de desvíos"). Activations rise under reforzada. |
+| **P.O. 3.3** | **RR (Replacement Reserves) activation — TERRE platform.** *"Activación de energías de balance procedentes del producto de reserva de sustitución (RR)"* (BOE-A-2022-4969 + BOE-A-2025-5342). mFRR is governed separately by PO 7.3 + the MARI integration in BOE-A-2024-11535 — **do not conflate**. Activations rise under reforzada. |
 | **P.O. 7.2** | Secondary regulation (aFRR). Capacity-reservation auction enlarged under reforzada. |
 | **P.O. 7.3** | Tertiary regulation (mFRR). |
-| **P.O. 7.4** | **Voltage control of the transmission grid.** Originally established by BOE-A-2000-5204 (10 March 2000) as the *Servicio complementario de control de tensión de la red de transporte*. **Modified by BOE-A-2025-13076 (CNMC Resolución 2025-06-12, `docs/regulation/spain/20250612_cnmc_voltage_service.pdf`) to introduce a two-tier service** under operación reforzada: **basic (mandatory, penalty €1/MVArh non-compliance)** + **dynamic (retributed, consigna-following)**. The dynamic tier is the new zonal reactive power market and now allows renewable installations to participate. Earlier versions of this glossary mis-labelled PO-7.4 as RR (replacement reserves); that was wrong. RR / TERRE is under a different REE procedure (see §7.4 description). |
+| **P.O. 7.4** | **Voltage control of the transmission grid.** Originally established by BOE-A-2000-5204 (10 March 2000) as the *Servicio complementario de control de tensión de la red de transporte*. **Modified by BOE-A-2025-13076 (CNMC Resolución 2025-06-12, `docs/regulation/spain/20250612_cnmc_voltage_service.pdf`) to introduce a two-tier service** under operación reforzada: **basic (mandatory; non-compliance penalty per the new PO 7.4 anexos via PQBIN/PQO ratios — the "€1/MVArh" earlier circulated in informal summaries is unsourced)** + **dynamic (retributed, consigna-following)**. The dynamic tier is the new zonal reactive power market and now allows renewable installations to participate. Earlier versions of this glossary mis-labelled PO-7.4 as RR (replacement reserves); that was wrong. RR / TERRE is under a different REE procedure (see §7.4 description). |
 | **P.O. 14.4** | Settlement rights and payment obligations for adjustment services — where reforzada costs materialise in liquidation. |
 
 ### Subsequent regulatory cascade (timeline)
@@ -500,7 +502,7 @@ Operación reforzada is a regime shift orthogonal to the MTU15 reform sequence. 
 
 ### 12.1 Fase I — PDBF restrictions (pay-as-bid, ~€170/MWh, ~2-3× DA spot)
 
-**Strongest single bidding distorter.** Pay-as-bid post-clearing means a unit that REE *has to* call for security gets paid its bid price, not the marginal price. A zonally-dominant CCGT in a transmission corridor with limited substitutes (Sur, Levante, Cataluña — see §10 / firm-zone HHI 3,000-5,500) can bid scarcity-tier prices (>€500/MWh) in DA, deliberately *not clear*, and still earn €170+/MWh through Fase I forced inclusion.
+**Strongest single bidding distorter.** Fase I up-redispatch is pay-as-bid — but pay-as-bid of a **separate `oferta de restricciones técnicas`** the unit submits to REE (PO 3.2 process; PO 14.4 apartado 20.1 settlement), **not** of the day-ahead market offer. The day-ahead offer and the restriction offer are distinct instruments. A zonally-dominant CCGT in a transmission corridor with limited substitutes (Sur, Levante, Cataluña — see §10 / firm-zone HHI 3,000-5,500) therefore plays two separate moves: it parks a scarcity-tier block (>€500/MWh) in DA purely so it does *not clear*, and it separately submits a high restriction offer that earns it €170+/MWh when REE recalls it in Fase I. The DA scarcity-tier price itself is only a non-clearing marker — it is not the Fase I payment, which is why its level (GN ~€1,000, GE the cap, IB a ramp) is firm-idiosyncratic. The no-offer default (PO 14.4 ap. 20.2) is 1.15 × the day-ahead price. Per-unit restriction offers are not published by ESIOS; only the aggregate Fase I solution price is observable.
 
 **Predicted bidding pattern**: zonally-dominant incumbents offer at scarcity prices in DA (DA non-clearing is strategic, not technical). Empirical confirmation: GN CCGTs (40-45% share in Sur/Levante/Cataluña) submit single-block scarcity bids and essentially never partial-clear at MCP (Table 2 in `bidding_internal.tex` §2.1). Non-zonal CCGTs (GE, IB inland) bid near marginal cost.
 
