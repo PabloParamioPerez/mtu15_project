@@ -92,6 +92,14 @@ def main():
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(figsize=(9, 5.5))
+    # Y-axis is truncated just above the withholding threshold: the parked
+    # scarcity-tier prices (GN ~1000, GE at the 4000 cap, IB a 200-700 ramp)
+    # are non-clearing markers, not payments -- the Fase I recall is paid
+    # pay-as-bid through a SEPARATE restriction offer (PO 14.4 ap. 20.1),
+    # not at the parked price -- so plotting them would only invite a
+    # misreading. The economically meaningful information is the COMPETING
+    # tier (below the cliff) and the WITHHELD QUANTITY (annotated above).
+    YTOP = 260
     for firm, col in FIRMS.items():
         h = hist[hist["firm"] == firm].sort_values("pbin")
         if h.empty:
@@ -99,43 +107,54 @@ def main():
         price = h["pbin"].values
         cum = np.cumsum(h["mw"].values)
         share = cum / cum[-1]
-        # Step supply curve: over cumulative-share (share[i-1], share[i]] the
-        # offered price is price[i]; share[-1]=0 implicitly is 0.
+        tot = h["mw"].sum()
+        # Step supply curve, clipped at YTOP so the parked scarcity prices
+        # are not displayed at face value.
+        pc = np.minimum(price, YTOP)
         ax.step(np.concatenate([[0.0], share]),
-                np.concatenate([price, [price[-1]]]),
+                np.concatenate([pc, [pc[-1]]]),
                 where="post", color=col, lw=1.8, label=firm)
         # Share of the fleet's offered MW priced at or below mean MCP.
         da_share = share[price <= mcp][-1] if (price <= mcp).any() else 0.0
         ax.scatter([da_share], [mcp], color=col, s=28, zorder=5,
                    edgecolors="black", linewidths=0.4)
+        # Annotate the withheld share at the cliff: where the firm's curve
+        # crosses the SCARCITY threshold (the share priced BELOW scarcity).
+        in_band = share[price < SCARCITY][-1] if (price < SCARCITY).any() else 0.0
+        scarc = h[h["pbin"] >= SCARCITY]["mw"].sum() / tot
+        if scarc > 0.01:
+            ax.annotate(f"{firm}: {scarc:.0%} withheld",
+                        xy=(in_band, YTOP - 4),
+                        xytext=(in_band, YTOP - 26 - 18 *
+                                list(FIRMS).index(firm)),
+                        fontsize=8, ha="center", color=col, weight="bold",
+                        arrowprops=dict(arrowstyle="->", lw=0.7, color=col))
 
     ax.axhline(mcp, color="black", ls="--", lw=1.1)
-    ax.text(0.012, mcp - 48, f"mean day-ahead clearing price $\\approx$ {mcp:.0f} EUR/MWh",
+    ax.text(0.012, mcp - 18, f"mean day-ahead clearing price $\\approx$ {mcp:.0f} EUR/MWh",
             fontsize=8.5)
     # CCGT marginal-cost band: the competitive benchmark.
     ax.axhspan(MC_LO, MC_HI, color="#7a7a7a", alpha=0.30, zorder=0, lw=0)
-    ax.text(0.012, MC_HI + 14,
+    ax.text(0.012, MC_HI + 6,
             f"CCGT marginal cost $\\approx$ {MC_LO:.0f}--{MC_HI:.0f} EUR/MWh",
             fontsize=8.5)
     # Withholding threshold: above the realised clearing-price ceiling.
     ax.axhline(SCARCITY, color="#cc6600", ls="-.", lw=1.1)
-    ax.text(0.012, SCARCITY + 14,
-            f"withholding threshold $\\approx$ {SCARCITY:.0f} EUR/MWh "
-            "(clearing-price ceiling)", fontsize=8.5, color="#cc6600")
-    ax.set_ylim(-60, 1150)
+    ax.text(0.012, SCARCITY + 4,
+            f"clearing-price ceiling $\\approx$ {SCARCITY:.0f} EUR/MWh "
+            "(bids above cannot clear)", fontsize=8.5, color="#cc6600")
+    ax.set_ylim(-60, YTOP)
     ax.set_xlim(0, 1)
     ax.set_xlabel("cumulative share of the firm's offered CCGT MW", fontsize=10)
-    ax.set_ylabel("bid price (EUR/MWh)", fontsize=10)
+    ax.set_ylabel("bid price (EUR/MWh) -- truncated above the ceiling",
+                  fontsize=10)
     ax.set_title(f"Two-tier CCGT day-ahead bid curve, by firm ({REGIME[0]})\n"
-                 "low tier clears the auction; high tier is parked for Fase I "
-                 "redispatch", fontsize=10.5)
+                 "low tier clears the auction; high tier is withheld "
+                 "(non-clearing -- not the Fase I price)", fontsize=10.5)
     ax.annotate("competing tier\n(clears day-ahead)", xy=(0.10, mcp),
-                xytext=(0.16, 430), fontsize=8.5, ha="center",
+                xytext=(0.20, 50), fontsize=8.5, ha="center",
                 arrowprops=dict(arrowstyle="->", lw=0.8))
-    ax.annotate("scarcity tier\n(withheld; recalled in Fase I)", xy=(0.55, 1000),
-                xytext=(0.45, 720), fontsize=8.5, ha="center",
-                arrowprops=dict(arrowstyle="->", lw=0.8))
-    ax.legend(fontsize=9, loc="upper left", title="CCGT fleet")
+    ax.legend(fontsize=9, loc="lower right", title="CCGT fleet")
     ax.grid(alpha=0.3, lw=0.5)
     fig.tight_layout()
     fig.savefig(FIG, bbox_inches="tight", dpi=130)
