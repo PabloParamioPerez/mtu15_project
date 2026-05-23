@@ -260,13 +260,16 @@ def build_price_dispersion(price_panel):
 # Spec runners
 # ============================================================================
 
-def run_spec_A(panel, reform):
-    """Per-curve DiD on sigma_p and N_eff."""
+def run_spec_A(panel, reform, tech_filter=None):
+    """Per-curve DiD on sigma_p and N_eff. If tech_filter is set
+    (e.g. 'CCGT'), restricts the panel to that tech first."""
     w = WINDOWS[reform]
     pre_lo, pre_hi = pd.Timestamp(w["pre_lo"]), pd.Timestamp(w["pre_hi"])
     post_lo, post_hi = pd.Timestamp(w["post_lo"]), pd.Timestamp(w["post_hi"])
     p = panel.copy()
     p["d"] = pd.to_datetime(p["d"])
+    if tech_filter is not None:
+        p = p[p["tech"] == tech_filter].copy()
     in_pre = (p["d"] >= pre_lo) & (p["d"] <= pre_hi)
     in_post = (p["d"] >= post_lo) & (p["d"] <= post_hi)
     p = p[(in_pre | in_post) & p["hour_class"].isin(["Critical", "Flat"])].copy()
@@ -455,13 +458,22 @@ def main():
     da["hour_class"] = da["clock_hour"].map(hour_class_label)
     print(f"  {len(da):,} DA in-band curves (DA15 window)")
 
-    # ---- Spec A: per-curve DiD -----------------------------------------------
-    print("\n=== Spec A: per-curve DiD (sigma_p, N_eff) ===")
-    a_ida = run_spec_A(ida, "ID15")
-    a_ida.insert(0, "reform", "ID15"); a_ida.insert(1, "market", "IDA")
-    a_da = run_spec_A(da, "DA15")
-    a_da.insert(0, "reform", "DA15"); a_da.insert(1, "market", "DA")
-    a = pd.concat([a_ida, a_da], ignore_index=True)
+    # ---- Spec A: per-curve DiD (pooled + per-tech) ---------------------------
+    print("\n=== Spec A: per-curve DiD (sigma_p, N_eff), pooled + per-tech ===")
+    a_rows = []
+    for reform, panel, market in [("ID15", ida, "IDA"), ("DA15", da, "DA")]:
+        # Pooled (all techs)
+        a_p = run_spec_A(panel, reform, tech_filter=None)
+        if a_p is not None:
+            a_p.insert(0, "reform", reform); a_p.insert(1, "market", market)
+            a_p.insert(2, "tech", "All"); a_rows.append(a_p)
+        # Per tech
+        for tech in TECHS:
+            a_t = run_spec_A(panel, reform, tech_filter=tech)
+            if a_t is not None:
+                a_t.insert(0, "reform", reform); a_t.insert(1, "market", market)
+                a_t.insert(2, "tech", tech); a_rows.append(a_t)
+    a = pd.concat(a_rows, ignore_index=True)
     print(a.to_string(index=False))
     a.to_csv(OUT_DIR / "specA_per_curve_did.csv", index=False)
 

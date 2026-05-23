@@ -266,29 +266,33 @@ For MTU15-IDA the post-window is pre-blackout (reforzada absent throughout) so $
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
  & MTU15-IDA & MTU15-DA & MTU15-IDA & MTU15-DA \\
 \midrule
-Post $\times$ Critical ($\theta$) & $1.71^{***}$ & $1.36^{***}$ & $0.10$\phantom{$^{***}$} & $0.14^{***}$ \\
-                                  & $(0.34)$    & $(0.34)$    & $(0.12)$  & $(0.04)$  \\
+\multicolumn{5}{l}{\textit{Post $\times$ Critical ($\theta$), by technology:}} \\[1pt]
+\quad CCGT       & $2.45^{***}$ & $1.30^{*}$\phantom{$^{**}$}  & $0.79^{***}$ & $0.44^{***}$ \\
+                 & $(0.58)$    & $(0.75)$    & $(0.30)$    & $(0.06)$    \\
+\quad Hydro      & $1.17^{***}$ & $1.69^{***}$ & $0.21^{***}$ & $-0.04$\phantom{$^{***}$} \\
+                 & $(0.44)$    & $(0.29)$    & $(0.06)$    & $(0.04)$    \\
+\quad Hydro pump & $0.25$\phantom{$^{***}$} & $-0.63^{*}$\phantom{$^{**}$} & $0.18^{**}$\phantom{$^{*}$} & $-0.05$\phantom{$^{***}$} \\
+                 & $(0.28)$    & $(0.36)$    & $(0.08)$    & $(0.03)$    \\
 \addlinespace
-\multicolumn{5}{l}{\textit{Cell means (raw)}} \\
-\quad Pre, crit   &  8.78 & 19.13 & 3.98 & 3.22 \\
-\quad Post, crit  &  7.52 & 21.06 & 5.07 & 3.58 \\
-\quad Pre, flat   & 11.53 & 16.34 & 5.97 & 3.06 \\
-\quad Post, flat  &  8.84 & 16.89 & 7.31 & 3.28 \\
+\quad (Pooled)   & $1.71^{***}$ & $1.36^{***}$ & $0.10$\phantom{$^{***}$} & $0.14^{***}$ \\
+                 & $(0.34)$    & $(0.34)$    & $(0.12)$    & $(0.04)$    \\
 \midrule
-Unit FE         & Yes        & Yes        & Yes        & Yes        \\
-Date FE         & No         & No         & No         & No         \\
-Cluster (date)  & Yes        & Yes        & Yes        & Yes        \\
-$N$ (curves)    & $150{,}350$ & $317{,}698$ & $150{,}350$ & $317{,}698$ \\
+Unit FE          & Yes        & Yes        & Yes        & Yes        \\
+Date FE          & No         & No         & No         & No         \\
+Cluster (date)   & Yes        & Yes        & Yes        & Yes        \\
+$N$ (CCGT)       & $50{,}824$  & $159{,}669$ & $50{,}824$  & $159{,}669$ \\
+$N$ (Hydro)      & $81{,}567$  & $132{,}822$ & $81{,}567$  & $132{,}822$ \\
+$N$ (Hydro pump) & $17{,}959$  & $25{,}207$  & $17{,}959$  & $25{,}207$  \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \smallskip
-\noindent{\footnotesize \textit{Notes:} Standard errors in parentheses, clustered by date. $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$. Unit FE absorbed via within-unit demeaning. Sample: Big-4 (IB/GE/GN/HC) CCGT $+$ Hydro reservoir $+$ Hydro pump-storage sell offers; in-band $|p_{\text{bid}}-\text{MCP}|\le 140$ EUR/MWh. Critical $h \in \{5,\dots,8, 16,\dots,22\}$; flat $h \in \{1,2,3\}$; other hours dropped.}
+\noindent{\footnotesize \textit{Notes:} Standard errors in parentheses, clustered by date. $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$. Each tech row is a separate regression on that tech's subsample (the pooled row stacks all three). Unit FE absorbed via within-unit demeaning. Sample: Big-4 (IB/GE/GN/HC) CCGT, Hydro reservoir, Hydro pump-storage sell offers; in-band $|p_{\text{bid}}-\text{MCP}|\le 140$ EUR/MWh. Critical $h \in \{5,\dots,8, 16,\dots,22\}$; flat $h \in \{1,2,3\}$; other hours dropped.}
 % Source: results/regressions/bid/mtu15_critical_flat/specA_per_curve_did.csv
 
 \paragraph{Reading.}
-\textit{(Gap. Key points: $\sigma_p$ DiD positive and significant for BOTH reforms --- MTU15 unlocks a wider in-band price ladder in critical hours, the strategic margin granularity creates. $N_{\text{eff}}$ DiD: significant only for DA15, suggesting quantity-side fragmentation responds to the DA reform but not detectably to the IDA reform within the 40-day clean window.)}
+\textit{(Gap. Per-tech heterogeneity is large and economically meaningful. (i) ID15 --- CCGT responds strongest on both margins ($\sigma_p$ $+2.45^{***}$, $N_{\text{eff}}$ $+0.79^{***}$); Hydro reservoir intermediate; pump-storage tiny/null on $\sigma_p$ but small positive on $N_{\text{eff}}$. (ii) DA15 --- the leader flips: Hydro reservoir takes the largest $\sigma_p$ response ($+1.69^{***}$), CCGT only marginally significant on $\sigma_p$ ($+1.30^{*}$) but dominant on $N_{\text{eff}}$ ($+0.44^{***}$); pump-storage NEGATIVE on $\sigma_p$ ($-0.63^{*}$). (iii) The pooled estimate hides the heterogeneity --- e.g. ID15 $N_{\text{eff}}$ pooled $+0.10$ is null, but CCGT alone is $+0.79^{***}$ and Hydro $+0.21^{***}$. The contrast between ID15 (CCGT-led) and DA15 (Hydro-led on $\sigma_p$, CCGT-led on $N_{\text{eff}}$) deserves a paragraph: each reform reshapes a different lever.)}
 
 \subsection*{6.4 Spec B --- aggregate clearing-price DiD}
 
