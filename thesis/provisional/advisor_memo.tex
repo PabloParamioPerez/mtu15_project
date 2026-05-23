@@ -280,20 +280,28 @@ MTU15-DA  & $N_{\text{eff}}$   &  3.22 &  3.58 &  3.06 &  3.28 & $+0.14$ & 0.04 
 
 \begin{center}
 \footnotesize
-\begin{tabular}{l r r r r r r r}
+\begin{tabular}{l l r r r r r r r}
 \toprule
-\textbf{Reform} & \textbf{Pre crit} & \textbf{Post crit} & \textbf{Pre flat} & \textbf{Post flat} & \textbf{DiD $\theta$ (EUR/MWh)} & \textbf{SE} & \textbf{t} \\
+\textbf{Reform} & \textbf{Spec} & \textbf{Pre crit} & \textbf{Post crit} & \textbf{Pre flat} & \textbf{Post flat} & \textbf{DiD $\theta$ (EUR/MWh)} & \textbf{SE} & \textbf{t} \\
 \midrule
-MTU15-IDA & 114.0 & 38.3 & 84.2 & 19.8 & $-11.32$ & 3.72 & $-3.04$ \\
-MTU15-DA  &  79.4 & 86.9 & 85.2 & 66.0 & $+26.70$ & 2.51 & $+10.65$ \\
+MTU15-IDA & B0 (no FE)   & 114.0 & 38.3 & 84.2 & 19.8 & $-11.32$ & 3.72 & $-3.04$ \\
+MTU15-IDA & B1 (date FE) & ---   & ---  & ---  & ---  & $-11.18$ & 3.75 & $-2.98$ \\
+MTU15-DA  & B0 (no FE)   &  79.4 & 86.9 & 85.2 & 66.0 & $+26.70$ & 2.51 & $+10.65$ \\
+MTU15-DA  & B1 (date FE) & ---   & ---  & ---  & ---  & $+26.70$ & 2.54 & $+10.50$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 % Source: results/regressions/bid/mtu15_critical_flat/specB_aggregate_price_did.csv
 % IDA: 8{,}652 (date, session, period) observations; DA: 6{,}440.
+% B0: raw OLS (post + crit + post*crit). B1: + date FE (post absorbed; the
+%   DiD is identified strictly off within-day crit-vs-flat variation across
+%   the cutover, absorbing every common date-level shock: seasonal,
+%   gas-price, reforzada drift, weekday).
+
+\paragraph{Seasonality.} The pre/post arms span large seasonal transitions (ID15 winter $\to$ early spring; DA15 summer $\to$ autumn) and the level changes are correspondingly large. Spec B1 absorbs every common date-level shock via date FE; the DiD is essentially unchanged ($-11.32 \to -11.18$ ID15; $+26.70 \to +26.70$ DA15), so the headline numbers are \emph{not} driven by simple date-level seasonality. \textit{(Residual concern, to flag in the prose: a differential seasonal \emph{trend} in the (crit $-$ flat) differential itself --- which date FE does not catch --- would still confound the DiD. The standard same-calendar-month robustness against prior years is not directly feasible in the tight windows used here; the cleanest available fallback is the Spec C cross-sectional within-hour dispersion test below, which is post-only and so immune by construction to pre/post seasonal drift.)}
 
 \paragraph{Reading.}
-\textit{(Gap. The headline empirical fact: opposite signs. ID15 --- critical-hour IDA prices fell EUR\,$11/$MWh more than flat-hour ones after MTU15-IDA (granular intraday absorbed within-hour scarcity, compressing the critical peak). DA15 --- critical-hour DA prices rose EUR\,$27/$MWh more than flat (granular day-ahead pricing extracted higher rents in scarce quarters; within-hour ladder now realised in the clearing price). Note the level changes are large (gas-price fall over ID15 window; reforzada-driven generally tighter DA over DA15 window) --- the DiD strips both as long as they hit critical and flat similarly.)}
+\textit{(Gap. The headline empirical fact: opposite signs. ID15 --- critical-hour IDA prices fell EUR\,$11/$MWh more than flat-hour ones after MTU15-IDA (granular intraday absorbed within-hour scarcity, compressing the critical peak). DA15 --- critical-hour DA prices rose EUR\,$27/$MWh more than flat (granular day-ahead pricing extracted higher rents in scarce quarters; within-hour ladder now realised in the clearing price).)}
 
 \subsection*{6.5 Spec C --- within-hour dispersion (post-MTU15 only)}
 

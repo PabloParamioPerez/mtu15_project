@@ -311,7 +311,14 @@ def run_spec_A(panel, reform):
 
 
 def run_spec_B(price_panel, reform):
-    """Aggregate clearing-price DiD."""
+    """Aggregate clearing-price DiD. Two specs reported:
+       B0: raw OLS (post + crit + post*crit, no FE) -- the naive DiD,
+           sensitive to seasonal/gas-price trends in the crit-flat differential.
+       B1: with DATE FE + CRIT FE (post is absorbed by date FE; the DiD
+           coefficient on post*crit is identified strictly off within-day
+           crit-vs-flat variation across the cutover, absorbing all
+           common date-level shocks including seasonal and gas-price drift).
+    """
     w = WINDOWS[reform]
     pre_lo, pre_hi = pd.Timestamp(w["pre_lo"]), pd.Timestamp(w["pre_hi"])
     post_lo, post_hi = pd.Timestamp(w["post_lo"]), pd.Timestamp(w["post_hi"])
@@ -326,15 +333,26 @@ def run_spec_B(price_panel, reform):
     p["crit"] = (p["hour_class"] == "Critical").astype(int)
     p["post_crit"] = p["post"] * p["crit"]
     cell = p.groupby(["post", "crit"])["p_clear"].mean().unstack()
-    X = np.column_stack([np.ones(len(p)), p["post"].values,
-                         p["crit"].values, p["post_crit"].values])
-    beta, se = clustered_ols(p["p_clear"].values, X, p["d"].astype(str).values)
-    return pd.DataFrame([{
-        "outcome": "p_clear", "n": len(p),
-        "DiD": beta[3], "se": se[3], "t": beta[3] / se[3],
-        "pre_crit": cell.loc[0, 1], "post_crit": cell.loc[1, 1],
-        "pre_flat": cell.loc[0, 0], "post_flat": cell.loc[1, 0],
-    }])
+
+    rows = []
+    # B0 -- naive (no FE)
+    X0 = np.column_stack([np.ones(len(p)), p["post"].values,
+                          p["crit"].values, p["post_crit"].values])
+    b0, se0 = clustered_ols(p["p_clear"].values, X0, p["d"].astype(str).values)
+    rows.append({"spec": "B0_noFE", "outcome": "p_clear", "n": len(p),
+                 "DiD": b0[3], "se": se0[3], "t": b0[3] / se0[3],
+                 "pre_crit": cell.loc[0, 1], "post_crit": cell.loc[1, 1],
+                 "pre_flat": cell.loc[0, 0], "post_flat": cell.loc[1, 0]})
+    # B1 -- date FE + crit FE (post is absorbed by date FE)
+    dd = pd.get_dummies(p["d"].astype(str), prefix="d", drop_first=True).astype(float).values
+    X1 = np.column_stack([np.ones(len(p)), p["crit"].values.astype(float),
+                          p["post_crit"].values.astype(float), dd])
+    b1, se1 = clustered_ols(p["p_clear"].values, X1, p["d"].astype(str).values)
+    rows.append({"spec": "B1_dateFE", "outcome": "p_clear", "n": len(p),
+                 "DiD": b1[2], "se": se1[2], "t": b1[2] / se1[2],
+                 "pre_crit": cell.loc[0, 1], "post_crit": cell.loc[1, 1],
+                 "pre_flat": cell.loc[0, 0], "post_flat": cell.loc[1, 0]})
+    return pd.DataFrame(rows)
 
 
 def run_spec_C(disp_panel, reform, label):
