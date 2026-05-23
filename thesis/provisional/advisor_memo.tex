@@ -258,20 +258,34 @@ For MTU15-IDA the post-window is pre-blackout (reforzada absent throughout) so $
 
 \begin{center}
 \footnotesize
-\begin{tabular}{l l r r r r r r r}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l*{4}{c}}
 \toprule
-\textbf{Reform} & \textbf{Outcome} & \textbf{Pre crit} & \textbf{Post crit} & \textbf{Pre flat} & \textbf{Post flat} & \textbf{DiD $\theta$} & \textbf{SE} & \textbf{t} \\
+ & (1) & (2) & (3) & (4) \\
+ & \multicolumn{2}{c}{Price spread $\sigma_p$} & \multicolumn{2}{c}{Tranche count $N_{\text{eff}}$} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+ & MTU15-IDA & MTU15-DA & MTU15-IDA & MTU15-DA \\
 \midrule
-MTU15-IDA & $\sigma_p$         &  8.78 &  7.52 & 11.53 &  8.84 & $+1.71$ & 0.34 & $5.06$ \\
-MTU15-IDA & $N_{\text{eff}}$   &  3.98 &  5.07 &  5.97 &  7.31 & $+0.10$ & 0.12 & $0.83$ \\
-MTU15-DA  & $\sigma_p$         & 19.13 & 21.06 & 16.34 & 16.89 & $+1.36$ & 0.34 & $4.07$ \\
-MTU15-DA  & $N_{\text{eff}}$   &  3.22 &  3.58 &  3.06 &  3.28 & $+0.14$ & 0.04 & $3.96$ \\
+Post $\times$ Critical ($\theta$) & $1.71^{***}$ & $1.36^{***}$ & $0.10$\phantom{$^{***}$} & $0.14^{***}$ \\
+                                  & $(0.34)$    & $(0.34)$    & $(0.12)$  & $(0.04)$  \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Cell means (raw)}} \\
+\quad Pre, crit   &  8.78 & 19.13 & 3.98 & 3.22 \\
+\quad Post, crit  &  7.52 & 21.06 & 5.07 & 3.58 \\
+\quad Pre, flat   & 11.53 & 16.34 & 5.97 & 3.06 \\
+\quad Post, flat  &  8.84 & 16.89 & 7.31 & 3.28 \\
+\midrule
+Unit FE         & Yes        & Yes        & Yes        & Yes        \\
+Date FE         & No         & No         & No         & No         \\
+Cluster (date)  & Yes        & Yes        & Yes        & Yes        \\
+$N$ (curves)    & $150{,}350$ & $317{,}698$ & $150{,}350$ & $317{,}698$ \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\smallskip
+\noindent{\footnotesize \textit{Notes:} Standard errors in parentheses, clustered by date. $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$. Unit FE absorbed via within-unit demeaning. Sample: Big-4 (IB/GE/GN/HC) CCGT $+$ Hydro reservoir $+$ Hydro pump-storage sell offers; in-band $|p_{\text{bid}}-\text{MCP}|\le 140$ EUR/MWh. Critical $h \in \{5,\dots,8, 16,\dots,22\}$; flat $h \in \{1,2,3\}$; other hours dropped.}
 % Source: results/regressions/bid/mtu15_critical_flat/specA_per_curve_did.csv
-% Sample: CCGT + Hydro reservoir + Hydro pump of Big-4 (IB/GE/GN/HC).
-% IDA: 150{,}350 in-band per-(unit,date,session,period) curves; DA: 317{,}698.
 
 \paragraph{Reading.}
 \textit{(Gap. Key points: $\sigma_p$ DiD positive and significant for BOTH reforms --- MTU15 unlocks a wider in-band price ladder in critical hours, the strategic margin granularity creates. $N_{\text{eff}}$ DiD: significant only for DA15, suggesting quantity-side fragmentation responds to the DA reform but not detectably to the IDA reform within the 40-day clean window.)}
@@ -280,23 +294,33 @@ MTU15-DA  & $N_{\text{eff}}$   &  3.22 &  3.58 &  3.06 &  3.28 & $+0.14$ & 0.04 
 
 \begin{center}
 \footnotesize
-\begin{tabular}{l l r r r r r r r}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l*{4}{c}}
 \toprule
-\textbf{Reform} & \textbf{Spec} & \textbf{Pre crit} & \textbf{Post crit} & \textbf{Pre flat} & \textbf{Post flat} & \textbf{DiD $\theta$ (EUR/MWh)} & \textbf{SE} & \textbf{t} \\
+ & (1) & (2) & (3) & (4) \\
+ & \multicolumn{2}{c}{MTU15-IDA} & \multicolumn{2}{c}{MTU15-DA} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+ & B0: no FE & B1: $+$date FE & B0: no FE & B1: $+$date FE \\
 \midrule
-MTU15-IDA & B0 (no FE)   & 114.0 & 38.3 & 84.2 & 19.8 & $-11.32$ & 3.72 & $-3.04$ \\
-MTU15-IDA & B1 (date FE) & ---   & ---  & ---  & ---  & $-11.18$ & 3.75 & $-2.98$ \\
-MTU15-DA  & B0 (no FE)   &  79.4 & 86.9 & 85.2 & 66.0 & $+26.70$ & 2.51 & $+10.65$ \\
-MTU15-DA  & B1 (date FE) & ---   & ---  & ---  & ---  & $+26.70$ & 2.54 & $+10.50$ \\
+Post $\times$ Critical ($\theta$) & $-11.32^{***}$ & $-11.18^{***}$ & $+26.70^{***}$ & $+26.70^{***}$ \\
+                                  & $(3.72)$    & $(3.75)$    & $(2.51)$    & $(2.54)$    \\
+\addlinespace
+\multicolumn{5}{l}{\textit{Cell means (raw, EUR/MWh)}} \\
+\quad Pre, crit   & 114.0 & --- & 79.4 & --- \\
+\quad Post, crit  &  38.3 & --- & 86.9 & --- \\
+\quad Pre, flat   &  84.2 & --- & 85.2 & --- \\
+\quad Post, flat  &  19.8 & --- & 66.0 & --- \\
+\midrule
+Date FE         & No         & Yes        & No         & Yes        \\
+Cluster (date)  & Yes        & Yes        & Yes        & Yes        \\
+$N$             & $8{,}652$   & $8{,}652$   & $6{,}440$   & $6{,}440$   \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\smallskip
+\noindent{\footnotesize \textit{Notes:} Outcome: OMIE clearing price (EUR/MWh). Standard errors in parentheses, clustered by date. $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$. B0 is the naive DiD with no FE; B1 adds date FE (the post main effect is absorbed; the DiD is identified strictly off within-day crit-vs-flat variation across the cutover, absorbing every common date-level shock --- seasonal, gas-price, reforzada drift, weekday). Sample: ID15 from \texttt{marginalpibc} (3 sessions $\times$ period); DA15 from \texttt{marginalpdbc}.}
 % Source: results/regressions/bid/mtu15_critical_flat/specB_aggregate_price_did.csv
-% IDA: 8{,}652 (date, session, period) observations; DA: 6{,}440.
-% B0: raw OLS (post + crit + post*crit). B1: + date FE (post absorbed; the
-%   DiD is identified strictly off within-day crit-vs-flat variation across
-%   the cutover, absorbing every common date-level shock: seasonal,
-%   gas-price, reforzada drift, weekday).
 
 \paragraph{Seasonality.} The pre/post arms span large seasonal transitions (ID15 winter $\to$ early spring; DA15 summer $\to$ autumn) and the level changes are correspondingly large. Spec B1 absorbs every common date-level shock via date FE; the DiD is essentially unchanged ($-11.32 \to -11.18$ ID15; $+26.70 \to +26.70$ DA15), so the headline numbers are \emph{not} driven by simple date-level seasonality. \textit{(Residual concern, to flag in the prose: a differential seasonal \emph{trend} in the (crit $-$ flat) differential itself --- which date FE does not catch --- would still confound the DiD. The standard same-calendar-month robustness against prior years is not directly feasible in the tight windows used here; the cleanest available fallback is the Spec C cross-sectional within-hour dispersion test below, which is post-only and so immune by construction to pre/post seasonal drift.)}
 
@@ -307,19 +331,32 @@ MTU15-DA  & B1 (date FE) & ---   & ---  & ---  & ---  & $+26.70$ & 2.54 & $+10.5
 
 \begin{center}
 \footnotesize
-\begin{tabular}{l l l r r r r r}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l*{6}{c}}
 \toprule
-\textbf{Reform} & \textbf{Object} & \textbf{Outcome} & \textbf{Mean flat} & \textbf{Mean crit} & \textbf{$\theta_{\text{crit}}$} & \textbf{SE} & \textbf{t} \\
+ & (1) & (2) & (3) & (4) & (5) & (6) \\
+ & \multicolumn{2}{c}{$D_{\text{price}}$ (unit, EUR/MWh)} & \multicolumn{2}{c}{$D_{\text{qty}}$ (unit, CV)} & \multicolumn{2}{c}{SD$_{\text{price}}$ (system, EUR/MWh)} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+ & MTU15-IDA & MTU15-DA & MTU15-IDA & MTU15-DA & MTU15-IDA & MTU15-DA \\
 \midrule
-MTU15-IDA & per-unit  & $D_{\text{price}}$ (EUR/MWh)  & 0.12  & 0.50  & $+0.38$ & 0.05  & $8.02$  \\
-MTU15-IDA & per-unit  & $D_{\text{qty}}$ (CV)         & 0.007 & 0.031 & $+0.023$& 0.003 & $8.96$  \\
-MTU15-IDA & system    & $\text{SD}_{\text{price}}$ (EUR/MWh) & 2.50  & 7.04  & $+4.55$ & 0.40  & $11.46$ \\
-MTU15-DA  & per-unit  & $D_{\text{price}}$ (EUR/MWh)  & 0.21  & 1.53  & $+1.32$ & 0.11  & $12.10$ \\
-MTU15-DA  & per-unit  & $D_{\text{qty}}$ (CV)         & 0.008 & 0.041 & $+0.032$& 0.002 & $18.77$ \\
-MTU15-DA  & system    & $\text{SD}_{\text{price}}$ (EUR/MWh) & 2.49  & 6.46  & $+3.97$ & 0.37  & $10.72$ \\
+Critical ($\theta$) & $0.39^{***}$ & $1.35^{***}$ & $0.024^{***}$ & $0.033^{***}$ & $4.55^{***}$ & $3.97^{***}$ \\
+                    & $(0.05)$  & $(0.11)$  & $(0.003)$ & $(0.002)$ & $(0.40)$  & $(0.37)$  \\
+\addlinespace
+\multicolumn{7}{l}{\textit{Raw means (post-MTU15 only)}} \\
+\quad Mean (flat)       & 0.12  & 0.21  & 0.007 & 0.008 & 2.50 & 2.49 \\
+\quad Mean (crit)       & 0.50  & 1.53  & 0.031 & 0.041 & 7.04 & 6.46 \\
+\quad Ratio crit/flat   & $4.1{\times}$ & $7.3{\times}$ & $4.3{\times}$ & $4.9{\times}$ & $2.8{\times}$ & $2.6{\times}$ \\
+\midrule
+Date FE         & Yes        & Yes        & Yes        & Yes        & Yes        & Yes        \\
+Unit FE         & No         & No         & No         & No         & n/a        & n/a        \\
+Cluster (date)  & Yes        & Yes        & Yes        & Yes        & Yes        & Yes        \\
+$N$             & $23{,}797$  & $62{,}379$  & $23{,}797$  & $62{,}379$  & $1{,}386$   & $1{,}288$   \\
 \bottomrule
 \end{tabular}
 \end{center}
+
+\smallskip
+\noindent{\footnotesize \textit{Notes:} Cross-sectional regression on the post-MTU15 sample only (pre-MTU15 has one period per hour, so the within-hour SD is undefined). Standard errors in parentheses, clustered by date. Date FE absorbed via within-date demeaning of the outcome and the Critical indicator. $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$. Per-unit cells require all 4 within-hour quarters bid; system cells require all 4 quarter clearing prices observed. ID15 post-window: 2025-03-19 to 2025-04-27. DA15 post-window: 2025-10-01 to 2025-12-31.}
 % Source: results/regressions/bid/mtu15_critical_flat/specC_within_hour_dispersion.csv
 
 \paragraph{Reading.}

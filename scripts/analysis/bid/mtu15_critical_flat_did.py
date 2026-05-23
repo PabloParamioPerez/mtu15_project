@@ -356,7 +356,9 @@ def run_spec_B(price_panel, reform):
 
 
 def run_spec_C(disp_panel, reform, label):
-    """Post-only cross-sectional crit-vs-flat on within-hour dispersion outcomes."""
+    """Post-only cross-sectional crit-vs-flat on within-hour dispersion outcomes,
+    with DATE FE (absorbed via within-date demeaning of Y and crit). SE
+    clustered by date."""
     w = WINDOWS[reform]
     post_lo, post_hi = pd.Timestamp(w["post_lo"]), pd.Timestamp(w["post_hi"])
     p = disp_panel.copy()
@@ -369,12 +371,15 @@ def run_spec_C(disp_panel, reform, label):
     out = []
     outcomes = [c for c in ["D_price", "D_qty", "SD_price"] if c in p.columns]
     for outcome in outcomes:
-        d = p.dropna(subset=[outcome])
+        d = p.dropna(subset=[outcome]).copy()
         if len(d) < 30:
             continue
         means = d.groupby("crit")[outcome].mean()
-        X = np.column_stack([np.ones(len(d)), d["crit"].values])
-        beta, se = clustered_ols(d[outcome].values, X, d["d"].astype(str).values)
+        # Within-date demean Y and crit (absorbs date FE).
+        d["y_d"] = d[outcome] - d.groupby("d")[outcome].transform("mean")
+        d["crit_d"] = d["crit"] - d.groupby("d")["crit"].transform("mean")
+        X = np.column_stack([np.ones(len(d)), d["crit_d"].values])
+        beta, se = clustered_ols(d["y_d"].values, X, d["d"].astype(str).values)
         out.append({"label": label, "outcome": outcome, "n": len(d),
                     "theta_crit": beta[1], "se": se[1], "t": beta[1] / se[1],
                     "mean_flat": means.get(0, np.nan),
