@@ -53,6 +53,7 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 H = 140.0
 CRITICAL = {5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22}
 FLAT = {1, 2, 3}
+MIDDAY = {11, 12, 13, 14}  # solar-marginal low-variance falsification target
 TECHS = ["CCGT", "Hydro", "Hydro_pump"]
 FIRMS = ["IB", "GE", "GN", "HC"]
 
@@ -90,6 +91,7 @@ def firm_bucket(o):
 def hour_class_label(h):
     if h in CRITICAL: return "Critical"
     if h in FLAT: return "Flat"
+    if h in MIDDAY: return "Midday"
     return "Other"
 
 
@@ -177,6 +179,29 @@ def build_ida_panel(lo, hi):
                "sum_w", "sum_wp"]]
 
 
+def build_da_cleared_mw(lo, hi):
+    """System-aggregate DA cleared MW per (date, period). Sum of all units'
+    cleared quantity from pdbc_all. Column named 'p_clear' so it can be
+    fed to run_spec_B directly (the outcome label is set in main)."""
+    PDBC = REPO / "data/processed/omie/mercado_diario/programas/pdbc_all.parquet"
+    con = duckdb.connect()
+    con.execute("SET memory_limit='8GB'")
+    sql = f"""
+    SELECT CAST(date AS DATE) d, CAST(NULL AS INT) session_number, period,
+           SUM(assigned_power_mw) AS p_clear,
+           COALESCE(mtu_minutes, 60) mtu
+    FROM '{PDBC}' WHERE date BETWEEN '{lo}' AND '{hi}'
+      AND assigned_power_mw > 0
+    GROUP BY 1, period, mtu_minutes
+    """
+    df = con.execute(sql).fetchdf()
+    df["d"] = pd.to_datetime(df["d"])
+    df["clock_hour"] = np.where(df["mtu"] == 60, df["period"] - 1,
+                                 ((df["period"] - 1) // 4).astype(int))
+    df["hour_class"] = df["clock_hour"].map(hour_class_label)
+    return df
+
+
 def build_aggregate_price(market, lo, hi):
     """Per (date, [session,] period) clearing price."""
     con = duckdb.connect()
@@ -260,9 +285,13 @@ def build_price_dispersion(price_panel):
 # Spec runners
 # ============================================================================
 
-def run_spec_A(panel, reform, tech_filter=None):
+def run_spec_A(panel, reform, tech_filter=None, firm_filter=None,
+               treated="Critical", control="Flat"):
     """Per-curve DiD on sigma_p and N_eff. If tech_filter is set
-    (e.g. 'CCGT'), restricts the panel to that tech first."""
+    (e.g. 'CCGT'), restricts the panel to that tech first; firm_filter
+    further restricts to a single firm. treated/control control which
+    hour-classes are compared (defaults Critical vs Flat; use
+    treated='Midday' for a falsification)."""
     w = WINDOWS[reform]
     pre_lo, pre_hi = pd.Timestamp(w["pre_lo"]), pd.Timestamp(w["pre_hi"])
     post_lo, post_hi = pd.Timestamp(w["post_lo"]), pd.Timestamp(w["post_hi"])
@@ -270,13 +299,15 @@ def run_spec_A(panel, reform, tech_filter=None):
     p["d"] = pd.to_datetime(p["d"])
     if tech_filter is not None:
         p = p[p["tech"] == tech_filter].copy()
+    if firm_filter is not None:
+        p = p[p["firm"] == firm_filter].copy()
     in_pre = (p["d"] >= pre_lo) & (p["d"] <= pre_hi)
     in_post = (p["d"] >= post_lo) & (p["d"] <= post_hi)
-    p = p[(in_pre | in_post) & p["hour_class"].isin(["Critical", "Flat"])].copy()
+    p = p[(in_pre | in_post) & p["hour_class"].isin([treated, control])].copy()
     if p.empty:
         return None
     p["post"] = (p["d"] >= post_lo).astype(int)
-    p["crit"] = (p["hour_class"] == "Critical").astype(int)
+    p["crit"] = (p["hour_class"] == treated).astype(int)
     p["post_crit"] = p["post"] * p["crit"]
     out = []
     for outcome in ["sigma_p", "n_eff"]:
@@ -458,24 +489,57 @@ def main():
     da["hour_class"] = da["clock_hour"].map(hour_class_label)
     print(f"  {len(da):,} DA in-band curves (DA15 window)")
 
-    # ---- Spec A: per-curve DiD (pooled + per-tech) ---------------------------
-    print("\n=== Spec A: per-curve DiD (sigma_p, N_eff), pooled + per-tech ===")
+    # ---- Spec A: per-curve DiD (pooled + per-tech + per-CCGT-firm) -----------
+    print("\n=== Spec A: per-curve DiD (sigma_p, N_eff), pooled + per-tech "
+          "+ per-CCGT-firm ===")
     a_rows = []
     for reform, panel, market in [("ID15", ida, "IDA"), ("DA15", da, "DA")]:
         # Pooled (all techs)
         a_p = run_spec_A(panel, reform, tech_filter=None)
         if a_p is not None:
             a_p.insert(0, "reform", reform); a_p.insert(1, "market", market)
-            a_p.insert(2, "tech", "All"); a_rows.append(a_p)
-        # Per tech
+            a_p.insert(2, "tech", "All"); a_p.insert(3, "firm", "All")
+            a_rows.append(a_p)
+        # Per tech (firm-pooled)
         for tech in TECHS:
             a_t = run_spec_A(panel, reform, tech_filter=tech)
             if a_t is not None:
                 a_t.insert(0, "reform", reform); a_t.insert(1, "market", market)
-                a_t.insert(2, "tech", tech); a_rows.append(a_t)
+                a_t.insert(2, "tech", tech); a_t.insert(3, "firm", "All")
+                a_rows.append(a_t)
+        # Per CCGT firm (Idea 1: firm-level heterogeneity within CCGT)
+        for firm in FIRMS:
+            a_f = run_spec_A(panel, reform, tech_filter="CCGT", firm_filter=firm)
+            if a_f is not None:
+                a_f.insert(0, "reform", reform); a_f.insert(1, "market", market)
+                a_f.insert(2, "tech", "CCGT"); a_f.insert(3, "firm", firm)
+                a_rows.append(a_f)
     a = pd.concat(a_rows, ignore_index=True)
     print(a.to_string(index=False))
     a.to_csv(OUT_DIR / "specA_per_curve_did.csv", index=False)
+
+    # ---- Spec A FALSIFICATION on Midday (Idea 6) -----------------------------
+    print("\n=== Spec A FALSIFICATION: midday (11-14) vs flat -- DiD should "
+          "be ~0 (solar-marginal hours have no within-hour variation for "
+          "MTU15 to unlock) ===")
+    f_rows = []
+    for reform, panel, market in [("ID15", ida, "IDA"), ("DA15", da, "DA")]:
+        # Pooled
+        a_p = run_spec_A(panel, reform, treated="Midday", control="Flat")
+        if a_p is not None:
+            a_p.insert(0, "reform", reform); a_p.insert(1, "market", market)
+            a_p.insert(2, "tech", "All"); a_rows_falsif = a_p
+            f_rows.append(a_p)
+        for tech in TECHS:
+            a_t = run_spec_A(panel, reform, tech_filter=tech,
+                             treated="Midday", control="Flat")
+            if a_t is not None:
+                a_t.insert(0, "reform", reform); a_t.insert(1, "market", market)
+                a_t.insert(2, "tech", tech); f_rows.append(a_t)
+    if f_rows:
+        f = pd.concat(f_rows, ignore_index=True)
+        print(f.to_string(index=False))
+        f.to_csv(OUT_DIR / "specA_falsification_midday.csv", index=False)
 
     # ---- Spec B: aggregate clearing-price DiD --------------------------------
     print("\n=== Spec B: aggregate clearing-price DiD ===")
@@ -487,7 +551,16 @@ def main():
     b_ida.insert(0, "reform", "ID15"); b_ida.insert(1, "market", "IDA")
     b_da = run_spec_B(da_prices, "DA15")
     b_da.insert(0, "reform", "DA15"); b_da.insert(1, "market", "DA")
-    b = pd.concat([b_ida, b_da], ignore_index=True)
+    # Add cleared-MW outcome for DA15 (Idea 4: quantity-side parallel to price)
+    print("  building DA cleared-MW panel (sum across units, per period)...")
+    da_cleared = build_da_cleared_mw(WINDOWS["DA15"]["pre_lo"],
+                                      WINDOWS["DA15"]["post_hi"])
+    b_da_q = run_spec_B(da_cleared, "DA15")
+    if b_da_q is not None:
+        b_da_q.insert(0, "reform", "DA15"); b_da_q.insert(1, "market", "DA")
+        b_da_q["outcome"] = "cleared_MW"
+    b = pd.concat([b_ida, b_da, b_da_q] if b_da_q is not None else
+                  [b_ida, b_da], ignore_index=True)
     print(b.to_string(index=False))
     b.to_csv(OUT_DIR / "specB_aggregate_price_did.csv", index=False)
 

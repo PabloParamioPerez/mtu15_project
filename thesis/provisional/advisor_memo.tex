@@ -266,23 +266,36 @@ For MTU15-IDA the post-window is pre-blackout (reforzada absent throughout) so $
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
  & MTU15-IDA & MTU15-DA & MTU15-IDA & MTU15-DA \\
 \midrule
-\multicolumn{5}{l}{\textit{Post $\times$ Critical ($\theta$), by technology:}} \\[1pt]
+\multicolumn{5}{l}{\textit{Panel A: $\theta$ by technology (firm-pooled)}} \\[1pt]
 \quad CCGT       & $2.45^{***}$ & $1.30^{*}$\phantom{$^{**}$}  & $0.79^{***}$ & $0.44^{***}$ \\
                  & $(0.58)$    & $(0.75)$    & $(0.30)$    & $(0.06)$    \\
 \quad Hydro      & $1.17^{***}$ & $1.69^{***}$ & $0.21^{***}$ & $-0.04$\phantom{$^{***}$} \\
                  & $(0.44)$    & $(0.29)$    & $(0.06)$    & $(0.04)$    \\
 \quad Hydro pump & $0.25$\phantom{$^{***}$} & $-0.63^{*}$\phantom{$^{**}$} & $0.18^{**}$\phantom{$^{*}$} & $-0.05$\phantom{$^{***}$} \\
                  & $(0.28)$    & $(0.36)$    & $(0.08)$    & $(0.03)$    \\
-\addlinespace
 \quad (Pooled)   & $1.71^{***}$ & $1.36^{***}$ & $0.10$\phantom{$^{***}$} & $0.14^{***}$ \\
                  & $(0.34)$    & $(0.34)$    & $(0.12)$    & $(0.04)$    \\
 \midrule
-Unit FE          & Yes        & Yes        & Yes        & Yes        \\
-Date FE          & No         & No         & No         & No         \\
-Cluster (date)   & Yes        & Yes        & Yes        & Yes        \\
-$N$ (CCGT)       & $50{,}824$  & $159{,}669$ & $50{,}824$  & $159{,}669$ \\
-$N$ (Hydro)      & $81{,}567$  & $132{,}822$ & $81{,}567$  & $132{,}822$ \\
-$N$ (Hydro pump) & $17{,}959$  & $25{,}207$  & $17{,}959$  & $25{,}207$  \\
+\multicolumn{5}{l}{\textit{Panel B: $\theta$ by CCGT firm (Big-4)}} \\[1pt]
+\quad IB & $6.46^{***}$  & $3.01^{***}$  & $0.15^{**}$\phantom{$^{*}$}  & $0.32^{***}$ \\
+         & $(1.72)$      & $(1.12)$      & $(0.06)$      & $(0.10)$      \\
+\quad GE & $2.10^{**}$\phantom{$^{*}$} & $-1.47^{***}$ & $0.15^{***}$ & $-0.03^{***}$ \\
+         & $(0.87)$      & $(0.32)$      & $(0.04)$      & $(0.01)$      \\
+\quad GN & $2.88^{***}$  & $35.00^{***}$ & $1.84^{***}$  & $3.13^{***}$  \\
+         & $(0.67)$      & $(2.26)$      & $(0.50)$      & $(0.23)$      \\
+\quad HC & $-1.03$\phantom{$^{***}$} & $-12.96^{***}$ & $-0.15$\phantom{$^{***}$} & $-0.27^{***}$ \\
+         & $(1.60)$      & $(1.40)$      & $(0.14)$      & $(0.05)$      \\
+\midrule
+Unit FE              & Yes        & Yes        & Yes        & Yes        \\
+Date FE              & No         & No         & No         & No         \\
+Cluster (date)       & Yes        & Yes        & Yes        & Yes        \\
+$N$ Panel A (CCGT)   & $50{,}824$  & $159{,}669$ & $50{,}824$  & $159{,}669$ \\
+$N$ Panel A (Hydro)  & $81{,}567$  & $132{,}822$ & $81{,}567$  & $132{,}822$ \\
+$N$ Panel A (H. pump)& $17{,}959$  & $25{,}207$  & $17{,}959$  & $25{,}207$  \\
+$N$ Panel B (IB)     & $5{,}373$   & $45{,}957$  & $5{,}373$   & $45{,}957$  \\
+$N$ Panel B (GE)     & $12{,}507$  & $30{,}667$  & $12{,}507$  & $30{,}667$  \\
+$N$ Panel B (GN)     & $28{,}571$  & $44{,}464$  & $28{,}571$  & $44{,}464$  \\
+$N$ Panel B (HC)     & $4{,}373$   & $38{,}581$  & $4{,}373$   & $38{,}581$  \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -292,7 +305,7 @@ $N$ (Hydro pump) & $17{,}959$  & $25{,}207$  & $17{,}959$  & $25{,}207$  \\
 % Source: results/regressions/bid/mtu15_critical_flat/specA_per_curve_did.csv
 
 \paragraph{Reading.}
-\textit{(Gap. Per-tech heterogeneity is large and economically meaningful. (i) ID15 --- CCGT responds strongest on both margins ($\sigma_p$ $+2.45^{***}$, $N_{\text{eff}}$ $+0.79^{***}$); Hydro reservoir intermediate; pump-storage tiny/null on $\sigma_p$ but small positive on $N_{\text{eff}}$. (ii) DA15 --- the leader flips: Hydro reservoir takes the largest $\sigma_p$ response ($+1.69^{***}$), CCGT only marginally significant on $\sigma_p$ ($+1.30^{*}$) but dominant on $N_{\text{eff}}$ ($+0.44^{***}$); pump-storage NEGATIVE on $\sigma_p$ ($-0.63^{*}$). (iii) The pooled estimate hides the heterogeneity --- e.g. ID15 $N_{\text{eff}}$ pooled $+0.10$ is null, but CCGT alone is $+0.79^{***}$ and Hydro $+0.21^{***}$. The contrast between ID15 (CCGT-led) and DA15 (Hydro-led on $\sigma_p$, CCGT-led on $N_{\text{eff}}$) deserves a paragraph: each reform reshapes a different lever.)}
+\textit{(Gap. Per-tech heterogeneity is large and economically meaningful (Panel A). (i) ID15 --- CCGT responds strongest on both margins; Hydro intermediate; pump-storage tiny on $\sigma_p$. (ii) DA15 --- the leader flips: Hydro reservoir takes the largest $\sigma_p$ response ($+1.69^{***}$), CCGT dominant on $N_{\text{eff}}$ ($+0.44^{***}$); pump-storage NEGATIVE on $\sigma_p$. (iii) The pooled estimate hides the heterogeneity (e.g. ID15 $N_{\text{eff}}$ pooled null, CCGT $+0.79^{***}$). Panel B drills into CCGT: ID15 sees a sharp firm split, with IB the biggest $\sigma_p$ shifter ($+6.46^{***}$) and GN the biggest $N_{\text{eff}}$ shifter ($+1.84^{***}$); HC essentially null. DA15 looks even more heterogeneous, but the GN row ($+35.0^{***}$ on $\sigma_p$, $+3.13^{***}$ on $N_{\text{eff}}$) is driven by an anomalous collapse of GN's flat-hour bidding post-reform (pre/post-flat means $40.7 \to 7.6$), so it should be flagged as a level-shift artefact rather than read as a within-hour MTU15 effect. The cleaner DA15 firm story is IB $+3.01^{***}$, GE $-1.47^{***}$, HC $-12.96^{***}$: firms differentiate sharply in how they exploit (or de-exploit) the new granular margin.)}
 
 \subsection*{6.4 Spec B --- aggregate clearing-price DiD}
 
@@ -331,6 +344,38 @@ $N$             & $8{,}652$   & $8{,}652$   & $6{,}440$   & $6{,}440$   \\
 \paragraph{Reading.}
 \textit{(Gap. The headline empirical fact: opposite signs. ID15 --- critical-hour IDA prices fell EUR\,$11/$MWh more than flat-hour ones after MTU15-IDA (granular intraday absorbed within-hour scarcity, compressing the critical peak). DA15 --- critical-hour DA prices rose EUR\,$27/$MWh more than flat (granular day-ahead pricing extracted higher rents in scarce quarters; within-hour ladder now realised in the clearing price).)}
 
+\paragraph{Quantity outcome (DA cleared MW, DA15 only).} Same B0/B1 spec but with the OMIE day-ahead cleared MW as outcome (sum across units of \texttt{assigned\_power\_mw} from \texttt{pdbc\_all}, per (date, period)).
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l*{2}{c}}
+\toprule
+ & (1) & (2) \\
+ & B0: no FE & B1: $+$date FE \\
+\midrule
+Post $\times$ Critical ($\theta$, MW) & $-2{,}115^{***}$ & $-2{,}115^{***}$ \\
+                                       & $(255)$         & $(259)$         \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Cell means (raw, MW)}} \\
+\quad Pre, crit   & $20{,}516$ & --- \\
+\quad Post, crit  & $19{,}214$ & --- \\
+\quad Pre, flat   & $15{,}643$ & --- \\
+\quad Post, flat  & $16{,}457$ & --- \\
+\midrule
+Date FE        & No  & Yes \\
+Cluster (date) & Yes & Yes \\
+$N$            & $6{,}440$ & $6{,}440$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\smallskip
+\noindent{\footnotesize \textit{Notes:} Outcome: total DA cleared MW per period. Critical-hour cleared volume \emph{fell} by $-1{,}301$ MW post-reform; flat-hour rose by $+814$ MW; DiD $= -2{,}115^{***}$. \textit{(Read jointly with the price DiD above: critical-hour DA price ROSE by EUR\,$27/$MWh, cleared QUANTITY FELL by $2{,}115$ MW --- the joint pattern is a textbook withholding signature in the critical hours where MTU15-DA created the discrimination margin.)}}
+
+\paragraph{Reading (quantity).}
+\textit{(Gap. The joint price-up / quantity-down pattern in critical hours is the empirical face of strategic discrimination. The same MTU15-DA reform that let firms post higher prices in scarce quarters also let them clear less volume there --- consistent with a more elastic supply schedule being pivoted up in critical hours.)}
+
 \subsection*{6.5 Spec C --- within-hour dispersion (post-MTU15 only)}
 
 \begin{center}
@@ -366,8 +411,43 @@ $N$             & $23{,}797$  & $62{,}379$  & $23{,}797$  & $62{,}379$  & $1{,}3
 \paragraph{Reading.}
 \textit{(Gap. The falsification: every within-hour dispersion outcome is $3$--$7\times$ larger in critical than flat hours post-MTU15. This is the direct confirmation that MTU15 unlocks within-hour discrimination only where within-hour residual demand actually varies. The system-level SD$_{\text{price}}$ $\sim$ EUR\,$6$--$7/$MWh in critical hours vs $\sim$EUR\,$2.5$ in flat is the realised cross-quarter clearing-price spread --- the empirical face of the unlocked discrimination margin.)}
 
-\subsection*{6.6 Robustness (to add)}
+\subsection*{6.6 Falsification --- midday hours as a placebo group}
 
-\textit{(Gap to write. Planned: extended pre windows (full pre-MTU15-IDA back to 2024-06-14; full pre-MTU15-DA back to 2024-06-14) for sample-length sensitivity; same-calendar-month restriction; per-firm and per-tech breakdowns of the DiD (trivial off the existing panel); for DA15, acknowledgement that no clean placebo exists for separating MTU15-DA from reforzada beyond the critical-flat differencing.)}
+If MTU15 only matters where within-hour residual demand actually varies, the DiD should be small on midday hours (11--14, solar-marginal, $\sigma_{\text{within}}$ $\in [468, 502]$ MW --- between critical $[522, 1303]$ and flat $[336, 357]$). Re-running Spec A with midday as the treated group and flat as the control:
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l*{4}{c}}
+\toprule
+ & (1) & (2) & (3) & (4) \\
+ & \multicolumn{2}{c}{Price spread $\sigma_p$} & \multicolumn{2}{c}{Tranche count $N_{\text{eff}}$} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+ & MTU15-IDA & MTU15-DA & MTU15-IDA & MTU15-DA \\
+\midrule
+\multicolumn{5}{l}{\textit{Post $\times$ Midday ($\theta$), Spec A (Critical replaced by Midday):}} \\[1pt]
+\quad (Pooled)   & $1.10^{***}$ & $2.26^{***}$ & $0.06$\phantom{$^{***}$}  & $0.18^{***}$ \\
+                 & $(0.41)$    & $(0.43)$    & $(0.10)$    & $(0.04)$    \\
+\quad CCGT       & $2.75^{***}$ & $1.55^{*}$\phantom{$^{**}$}  & $1.44^{***}$ & $0.40^{***}$ \\
+                 & $(0.72)$    & $(0.81)$    & $(0.27)$    & $(0.06)$    \\
+\quad Hydro      & $0.00$\phantom{$^{***}$}  & $2.77^{***}$ & $-0.09$\phantom{$^{***}$} & $0.05$\phantom{$^{***}$} \\
+                 & $(0.47)$    & $(0.44)$    & $(0.08)$    & $(0.05)$    \\
+\quad Hydro pump & $0.62$\phantom{$^{***}$}  & $0.38$\phantom{$^{***}$}  & $0.14$\phantom{$^{***}$}  & $0.14^{**}$\phantom{$^{*}$} \\
+                 & $(0.46)$    & $(0.35)$    & $(0.10)$    & $(0.06)$    \\
+\midrule
+$N$ (pooled)     & $83{,}887$  & $129{,}100$ & $83{,}887$  & $129{,}100$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\smallskip
+\noindent{\footnotesize \textit{Notes:} Same Spec A regression as Table 6.3 Panel A but with treated $h \in \{11, 12, 13, 14\}$ instead of $\{5,\dots,8, 16,\dots,22\}$. Standard errors in parentheses, clustered by date. Source: \texttt{results/regressions/bid/mtu15\_critical\_flat/specA\_falsification\_midday.csv}.}
+
+\paragraph{Reading.}
+\textit{(Gap. The falsification is \emph{partial}, not clean: midday is not zero. Pooled $\sigma_p$ midday $+1.10^{***}$ (ID15) is $\sim\!65\%$ of the critical $+1.71^{***}$; for DA15 the midday $+2.26^{***}$ actually exceeds the critical $+1.36^{***}$ pooled. By tech, CCGT midday ID15 ($+2.75^{***}$) is bigger than CCGT critical ID15 ($+2.45^{***}$). The honest reading: MTU15 unlocks discrimination wherever within-hour residual demand has any variance --- and midday has intermediate variance, so a non-trivial effect there is consistent with the mechanism rather than refuting it. The result is therefore not a pure placebo failure; it sharpens the interpretation as a \emph{dose-response} reading of MTU15 (effect grows with the within-hour variance of the hour class). A cleaner placebo (e.g.\ a calendar block with no MTU15 in either arm, or weekends if the variance pattern differs) is the natural next robustness.)}
+
+\subsection*{6.7 Further robustness (to add)}
+
+\textit{(Gap to write. Planned: extended pre windows (full pre-MTU15-IDA back to 2024-06-14; full pre-MTU15-DA back to 2024-06-14) for sample-length sensitivity; same-calendar-month restriction; CCGT scarcity-tier decomposition of the bid-shape outcomes; for DA15, acknowledgement that no clean placebo exists for separating MTU15-DA from reforzada beyond the critical-flat differencing.)}
 
 \end{document}
