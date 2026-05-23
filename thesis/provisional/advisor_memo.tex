@@ -204,4 +204,121 @@
 \end{tabular}
 \end{center}
 
+% =====================================================================
+% PAGE 6+: MTU15 effect --- critical/flat identification (ID15 and DA15)
+% =====================================================================
+\section*{6. MTU15 effect: critical/flat identification (ID15 and DA15)}
+
+\paragraph{Strategy.}
+\textit{(Gap to write: 3--4 sentences recapping the critical/flat identification --- critical hours $\{5,6,7,8,16,\dots,22\}$ are where within-hour residual demand varies and MTU15 has economic content; flat hours $\{1,2,3\}$ are the within-day control where MTU15 should not matter; the (critical $-$ flat) differential across the reform date isolates the MTU15 effect from any day-level shock that hits both classes proportionally.)}
+
+\subsection*{6.1 Specifications}
+
+Let $u$ index a unit, $d$ a date, $p$ a market period (hour pre-MTU15, quarter post), $h$ the clock-hour, $s$ the IDA session, $T_r$ the reform date, $\mathcal{C}$ the critical-hour set. All sell-side, in-band $|p_{\text{bid}} - \text{MCP}| \le 140$ EUR/MWh.
+
+\textbf{Spec A --- per-curve functional outcomes} $Y \in \{\sigma_p, N_{\text{eff}}\}$, panel $(u,d,p[,s])$:
+\[
+Y_{u,d,p[,s]} \;=\; \alpha + \alpha_u + \delta_d + \gamma_h + \beta\,\mathbf{1}\{d \ge T_r\} + \theta\,\mathbf{1}\{d \ge T_r\}\cdot\mathbf{1}\{h \in \mathcal{C}\} + \varepsilon
+\]
+$\alpha_u$ unit FE absorbed by within-unit demeaning; $\gamma_h$ absorbs the crit-flat baseline; SEs clustered by date. $\theta$ is the DiD.
+
+\textbf{Spec B --- aggregate clearing-price DiD}, panel $(d,p[,s])$ over the OMIE clearing price $P$:
+\[
+P_{d,p[,s]} \;=\; \alpha + \gamma_h + \beta\,\mathbf{1}\{d \ge T_r\} + \theta\,\mathbf{1}\{d \ge T_r\}\cdot\mathbf{1}\{h \in \mathcal{C}\} + \varepsilon
+\]
+
+\textbf{Spec C --- within-hour dispersion} (post-only; pre has one period per hour, SD undefined). For each (unit, date, clock-hour [, session]) with all 4 quarters present:
+\begin{align*}
+D_{\text{price}}^{(u,d,h)} &\;=\; \mathrm{sd}_q\!\left\{\bar p_{u,d,h,q}\right\}, &
+D_{\text{qty}}^{(u,d,h)} &\;=\; \frac{\mathrm{sd}_q\!\left\{m_{u,d,h,q}\right\}}{\mathrm{mean}_q\!\left\{m_{u,d,h,q}\right\}},
+\end{align*}
+where $\bar p_{u,d,h,q}$ is the unit's MW-weighted in-band mean price in quarter $q$ and $m_{u,d,h,q}$ is its in-band MW. Regress on the critical indicator:
+\[
+D^{(u,d,h)}_{\cdot} \;=\; \alpha + \alpha_u + \delta_d + \theta\,\mathbf{1}\{h \in \mathcal{C}\} + \varepsilon
+\]
+System-level analog drops the unit dimension and uses the clearing-price SD across the 4 quarters.
+
+\subsection*{6.2 Sample windows (reforzada handled by tight pre/post)}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{l l l c}
+\toprule
+\textbf{Reform} & \textbf{Pre window} & \textbf{Post window} & \textbf{Reforzada} \\
+\midrule
+MTU15-IDA & 2024-12-19 $\to$ 2025-03-18 (3 mo, ISP15) & \textbf{2025-03-19 $\to$ 2025-04-27} (40 d, clean) & absent both arms \\
+MTU15-DA  & 2025-07-01 $\to$ 2025-09-30 (3 mo) & 2025-10-01 $\to$ 2025-12-31 (3 mo) & active both arms, level constant \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+For MTU15-IDA the post-window is pre-blackout (reforzada absent throughout) so $\theta$ identifies the MTU15-IDA effect cleanly. For MTU15-DA both arms sit under continuous reforzada (active since 2025-04-28); the DiD critical-flat interaction strips the level shift as long as the reforzada critical-vs-flat differential is stable across the cutover.
+
+\subsection*{6.3 Spec A --- per-curve $\sigma_p$ and $N_{\text{eff}}$}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{l l r r r r r r r}
+\toprule
+\textbf{Reform} & \textbf{Outcome} & \textbf{Pre crit} & \textbf{Post crit} & \textbf{Pre flat} & \textbf{Post flat} & \textbf{DiD $\theta$} & \textbf{SE} & \textbf{t} \\
+\midrule
+MTU15-IDA & $\sigma_p$         &  8.78 &  7.52 & 11.53 &  8.84 & $+1.71$ & 0.34 & $5.06$ \\
+MTU15-IDA & $N_{\text{eff}}$   &  3.98 &  5.07 &  5.97 &  7.31 & $+0.10$ & 0.12 & $0.83$ \\
+MTU15-DA  & $\sigma_p$         & 19.13 & 21.06 & 16.34 & 16.89 & $+1.36$ & 0.34 & $4.07$ \\
+MTU15-DA  & $N_{\text{eff}}$   &  3.22 &  3.58 &  3.06 &  3.28 & $+0.14$ & 0.04 & $3.96$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+% Source: results/regressions/bid/mtu15_critical_flat/specA_per_curve_did.csv
+% Sample: CCGT + Hydro reservoir + Hydro pump of Big-4 (IB/GE/GN/HC).
+% IDA: 150{,}350 in-band per-(unit,date,session,period) curves; DA: 317{,}698.
+
+\paragraph{Reading.}
+\textit{(Gap. Key points: $\sigma_p$ DiD positive and significant for BOTH reforms --- MTU15 unlocks a wider in-band price ladder in critical hours, the strategic margin granularity creates. $N_{\text{eff}}$ DiD: significant only for DA15, suggesting quantity-side fragmentation responds to the DA reform but not detectably to the IDA reform within the 40-day clean window.)}
+
+\subsection*{6.4 Spec B --- aggregate clearing-price DiD}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{l r r r r r r r}
+\toprule
+\textbf{Reform} & \textbf{Pre crit} & \textbf{Post crit} & \textbf{Pre flat} & \textbf{Post flat} & \textbf{DiD $\theta$ (EUR/MWh)} & \textbf{SE} & \textbf{t} \\
+\midrule
+MTU15-IDA & 114.0 & 38.3 & 84.2 & 19.8 & $-11.32$ & 3.72 & $-3.04$ \\
+MTU15-DA  &  79.4 & 86.9 & 85.2 & 66.0 & $+26.70$ & 2.51 & $+10.65$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+% Source: results/regressions/bid/mtu15_critical_flat/specB_aggregate_price_did.csv
+% IDA: 8{,}652 (date, session, period) observations; DA: 6{,}440.
+
+\paragraph{Reading.}
+\textit{(Gap. The headline empirical fact: opposite signs. ID15 --- critical-hour IDA prices fell EUR\,$11/$MWh more than flat-hour ones after MTU15-IDA (granular intraday absorbed within-hour scarcity, compressing the critical peak). DA15 --- critical-hour DA prices rose EUR\,$27/$MWh more than flat (granular day-ahead pricing extracted higher rents in scarce quarters; within-hour ladder now realised in the clearing price). Note the level changes are large (gas-price fall over ID15 window; reforzada-driven generally tighter DA over DA15 window) --- the DiD strips both as long as they hit critical and flat similarly.)}
+
+\subsection*{6.5 Spec C --- within-hour dispersion (post-MTU15 only)}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{l l l r r r r r}
+\toprule
+\textbf{Reform} & \textbf{Object} & \textbf{Outcome} & \textbf{Mean flat} & \textbf{Mean crit} & \textbf{$\theta_{\text{crit}}$} & \textbf{SE} & \textbf{t} \\
+\midrule
+MTU15-IDA & per-unit  & $D_{\text{price}}$ (EUR/MWh)  & 0.12  & 0.50  & $+0.38$ & 0.05  & $8.02$  \\
+MTU15-IDA & per-unit  & $D_{\text{qty}}$ (CV)         & 0.007 & 0.031 & $+0.023$& 0.003 & $8.96$  \\
+MTU15-IDA & system    & $\text{SD}_{\text{price}}$ (EUR/MWh) & 2.50  & 7.04  & $+4.55$ & 0.40  & $11.46$ \\
+MTU15-DA  & per-unit  & $D_{\text{price}}$ (EUR/MWh)  & 0.21  & 1.53  & $+1.32$ & 0.11  & $12.10$ \\
+MTU15-DA  & per-unit  & $D_{\text{qty}}$ (CV)         & 0.008 & 0.041 & $+0.032$& 0.002 & $18.77$ \\
+MTU15-DA  & system    & $\text{SD}_{\text{price}}$ (EUR/MWh) & 2.49  & 6.46  & $+3.97$ & 0.37  & $10.72$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+% Source: results/regressions/bid/mtu15_critical_flat/specC_within_hour_dispersion.csv
+
+\paragraph{Reading.}
+\textit{(Gap. The falsification: every within-hour dispersion outcome is $3$--$7\times$ larger in critical than flat hours post-MTU15. This is the direct confirmation that MTU15 unlocks within-hour discrimination only where within-hour residual demand actually varies. The system-level SD$_{\text{price}}$ $\sim$ EUR\,$6$--$7/$MWh in critical hours vs $\sim$EUR\,$2.5$ in flat is the realised cross-quarter clearing-price spread --- the empirical face of the unlocked discrimination margin.)}
+
+\subsection*{6.6 Robustness (to add)}
+
+\textit{(Gap to write. Planned: extended pre windows (full pre-MTU15-IDA back to 2024-06-14; full pre-MTU15-DA back to 2024-06-14) for sample-length sensitivity; same-calendar-month restriction; per-firm and per-tech breakdowns of the DiD (trivial off the existing panel); for DA15, acknowledgement that no clean placebo exists for separating MTU15-DA from reforzada beyond the critical-flat differencing.)}
+
 \end{document}
