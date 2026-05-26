@@ -106,15 +106,36 @@ REE imposes "limitaciones por seguridad" and program modifications to satisfy se
 - Reserve sufficiency for service restoration
 - Distribution-grid security conditions (communicated by DSOs)
 
-**Settlement:** Increases of energy are valued via the technical-restriction offers presented by service providers (least-cost solution from valid technical alternatives). Reductions are valued at the DA marginal price (zero extra cost — equivalent to canceling the DA assignment).
-
 ### Fase 2 — generation-demand rebalance
 
-After Phase 1, REE adjusts to maintain the generation-demand balance, **respecting the Phase-1 security limits**. Increments and reductions are settled via the same technical-restriction offer pool.
-
-Phase-2 increments and reductions carry no security-derived limits, so they CAN be modified in subsequent markets (intraday auctions or balancing services).
+After Phase 1, REE adjusts to maintain the generation-demand balance, **respecting the Phase-1 security limits**. Phase-2 increments and reductions carry no security-derived limits, so they CAN be modified in subsequent markets (intraday auctions or balancing services).
 
 **Output:** **PDVD** (Programa Diario Viable Definitivo, OMIE convention; called *PDVP — Provisional* in REE's *Guía del Proveedor de Servicios de Ajuste*, p.236). **Firm.**
+
+### Settlement rules (PO 14.4 §20, BOE-A-2025-13076 verified)
+
+The two phases have **asymmetric settlement on the downward side**, which is the economically interesting structural fact. Verified line-by-line against `docs/regulation/spain/20250612_cnmc_voltage_service.pdf`:
+
+| Apartado | Phase | Direction | Condition | Formula | Net to unit |
+|---|---|---|---|---|---|
+| §20.1 | 1 | UP | with restriction offer | $\text{DC} = \text{Energy} \times \text{POPVPV}_{u,b}$ + start-up costs (CAF/CAC/ChAA/DCAA) | unit-set, pay-as-bid offer ≥ 0 |
+| §20.2 | 1 | UP | no offer (or insufficient), via mecanismo excepcional de resolución | $\text{DC} = \text{Energy} \times 1.15 \times \text{PMD}$ (or 1.15 × PMED if PMD < 0) | +0.15 × PMD (penalty/incentive to bid) |
+| §20.3 | 1 | UP | purchase + export units | $\text{DC} = \text{Energy} \times \text{PMD}$ | 0 |
+| **§20.4** | **1** | **DOWN** | **sale units (always)** | $\text{OP} = \text{Energy} \times \text{PMD}$ | **0 — full refund of the DA sale, costless** |
+| §20.5 | 1 | DOWN | purchase units | $\text{DC} = \text{Energy} \times \text{PMD}$ | refund of the DA purchase |
+| §20.9 | 2 | UP | with offer | $\text{DC} = \text{Energy} \times \text{POECOS}_{u,b}$ | unit-set, pay-as-bid offer ≥ 0 |
+| §20.10 | 2 | UP | sale + purchase units, mechanism cases | (additional rule) | residual |
+| §20.11 | 2 | UP | purchase or sale, no-offer cases | (additional rule) | residual |
+| **§20.12** | **2** | **DOWN** | **sale + purchase, with offer** | $\text{OP} = \text{Energy} \times \text{POECOB}_{u,b}$ | **PMD $-$ POECOB ≥ 0 — unit KEEPS the spread** |
+| §20.13 | 2 | DOWN | no offer when obliged | $\text{OP} = \text{Energy} \times 1.15 \times \text{PMD}$ (or 0.85 × PMD if PMD < 0) | $-0.15 \times \text{PMD}$ (penalty) |
+| §20.14 | 2 | DOWN | mecanismo excepcional | $\text{OP} = \text{Energy} \times 0.85 \times \text{PMD}$ (or 1.15 × PMD if PMD < 0) | $+0.15 \times \text{PMD}$ |
+| §20.15 | — | — | aggregate cost computation | (total) | — |
+
+Glossary: DC = Derecho de Cobro (payment to unit); OP = Obligación de Pago (refund from unit); POPVPV = price of Fase 1 UP offer; POECOB = price of Fase 2 DOWN offer; POECOS = price of Fase 2 UP offer; PMD = Precio Marginal Diario (DA market price); PMED = monthly mean of PMD in the relevant period.
+
+**Key economic asymmetry** (Brown & Reguant 2026-04 WP, footnote 8, p. 6): in Phase 1, a unit selected for DOWN-redispatch refunds the **full PMD** (the cancellation is costless to the system, but the unit gets nothing for being curtailed). In Phase 2, a unit with a DOWN-offer only refunds **its own pay-as-bid offer (POECOB)**, which can be below PMD — so the unit can **earn the spread (PMD − POECOB)** by being downward-redispatched. UP-redispatch is paid-as-bid in either phase (§20.1 / §20.9), with default 1.15 × PMD applying only when there is no offer (§20.2).
+
+**Strategic implication.** A unit facing a high probability of being curtailed downward prefers Phase 2 over Phase 1: in Phase 1 it is forced to refund the DA sale at zero profit, in Phase 2 it can engineer being curtailed for profit by submitting a POECOB below PMD. This pushes capacity to submit Phase 2 DOWN offers strategically and is one of the channels through which the post-PDBF restrictions market carries strategic content beyond cost-reflective bidding.
 
 **Data file (ESIOS):** `totalrp48preccierre` — Phase-1 + Phase-2 redispatch quantities by `tipo_redespacho` code, `qty_up_mwh` / `qty_down_mwh` / `price_up_eur` / `price_down_eur`. Indexed by `period_start_utc`. Aggregate (not per-unit at this layer, though per-unit detail is in subscription-only ESIOS files).
 

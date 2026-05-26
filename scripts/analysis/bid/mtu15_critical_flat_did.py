@@ -1,6 +1,9 @@
 # STATUS: ALIVE
-# LAST-AUDIT: 2026-05-23
-# FEEDS: thesis/provisional/advisor_memo.tex sec 6 (MTU15 effect, ID15+DA15)
+# LAST-AUDIT: 2026-05-26
+# FEEDS: thesis/provisional/advisor_memo.tex sec 4 -- primary critical/flat DiD
+#        (Spec A per-curve bid shape sigma_p / N_eff). Companion BSTS results
+#        for prices and per-tech cleared energy are produced by
+#        bsts_daily_longpre.R (headline) and bsts_daily_mh.R (robustness).
 # CLAIM: Critical/flat × pre/post DiD of MTU15 reform effects on
 #        (A) per-curve functionals sigma_p, N_eff;
 #        (B) aggregate clearing prices;
@@ -76,6 +79,25 @@ def tech_bucket(t):
     if "ciclo combinado" in t: return "CCGT"
     if "hidráulica generación" in t: return "Hydro"
     if "bombeo" in t: return "Hydro_pump"
+    return "Other"
+
+
+# Fuller tech bucket for per-tech cleared-MW DiD: keeps all generation
+# technologies separate (CCGT, Hydro run-of-river, Hydro pump, Hydro RE,
+# Wind, Solar PV, Solar thermal, Nuclear, Coal/other non-RE thermal,
+# Biomass/RE thermal). Demand-side and intermediary categories collapsed.
+def tech_bucket_full(t):
+    t = str(t).lower()
+    if "ciclo combinado" in t:                        return "CCGT"
+    if "hidráulica generación" in t:                  return "Hydro_run"
+    if "bombeo" in t:                                 return "Hydro_pump"
+    if "re mercado hidráulica" in t:                  return "Hydro_RE"
+    if "eólica" in t:                                 return "Wind"
+    if "fotovolt" in t:                               return "Solar_PV"
+    if "solar térmica" in t or "solar termica" in t:  return "Solar_thermal"
+    if "nuclear" in t:                                return "Nuclear"
+    if "térmica no renovab" in t:                     return "Coal_other_thermal"
+    if "térmica renovable" in t:                      return "Biomass_RE"
     return "Other"
 
 
@@ -179,27 +201,50 @@ def build_ida_panel(lo, hi):
                "sum_w", "sum_wp"]]
 
 
-def build_da_cleared_mw(lo, hi):
-    """System-aggregate DA cleared MW per (date, period). Sum of all units'
-    cleared quantity from pdbc_all. Column named 'p_clear' so it can be
-    fed to run_spec_B directly (the outcome label is set in main)."""
+def build_da_cleared_mw(lo, hi, by_tech=False):
+    """DA cleared MW per (date, period), optionally disaggregated by tech.
+    Sum of cleared quantity from pdbc_all. Column 'p_clear' = sum MW so it
+    plugs into run_spec_B unchanged. If by_tech=True, returns a dict
+    {tech: panel} where each panel is the per-(date,period) sum of that
+    tech's cleared MW (run_spec_B is then called once per tech)."""
     PDBC = REPO / "data/processed/omie/mercado_diario/programas/pdbc_all.parquet"
     con = duckdb.connect()
     con.execute("SET memory_limit='8GB'")
+    if not by_tech:
+        sql = f"""
+        SELECT CAST(date AS DATE) d, CAST(NULL AS INT) session_number, period,
+               SUM(assigned_power_mw) AS p_clear,
+               COALESCE(mtu_minutes, 60) mtu
+        FROM '{PDBC}' WHERE date BETWEEN '{lo}' AND '{hi}'
+          AND assigned_power_mw > 0
+        GROUP BY 1, period, mtu_minutes
+        """
+        df = con.execute(sql).fetchdf()
+        df["d"] = pd.to_datetime(df["d"])
+        df["clock_hour"] = np.where(df["mtu"] == 60, df["period"] - 1,
+                                    ((df["period"] - 1) // 4).astype(int))
+        df["hour_class"] = df["clock_hour"].map(hour_class_label)
+        return df
+    # By-tech: join lista_unidades, group by (date, period, tech).
+    units = pd.read_csv(UNITS)
+    units["tech_full"] = units["technology"].apply(tech_bucket_full)
+    units = units[units["tech_full"] != "Other"][["unit_code", "tech_full"]].drop_duplicates("unit_code")
+    con.register("u", units)
     sql = f"""
-    SELECT CAST(date AS DATE) d, CAST(NULL AS INT) session_number, period,
-           SUM(assigned_power_mw) AS p_clear,
-           COALESCE(mtu_minutes, 60) mtu
-    FROM '{PDBC}' WHERE date BETWEEN '{lo}' AND '{hi}'
-      AND assigned_power_mw > 0
-    GROUP BY 1, period, mtu_minutes
+    SELECT CAST(p.date AS DATE) d, CAST(NULL AS INT) session_number, p.period,
+           u.tech_full AS tech, SUM(p.assigned_power_mw) AS p_clear,
+           COALESCE(p.mtu_minutes, 60) mtu
+    FROM '{PDBC}' p JOIN u ON p.unit_code = u.unit_code
+    WHERE p.date BETWEEN '{lo}' AND '{hi}' AND p.assigned_power_mw > 0
+    GROUP BY 1, period, tech, mtu_minutes
     """
     df = con.execute(sql).fetchdf()
     df["d"] = pd.to_datetime(df["d"])
     df["clock_hour"] = np.where(df["mtu"] == 60, df["period"] - 1,
-                                 ((df["period"] - 1) // 4).astype(int))
+                                ((df["period"] - 1) // 4).astype(int))
     df["hour_class"] = df["clock_hour"].map(hour_class_label)
-    return df
+    return {t: df[df["tech"] == t].drop(columns=["tech"]).copy()
+            for t in sorted(df["tech"].unique())}
 
 
 def build_aggregate_price(market, lo, hi):
@@ -541,6 +586,138 @@ def main():
         print(f.to_string(index=False))
         f.to_csv(OUT_DIR / "specA_falsification_midday.csv", index=False)
 
+    # ---- Additional robustness suite for Spec A pooled -----------------------
+    print("\n=== Additional robustness (Spec A pooled, sigma_p + N_eff) ===")
+    # R1: extend ID15 pre window back to 2024-06-14 (3-sess + ISP15-win)
+    WINDOWS["ID15_ext"] = {
+        "pre_lo": "2024-06-14", "pre_hi": "2025-03-18",
+        "post_lo": "2025-03-19", "post_hi": "2025-04-27",
+        "reform_date": pd.Timestamp("2025-03-19"),
+    }
+    # R2a/b: placebo reform date in mid-pre (DiD should be ~ 0)
+    WINDOWS["ID15_placebo"] = {
+        "pre_lo": "2024-12-19", "pre_hi": "2025-01-30",
+        "post_lo": "2025-01-31", "post_hi": "2025-03-18",
+        "reform_date": pd.Timestamp("2025-01-31"),
+    }
+    WINDOWS["DA15_placebo"] = {
+        "pre_lo": "2025-07-01", "pre_hi": "2025-08-14",
+        "post_lo": "2025-08-15", "post_hi": "2025-09-30",
+        "reform_date": pd.Timestamp("2025-08-15"),
+    }
+    # R3: weekday-only filter (Mon-Fri)
+    ida_wd = ida[ida["d"].dt.dayofweek < 5].copy()
+    da_wd = da[da["d"].dt.dayofweek < 5].copy()
+
+    # R1 needs a wider IDA panel (the default `ida` covers only Dec 2024 onward).
+    print("    building extended IDA panel for R1 (pre back to 2024-06-14)...")
+    ida_ext = build_ida_panel(WINDOWS["ID15_ext"]["pre_lo"],
+                              WINDOWS["ID15_ext"]["post_hi"])
+    print(f"      {len(ida_ext):,} extended IDA curves")
+
+    # R4: extend the flat control set. Hour 0 (sigma_within=412 MW) is the
+    # next-quietest hour after the {1,2,3} flat trio (sigma_within in [336,357]);
+    # hour 23 (510 MW) and hour 4 (587 MW) are already in evening fall-off /
+    # morning ramp respectively. R4a adds hour 0; R4b adds hours 0 and 23.
+    def _relabel_flat(panel, extra_hours):
+        p = panel.copy()
+        p.loc[p["clock_hour"].isin(extra_hours), "hour_class"] = "Flat"
+        return p
+    ida_f4a = _relabel_flat(ida, [0])
+    da_f4a  = _relabel_flat(da,  [0])
+    ida_f4b = _relabel_flat(ida, [0, 23])
+    da_f4b  = _relabel_flat(da,  [0, 23])
+
+    # R5: cross-border control for ID15. The cross-border DiD on net flow
+    # is +8,965 MW (t=5.12) at the MTU15-IDA cutover -- a sibling treatment
+    # effect on the same reform (the pan-European IDA SIDC auctions and XBID
+    # continuous moved 60->15 min on 2025-03-19). Adding the hourly net
+    # cross-border flow as a linear control partials out the cross-border
+    # channel; the residual theta is the bid-shape effect net of cross-border-
+    # allocation-timing.
+    def _add_xb_control(panel, lo, hi):
+        from pathlib import Path as _P
+        IND = REPO / "data/processed/esios/indicators"
+        sql_xb = f"""
+        SELECT date, hour,
+               SUM(COALESCE(f1.value,0) + COALESCE(f3.value,0)
+                 - COALESCE(f2.value,0) - COALESCE(f4.value,0)) AS xb_net_mw
+        FROM '{IND}/535.parquet' f1
+        FULL JOIN '{IND}/536.parquet' f2 USING (date, hour)
+        FULL JOIN '{IND}/539.parquet' f3 USING (date, hour)
+        FULL JOIN '{IND}/540.parquet' f4 USING (date, hour)
+        WHERE date BETWEEN '{lo}' AND '{hi}' GROUP BY date, hour
+        """
+        xb = duckdb.connect().execute(sql_xb).fetchdf()
+        xb["d"] = pd.to_datetime(xb["date"])
+        xb = xb[["d", "hour", "xb_net_mw"]].rename(columns={"hour": "clock_hour"})
+        p = panel.merge(xb, on=["d", "clock_hour"], how="left")
+        p["xb_net_mw"] = p["xb_net_mw"].fillna(0)
+        return p
+
+    def run_spec_A_xb(panel, reform):
+        """Spec A with hourly cross-border net flow as a linear control."""
+        w = WINDOWS[reform]
+        pre_lo, pre_hi = pd.Timestamp(w["pre_lo"]), pd.Timestamp(w["pre_hi"])
+        post_lo, post_hi = pd.Timestamp(w["post_lo"]), pd.Timestamp(w["post_hi"])
+        p = panel.copy()
+        p["d"] = pd.to_datetime(p["d"])
+        in_pre = (p["d"] >= pre_lo) & (p["d"] <= pre_hi)
+        in_post = (p["d"] >= post_lo) & (p["d"] <= post_hi)
+        p = p[(in_pre | in_post) & p["hour_class"].isin(["Critical", "Flat"])].copy()
+        if p.empty:
+            return None
+        p["post"] = (p["d"] >= post_lo).astype(int)
+        p["crit"] = (p["hour_class"] == "Critical").astype(int)
+        p["post_crit"] = p["post"] * p["crit"]
+        out = []
+        for outcome in ["sigma_p", "n_eff"]:
+            d = p.dropna(subset=[outcome, "xb_net_mw"]).copy()
+            if len(d) < 50: continue
+            gm = d.groupby("unit_code")[outcome].transform("mean")
+            d["y_w"] = d[outcome] - gm
+            for c in ["post", "crit", "post_crit", "xb_net_mw"]:
+                gmc = d.groupby("unit_code")[c].transform("mean")
+                d[c + "_w"] = d[c] - gmc
+            X = np.column_stack([np.ones(len(d)), d["post_w"].values,
+                                 d["crit_w"].values, d["post_crit_w"].values,
+                                 d["xb_net_mw_w"].values])
+            beta, se = clustered_ols(d["y_w"].values, X, d["d"].astype(str).values)
+            out.append({"outcome": outcome, "n": len(d),
+                        "DiD": beta[3], "se": se[3], "t": beta[3] / se[3],
+                        "beta_xb": beta[4], "se_xb": se[4]})
+        return pd.DataFrame(out)
+
+    print("\n  building IDA panel with xb control for R5...")
+    ida_xb = _add_xb_control(ida, WINDOWS["ID15"]["pre_lo"],
+                                  WINDOWS["ID15"]["post_hi"])
+
+    rob_specs = [
+        ("R1_ID15_ext_pre",    run_spec_A(ida_ext, "ID15_ext")),
+        ("R2a_ID15_placebo",   run_spec_A(ida, "ID15_placebo")),
+        ("R2b_DA15_placebo",   run_spec_A(da, "DA15_placebo")),
+        ("R3a_ID15_weekday",   run_spec_A(ida_wd, "ID15")),
+        ("R3b_DA15_weekday",   run_spec_A(da_wd, "DA15")),
+        ("R4a_ID15_flat0",     run_spec_A(ida_f4a, "ID15")),
+        ("R4a_DA15_flat0",     run_spec_A(da_f4a,  "DA15")),
+        ("R4b_ID15_flat023",   run_spec_A(ida_f4b, "ID15")),
+        ("R4b_DA15_flat023",   run_spec_A(da_f4b,  "DA15")),
+        ("R5_ID15_xb_control", run_spec_A_xb(ida_xb, "ID15")),
+    ]
+    rob_rows = []
+    for label, r in rob_specs:
+        if r is None:
+            continue
+        r = r.copy()
+        r.insert(0, "label", label)
+        rob_rows.append(r)
+        for _, row in r.iterrows():
+            print(f"  {label:24s} {row['outcome']:8s}  DiD={row['DiD']:+8.3f}  "
+                  f"se={row['se']:6.3f}  t={row['t']:+6.2f}  n={int(row['n']):,}")
+    if rob_rows:
+        pd.concat(rob_rows, ignore_index=True).to_csv(
+            OUT_DIR / "robustness_specA.csv", index=False)
+
     # ---- Spec B: aggregate clearing-price DiD --------------------------------
     print("\n=== Spec B: aggregate clearing-price DiD ===")
     ida_prices = build_aggregate_price("IDA", WINDOWS["ID15"]["pre_lo"],
@@ -563,6 +740,35 @@ def main():
                   [b_ida, b_da], ignore_index=True)
     print(b.to_string(index=False))
     b.to_csv(OUT_DIR / "specB_aggregate_price_did.csv", index=False)
+
+    # ---- Per-tech cleared-MW DiD (DA15 only): is the -2,115 MW withholding
+    # signature concentrated in CCGT, or system-wide?
+    print("\n=== Spec B: per-tech DA cleared-MW DiD (DA15) ===")
+    da_cleared_by_tech = build_da_cleared_mw(WINDOWS["DA15"]["pre_lo"],
+                                              WINDOWS["DA15"]["post_hi"],
+                                              by_tech=True)
+    bt_rows = []
+    for tech in ["CCGT", "Hydro_run", "Hydro_pump", "Hydro_RE", "Wind",
+                 "Solar_PV", "Solar_thermal", "Nuclear",
+                 "Coal_other_thermal", "Biomass_RE"]:
+        panel = da_cleared_by_tech.get(tech)
+        if panel is None or panel.empty:
+            continue
+        r = run_spec_B(panel, "DA15")
+        if r is None:
+            continue
+        r.insert(0, "reform", "DA15"); r.insert(1, "market", "DA")
+        r["tech"] = tech; r["outcome"] = "cleared_MW"
+        # Keep only the date-FE spec for the by-tech display.
+        r = r[r["spec"] == "B1_dateFE"]
+        bt_rows.append(r)
+        row = r.iloc[0]
+        print(f"  {tech:20s}  n={int(row['n']):,}  DiD={row['DiD']:+9.1f} MW  "
+              f"se={row['se']:7.1f}  t={row['t']:+6.2f}  "
+              f"pre_crit={row['pre_crit']:8.0f} post_crit={row['post_crit']:8.0f}")
+    if bt_rows:
+        pd.concat(bt_rows, ignore_index=True).to_csv(
+            OUT_DIR / "specB_cleared_mw_per_tech.csv", index=False)
 
     # ---- Spec C: within-hour dispersion (post-only) --------------------------
     print("\n=== Spec C: within-hour dispersion (post-only) ===")

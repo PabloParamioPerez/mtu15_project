@@ -1,15 +1,13 @@
 % ============================================================================
 % advisor_memo.tex
-% Intuitive 5-page overview of the MTU15 thesis project for the advisor.
-% Companion: descriptive_facts.tex (detailed working notes).
-%
-% SKELETON ONLY. Section structure, figure placeholders, and table skeletons.
-% Prose to be written by the author.
+% Self-contained 4-page memo on the effect of MTU15 (intraday and day-ahead)
+% on bids, prices and quantities, using the critical/flat hour-class
+% identification strategy. Companion: descriptive_facts.tex.
 % ============================================================================
 
 \documentclass[11pt]{article}
 
-\usepackage[margin=1.9cm]{geometry}
+\usepackage[margin=2.4cm]{geometry}
 \usepackage{graphicx}
 \usepackage{amsmath, amssymb}
 \usepackage{booktabs}
@@ -19,198 +17,74 @@
 \hypersetup{colorlinks=true, linkcolor=blue!50!black, urlcolor=blue!50!black}
 \usepackage{microtype}
 \usepackage{enumitem}
-\setlist[itemize]{leftmargin=*, itemsep=2pt, topsep=2pt}
+\setlist[itemize]{leftmargin=*, itemsep=5pt, topsep=5pt}
 \usepackage{titlesec}
-\titlespacing*{\section}{0pt}{8pt}{4pt}
-\titlespacing*{\paragraph}{0pt}{4pt}{6pt}
-\renewcommand{\arraystretch}{1.05}
+\titlespacing*{\section}{0pt}{18pt}{10pt}
+\titlespacing*{\paragraph}{0pt}{10pt}{8pt}
+\renewcommand{\arraystretch}{1.18}
+\linespread{1.12}
+
+\usepackage[most]{tcolorbox}
+\newtcolorbox{takeaway}{
+  enhanced,
+  colback=black!3,
+  colframe=black!55,
+  boxrule=0.5pt,
+  arc=2pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+  before skip=6pt, after skip=8pt,
+}
 
 \graphicspath{{../../figures/thesis/}{../../figures/working/}}
 
-\title{\vspace{-1.5cm}\large MTU15 thesis project --- intuitive overview\vspace{-0.4cm}}
-\author{\normalsize Pablo Paramio Mart\'in}
+\title{\vspace{-1.5cm}\large MTU15 effects on bids, prices and quantities\\[-2pt]\normalsize critical/flat identification for ID15 and DA15\vspace{-0.4cm}}
+\author{\normalsize Pablo Paramio P\'erez}
 \date{\normalsize\today}
 
 \begin{document}
 \maketitle
 \vspace{-0.8cm}
 
-% =====================================================================
-% PAGE 1: The question
-% =====================================================================
-\section*{1. The question}
+\begin{abstract}
+\noindent
+The two MTU15 reforms turn within-hour bidding into a strategic margin, and the dispatchable fleet exploits it. We see this directly in the bid curves: in critical hours (morning ramp and evening peak) where within-hour residual demand actually varies, ladders widen substantially --- broadly under ID15 (CCGT, hydro, pump-storage) and more selectively under DA15 (hydro, CCGT). Wind, whose output spans all hours rather than concentrating in peaks, shows little critical-flat differential. The clearest quantity-side causal trace is on the day-ahead auction-cleared mix under DA15: CCGT cleared volume rises $\sim$59~GWh/day net of the 2024 same-calendar placebo (joint 95\% credible interval $[+43,+75]$) --- the size implied by finer granularity raising CCGT's chance of being marginal across the four quarters of a peak hour. Pump-storage independently corroborates the within-day arbitrage channel: under DA15 it shifts $+$237~MWh of day-ahead generation toward critical hours, concentrating its arbitrage exactly where granularity creates value. Clearing prices move in the directions the two-market bidding contrast would predict, but their placebo-net credible intervals bracket zero; we do not claim causal price magnitudes.
+\end{abstract}
 
-\paragraph{Market structure (reform calendar in one paragraph).}
-% TODO: Spanish wholesale; auction layers (DA, IDA auctions, continuous, balancing);
-%       three reforms (IDA-sessions 2024-06, ISP15 2024-12, MTU15-IDA 2025-03, MTU15-DA 2025-10);
-%       what each reform changed in market design and in settlement.
+\section*{1. Setup: outcomes, windows, and seasonal control}
 
-\paragraph{Who actually sets the price (NOT a priori CCGT).}
-% TODO: tech-level price-setter shares (see descriptive_facts §X for the table);
-%       hydro dominates, CCGT is ~9% — but CCGT is the focal technology because
-%       of strategic profile, not because it's most often marginal.
+\begin{takeaway}
+\emph{Takeaway.} We measure how MTU15 reshapes three families of outcomes: per-curve bid shape; aggregate clearing price and cleared energy; and post-only within-hour dispersion. Identification compares \emph{critical} clock-hours (those with the most within-hour load variation) to \emph{flat} clock-hours (overnight; the within-day control) across each reform's pre/post window. Outcomes whose pre/post comparison crosses different seasons --- chiefly DA15 prices and cleared quantities --- are additionally seasonally adjusted.
+\end{takeaway}
 
-\paragraph{Why this matters.}
-% TODO: granular pricing as a NEW STRATEGIC MARGIN that didn't exist before;
-%       framing in terms of within-hour discrimination opportunity for whichever
-%       units are at or near the margin in critical hours.
+\paragraph{Two reforms.} The Spanish wholesale electricity market shifted from a 60-minute to a 15-minute market time unit in two steps: \textbf{ID15} (2025-03-19, intraday auctions and continuous market) and \textbf{DA15} (2025-10-01, day-ahead). After each reform there are four periods per clock-hour; before, one. The \emph{operaci\'on reforzada} regulatory stance (REE's post-blackout reinforced operation, continuous from 2025-04-28) is a continuous confound that forces CCGT inclusion; tight pre/post windows around each reform date hold its level constant within each arm.
 
-\paragraph{Outcomes we care about, and why.}
-\begin{itemize}
-\item % TODO: bid-shape divergence
-\item % TODO: quarter-level cleared quantities (q1, q2)
-\item % TODO: within-hour clearing-price dispersion
-\item % TODO: mark-up / market-power proxies
-\end{itemize}
+\paragraph{Variables.} Each (unit $u$, date $d$, period $p$) sell offer is a tranche ladder $\{(p_k, q_k)\}_{k=1}^{K_{u,d,p}}$ where $p_k$ is the bid price (EUR/MWh) and $q_k$ the quantity (MW per OMIE \emph{Potencia} field, \texttt{ficherosomie137.pdf} \S 5.1.4.2). Offers carry one of three structural types: \emph{simple} (a bare price--quantity ladder), \emph{minimum-income condition} (MIC), or \emph{block} (all-or-nothing across periods); CCGT is the outlier with the bulk of its offers in MIC or block form (\S 4, \S 5(d)). Let $\text{MCP}_{d,p}$ be the OMIE clearing price \emph{of the market in which the offer was submitted} (day-ahead offers, in the OMIE files cab/det; intraday-auction offers in session $s$, files icab/idet), and $h=140$ EUR/MWh the bandwidth. Define the in-band set, MW weights, and in-band weighted mean bid price:
+\[
+\mathcal{B}_{u,d,p} \;=\; \{k:\,|p_k-\text{MCP}_{d,p}|\le h\}, \qquad w_k \;=\; \frac{q_k}{\sum_{j\in\mathcal{B}_{u,d,p}} q_j}, \qquad \bar p_{u,d,p} \;=\; \sum_{k\in\mathcal{B}} w_k\,p_k.
+\]
 
-% =====================================================================
-% PAGE 2: Variation across hours
-% =====================================================================
-\section*{2. Variation across hours: where granularity has economic content}
+\emph{Per-curve} (in-band, MW-weighted; one value per (unit, date, period)):
+\[
+\sigma_{p,\,u,d,p} \;=\; \sqrt{\sum_{k\in\mathcal{B}_{u,d,p}} w_k\,(p_k-\bar p_{u,d,p})^2}, \qquad
+N_{\text{eff},\,u,d,p} \;=\; \Big(\sum_{k\in\mathcal{B}_{u,d,p}} w_k^2\Big)^{-1}.
+\]
+$\sigma_p$ = price spread of the bid ladder within a single quarter; $N_{\text{eff}}$ = effective tranche count of that quarter (1 = a single block, large = many equal-sized tranches).
 
-\paragraph{Intuition.}
-% TODO: short paragraph on within-hour residual-demand variation as the
-%       structural condition for granularity to matter.
+\emph{Aggregate}: $\text{MCP}_{d,p}$ is the OMIE clearing price (EUR/MWh); $Q_{d,p}=\sum_{u,k} q^{\text{cleared}}_{u,d,p,k}$ is the system DA cleared quantity per (date, period)\footnote{The OMIE assigned-power field is per-period instantaneous power (MW), invariant to period length, so one 15-min quarter and one 60-min hour at the same MW are directly comparable as rates. Aggregating MW across the four quarters of a clock-hour gives the stock of energy delivered in that clock-hour, $\text{MWh}_h = \sum_{q\in h}\text{MW}_q\,\Delta t_q$. Aggregate-quantity coefficients below are reported as MWh per clock-hour (numerically equal to the per-period mean MW because the integration is over 1 h, but the unit is energy, not power).}.
 
-\paragraph{Classifier.}
-% TODO: sigma_within(h,d) definition; data window 2023-01-01 to 2026-05-14
-%       (ENTSO-E 15-min ISP, A65 load + A75 wind+solar actuals).
+\emph{Within-hour dispersion} (post-only, used to calibrate the critical/flat partition in \S 2). The per-curve $\sigma_p$ and $N_{\text{eff}}$ describe the shape of a \emph{single} quarter's ladder. Here we instead summarize how price and shape vary \emph{across the four quarters} of a clock-hour --- a direct trace of within-hour discrimination, mechanically zero under MTU60. For each (unit, date, clock-hour $h$) cell with all four quarters present, let $q\in\{1,2,3,4\}$ index quarters, $\bar p_q=\sum_{k\in\mathcal{B}_q} w_k\,p_k$ the in-band MW-weighted mean bid price of quarter $q$, $\sigma_{p,q}$ and $N_{\text{eff},q}$ its per-curve metrics, $m_q=\sum_{k\in\mathcal{B}_q} q_k$ the in-band MW summed over the quarter, $\overline{m}=\tfrac{1}{4}\sum_q m_q$ the mean across the four quarters, and $\text{MCP}_q$ the quarter-$q$ clearing price:
+\[
+\begin{aligned}
+D_{\text{price}} &= \mathrm{sd}_q(\bar p_q), &
+D_{\text{qty}}   &= \mathrm{sd}_q(m_q)/\overline{m}, &
+\text{SD}_{\text{price}} &= \mathrm{sd}_q(\text{MCP}_q), \\
+D_\sigma &= \mathrm{sd}_q(\sigma_{p,q}), &
+D_N      &= \mathrm{sd}_q(N_{\text{eff},q}).
+\end{aligned}
+\]
+$D_{\text{price}}$, $D_{\text{qty}}$, $\text{SD}_{\text{price}}$ are across-quarter shifts in bid \textsc{level}, bid \textsc{volume}, and system clearing prices; $D_\sigma$, $D_N$ are across-quarter shifts in ladder \textsc{spread} and \textsc{tranche count}. All five are zero under the MTU60-equivalent strategy (identical bids in every quarter), so any positive value post-MTU15 is a direct trace of within-hour discrimination.
 
-\paragraph{What we see.}
-\begin{itemize}
-\item % TODO: critical hours 5--9, 16--22, sigma in [522, 1303] MW
-\item % TODO: flat hours 1--3, sigma in [336, 357] MW
-\item % TODO: midday hours 11--14, sigma in [468, 502] MW, excluded (solar-marginal regime)
-\end{itemize}
-
-\paragraph{Validation.}
-% TODO: post-MTU15-DA within-hour DA quarter-price std: 6.6 EUR/MWh critical vs
-%       2.1 flat (3x). Same falsifier on CCGT price-setting share (9.1% crit vs 9.0% flat).
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.72\textwidth]{fig_critical_hours_calibration.pdf}
-\caption{\small % TODO: caption.
-}
-\label{fig:sigma_within}
-\end{figure}
-
-% =====================================================================
-% PAGE 3: Variation across firms / technologies
-% =====================================================================
-\section*{3. Variation across firms and technologies: how do CCGTs bid?}
-
-\paragraph{The object.}
-% TODO: 4 quarter supply curves per unit per hour; need to measure how much
-%       they differ in the band that matters for clearing.
-
-\paragraph{Metric: $D_w$.}
-% TODO: kernel-weighted area between curves in the band $\pm 50$ EUR/MWh around
-%       the hour-mean clearing price; aggregate the 6 within-hour pairs by max.
-
-\paragraph{Decomposition: $\Delta p$ vs $\Delta q$.}
-% TODO: upper bound D_w <= Delta_p * M_i + 2h * Delta_q; what each channel
-%       means in plain terms.
-
-\paragraph{What we see (post-MTU15-DA, critical hours, CCGT, Oct--Dec 2025).}
-\begin{itemize}
-\item % TODO: GN dominates $\Delta q$
-\item % TODO: GE leans on $\Delta p$
-\item % TODO: IB and HC negligible on both
-\item % TODO: flat hours $\approx 0$ across firms
-\end{itemize}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.92\textwidth]{fig_per_firm_bid_curves_quarters_ccgt.pdf}
-\caption{\small % TODO: caption.
-}
-\label{fig:perfirm}
-\end{figure}
-
-\paragraph{Operational vs strategic decomposition.}
-% TODO: how we separate physical-constraint shape variation from strategic
-%       variation (price-setter restriction).
-
-% =====================================================================
-% PAGE 4: Confounders: blackout + reforzada
-% =====================================================================
-\section*{4. The 2025 regulatory shock: blackout and reinforced operation}
-
-\paragraph{The blackout (28 April 2025).}
-% TODO: pan-Iberian blackout; XBID suspension; entrance into reforzada posture.
-
-\paragraph{What ``reforzada'' does in practice.}
-\begin{itemize}
-\item % TODO: PO-3.x forced CCGT inclusion (+1,044 GWh/mo post-blackout)
-\item % TODO: PO-7.4 zonal reactive market (June 2025)
-\item % TODO: CNMC enforcement (April 2026 cohort, ~100 expedientes)
-\end{itemize}
-
-\paragraph{What this lets us claim.}
-% TODO: within a tight window around each reform date, regulatory state is
-%       approximately constant; sharp changes at the reform date are
-%       attributable to the reform itself, not to the broader 2025 turmoil.
-
-% =====================================================================
-% PAGE 5: Reform windows + outcomes
-% =====================================================================
-\section*{5. Reform windows we use, and outcomes we measure in each}
-
-\paragraph{Strategy in one sentence.}
-% TODO: tight window per reform; reforzada (and other regulatory confounders)
-%       are constant within window; reform variation stands out.
-
-\paragraph{The reform calendar and our windows.}
-
-\begin{center}
-\footnotesize
-\begin{tabular}{p{2.6cm} p{3.2cm} p{8.8cm}}
-\toprule
-\textbf{Reform} & \textbf{Date} & \textbf{Window and why} \\
-\midrule
-% TODO: IDA: 6 MIBEL --> 3 European sessions & 2024-06-14 & ...
-\\ \addlinespace
-% TODO: ISP15 & 2024-12-01 & (quantities at 15-min, prices still hourly --- the
-%       genuinely new ex-ante information environment vs the prior regime) & ...
-\\ \addlinespace
-% TODO: MTU15-IDA & 2025-03-19 & ...
-\\ \addlinespace
-% TODO: MTU15-DA & 2025-10-01 & ...
-\\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\paragraph{Outcomes we measure in each window.}
-
-\begin{center}
-\footnotesize
-\begin{tabular}{p{4.4cm} p{12.0cm}}
-\toprule
-\textbf{Outcome} & \textbf{What it tells us / why it matters} \\
-\midrule
-% TODO: D_w bid-shape divergence
-\\ \addlinespace
-% TODO: Delta_p / Delta_q channel shares
-\\ \addlinespace
-% TODO: quarter-level CCGT cleared output (q1, q2)
-\\ \addlinespace
-% TODO: mark-up proxies
-\\ \addlinespace
-% TODO: price-setter frequency by firm and hour-class
-\\
-\bottomrule
-\end{tabular}
-\end{center}
-
-% =====================================================================
-% PAGE 6+: MTU15 effect --- critical/flat identification (ID15 and DA15)
-% =====================================================================
-\section*{6. MTU15 effect: critical/flat identification (ID15 and DA15)}
-
-\paragraph{Strategy.} Tight pre/post windows around each reform date, so reforzada level is constant within each arm; the (critical $-$ flat) differential across the cutover strips common date-level shocks. Critical $h \in \{5,\dots,8, 16,\dots,22\}$ have non-trivial within-hour residual demand variance (522--1303 MW); flat $\{1,2,3\}$ is the within-day control (336--357 MW); other hours dropped.
-
+\paragraph{Windows.}
 \begin{center}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -218,70 +92,185 @@
 \toprule
 \textbf{Reform} & \textbf{Pre window} & \textbf{Post window} & \textbf{Reforzada} \\
 \midrule
-MTU15-IDA & 2024-12-19 $\to$ 2025-03-18 (3 mo) & 2025-03-19 $\to$ 2025-04-27 (40 d, clean) & absent both \\
-MTU15-DA  & 2025-07-01 $\to$ 2025-09-30 (3 mo) & 2025-10-01 $\to$ 2025-12-31 (3 mo) & active both, constant \\
+ID15 & 2024-12-19 $\to$ 2025-03-18 (3 mo) & 2025-03-19 $\to$ 2025-04-27 (40 d, clean) & absent both \\
+DA15  & 2025-07-01 $\to$ 2025-09-30 (3 mo) & 2025-10-01 $\to$ 2025-12-31 (3 mo) & active both, constant \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\subsection*{6.1 Specifications}
-
-$u$ unit; $d$ date; $p$ period (hour pre-, quarter post-MTU15); $h$ clock-hour; $s$ IDA session; $T_r$ reform date. SEs clustered by date throughout; sample restricted to critical and flat hours.
-
-\textbf{A. Per-curve} ($Y \in \{\sigma_p, N_{\text{eff}}\}$, in-band $|p_{\text{bid}}-\text{MCP}|\le 140$):
-\[
-Y_{u,d,p[,s]} = \alpha + \alpha_u + \beta\,\mathbf{1}\{d \ge T_r\} + \xi\,\mathbf{1}\{h \in \mathcal{C}\} + \theta\,\mathbf{1}\{d \ge T_r\}\cdot\mathbf{1}\{h \in \mathcal{C}\} + \varepsilon
-\]
-
-\textbf{B. Aggregate} ($P \in \{$OMIE clearing price, DA cleared MW$\}$):
-\[
-P_{d,p[,s]} = \delta_d + \xi\,\mathbf{1}\{h \in \mathcal{C}\} + \theta\,\mathbf{1}\{d \ge T_r\}\cdot\mathbf{1}\{h \in \mathcal{C}\} + \varepsilon \qquad (\text{date FE absorbs post})
-\]
-
-\textbf{C. Within-hour dispersion, post-only.} For $D \in \{D_{\text{price}}=\mathrm{sd}_q\bar p_q,\ D_{\text{qty}}=\mathrm{cv}_q m_q\}$ across the 4 within-hour quarters:
-\[
-D^{(\cdot,d,h)}_{\cdot} = \delta_d + \theta\,\mathbf{1}\{h \in \mathcal{C}\} + \varepsilon
-\]
-
-\subsection*{6.2 Results}
+\paragraph{Method by outcome.} The table below previews the design; \S 3 develops the formal restrictions. Bid shape uses a DiD with the critical/flat partition; clearing prices and per-tech cleared energy use a Bayesian Structural Time Series counterfactual (Brodersen et al.\ 2015, applied to electricity reform by M\"arkle-Hu\ss\ et al.\ 2017). The BSTS pre-window for DA15 starts after the post-blackout reforzada onset (2025-04-28), holding the regulatory regime constant; ID15's post-window is pre-blackout. Both reforms have a placebo on the same calendar window of 2024 to falsify residual cross-season trend.
 
 \begin{center}
 \footnotesize
-\setlength{\tabcolsep}{5pt}
-\begin{tabular}{l l l c c}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l l l l l}
 \toprule
-\textbf{Spec} & \textbf{Outcome (DiD $\theta$)} & \textbf{Subsample} & \textbf{MTU15-IDA} & \textbf{MTU15-DA} \\
+\textbf{Outcome} & \textbf{Method} & \textbf{Granularity} & \textbf{Pre / Post window} & \textbf{Identifies} \\
 \midrule
-A & $\sigma_p$ (EUR/MWh)            & CCGT          & $2.45^{***}$ (0.58)    & $1.30^{*}$ (0.75) \\
-A &                                 & Hydro         & $1.17^{***}$ (0.44)    & $1.69^{***}$ (0.29) \\
-A &                                 & Hydro pump    & $0.25$ (0.28)          & $-0.63^{*}$ (0.36) \\
-\addlinespace
-A & $N_{\text{eff}}$                & CCGT          & $0.79^{***}$ (0.30)    & $0.44^{***}$ (0.06) \\
-A &                                 & Hydro         & $0.21^{***}$ (0.06)    & $-0.04$ (0.04) \\
-A &                                 & Hydro pump    & $0.18^{**}$ (0.08)     & $-0.05$ (0.03) \\
-\addlinespace
-B & Clearing price (EUR/MWh)        & system        & $-11.18^{***}$ (3.75)  & $+26.70^{***}$ (2.54) \\
-B & DA cleared MW                   & system        & ---                    & $-2{,}115^{***}$ (259) \\
-\addlinespace
-C & $D_{\text{price}}$ (EUR/MWh)    & per unit      & $0.39^{***}$ (0.05)    & $1.35^{***}$ (0.11) \\
-C & $D_{\text{qty}}$ (CV)           & per unit      & $0.024^{***}$ (0.003)  & $0.033^{***}$ (0.002) \\
-C & $\text{SD}_{\text{price}}$ (EUR/MWh) & system  & $4.55^{***}$ (0.40)    & $3.97^{***}$ (0.37) \\
+$\sigma_p$, $N_{\text{eff}}$ (bid shape) & DiD crit$-$flat & per-curve & 3 mo / 3 mo & critical$-$flat differential \\
+DA price, cleared energy per tech & BSTS & daily & 156 d / 40 d (reforzada-constant) & DA15 \\
+IDA price, cleared energy per tech & BSTS & daily & 278 d / 40 d (post-IDA-reform) & ID15 \\
+Placebo 2024 (each reform) & BSTS & daily & same windows shifted to 2024 & cross-season artefact \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\noindent{\footnotesize \textit{Notes:} Standard errors in parentheses, clustered by date. $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$. Spec A: per-tech subsample regressions, unit FE absorbed via within-unit demeaning. Spec B: date FE absorbs post; DiD without FE: ID15 $-11.32$, DA15 $+26.70$ (unchanged). Spec C: post-only with date FE via within-date demeaning. Source: \texttt{results/regressions/bid/mtu15\_critical\_flat/}.}
+\paragraph{Seasonal control.} Bid-shape outcomes need none: $\sigma_p$ and $N_{\text{eff}}$ are MCP-centered and MW-weighted on the in-band ladder, so summer$\to$winter price-level seasonality does not transmit; the flat-hour control absorbs common-to-all-hours bid-shape seasonality and the placebo (\S 5(b)) checks for pre-existing trends in the critical$-$flat differential. For \emph{level outcomes} (prices, cleared energy), seasonality is controlled by the BSTS covariates (wind, solar, gas) plus a weekly seasonal cycle and the local-linear trend (\S 3.B), and residual cross-season trend is gauged by the 2024 same-calendar placebo. For the supporting pump-storage DiD (\S 4/5(c)) we use a same-calendar-month restriction (pre Oct--Dec 2024, post Oct--Dec 2025).
 
-\paragraph{Reading (gaps for prose).}
-\begin{itemize}\setlength{\itemsep}{1pt}\setlength{\topsep}{2pt}
-\item \textit{$\sigma_p$: positive significant DiD in both reforms for CCGT and Hydro --- MTU15 widens the in-band price ladder in critical hours. Per-tech heterogeneity: CCGT-led for ID15; Hydro-led for DA15 on $\sigma_p$, CCGT-led on $N_{\text{eff}}$.}
-\item \textit{Prices: OPPOSITE signs across reforms. ID15 critical-hour IDA prices fall EUR\,$11/$MWh more than flat (granular intraday absorbs scarcity peaks); DA15 critical-hour DA prices rise EUR\,$27/$MWh more (granular day-ahead pricing extracts higher rents in scarce quarters).}
-\item \textit{Quantity: DA15 critical-hour cleared MW falls $-2{,}115$ MW more than flat. Joint with the $+\text{EUR}\,27$ price effect $=$ textbook withholding signature.}
-\item \textit{Spec C dispersion (post-only): every outcome is $3$--$7\times$ larger in critical than flat hours --- direct confirmation that MTU15 unlocks discrimination only where within-hour variance exists.}
+\section*{2. The critical/flat partition: where granular pricing has economic content}
+
+\begin{takeaway}
+\emph{Takeaway.} Within-hour discrimination has economic content only where within-hour residual demand actually varies. Critical hours (morning ramp + evening peak) are where MTU15 can bite; flat hours (overnight) are the within-day control. Post-MTU15 within-hour dispersion is much larger in critical than flat hours on every bid-level and bid-shape outcome we measure --- the partition correctly identifies where the reform lives.
+\end{takeaway}
+
+\paragraph{Intuition.} Granular pricing only has economic content where within-hour residual demand\footnote{Spanish-market convention calls this the \emph{hueco t\'ermico} (thermal gap) --- the load that thermal and other dispatchable generation must cover after subtracting wind and solar.} actually varies; if a clock-hour is internally flat, the four quarters look the same and there is nothing to discriminate on. We measure within-hour variation by $\sigma_{\text{within}}(h,d) = \mathrm{sd}_q[\text{load}-\text{wind}-\text{solar}]_{q,h,d}$ on 15-min residual-demand data\footnote{ENTSO-E Transparency Platform: A65 (actual total load) and the wind/solar component of A75 (actual generation per type, PSR codes B16, B18, B19); window 2023-01-01 to 2026-05-14.} and partition clock-hours by median $\sigma_{\text{within}}$:
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item \textbf{Critical} $\mathcal{C}=\{5,\dots,8,\,16,\dots,22\}$: morning ramp + evening peak; $\sigma_{\text{within}}\in[522,1303]$ MW.
+\item \textbf{Flat} $\mathcal{F}=\{1,2,3\}$: overnight; $\sigma_{\text{within}}\in[336,357]$ MW.
+\item \textbf{Midday} $\{11,\dots,14\}$ (solar-marginal, $\sigma_{\text{within}}\in[468,502]$ MW): excluded from main specs; kept for falsification (\S 5(a)).
 \end{itemize}
 
-\subsection*{6.3 Robustness (one-line each)}
+\paragraph{Formal calibration of the partition (post-only).} Let $D_{d,h}$ stand for any one of the five within-hour dispersion outcomes ($D_{\text{price}}$, $D_{\text{qty}}$, $\text{SD}_{\text{price}}$, $D_\sigma$, $D_N$) on date $d$, clock-hour $h$. Under MTU60 the within-hour quarter dimension does not exist, so $D_{d,h}$ is mechanically zero pre-reform; we use the post-MTU15 sample to \emph{describe} where within-hour dispersion lives across hour-classes. A date-FE regression is a convenient way to summarise the critical$-$flat differential:
+\[
+D_{d,h} \;=\; \delta_d \;+\; \theta\,\mathbf{1}\{h\in\mathcal{C}\} \;+\; \varepsilon,
+\]
+fit per outcome. $\theta$ is the post-MTU15 critical$-$flat dispersion gap. This is a descriptive contrast, not a causal estimate: operational ramp constraints in critical hours can mechanically generate within-hour SD, and the partition calibration cannot separate operational from strategic dispersion.
 
-\textit{(All in \texttt{results/regressions/bid/mtu15\_critical\_flat/}.)} \textbf{(i) Date FE} (Spec B): DiD unchanged $\Rightarrow$ not driven by common date-level shocks. \textbf{(ii) Midday $\{11,\dots,14\}$ falsification} (Spec A pooled): $\sigma_p$ DiD $+1.10^{***}$ ID15 and $+2.26^{***}$ DA15 --- not zero but $\sim\!65\%$ of the critical magnitude; consistent with midday's intermediate within-hour variance, reads as a dose-response in variance rather than a placebo failure. \textbf{(iii) Per-CCGT-firm} (IB/GE/GN/HC): large heterogeneity (e.g.\ ID15 IB $\sigma_p$ $+6.46^{***}$, GN $N_{\text{eff}}$ $+1.84^{***}$); DA15 GN headline $\sigma_p$ $+35.0$ is a level-shift artefact (flat-hour mean collapsed $40.7\to 7.6$) and should be flagged, not read as within-hour MTU15. \textbf{To do:} extended pre windows; same-calendar-month; CCGT scarcity-tier split.
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l l c c c}
+\toprule
+\textbf{Outcome} & \textbf{Subsample} & \textbf{ID15} & \textbf{DA15} & \textbf{crit/flat ratio (IDA, DA)} \\
+\midrule
+$D_{\text{price}}$ (EUR/MWh)         & per unit (pooled) & $0.39^{***}$ (0.05)    & $1.35^{***}$ (0.11)   & $4.1\times,\ 7.4\times$ \\
+$D_{\text{qty}}$ (CV)                & per unit (pooled) & $0.024^{***}$ (0.003)  & $0.033^{***}$ (0.002) & $4.3\times,\ 4.9\times$ \\
+$\text{SD}_{\text{price}}$ (EUR/MWh) & system            & $4.55^{***}$ (0.40)    & $3.97^{***}$ (0.37)   & $2.8\times,\ 2.6\times$ \\
+\addlinespace
+$D_\sigma$ (EUR/MWh)                 & CCGT       & $0.42^{***}$ (0.07)    & $1.95^{***}$ (0.15)    & $3.2\times,\ 40.7\times$ \\
+                                     & Hydro      & $0.34^{***}$ (0.04)    & $0.33^{***}$ (0.05)    & $4.0\times,\ 2.2\times$  \\
+                                     & Hydro pump & $0.077^{***}$ (0.02)   & $-0.002$ (0.01)\,ns    & $64\times,\ 1.0\times$   \\
+                                     & Wind       & $-0.032$ (0.05)\,ns    & $0.10^{***}$ (0.01)    & $0.9\times,\ 2.0\times$  \\
+\bottomrule
+\end{tabular}
+\end{center}
+\noindent{\footnotesize \textit{SE clustered by date}; $^{***}p<0.01$, ns $=$ not significant. Pooled per-unit and system rows show the partition has economic content on both bid-level ($D_{\text{price}}$, $D_{\text{qty}}$, $\text{SD}_{\text{price}}$) and bid-shape ($D_\sigma$). The per-tech breakdown of $D_\sigma$ shows where within-hour discrimination is concentrated: CCGT exhibits by far the largest critical$-$flat differential under DA15, as one would expect from the marginal scarcity-tier technology; hydro is also significant; pump-storage shows none under DA15, because its strategic margin is day-ahead quantity allocation rather than within-hour ladder shaping --- the same logic that drives the pump-storage finding in \S 4. Wind is small under DA15 and indistinguishable from zero under ID15, matching the fact that $\sim$84\% of its in-band curves are a single block.}
+
+\section*{3. Identification: DiD for bid shape, BSTS for prices and quantities}
+
+\begin{takeaway}
+\emph{Takeaway.} Bid shape is identified by a critical/flat DiD: the (critical $-$ flat) shift across each cutover is the ATT under parallel trends. Clearing prices and per-tech cleared energy are identified by a Bayesian Structural Time Series counterfactual on a daily panel: conditional on the wind and solar renewable-supply covariates, the post-cutover series departs from the model's pre-trained extrapolation by the treatment effect; a 2024 same-calendar placebo gauges residual cross-season trend.
+\end{takeaway}
+
+$u$ unit; $d$ date; $p$ period; $h$ clock-hour; $s$ IDA session; $T_r$ reform date. Treatment status $D_{d,h} \equiv \mathbf{1}\{d\ge T_r\}\cdot\mathbf{1}\{h\in\mathcal{C}\}$; sample restricted to $h\in\mathcal{C}\cup\mathcal{F}$ for the DiD.
+
+\textbf{A. Per-curve DiD for bid shape} ($Y\in\{\sigma_p, N_{\text{eff}}\}$, run per-tech):
+\[
+Y_{u,d,p[,s]} = \alpha_u + \beta\,\mathbf{1}\{d\ge T_r\} + \xi\,\mathbf{1}\{h\in\mathcal{C}\} + \theta\,D_{d,h} + \varepsilon.
+\]
+Under the parallel-trends assumption $E[Y(0)\mid \mathcal{C},\,d\ge T_r] - E[Y(0)\mid \mathcal{C},\,d<T_r] = E[Y(0)\mid \mathcal{F},\,d\ge T_r] - E[Y(0)\mid \mathcal{F},\,d<T_r]$, the DiD coefficient $\theta$ identifies the ATT on the critical-hour bid shape. Flat hours act as a low-exposure control (mechanically reachable post-cutover but with negligible within-hour residual demand variance, \S 2), giving the standard $2\times 2$ DiD without staggered-treatment negative weights (de Chaisemartin \& D'Haultf\oe uille, 2026, ch.~3). SEs are clustered by date.
+
+\textbf{B. Bayesian Structural Time Series for prices and per-tech cleared energy.} Following Brodersen et al.\ (2015) as applied to the EPEX 15-min reform by M\"arkle-Hu\ss\ et al.\ (2017), the daily response $y_t$ (DA or IDA clearing price; per-tech daily cleared GWh) decomposes as
+\[
+y_t \;=\; \mu_t + \gamma_t + X_t'\beta + \varepsilon_t,
+\]
+where $\mu_t$ is a local linear trend with stochastic slope (default priors), $\gamma_t$ is a 7-period weekly seasonal cycle, $X_t = (\text{wind GWh}, \text{solar GWh}, \text{gas EUR})$ are exogenous renewable-supply and fuel-cost covariates, and $\beta$ is a spike-and-slab regression coefficient. M\"arkle-Hu\ss\ et al.\ used only wind and solar for EPEX; we add gas because Spain has meaningfully different gas exposure than Germany did in their window. Demand is excluded because it is itself partly an outcome and would induce simultaneity. Pre-cutover data train the model; the counterfactual at $t\ge T_r$ is $\hat y_t(0)\equiv E[y_t(0)\mid X_t,\,t< T_r]$, and the treatment effect at $t$ is $y_t - \hat y_t(0)$. The post-window average effect and its 95\% credible interval come directly from the Bayesian posterior.
+
+Window choice follows the principle of holding the relevant regulatory regime constant across pre and post. For DA15 the maximum reforzada-constant pre-window is 2025-04-28 $\to$ 2025-09-30 (156 days, starting at reforzada onset). For ID15 the maximum regime-constant pre is 2024-06-14 $\to$ 2025-03-18 (278 days, post-IDA-reform 3-session architecture, includes the December 2024 ISP15 introduction whose effect on the daily-mean price is small and is absorbed by the regression coefficients on wind, solar and gas). M\"arkle-Hu\ss\ et al.'s shorter 80-day pre is reported as a robustness check (\S 5(c)); it gives larger magnitudes because the local-linear trend cannot extrapolate cross-season. Two placebos --- one on the same calendar 2024 for each reform --- falsify residual cross-season trend; placebo-net effects are the cleanest identification of the treatment.
+
+The identifying restriction: conditional on $X_t$, the unobserved $y_t(0)$ for $t\ge T_r$ equals the pre-trained model's extrapolation. This rules out any unobserved level shift coincident with the cutover that is not predicted by $X_t$ or by the local-trend extrapolation, and the placebo gauges whether the placebo-window extrapolation is itself biased by seasonal trend.
+
+\section*{4. Results: bid-shape widening, day-ahead CCGT auction-cleared scale-up, and directional price movements}
+
+\noindent \textbf{Tech selection.} Spec A is run on the four technologies that bid into the in-band region with non-trivial frequency: CCGT (the focal scarcity-tier technology), hydro and hydro pump (cleanest from an omitted-variable-bias standpoint --- their marginal-cost stacks are insensitive to the gas--renewable mix), and wind (the dominant sell-side price-setter, included for consistency with Brown \& Reguant 2026). Solar PV is excluded because it bids effectively zero in-band scarcity-tier capacity; nuclear is excluded because its dispatch is predominantly bilateral.
+
+\noindent \textbf{Per-tech caveats.} Wind within-hour $\sigma_p$ mixes sub-hourly forecast revisions with strategic ladder shaping, so any positive wind DiD reads as a price-taking baseline (see table notes). The offer-type composition concern (Figure 1, \S 5(d)) is CCGT-specific: hydro, hydro pump and wind are $\sim\!100\%$ simple offers in both arms, so their Spec A DiDs below are simple-only by construction.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l l c c}
+\toprule
+\textbf{Outcome (DiD $\theta$)} & \textbf{Subsample} & \textbf{ID15} & \textbf{DA15} \\
+\midrule
+$\sigma_p$ (EUR/MWh)            & CCGT          & $2.45^{***}$ (0.58)    & $1.30^{*}$ (0.75) \\
+                                & Hydro         & $1.17^{***}$ (0.44)    & $1.69^{***}$ (0.29) \\
+                                & Hydro pump    & $0.25$ (0.28)          & $-0.63^{*}$ (0.36) \\
+                                & Wind$^{\dagger}$ & $0.32^{***}$ (0.10) & $0.17^{***}$ (0.04) \\
+\addlinespace
+$N_{\text{eff}}$                & CCGT          & $0.79^{***}$ (0.30)    & $0.44^{***}$ (0.06) \\
+                                & Hydro         & $0.21^{***}$ (0.06)    & $-0.04$ (0.04) \\
+                                & Hydro pump    & $0.18^{**}$ (0.08)     & $-0.05$ (0.03) \\
+                                & Wind$^{\dagger}$ & $0.017^{**}$ (0.007) & $0.009^{***}$ (0.003) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\noindent{\footnotesize \textit{Notes:} SEs in parentheses, clustered by date. $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$. Per-tech subsample regressions, unit FE absorbed via within-unit demeaning. $^{\dagger}$Wind DiDs read as a price-taking baseline: 84\% of in-band wind sell curves are a single block, with critical and flat scarcity slopes indistinguishable; magnitudes are 5--10$\times$ smaller than CCGT. \textit{DA15 CCGT $\sigma_p$ by offer type} (Figure 1): simple-only $+3.53^{***}$ ($t=3.60$), MIC $-0.90$ (ns), block $+0.29$ (ns); $N_{\text{eff}}$ widens broadly across offer types.}
+
+\paragraph{BSTS results for prices and per-tech auction-cleared energy.}
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l l c c c c}
+\toprule
+                & & \multicolumn{2}{c}{\textbf{ID15}} & \multicolumn{2}{c}{\textbf{DA15}} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6}
+\textbf{Outcome} & \textbf{Tech} & Effect & Placebo & Effect & Placebo \\
+\midrule
+Clearing price (EUR/MWh) & ---     & $-38.34^{***}$ & $-18.08^{*}$  & $+2.97$        & $-8.54$ \\
+\addlinespace
+Cleared (GWh/day)        & CCGT    & $-8.08^{***}$  & $-9.18^{***}$ & $+40.31^{***}$ & $-18.69^{***}$ \\
+                          & Hydro   & $-1.47^{***}$  & $+5.94^{***}$ & $+9.18^{***}$  & $+10.83^{***}$ \\
+                          & Wind    & $+5.34^{***}$  & $+7.99^{***}$ & $+13.16^{***}$ & $+2.15$        \\
+                          & Solar   & $+6.70^{***}$  & $+2.55^{***}$ & $-3.37$        & $+1.38$        \\
+                          & Nuclear & $+11.51^{***}$ & $+19.06^{***}$ & $-18.21^{**}$ & $-34.77^{***}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\noindent{\footnotesize Bayesian posterior point estimates; tail-probability stars $^{*}<0.10$, $^{**}<0.05$, $^{***}<0.01$. Pre-windows respect the relevant regulatory regime constancy: ID15 pre 2024-06-14 $\to$ 2025-03-18 (278 days, post-IDA-reform 3-session regime), post 2025-03-19 $\to$ 2025-04-27 (40 days, pre-blackout); DA15 pre 2025-04-28 $\to$ 2025-09-30 (156 days, post-reforzada-onset), post 2025-10-01 $\to$ 2025-11-09 (40 days). Each \textit{Placebo} column uses the same calendar window of 2024 (no reform; pure seasonal trend benchmark). The placebo-net contrast (real $-$ placebo) is the identified treatment effect; we compute its joint 95\% credible interval treating the two BSTS posteriors as independent (different years and model fits) and propagating their posterior variances. Only one BSTS finding survives at joint 95\%: \textbf{DA15 CCGT cleared scale-up}, $+$59~GWh/day net (joint CI $[+43,+75]$). The other placebo-net contrasts --- prices (IDA, DA), hydro, solar, wind, nuclear cleared --- have joint CIs that bracket zero. The window-length sensitivity in \S 5(c) reports the M\"arkle-Hu\ss\ 80-day-pre version of the same BSTS for comparison.}
+
+\paragraph{What survives.} \textbf{(i) Bid-shape widening in critical hours} (Figure 1). The granularity effect is robust across both reforms. ID15 widens broadly (CCGT, hydro, and pump-storage all show positive $\sigma_p$ DiDs; cross-border control attenuates by only 8\%, \S 5(d)). DA15 is more selective: hydro $\sigma_p$ and CCGT $N_{\text{eff}}$ (broad across offer types) have clean placebos. The pooled DA15 CCGT $\sigma_p$ is diluted by an offer-type composition shift; the cleaner simple-offer-only estimate is $+3.53^{***}$ (see \S 5(d), table notes, and right panel of Figure 1). Wind DiDs are small and read as a price-taking baseline.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{fig_sigma_p_forest.pdf}
+\caption{Per-technology $\sigma_p$ DiD with 95\% confidence intervals. Bid-shape widening in critical hours is positive and significant across most technology--reform combinations. \emph{Right panel}: the DA15 CCGT pooled estimate ($+1.30$) is diluted by an offer-type composition shift (\S 5(d)); the cleaner simple-offer-only estimate is $+3.53$ ($t=3.60$).}
+\label{fig:sigma-p-forest}
+\end{figure}
+
+\textbf{(ii) Day-ahead CCGT auction-cleared volume scales up under DA15.} Placebo-net CCGT cleared energy rises $+$59~GWh/day (joint 95\% credible interval $[+43,+75]$, propagating real and placebo posterior variance) --- the same channel as the bid-shape widening in (i): MTU15-DA lets CCGT discriminate finely within the hour, raising its expected acceptance probability across the four quarters of a peak hour. Hydro, solar and nuclear are essentially null once the 2024 same-calendar placebo is netted off (joint CIs bracket zero). Wind cleared also rises ($+$11~GWh/day net, joint CI $[-1,+23]$); the effect is borderline and wind shows little critical-flat differential in \S 2 (its output spans all hours rather than concentrating in peaks), so the granularity channel does not naturally explain it --- the $+$11 reads as residual cross-year dispatch variation the placebo does not absorb.
+
+\textbf{(iii) Pump-storage within-day arbitrage.} Critical-clock-hour DA generation rises $+237$ MWh under same-calendar ($t=5.0$; baseline cross-season $+634$ is inflated by summer/winter demand-mix). Under same-calendar, generation scales up in both hour-classes but disproportionately in critical: flat $117\!\to\!259$ MWh, critical $645\!\to\!1018$ MWh; the pumping pattern stays concentrated in flat hours pre and post. The technology with the largest within-hour arbitrage value scaled up its critical-hour energy once it could bid quarter by quarter.
+
+\textbf{(iv) Prices move directionally but joint credible intervals bracket zero.} Placebo-net point estimates are $-$20~EUR/MWh for IDA after ID15 (joint 95\% CI $[-50,+9]$) and $+$12~EUR/MWh for DA after DA15 (joint CI $[-15,+38]$). The signs track the two-market bidding contrast (\S 6): CCGT bids at marginal cost ($\sim$EUR 82--96/MWh) in IDA with $\sim$0\% withheld, so finer granularity lets cheaper marginal suppliers undercut in some within-hour quarters and drags the IDA average down; CCGT's two-tier scarcity-aware DA strategy means the auction-cleared mix shifts toward CCGT under DA15, raising the day-ahead level at the margin. The joint credible intervals (propagating the placebo's own posterior variance) bracket zero, however, so these price magnitudes do not stand as causal estimates --- the BSTS posterior for each side is individually significant, but the placebo-netted contrast is not.
+
+\section*{5. Robustness: surviving findings hold; price effects do not}
+
+\begin{takeaway}
+\emph{Takeaway.} Pump-storage and bid-shape findings survive the standard threats; the BSTS DA15 CCGT cleared scale-up survives at joint 95\%; price effects do not.
+\end{takeaway}
+
+\paragraph{(a) Hour-class definition does not affect our results.} Three checks. \emph{Midday-vs-flat falsification}: $\sigma_p$ DiD is $\sim\!\!65\%$ of the critical-vs-flat magnitude --- dose-response in within-hour variance, not a placebo failure. \emph{Weekday-only}: at the baseline. \emph{Extended flat set} (add hour 0, then hour 23): pooled $\sigma_p$ survives every extension.
+
+\paragraph{(b) ID15 results are window-invariant; DA15 CCGT $\sigma_p$ is the one window-sensitive finding.} \emph{Extended ID15 pre window} (back to 2024-06-14): $\sigma_p$ attenuates but the sign and significance survive. \emph{Pre-only placebo} (fake $T_r$ at the midpoint of each pre window): ID15 is clean, while the DA15 $\sigma_p$ placebo flags a pre-existing critical-flat trend --- so the DA15 bid-shape claim rests on hydro $\sigma_p$ and CCGT $N_{\text{eff}}$, where the placebo is clean.
+
+\paragraph{(c) Seasonal control: BSTS placebo for level outcomes, same-calendar DiD for pump-storage; window-length sensitivity.} The BSTS placebo (\S 4 table) handles cross-season trend for prices and per-tech daily cleared energy: the placebo coefficient is the seasonal component and the placebo-net effect is the treatment. Pre-windows are chosen to hold the relevant regulatory regime constant (DA15: 156 d post-reforzada-onset; ID15: 278 d post-IDA-reform). M\"arkle-Hu\ss\ et al.'s shorter 80-day pre gives substantially larger raw magnitudes (e.g.\ ID15 IDA price $-$62 vs $-$38 long pre; DA15 nuclear $-$67 vs $-$18) but rests on a winter-only or summer-only pre, so the local-linear trend extrapolates a cross-season counterfactual blindly; we report the 80-day result as a window-length robustness check, the long pre as the headline. We also add gas as a covariate beyond the M\"arkle-Hu\ss\ wind+solar set because Spain has meaningfully different gas exposure than Germany. The pump-storage finding rests on a separate DiD with same-calendar restriction (pre $=$ Oct--Dec 2024, post $=$ Oct--Dec 2025), retaining $+237^{***}$ MWh ($t=5.0$) under same-calendar with weather controls, corroborated by a Fourier-SA cross-check ($+350$, $t=7.4$).
+
+\paragraph{(d) None of the four candidate confound channels overturns the surviving findings.} \emph{Cross-border flows for ID15}: the same ID15 cutover moved pan-European IDA SIDC and XBID to 15 min, so this is a sibling treatment, not omitted-variable bias on $Y(0)$. The cross-border critical-flat DiD\footnote{ESIOS indicators 535 (FR imp), 536 (FR exp), 539 (PT imp), 540 (PT exp); net $=$ (FR\_imp $+$ PT\_imp) $-$ (FR\_exp $+$ PT\_exp).} is $+8\,965$ MWh ($t=+5.12$) for ID15 vs $+793$ ns for DA15; adding cross-border as a per-curve control attenuates ID15 $\sigma_p$ by only $8\%$ --- bid-granularity dominates. \emph{Reforzada} is absent from ID15 by construction and continuous over the DA15 cutover; its empirical signature is the same-cal DA15 CCGT cleared-energy decrease ($-1{,}363$ MWh), and the CCGT scarcity-tier split confirms it (withholding share $+3.7$pp$^{***}$, competing-tier $N_{\text{eff}}$ $+0.18^{***}$ --- reforzada parks capacity in the scarcity tier, MTU15 makes the competing-tier ladder more granular). \emph{CCGT offer-type composition} (\S 4, Figure 1) understates the pooled $\sigma_p$ DiD; simple-offer-only $+3.53^{***}$ is the cleaner estimate, $N_{\text{eff}}$ widens broadly. \emph{Per-CCGT-firm split}: the DA15 GN headline $+35.0$ is a flat-baseline collapse artefact (mean $40.7\!\to\!7.6$), not a within-hour MTU15 effect.
+
+\section*{6. Two market-structure facts that frame the bidding evidence}
+
+\paragraph{The two-tier CCGT bid curve and the day-ahead/intraday contrast.} Every Big-4 CCGT fleet runs a two-tier day-ahead offer: a low \emph{competing} tier near marginal cost ($\sim$\,EUR 100--110/MWh) and a high \emph{scarcity} tier above the $\sim$\,EUR 200 clearing-price ceiling --- shares above the ceiling: Naturgy 75\%, Endesa 22\%, Iberdrola 22\%, EDP-HC 19\%. Withholding is firm-wide, not a Naturgy story. The same fleets bid a single competitive tier at EUR 82--96/MWh with $\sim\!0\%$ withheld in the intraday auction, after Fase~I has cleared. A unit's marginal cost does not change between two auctions hours apart. The parked day-ahead capacity is recalled in Fase~I and paid pay-as-bid through a \emph{separate} restriction offer (procedure PO 3.2, BOE-A-2025-5342; settlement PO 14.4 ap.~20.1, BOE-A-2025-13076); the day-ahead two-tier curve is the geometry of the Fase~I-recall game, not cost-reflective bidding. MTU15-DA grants CCGT a within-hour degree of freedom over its competing tier. Through this lens, the $+$59~GWh/day CCGT auction-cleared scale-up in \S 4(ii) is the competing tier expanding into the four quarters of each peak hour.
+
+\paragraph{Market concentration migrated from wholesale to ancillary services.} Wholesale-market HHI hovers around 1\,100 over 2016--2024 (below the moderate-concentration threshold of 1\,500) and falls mid-day when solar peaks (solar is less concentrated than the Big-3). Day-ahead restrictions upward HHI above 4\,000; deviations upward above 6\,000; tertiary upward around 5\,000. Median of 4 firms with accepted upward restrictions bids. As renewables eroded wholesale-market power, technical and locational requirements concentrated the ancillary markets that absorb their variability.
+
+\paragraph{References.}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item Brodersen, K.H., F.\ Gallusser, J.\ Koehler, N.\ Remy, and S.L.\ Scott (2015), ``Inferring causal impact using Bayesian structural time-series models,'' \emph{Annals of Applied Statistics} 9(1).
+\item Brown, D.P.\ and M.\ Reguant (2026), ``The Price Impacts of Renewable Power: A Tale of Two Sources,'' \emph{Univ.\ Alberta WP 2026-04}.
+\item de Chaisemartin, C.\ and X.\ D'Haultf\oe uille (2026), \emph{Causal Inference with Differences-in-Differences: Credible Answers to Hard Questions}, Princeton University Press (forthcoming).
+\item Resoluci\'on CNMC 6-mar-2025 (\texttt{BOE-A-2025-5342}), PO 3.2 \emph{Resoluci\'on de restricciones t\'ecnicas}.
+\item Resoluci\'on CNMC 12-jun-2025 (\texttt{BOE-A-2025-13076}), PO 14.4 \emph{Liquidaci\'on de servicios de ajuste y pagos por capacidad}.
+\end{itemize}
 
 \end{document}

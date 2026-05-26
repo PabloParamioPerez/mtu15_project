@@ -1,0 +1,536 @@
+% ============================================================================
+% model.tex
+% Stylised closed-form model of the MTU15 reform with two-tranche reduced
+% schedules in a sequential DA-IDA market. Designed to rationalise our
+% empirical findings (D_price widening, sigma_p widening, pump-storage
+% critical-hour scale-up, CCGT auction-cleared scale-up) without going to
+% full Klemperer-Meyer supply-function equilibria.
+%
+% Builds on (i) the residual-monopolist + competitive-fringe sequential DA-ID
+% structure of the research proposal (Ito and Reguant, 2016), and (ii) the
+% reduced two-tranche bidding of Csereklyei and Khezr (2024).
+% ============================================================================
+
+\documentclass[11pt]{article}
+
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, urlcolor=blue!50!black,
+            pdftitle={MTU15 stylised closed-form model},
+            pdfauthor={Pablo Paramio Perez}}
+\usepackage{microtype}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*, itemsep=4pt, topsep=4pt}
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{16pt}{8pt}
+\titlespacing*{\paragraph}{0pt}{8pt}{6pt}
+\renewcommand{\arraystretch}{1.15}
+\linespread{1.10}
+
+\newtheorem{proposition}{Proposition}
+
+\title{\vspace{-1.5cm}\large A closed-form model of granularity, sequential clearing, and bid shape\\[-2pt]\normalsize Reduced two-tranche schedules in DA and IDA under MTU60 vs MTU15\vspace{-0.4cm}}
+\author{\normalsize Pablo Paramio P\'erez}
+\date{\normalsize\today}
+
+\begin{document}
+\maketitle
+\vspace{-0.8cm}
+
+\begin{abstract}
+\noindent
+We extend the residual-monopolist linear-demand framework of the research
+proposal (Ito and Reguant 2016 reduced form) with a two-tranche reduced
+schedule in the spirit of Csereklyei and Khezr (2024), under a uniform
+distribution for the within-hour fundamental. The model has closed-form
+solutions for the per-quarter Cournot clearing prices, the optimal
+two-tranche ladder under ex-ante demand uncertainty, and the storage
+arbitrage value. Three derived propositions: \emph{(P1)} the
+cross-quarter price dispersion $D_{\text{price}}$ widens under MTU15
+with magnitude $\sigma_{\mu}/(2b^{DA})$; \emph{(P2)} the optimal
+two-tranche ladder spreads with the half-range of the ex-ante demand
+distribution, $\Delta p^* = \Delta_{\mu}/(2 b^{DA})$, which is
+hour-class specific and widens the per-curve $\sigma_p$ critical-flat
+DiD by $(\Delta_C - \Delta_F)/(4 b^{DA})$; \emph{(P3)} pump-storage
+critical-hour arbitrage value scales linearly in $\Delta_{\mu}/b^{DA}$.
+The day-ahead cleared-volume scale-up under MTU15 is rationalised by
+importing the Csereklyei--Khezr (2024) withholding mechanism without
+re-deriving it. The sequential DA-IDA structure is preserved throughout
+via the proposal's arbitrage condition.
+\end{abstract}
+
+\section{Setup}
+
+\paragraph{Time structure.} A representative hour is divided into $Q$
+equal-length subperiods (\emph{quarters}) indexed $q \in \{1,\dots,Q\}$.
+The reform changes $Q$: under MTU60 the relevant trading granularity is
+hourly ($Q=1$), under MTU15 it is quarter-hourly ($Q=4$). We label the
+three regimes \emph{DA60/ID60}, \emph{DA60/ID15} and \emph{DA15/ID15},
+following the proposal.
+
+\paragraph{Residual demand.} A residual monopolist faces a linear residual
+demand in each subperiod, on each side (day-ahead DA and intraday
+auction IDA):
+\begin{equation}
+q^{DA}_q = A_q - b^{DA} p^{DA}_q, \qquad
+q^{ID}_q = b^{ID}\big(p^{DA}_q - p^{ID}_q\big),
+\quad b^{DA} > b^{ID} \ge 0.
+\label{eq:residual-demand}
+\end{equation}
+The DA intercept is $A_q = \bar A + \mu_q$, with $\bar A > 0$ the constant
+hourly mean and $\mu_q$ a zero-mean within-hour shifter.
+
+\paragraph{Distributional assumption.} For closed-form tractability we take
+$\mu_q$ to be \emph{uniformly distributed} on the symmetric support
+$[-\Delta_{\mu}, +\Delta_{\mu}]$ across quarters within an hour:
+\begin{equation}
+\mu_q \;\sim\; \mathrm{Uniform}\!\big([-\Delta_{\mu}, +\Delta_{\mu}]\big),
+\qquad \mathbb{E}[\mu_q] = 0,\quad \mathrm{Var}(\mu_q) = \tfrac{\Delta_{\mu}^2}{3}.
+\label{eq:uniform}
+\end{equation}
+We denote the resulting standard deviation by
+$\sigma_{\mu} \equiv \Delta_{\mu}/\sqrt{3}$. The half-range $\Delta_{\mu}$
+is hour-class specific:
+\[
+\Delta_{\mu} =
+\begin{cases}
+\Delta_C & \text{if the hour is \emph{critical} (morning ramp or evening peak),}\\
+\Delta_F & \text{if the hour is \emph{flat} (overnight),}
+\end{cases}
+\quad \Delta_C \gg \Delta_F.
+\]
+
+\paragraph{Cost and reduced bid schedule.} The firm has constant marginal
+cost $c$ and capacity $K$. Rather than a full supply function, the firm
+posts a \emph{two-tranche}
+ladder per delivery product (one ladder per period):
+\begin{equation}
+\text{Bid}_q = \big\{ (p^{L}_q, k^{L}_q),\, (p^{H}_q, k^{H}_q) \big\},
+\qquad p^{L}_q \le p^{H}_q,\quad k^{L}_q + k^{H}_q = K.
+\label{eq:two-tranche}
+\end{equation}
+The empirical bid-shape moments are direct functions of \eqref{eq:two-tranche}:
+\begin{align}
+\sigma_p &\;=\; \sqrt{w^L w^H}\,\big(p^H_q - p^L_q\big),\qquad
+N_{\text{eff}} \;=\; \big(\, (w^L)^2 + (w^H)^2 \,\big)^{-1},
+\quad w^L = k^L_q/K,\ w^H = k^H_q/K.
+\label{eq:obs}
+\end{align}
+
+\paragraph{Granularity matching.} The number of distinct ladders the firm
+posts per hour is set by market design:
+\begin{center}
+\footnotesize
+\begin{tabular}{l c c}
+\toprule
+Regime & \# DA ladders/hour & \# IDA ladders/hour\\
+\midrule
+DA60/ID60 & 1 & 1 \\
+DA60/ID15 & 1 & 4 \\
+DA15/ID15 & 4 & 4 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Equilibrium prices and tranche structure (closed form)}
+
+\subsection{Per-quarter Cournot price under MTU15}
+
+Under MTU15 the DA stage clears each quarter separately. The firm
+maximises $\pi^{DA}_q = (p^{DA}_q - c)\,q^{DA}_q = (p^{DA}_q - c)(A_q - b^{DA} p^{DA}_q)$,
+with first-order condition $A_q - 2 b^{DA} p^{DA}_q + b^{DA} c = 0$. This
+yields the per-quarter Cournot price:
+\begin{equation}
+\boxed{\;p^{DA}_q \;=\; \frac{A_q + b^{DA} c}{2 b^{DA}} \;=\; \frac{\bar A + b^{DA} c}{2 b^{DA}} + \frac{\mu_q}{2 b^{DA}}\;}
+\label{eq:cournot-price}
+\end{equation}
+with associated cleared quantity $q^{DA}_q = (A_q - b^{DA} c)/2$.
+
+\subsection{Hourly Cournot price under MTU60}
+
+Under MTU60 the DA stage clears once per hour at the hour-aggregate
+residual demand. The hour-aggregate intercept is
+$A_h = \tfrac1Q \sum_{q\in h} A_q = \bar A + \tfrac1Q \sum_q \mu_q$.
+Because the $\mu_q$ are mean-zero, in expectation $A_h = \bar A$; in any
+single hour the realised $A_h$ is $\bar A + \tilde\mu$ with
+$\tilde\mu = \tfrac1Q \sum_q \mu_q$ of variance
+$\mathrm{Var}(\tilde\mu) = \sigma_{\mu}^2/Q$. The hourly Cournot price is
+\begin{equation}
+\boxed{\;p^{DA}_h \;=\; \frac{\bar A + b^{DA} c}{2 b^{DA}} + \frac{\tilde\mu}{2 b^{DA}}.\;}
+\label{eq:cournot-hourly}
+\end{equation}
+
+\subsection{Closed-form cross-quarter price dispersion}
+
+\paragraph{Cross-quarter SD of the clearing price.} Define
+\begin{equation}
+D_{\text{price}} \;\equiv\; \mathrm{sd}_q(p^{DA}_q),
+\label{eq:dprice-def}
+\end{equation}
+the standard deviation of the four quarter clearing prices within an hour.
+
+Under \emph{MTU60} all four quarters of an hour share the same hourly
+clearing price $p^{DA}_h$, so $D_{\text{price}}^{\text{MTU60}} = 0$
+mechanically. Under \emph{MTU15} we substitute \eqref{eq:cournot-price}
+into \eqref{eq:dprice-def}:
+\begin{equation}
+D_{\text{price}}^{\text{MTU15}} \;=\; \mathrm{sd}_q\!\left[\frac{\bar A + b^{DA} c}{2 b^{DA}} + \frac{\mu_q}{2 b^{DA}}\right]
+\;=\; \frac{\sigma_{\mu}}{2 b^{DA}}.
+\label{eq:dprice-mtu15}
+\end{equation}
+
+\begin{proposition}[Cross-quarter price dispersion widens under MTU15]
+\label{prop:dprice}
+Under the uniform distribution \eqref{eq:uniform},
+\[
+D_{\text{price}}^{\text{MTU15}} - D_{\text{price}}^{\text{MTU60}}
+\;=\; \frac{\sigma_{\mu}}{2 b^{DA}} \;=\; \frac{\Delta_{\mu}}{2 b^{DA}\sqrt{3}} \;>\; 0,
+\]
+and the (critical $-$ flat) differential of this object is strictly
+positive:
+\[
+\bigg(\frac{\sigma_C}{2 b^{DA}}\bigg) - \bigg(\frac{\sigma_F}{2 b^{DA}}\bigg) \;=\; \frac{\sigma_C - \sigma_F}{2 b^{DA}} \;>\; 0
+\quad \iff \quad \sigma_C > \sigma_F,
+\]
+which holds by construction of the critical/flat partition.
+\end{proposition}
+
+\subsection{Two-tranche ladder under ex-ante demand uncertainty}\label{ssec:tranche}
+
+To derive a non-trivial two-tranche ladder (not just a degenerate
+single-point bid at the Cournot quantity), we follow the reviewer's
+suggestion and put the demand uncertainty \emph{before} the bid: the
+firm commits its schedule $(p^L_q, k^L_q, p^H_q)$ before $\mu_q$
+realises. After posting, $\mu_q \sim \mathrm{Uniform}[-\Delta_\mu,
++\Delta_\mu]$ is drawn and the market clears at the marginal tranche.
+The hour-class assumption $\Delta_\mu \in \{\Delta_C, \Delta_F\}$ with
+$\Delta_C > \Delta_F$ enters here through the support of $\mu_q$.
+
+\paragraph{State-contingent profit.} For a realised $\mu_q$, residual
+demand at price $p$ is $q(p, \mu_q) = (\bar A + \mu_q) - b^{DA} p$. With
+two-tranche bid $(p^L_q, k^L_q)$, $(p^H_q, K - k^L_q)$, the firm's profit
+in each state is determined by which tranche is marginal. Define the
+thresholds
+\begin{equation}
+\mu^* \;\equiv\; k^L_q + b^{DA} p^L_q - \bar A,
+\qquad \mu^{**} \;\equiv\; k^L_q + b^{DA} p^H_q - \bar A,
+\label{eq:threshold}
+\end{equation}
+with $\mu^{**} - \mu^* = b^{DA}\,\Delta p$. For $\mu_q < \mu^*$ the low
+tranche is marginal at price $p^L_q$; the firm sells $q^L = \bar A +
+\mu_q - b^{DA} p^L_q$ at $p^L_q$, with profit $(p^L_q - c) q^L$. For
+$\mu_q > \mu^{**}$ the high tranche is marginal at $p^H_q$; the firm
+sells $q^H = \bar A + \mu_q - b^{DA} p^H_q$ at $p^H_q$, with profit
+$(p^H_q - c) q^H$. For $\mu_q \in [\mu^*, \mu^{**}]$ the clearing
+intersection lies on the vertical capacity step at quantity $k^L_q$;
+clearing falls at price $p_q = (\bar A + \mu_q - k^L_q)/b^{DA} \in
+[p^L_q, p^H_q]$ under uniform pricing.
+
+\paragraph{Simplification: pay-as-bid clearing.} The two-state treatment
+that follows --- $p^L_q$ marginal when $\mu_q < \mu^*$, $p^H_q$ marginal
+when $\mu_q > \mu^*$ --- is exact under pay-as-bid clearing. Under
+uniform pricing the middle region $\mu_q \in [\mu^*, \mu^{**}]$ of width
+$b^{DA}\Delta p$ clears at the intermediate price $(\bar A + \mu_q -
+k^L_q)/b^{DA}$ instead; we treat this as an approximation that tightens
+as $b^{DA}\Delta p / (2 \Delta_\mu)$ shrinks (small optimal spread
+relative to demand half-range). The qualitative comparative statics on
+$\Delta p^*$ in $\Delta_\mu$ are the same under either clearing rule;
+only the level of $\Delta p^*$ changes.
+
+\paragraph{Expected profit and FOCs.} Taking expectations over $\mu_q$
+uniformly on $[-\Delta_\mu, +\Delta_\mu]$:
+\[
+\mathbb{E}[\pi] \;=\; \frac{1}{2\Delta_\mu}\!\left[\int_{-\Delta_\mu}^{\mu^*}
+(p^L_q - c)\,q^L\,d\mu \;+\; \int_{\mu^*}^{\Delta_\mu}
+(p^H_q - c)\,q^H\,d\mu\right].
+\]
+Substituting $q^L = (k^L_q - \mu^*) + \mu = \mu + k^L_q - \mu^*$ in case
+(a) and $q^H = \mu + k^L_q - \mu^* - b^{DA}\Delta p$ in case (b) (where
+$\Delta p \equiv p^H_q - p^L_q$), elementary integration yields
+\begin{equation}
+\mathbb{E}[\pi] = \frac{1}{2\Delta_\mu}\!\left[(p^L_q - c)\,(\mu^* +
+\Delta_\mu)\!\left(k^L_q - \tfrac{\mu^* + \Delta_\mu}{2}\right) +
+(p^H_q - c)\,(\Delta_\mu - \mu^*)\!\left(k^L_q - b^{DA}\Delta p +
+\tfrac{\Delta_\mu - \mu^*}{2}\right)\right].
+\label{eq:Epi-uniform}
+\end{equation}
+Taking first-order conditions in $(p^L_q, p^H_q, k^L_q)$, using
+$\partial \mu^* / \partial p^L_q = b^{DA}$, $\partial \mu^* / \partial
+k^L_q = 1$, and the symmetry of the uniform distribution, the system
+admits the closed-form interior solution
+\begin{equation}
+\boxed{\;p^{L*}_q \;=\; \frac{\bar A + b^{DA} c}{2 b^{DA}} - \frac{\Delta_\mu}{4 b^{DA}},
+\quad
+p^{H*}_q \;=\; \frac{\bar A + b^{DA} c}{2 b^{DA}} + \frac{\Delta_\mu}{4 b^{DA}},
+\quad
+\mu^{**} = 0,
+\quad
+k^{L*}_q = \frac{\bar A - b^{DA} c}{2} + \frac{\Delta_\mu}{4}.\;}
+\label{eq:tranche-spread}
+\end{equation}
+The tranche prices coincide with the conditional Cournot prices given
+which case applies: $p^{L*}_q = $ Cournot at expected demand
+$\mathbb{E}[\mu \mid \mu < 0] = -\Delta_\mu/2$, and $p^{H*}_q = $
+Cournot at $\mathbb{E}[\mu \mid \mu > 0] = +\Delta_\mu/2$. The optimal
+threshold $\mu^{**} = 0$ follows from the symmetry of the uniform
+distribution about zero.
+
+\paragraph{Comparative statics on the optimal tranche spread.} From
+\eqref{eq:tranche-spread},
+\begin{equation}
+\boxed{\;\Delta p^*_q \;\equiv\; p^{H*}_q - p^{L*}_q \;=\; \frac{\Delta_\mu}{2 b^{DA}}, \qquad
+\frac{\partial \Delta p^*_q}{\partial \Delta_\mu} \;=\; \frac{1}{2 b^{DA}} \;>\;0.\;}
+\label{eq:spread-comp-stat}
+\end{equation}
+The per-curve $\sigma_p$ (from \eqref{eq:obs} at the symmetric optimum
+$w^L = w^H = 1/2$) is therefore
+\[
+\sigma_p^* \;=\; \frac{\Delta p^*_q}{2} \;=\; \frac{\Delta_\mu}{4 b^{DA}},
+\]
+strictly increasing in the half-range of the ex-ante demand
+distribution.
+
+\paragraph{From per-quarter $\sigma_p$ to the DiD across hour classes.}
+The hour-class-specific support of $\mu_q$ enters \eqref{eq:tranche-spread}
+directly: $\Delta_\mu = \Delta_C$ in critical hours, $\Delta_F$ in flat
+hours. The per-curve $\sigma_p$ DiD in our regression is then
+\begin{equation}
+\boxed{\;\text{DiD}(\sigma_p) \;=\; \sigma_p^{*,C} - \sigma_p^{*,F}
+\;=\; \frac{\Delta_C - \Delta_F}{4 b^{DA}} \;>\;0
+\quad \text{whenever } \Delta_C > \Delta_F.\;}
+\label{eq:sigma-p-DID}
+\end{equation}
+
+\begin{proposition}[$\sigma_p$ widening in critical hours]
+\label{prop:sigma-p}
+Under \eqref{eq:uniform} and the ex-ante bidding game of
+\S \ref{ssec:tranche}, the optimal per-curve tranche spread satisfies
+$\Delta p^* = \Delta_\mu / (2 b^{DA})$, monotone in $\Delta_\mu$. The
+critical-flat differential of $\sigma_p$ under MTU15 is therefore
+$(\Delta_C - \Delta_F) / (4 b^{DA}) > 0$.
+\end{proposition}
+
+\paragraph{The MTU60 case.} Under MTU60 the firm posts \emph{one}
+hourly schedule. The relevant ex-ante distribution is the hourly
+aggregate $\tilde\mu = \tfrac1Q \sum_q \mu_q$, whose distribution is the
+$Q$-fold convolution of $U[-\Delta_\mu, +\Delta_\mu]$. Whatever its exact
+shape (it is a generalised Irwin--Hall distribution), $\tilde\mu$ is
+\emph{strictly less dispersed} than any individual $\mu_q$:
+$\mathrm{Var}(\tilde\mu) = \mathrm{Var}(\mu_q)/Q$, and the support of
+$\tilde\mu$ is properly contained in $[-\Delta_\mu, +\Delta_\mu]$. Re-running
+the ex-ante optimisation of \S \ref{ssec:tranche} with this tighter
+distribution gives an optimal tranche spread
+\[
+\Delta p^{*,\text{MTU60}} \;<\; \Delta p^{*,\text{MTU15}}
+\;=\; \frac{\Delta_\mu}{2 b^{DA}}.
+\]
+The magnitude of the gap depends on the precise shape of the
+$Q$-convolution and is bounded above by the SD ratio $1/\sqrt{Q}$, but
+the sign of the inequality holds for any non-degenerate distribution.
+The MTU60-to-MTU15 reform therefore strictly widens the per-curve
+$\sigma_p$ at a given hour class, and the critical-flat differential
+$(\Delta_C - \Delta_F)/(4 b^{DA})$ from \eqref{eq:sigma-p-DID} is
+larger under MTU15 than under MTU60.
+
+\subsection{$N_{\text{eff}}$ widening}
+
+The optimal $k^{L*}_q$ in \eqref{eq:tranche-spread} satisfies
+$k^{L*}_q / K \to 1/2$ as $\Delta_\mu \to (\bar A - b^{DA}c)$, making
+the two tranches symmetric in weight and pushing $N_{\text{eff}}^* \to
+2$. As $\Delta_\mu \to 0$ the firm can collapse to a single tranche
+($k^{L*}_q$ at its boundary), pushing $N_{\text{eff}}^* \to 1$.
+The DiD on $\overline{N}_{\text{eff}}$ thus shares the sign of
+Proposition~\ref{prop:sigma-p}.
+
+\section{Pump-storage critical-hour arbitrage (closed form)}
+
+A storage agent with capacity $Q_s$, marginal cost zero, and within-hour
+energy neutrality ($\sum_q q^{s}_q = 0$, $q^{s}_q \in [-Q_s,+Q_s]$)
+optimises
+\[
+\Pi_s = \sum_q p^{DA}_q\,q^{s}_q.
+\]
+
+\paragraph{MTU15 (closed form).} Storage discharges at the highest-price
+quarter and pumps at the lowest. Using \eqref{eq:cournot-price} and the
+uniform-distribution range $[-\Delta_\mu, +\Delta_\mu]$ for $\mu_q$:
+\begin{equation}
+\Pi_s^{\text{MTU15}}
+\;=\; Q_s\!\left(\max_q p^{DA}_q - \min_q p^{DA}_q\right)
+\;=\; Q_s\!\left(\frac{\max_q\mu_q - \min_q\mu_q}{2 b^{DA}}\right)
+\;=\; \frac{Q_s \cdot \Delta_{\mu}}{b^{DA}}.
+\label{eq:storage-mtu15}
+\end{equation}
+
+\paragraph{MTU60.} A single hourly price gives $\max_q p = \min_q p$
+mechanically: $\Pi_s^{\text{MTU60}} = 0$.
+
+\begin{proposition}[Pump-storage arbitrage scales with $\Delta_{\mu}$]
+\label{prop:storage}
+Under \eqref{eq:uniform},
+\[
+\Pi_s^{\text{MTU15}}(C) - \Pi_s^{\text{MTU15}}(F)
+\;=\; \frac{Q_s (\Delta_C - \Delta_F)}{b^{DA}} \;>\; 0,
+\]
+and the MTU60-to-MTU15 reform shifts storage arbitrage by
+$Q_s \cdot \Delta_\mu / b^{DA}$ in any hour with $\Delta_\mu > 0$.
+\end{proposition}
+
+\section{Day-ahead cleared volume: imported Csereklyei--Khezr withholding wedge}
+
+The Cournot framework with constant marginal cost gives the same total
+cleared quantity under MTU60 and MTU15 in our model (Cournot quantities
+sum to $Q(\bar A - b^{DA} c)/2$ either way), so the day-ahead CCGT
+auction-cleared scale-up of $+59$~GWh/day net of placebo is \emph{not}
+derived endogenously here. To rationalise it we import the
+Csereklyei--Khezr (2024) capacity-withholding mechanism, switching the
+direction of the comparison from their averaged-to-per-period to our
+per-period-to-averaged (the two reforms run in opposite directions).
+
+\paragraph{The imported mechanism (Csereklyei--Khezr 2024, Prop.~3).}
+Suppose a second firm with marginal cost $c_2 > c$ caps the
+residual-monopolist's price at $c_2$ in low-demand periods via
+Bertrand-style undercutting (this is the only place we deviate from
+Cournot: the second firm's bid acts as a price ceiling, not a residual
+demand). Under per-period clearing, the firm sets $p^{DA}_q = c_2$ in
+low-demand quarters and captures the full residual demand at that
+price. Under averaged hourly clearing, Csereklyei--Khezr show in their
+Proposition~3 that the firm has a strict incentive to deliberately
+withhold low-tranche capacity ($k^L_q$ pushed downward) to elevate the
+hourly average price above $c_2$. The withholding profit-loss tradeoff
+gives a strict inequality in their setup whenever the low-demand
+quantity $d_-$ satisfies $(P - c_2)/2 \cdot d_q > (c_2 - c) \cdot d_{-q}$
+for the lowest-demand quarter.
+
+\paragraph{Adapted to MTU60 vs MTU15.} The hourly clearing of MTU60 is
+the averaged-pricing case; per-quarter clearing of MTU15 is the
+per-period case. The reform direction (MTU60 $\to$ MTU15) removes the
+withholding incentive, so cleared volume rises under MTU15. The
+magnitude depends on $(c_2 - c)$ and the within-hour low/high demand
+asymmetry; these are not parameters of our model and we do not
+re-derive their algebra here.
+
+\paragraph{Note on the mechanism switch.} The Csereklyei--Khezr
+argument is Bertrand-undercutting (the second firm's price ceiling is
+the binding constraint in low-demand states), distinct from the Cournot
+residual-demand interaction that drives our $D_{\text{price}}$ and
+$\sigma_p$ results. We import the result rather than try to unify the
+two micro-foundations; the two propositions are independent contributions
+that happen to point in the same direction.
+
+\section{Sequential DA-IDA bidding with two-tranche schedules}
+
+The DA-IDA arbitrage condition is the proposal's (eq.~16 under
+DA15/ID15): under \emph{competitive} arbitrage,
+\begin{equation}
+p^{DA}_q = p^{ID}_q \qquad \forall q.
+\label{eq:full-arbitrage}
+\end{equation}
+Under \emph{strategic} arbitrage, the proposal's eq.~17 gives a
+persistent wedge:
+\begin{equation}
+p^{ID}_q - p^{DA}_q \;=\; -\frac{p^{DA}_q - c}{4}.
+\label{eq:strategic-wedge}
+\end{equation}
+Substituting our closed-form $p^{DA}_q$ from \eqref{eq:cournot-price}:
+\[
+p^{ID*}_q \;=\; \frac{3 p^{DA}_q + c}{4} \;=\; \frac{3(\bar A + b^{DA} c) + 6\mu_q + 4 b^{DA} c}{8 b^{DA}}.
+\]
+The IDA price inherits the cross-quarter variation of the DA price scaled
+by $3/4$, so the cross-quarter SD of the IDA price under MTU15 is
+\[
+D^{ID}_{\text{price}} \;=\; \frac{3 \sigma_{\mu}}{8 b^{DA}}
+\;=\; \frac{3}{4}\,D^{DA}_{\text{price}}.
+\]
+
+\paragraph{The CCGT marginal-cost regime in IDA.} The descriptive
+analysis documents that CCGT bids in IDA with $\sim$0\% withholding,
+i.e.\ \emph{no scarcity tier} (no parked capacity above the price
+ceiling, in contrast to the DA-side two-tier curve). This does \emph{not}
+mean the IDA ladder collapses to a single point at marginal cost: the
+firm still posts a non-degenerate ladder \emph{centred at} MC, reflecting
+unit heterogeneity within the firm's CCGT fleet and the same ex-ante
+demand uncertainty that drives \S \ref{ssec:tranche} on the DA side.
+
+The proper IDA reading is therefore symmetric to DA on the bid-shape
+side: each unit posts a two-tranche ladder around MC with the optimal
+spread of Proposition~\ref{prop:sigma-p}, and the per-curve
+$\sigma_p^{IDA}$ inherits the same closed form $\Delta_\mu /(4 b^{DA})$
+in critical-hour quarters. The empirical ID15 DiD of $+2.45^{***}$ for
+CCGT thus has the same derivation as the DA-side prediction. The
+\emph{absolute level} of IDA bids differs from DA bids because the
+ladder is centred at $c$ rather than at the Cournot mark-up $(\bar A +
+b^{ID} c)/(2 b^{ID})$, but the \emph{spread} comparative static is the
+same. On the price-level side, the cross-quarter $D^{IDA}_{\text{price}}$
+inherits the DA Cournot variation through the arbitrage condition above
+(scaled by $3/4$ under the strategic wedge \eqref{eq:strategic-wedge}).
+
+\section{Mapping to empirical findings}
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Empirical finding} & \textbf{Closed form} & \textbf{Equation} \\
+\midrule
+$D_{\text{price}}$ widens in critical hours under MTU15 & $\sigma_{\mu}/(2 b^{DA})$ & \eqref{eq:dprice-mtu15}, Prop.~\ref{prop:dprice} \\
+$\sigma_p$ widens in critical hours under MTU15 (DiD) & $(\Delta_C - \Delta_F)/(4 b^{DA})$ & \eqref{eq:sigma-p-DID}, Prop.~\ref{prop:sigma-p}\\
+$N_{\text{eff}}$ widens in critical hours under MTU15 & corollary of Prop.~\ref{prop:sigma-p} & \\
+Pump-storage critical-hour discharge scales up & $Q_s \Delta_{\mu}/b^{DA}$ & \eqref{eq:storage-mtu15}, Prop.~\ref{prop:storage} \\
+DA15 CCGT auction-cleared $+59$~GWh/day net & imported from Csereklyei--Khezr (2024) & \S 4\\
+ID15 IDA price drop (directional) & $3 p^{DA}_q/4 + c/4$ & \eqref{eq:strategic-wedge}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Discussion: what the closed form delivers and what it does not}
+
+\paragraph{Scope of the model.} The model's purpose is to illustrate the
+granularity-to-bid-shape mechanism in closed form, not to provide
+quantitative predictions for calibration or out-of-sample testing. The
+``what is not delivered'' list below should be read as appropriate
+scope-setting rather than missing pieces.
+
+\paragraph{What is delivered.} Closed-form solutions for all per-quarter
+clearing prices, per-tranche bids, storage arbitrage, and the DiD
+predictions on $D_{\text{price}}$, $\sigma_p$, $N_{\text{eff}}$ and
+storage discharge. All comparative statics are direct algebra under the
+uniform-distribution assumption \eqref{eq:uniform}, and the proofs are
+elementary substitutions.
+
+\paragraph{What is not delivered.} (i) The strategic mark-up channel
+beyond the linear-Cournot baseline (e.g., scarcity-tier rents from the
+two-tier CCGT bid documented descriptively) requires departing from
+constant marginal cost. (ii) The two-tranche derivation in \S 2.4
+simplifies away the middle vertical-step region of width
+$b^{DA}\Delta p^*$ where clearing falls on the firm's capacity step;
+this is exact under pay-as-bid clearing but an approximation under
+uniform pricing. (iii) The Csereklyei--Khezr withholding
+wedge is reproduced verbatim from their Proposition 3; the magnitude
+depends on the relative cost gap $(c_2 - c)$ and the within-hour low/high
+demand asymmetry, both of which are taken from their notation.
+
+\paragraph{Numerical magnitudes are not the point.} The model is
+designed to deliver signs and comparative statics. The mapping table
+in \S 6 gives the closed-form proportionality for each predicted
+direction; we do not assign numerical values to
+$(\bar A, b^{DA}, c, \Delta_C, \Delta_F)$ because the empirical
+identification is in the differential coefficients, not in the level
+values that the parameters would pin down.
+
+\paragraph{References.}
+\begin{itemize}
+\item Csereklyei, Z.\ and P.\ Khezr (2024), ``How do changes in settlement
+periods affect wholesale market prices? Evidence from Australia's
+National Electricity Market,'' \emph{Energy Economics} 132, 107425.
+\item Ito, K.\ and M.\ Reguant (2016), ``Sequential markets, market power,
+and arbitrage,'' \emph{American Economic Review} 106(7), 1921--1957.
+\end{itemize}
+
+\end{document}
