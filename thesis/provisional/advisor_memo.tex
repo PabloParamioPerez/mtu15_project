@@ -15,6 +15,8 @@
 \usepackage{longtable}
 \usepackage{multirow}
 \usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, decorations.pathreplacing}
 \usepackage[round,authoryear]{natbib}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true, linkcolor=blue!50!black, citecolor=black, urlcolor=blue!50!black}
@@ -88,7 +90,81 @@ DA15 real             & 50 & 58 \\
 DA15 placebo (2024)   & 45 & 49 \\
 \bottomrule
 \end{tabular}
-\end{center} Now define the in-band set, MW weights, and in-band weighted mean bid price:
+\end{center}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.82, every node/.style={font=\footnotesize}]
+  \def\xmax{12.5}
+  \def\ymax{8.4}
+  \def\mcp{4}
+  \def\h{1.15}
+  \def\ceiling{6.6}
+
+  % In-band shaded band ----------------------------------------------------
+  \fill[orange!18] (0, \mcp-\h) rectangle (\xmax-0.3, \mcp+\h);
+
+  % Axes -------------------------------------------------------------------
+  \draw[-{Latex[length=2.4mm]}, thick, gray!75] (0,0) -- (\xmax,0)
+    node[below left=2pt and -10pt, black] {Cumulative offered quantity (MW)};
+  \draw[-{Latex[length=2.4mm]}, thick, gray!75] (0,0) -- (0,\ymax);
+  \node[rotate=90, anchor=south, black] at (-0.55, \ymax/2)
+    {Bid price (EUR/MWh)};
+
+  % Reference horizontal lines --------------------------------------------
+  \draw[red!80!black, very thick, dash pattern=on 4pt off 2pt]
+    (0, \mcp) -- (\xmax-0.3, \mcp);
+  \node[red!80!black, anchor=west] at (\xmax-0.25, \mcp) {MCP};
+  \draw[gray!60, dotted, thick] (0, \ceiling) -- (\xmax-0.3, \ceiling);
+  \node[gray!60!black, anchor=west] at (\xmax-0.25, \ceiling) {ceiling};
+
+  % Supply step function (sell bids ordered cheapest-to-most-expensive) ---
+  \draw[blue!60!black, very thick, line cap=round]
+       (0,    0.4) -- (1.0,  0.4)
+    -- (1.0,  0.9) -- (1.8,  0.9)
+    -- (1.8,  1.3) -- (2.7,  1.3)
+    -- (2.7,  1.9) -- (3.4,  1.9)
+    -- (3.4,  2.5) -- (4.0,  2.5)
+    -- (4.0,  3.05)-- (4.7,  3.05)
+    -- (4.7,  3.55)-- (5.4,  3.55)   % low edge of competing tier (in-band)
+    -- (5.4,  3.95)-- (6.0,  3.95)   % in-band, just below MCP
+    -- (6.0,  4.30)-- (6.5,  4.30)   % in-band, just above MCP
+    -- (6.5,  4.75)-- (7.1,  4.75)   % in-band upper
+    -- (7.1,  5.10)-- (7.5,  5.10)   % top of competing
+    -- (7.5,  7.45)-- (8.5,  7.45)   % parked tier jump (above ceiling)
+    -- (8.5,  7.75)-- (10.0, 7.75);
+
+  % Demand vertical (sets MCP at supply crossing) -------------------------
+  \draw[red!80!black, very thick, dash pattern=on 4pt off 2pt]
+    (6.0, 0) -- (6.0, \mcp);
+  \node[red!80!black, below] at (6.0, -0.05) {$Q^\star$};
+
+  % Bandwidth bracket on the right -----------------------------------------
+  \draw[decorate, decoration={brace, amplitude=5pt, mirror},
+        thick] (\xmax-2.2, \mcp+\h) -- (\xmax-2.2, \mcp-\h);
+  \node[anchor=west] at (\xmax-2.05, \mcp) {$2h$};
+
+  % Labels -----------------------------------------------------------------
+  \node[orange!60!black, anchor=south west, fill=white, rounded corners,
+        inner sep=2pt, draw=orange!50, line width=0.4pt]
+    at (0.3, \mcp+\h+0.10) {\textbf{in-band: competing tier}};
+  \node[gray!50!black, anchor=south west, fill=white, rounded corners,
+        inner sep=2pt, draw=gray!40, line width=0.4pt]
+    at (7.55, \ceiling+1.1) {\textbf{parked tier} (above ceiling, non-strategic)};
+
+\end{tikzpicture}
+\caption{\textbf{Bandwidth $h$ and the in-band region.} The supply curve
+is the sorted sell-bid ladder for one quarter and one market. The market
+clears where supply meets demand, fixing the MCP. Bid-shape outcomes
+($\sigma_p$, $N_{\text{eff}}$) are computed only on tranches in the
+in-band region $[\text{MCP}-h,\ \text{MCP}+h]$ --- the competing tier
+where strategic action lives. The parked tier above the clearing-price
+ceiling is a Fase~I-recall placeholder (\hyperref[sec:context]{\S~7}) and
+is excluded by construction.}
+\label{fig:in-band-bandwidth}
+\end{figure}
+
+Now define the in-band set, MW weights, and in-band weighted mean bid price:
 \[
 \mathcal{B}_{u,d,p} \;=\; \{k:\,|p_k-\text{MCP}_{d,p}|\le h\}, \qquad w_k \;=\; \frac{q_k}{\sum_{j\in\mathcal{B}_{u,d,p}} q_j}, \qquad \bar p_{u,d,p} \;=\; \sum_{k\in\mathcal{B}} w_k\,p_k.
 \]
