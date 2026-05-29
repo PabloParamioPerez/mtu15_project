@@ -16,19 +16,104 @@ if str(SRC_DIR) not in sys.path:
 FILE_RE = re.compile(r"pdbc_(\d{8})\.(\d+)\.parquet$")
 
 
+def _print_stats(con: duckdb.DuckDBPyConnection, output_path: Path) -> None:
+    stats = con.execute(f"""
+        SELECT COUNT(*), MIN(date), MAX(date) FROM read_parquet('{output_path}')
+    """).fetchone()
+    days_by_mtu = con.execute(f"""
+        SELECT mtu_minutes, COUNT(DISTINCT date) AS n_days
+        FROM read_parquet('{output_path}')
+        GROUP BY mtu_minutes ORDER BY mtu_minutes
+    """).df()
+    rows_per_day = con.execute(f"""
+        SELECT MIN(cnt), MAX(cnt), AVG(cnt) FROM (
+            SELECT date, COUNT(*) cnt FROM read_parquet('{output_path}') GROUP BY date
+        ) t
+    """).fetchone()
+    mtu_dist = {int(r[0]): int(r[1]) for r in days_by_mtu.itertuples(index=False)}
+    print(f"Output rows:             {stats[0]:,}")
+    print(f"Date range:              {stats[1]} -> {stats[2]}")
+    print(f"Output file:             {output_path}")
+    print(f"Days by inferred MTU:    {mtu_dist}")
+    print(
+        f"Rows/day summary:        min={int(rows_per_day[0])}, "
+        f"max={int(rows_per_day[1])}, mean={rows_per_day[2]:.2f}"
+    )
+
+
+def _incremental_rebuild(
+    processed_dir: Path, output_path: Path, new_files: list[Path]
+) -> None:
+    """Append new daily files to the existing all.parquet, evicting any
+    rows with overlapping dates (so a new version of an existing date
+    cleanly supersedes the old one)."""
+    print(f"Incremental: {len(new_files)} new/changed daily file(s)")
+
+    by_new_date: dict[str, list[tuple[int, Path]]] = defaultdict(list)
+    for f in new_files:
+        m = FILE_RE.match(f.name)
+        if not m:
+            raise ValueError(f"Unexpected filename: {f.name}")
+        by_new_date[m.group(1)].append((int(m.group(2)), f))
+    new_kept = [max(lst, key=lambda t: t[0])[1] for lst in by_new_date.values()]
+
+    with tempfile.TemporaryDirectory(prefix="pdbc_inc_") as stage_dir:
+        stage = Path(stage_dir)
+        for f in new_kept:
+            (stage / f.name).symlink_to(f.resolve())
+        new_glob = str(stage / "pdbc_*.parquet")
+
+        con = duckdb.connect()
+        con.execute("SET memory_limit='6GB'")
+        con.execute("SET threads=4")
+        con.execute(f"SET temp_directory='{stage}'")
+
+        tmp_output = str(output_path) + ".inc"
+        con.execute(f"""
+            COPY (
+                SELECT * FROM read_parquet('{output_path}')
+                WHERE date NOT IN (
+                    SELECT DISTINCT date FROM read_parquet('{new_glob}', union_by_name=true)
+                )
+                UNION ALL BY NAME
+                SELECT * FROM read_parquet('{new_glob}', union_by_name=true)
+            )
+            TO '{tmp_output}' (FORMAT PARQUET)
+        """)
+
+    output_path.unlink()
+    Path(tmp_output).rename(output_path)
+    print(f"Replaced {len(by_new_date)} date(s) in place.")
+    _print_stats(duckdb.connect(), output_path)
+
+
 def main() -> None:
     processed_dir = PROJECT_ROOT / "data/processed/omie/mercado_diario/programas/pdbc"
     output_path = processed_dir.parent / "pdbc_all.parquet"
 
+    all_files_iter = sorted(processed_dir.glob("*.parquet"))
+    if not all_files_iter:
+        raise FileNotFoundError(f"No parquet files found in {processed_dir}")
+
+    # ---------------------------------------------------------------
+    # Incremental path: if output exists, only re-process files newer
+    # than the output and replace those dates in the existing parquet.
+    # Falls back to full rebuild if output is missing or stale.
+    # ---------------------------------------------------------------
     if output_path.exists():
-        newest_input = max((f.stat().st_mtime for f in processed_dir.glob("*.parquet")), default=0)
-        if output_path.stat().st_mtime >= newest_input:
+        output_mtime = output_path.stat().st_mtime
+        new_files = [f for f in all_files_iter if f.stat().st_mtime > output_mtime]
+        if not new_files:
             print("Up to date, skipping build.")
             return
 
-    all_files = sorted(processed_dir.glob("*.parquet"))
-    if not all_files:
-        raise FileNotFoundError(f"No parquet files found in {processed_dir}")
+        if len(new_files) < 0.5 * len(all_files_iter):
+            _incremental_rebuild(processed_dir, output_path, new_files)
+            return
+        # else fall through to full rebuild (changed too many files)
+        print(f"{len(new_files)}/{len(all_files_iter)} files changed; full rebuild.")
+
+    all_files = all_files_iter
 
     # Pick the highest-version file per date (filename encodes version: pdbc_YYYYMMDD.V.parquet).
     # Cross-file dedup at the row level becomes unnecessary because OMIE's later versions
@@ -69,38 +154,7 @@ def main() -> None:
             TO '{output_path}' (FORMAT PARQUET)
         """)
 
-    # --- Summary stats on final output ---
-    con2 = duckdb.connect()
-    stats = con2.execute(f"""
-        SELECT COUNT(*), MIN(date), MAX(date)
-        FROM read_parquet('{output_path}')
-    """).fetchone()
-
-    days_by_mtu = con2.execute(f"""
-        SELECT mtu_minutes, COUNT(DISTINCT date) AS n_days
-        FROM read_parquet('{output_path}')
-        GROUP BY mtu_minutes
-        ORDER BY mtu_minutes
-    """).df()
-
-    rows_per_day = con2.execute(f"""
-        SELECT MIN(cnt), MAX(cnt), AVG(cnt) FROM (
-            SELECT date, COUNT(*) AS cnt
-            FROM read_parquet('{output_path}')
-            GROUP BY date
-        ) t
-    """).fetchone()
-
-    mtu_dist = {int(r[0]): int(r[1]) for r in days_by_mtu.itertuples(index=False)}
-
-    print(f"Output rows (latest):    {stats[0]:,}")
-    print(f"Date range:              {stats[1]} -> {stats[2]}")
-    print(f"Output file:             {output_path}")
-    print(f"Days by inferred MTU:    {mtu_dist}")
-    print(
-        f"Rows/day summary:        min={int(rows_per_day[0])}, "
-        f"max={int(rows_per_day[1])}, mean={rows_per_day[2]:.2f}"
-    )
+    _print_stats(duckdb.connect(), output_path)
 
 
 if __name__ == "__main__":
