@@ -230,6 +230,15 @@ Cleared (GWh/day)        & CCGT       & $-8.08^{***}$  & $-9.18^{***}$ & $+40.31
 \label{fig:bsts-wedge}
 \end{figure}
 
+\noindent{\color{red}\textbf{[NOVEL] \emph{Wedge by hour-class --- dose-response in the predicted direction.}} Running the same single long-history BSTS on the daily DA $-$ IDA wedge \emph{separately} for each hour-class (Figure~\ref{fig:bsts-wedge-hour-class}; same covariates, same pre/post-windows): critical-hour wedge effect $+0.68$~EUR/MWh ($[-1.62, +2.88]$, $p{=}0.28$), midday $+0.44$ ($[-2.56, +3.34]$, $p{=}0.39$), flat $+0.21$ ($[-2.71, +2.83]$, $p{=}0.43$). None survives individually, but the magnitudes order $\text{critical} > \text{midday} > \text{flat}$ --- the dose-response predicted by the granularity-asymmetry mechanism (within-hour residual demand varies most in critical hours, least in flat hours, so any granularity-driven wedge should concentrate where it matters). The critical $-$ flat differential is $+0.47$~EUR/MWh.}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{fig_bsts_wedge_hour_class.pdf}
+\caption{\textbf{Per-hour-class BSTS counterfactual on the DA $-$ IDA wedge.} Three panels --- critical (top), midday (middle), flat (bottom) --- each running the single long-history BSTS of Figure~\ref{fig:bsts-wedge} on the daily mean wedge restricted to that hour-class. Same colour scheme. The post-window counterfactual sits closest to the observed wedge in flat hours and separates the most in critical hours, but the per-class CIs all bracket zero so the dose-response is directional rather than identified.}
+\label{fig:bsts-wedge-hour-class}
+\end{figure}
+
 \phantomsection\label{sec:4iv}\noindent\textbf{(iv) Pump-storage daily cleared MW: ID15 intraday-auction decrease surviving; DA15 day-ahead rise borderline.} Figure~\ref{fig:bsts-pumpstorage} shows both effects against their 2024 placebos. The tech with the largest within-day arbitrage value reallocates its dispatch once each market becomes 15-min-priceable. ID15 pulls pump-storage capacity \emph{out of} the now-finer intraday auction (top-left below the band, top-right placebo flat; placebo-net survives joint 95\%). DA15 lets the day-ahead auction absorb more of its discharge (bottom-left above the band) --- the closed-form storage prediction (\hyperref[sec:identification]{\S~3}) --- but the placebo (bottom-right) also rises, so the daily-level test is borderline; the within-day redistribution shows up cleanly in the bid-shape geometry of (\hyperref[sec:4i]{i}) and the per-hour-class quantity migration of (\hyperref[sec:4v]{v}) instead.
 
 \begin{figure}[H]
