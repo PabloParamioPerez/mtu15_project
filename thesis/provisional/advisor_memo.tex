@@ -159,7 +159,7 @@ clears where supply meets demand, fixing the MCP. Bid-shape outcomes
 ($\sigma_p$, $N_{\text{eff}}$) are computed only on tranches in the
 in-band region $[\text{MCP}-h,\ \text{MCP}+h]$ --- the competing tier
 where strategic action lives. The parked tier above the clearing-price
-ceiling is a Fase~I-recall placeholder (\hyperref[sec:context]{\S~7}) and
+ceiling is a non-strategic placeholder (\hyperref[sec:context]{\S~7}) and
 is excluded by construction.}
 \label{fig:in-band-bandwidth}
 \end{figure}
@@ -397,7 +397,7 @@ $N_{\text{eff}}$                & CCGT          & $-0.08$ (0.21)       & $+0.79$
 
 \paragraph{Per-CCGT-firm decomposition of the DA15 $\sigma_p$ widening.} The pooled DA15 CCGT day-ahead $\sigma_p$ widening is driven primarily by Naturgy and to a lesser extent Iberdrola; Endesa and EDP-HC do not contribute. The Naturgy effect is not a flat-baseline artefact at the $p_{90}$ bandwidth: $\sigma_p$ rises in both arms but more in critical hours.
 
-\paragraph{Bandwidth $h$.}\phantomsection\label{sec:5e} Why $p_{90}$: it isolates the competing tier of CCGT bids and excludes the parked tier above the ceiling, which is a Fase~I-recall placeholder rather than a strategic price (\hyperref[sec:context]{\S~7}). Including the parked tier would bias $\sigma_p$ upward by a measurement-driven cross-tier spread instead of a behavioural signal. The qualitative picture is robust to small shifts around $p_{90}$. At much wider bandwidths, CCGT $\sigma_p$ magnitudes inflate substantially and several DiD coefficients flip sign because the cross-tier spread itself moves across the cutover for reasons unrelated to within-tier bidding --- exactly the artefact $p_{90}$ avoids.
+\paragraph{Bandwidth $h$.}\phantomsection\label{sec:5e} Why $p_{90}$: it isolates the competing tier of CCGT bids and excludes the parked tier above the ceiling, which is a non-strategic placeholder rather than a strategic price (\hyperref[sec:context]{\S~7}). Including the parked tier would bias $\sigma_p$ upward by a measurement-driven cross-tier spread instead of a behavioural signal. The qualitative picture is robust to small shifts around $p_{90}$. At much wider bandwidths, CCGT $\sigma_p$ magnitudes inflate substantially and several DiD coefficients flip sign because the cross-tier spread itself moves across the cutover for reasons unrelated to within-tier bidding --- exactly the artefact $p_{90}$ avoids.
 
 \paragraph{Pump-storage seasonal control (\hyperref[sec:bsts]{Spec~A}).}\phantomsection\label{sec:5c-prime} The DA15 day-ahead pump-storage rise is borderline at joint 95\% in the main BSTS because of cross-season baseline drift between summer pre and autumn post. A same-calendar DiD restricted to Oct--Dec 2024 vs.\ Oct--Dec 2025 and a Fourier deseasonalisation both retain the directional finding when the demand-mix story is held fixed.
 
