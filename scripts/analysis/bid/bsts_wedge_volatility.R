@@ -34,12 +34,22 @@ COVARS <- COVAR_SPECS$base  # default for the original loop
 OUTCOMES <- c("wedge_sd", "wedge_abs", "wedge_iqr",
               "wedge_sd_critical", "wedge_sd_midday", "wedge_sd_flat")
 CFGS <- list(
-  # ID15 (intraday MTU60 -> MTU15, 2025-03-19): asymmetric granularity break
-  list("ID15",  "real",    "2024-06-14", "2025-03-18", "2025-03-19", "2025-04-27"),
-  list("ID15",  "placebo", "2023-06-14", "2024-03-18", "2024-03-19", "2024-04-27"),
-  # DA15 (day-ahead MTU60 -> MTU15, 2025-10-01): granularity becomes symmetric
-  list("DA15",  "real",    "2025-04-28", "2025-09-30", "2025-10-01", "2025-12-31"),
-  list("DA15",  "placebo", "2024-04-28", "2024-09-30", "2024-10-01", "2024-12-31"),
+  # ID15 (intraday MTU60 -> MTU15, 2025-03-19): asymmetric granularity break.
+  # Post-window ends at the blackout 2025-04-28 (the cleanest 40-day
+  # pre-blackout window; extending past the blackout would mix regimes).
+  list("ID15",  "real",        "2024-06-14", "2025-03-18", "2025-03-19", "2025-04-27"),
+  list("ID15",  "placebo",     "2023-06-14", "2024-03-18", "2024-03-19", "2024-04-27"),
+  # Extra 2026 placebo for ID15: pre includes post-blackout + DA15; fake
+  # cutover 2026-03-19; post = 40 days into spring 2026. Same calendar
+  # offset as the real ID15 window, an additional same-month falsifier.
+  list("ID15",  "placebo2026", "2025-06-14", "2026-03-18", "2026-03-19", "2026-04-27"),
+  # DA15 (day-ahead MTU60 -> MTU15, 2025-10-01): granularity becomes
+  # symmetric. Post-window extended to all available data (2026-04-27, ~7
+  # months instead of the earlier 3-month default). Placebo post-window
+  # extends to 2025-03-18 (the day before ID15) to keep the placebo
+  # uncontaminated by a real reform inside its post.
+  list("DA15",  "real",    "2025-04-28", "2025-09-30", "2025-10-01", "2026-04-27"),
+  list("DA15",  "placebo", "2024-04-28", "2024-09-30", "2024-10-01", "2025-03-18"),
   # ISP15 (REE settlement period 60 -> 15, 2024-12-11): NOT a granularity
   # break at OMIE (OMIE contract grid still 60-min); pre = post-IDA-reform
   # regime, post stops at ID15
