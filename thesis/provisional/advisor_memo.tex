@@ -74,7 +74,21 @@ Quantity-side, the cleared mix shifts in the direction the bid widening would pr
 \label{fig:bid_internal:timeline}
 \end{figure}
 
-\paragraph{Variables.} Each (unit $u$, date $d$, period $p$) sell offer is a tranche ladder $\{(p_k, q_k)\}_{k=1}^{K_{u,d,p}}$ where $p_k$ is the bid price (EUR/MWh) and $q_k$ the quantity in MW\footnote{Following OMIE \emph{Potencia} field in \textit{ficheros OMIE v1.37} \S 5.1.4.2.}. Offers carry one of three structural types: \emph{simple} (a bare price--quantity ladder), \emph{minimum-income condition} (MIC), or \emph{block} (all-or-nothing across periods). Most technologies use simple bids, but CCGT is the outlier with the bulk of its offers in MIC or block form (\hyperref[sec:results]{\S~4}, \hyperref[sec:5d]{\S~5(d)})\footnote{Approximate sell-offer shares by structural type (DA15/ID15): wind, solar, hydro and pump-storage $\sim\!100\%$ simple; nuclear $64\%$ simple, $36\%$ MIC; CCGT $18\%$ simple, $50\%$ MIC, $32\%$ block.}. Let $\text{MCP}_{d,p}$ be the OMIE clearing price \emph{of the market in which the offer was submitted} and $h$ a bandwidth that isolates the bids in contention: tranches close enough to the clearing price to plausibly compete in the \emph{competing tier} of the offer (CCGT's two-tier structure makes this distinction explicit, \hyperref[sec:context]{\S~7}). We anchor $h$ to the \emph{contemporary contested margin}: $h$ is computed as $p_{90}-p_{50}$ of the MCP distribution \emph{in the analysis window of the comparison, market by market}. The eight bandwidths used in this memo (one per reform $\times$ \{real, placebo\} $\times$ \{DA, IDA\}) are: ID15 real DA~$=$~50, ID15 real IDA~$=$~62, ID15 placebo DA~$=$~45, ID15 placebo IDA~$=$~46, DA15 real DA~$=$~50, DA15 real IDA~$=$~58, DA15 placebo DA~$=$~45, DA15 placebo IDA~$=$~49 EUR/MWh. Bandwidth-robustness across wider $h$ choices is reported in \hyperref[sec:5e]{\S~5(e)}. Now define the in-band set, MW weights, and in-band weighted mean bid price:
+\paragraph{Variables.} Each (unit $u$, date $d$, period $p$) sell offer is a tranche ladder $\{(p_k, q_k)\}_{k=1}^{K_{u,d,p}}$ where $p_k$ is the bid price (EUR/MWh) and $q_k$ the quantity in MW\footnote{Following OMIE \emph{Potencia} field in \textit{ficheros OMIE v1.37} \S 5.1.4.2.}. Offers carry one of three structural types: \emph{simple} (a bare price--quantity ladder), \emph{minimum-income condition} (MIC), or \emph{block} (all-or-nothing across periods). Most technologies use simple bids, but CCGT is the outlier with the bulk of its offers in MIC or block form (\hyperref[sec:results]{\S~4}, \hyperref[sec:5d]{\S~5(d)})\footnote{Approximate sell-offer shares by structural type (DA15/ID15): wind, solar, hydro and pump-storage $\sim\!100\%$ simple; nuclear $64\%$ simple, $36\%$ MIC; CCGT $18\%$ simple, $50\%$ MIC, $32\%$ block.}. Let $\text{MCP}_{d,p}$ be the OMIE clearing price \emph{of the market in which the offer was submitted} and $h$ a bandwidth that isolates the bids in contention: tranches close enough to the clearing price to plausibly compete in the \emph{competing tier} of the offer (CCGT's two-tier structure makes this distinction explicit, \hyperref[sec:context]{\S~7}). We anchor $h$ to the \emph{contemporary contested margin}: $h$ is computed as $p_{90}-p_{50}$ of the MCP distribution \emph{in the analysis window of the comparison, market by market}. The resulting eight bandwidths (one per reform $\times$ \{real, placebo\} $\times$ \{DA, IDA\}) are summarised in the table below; bandwidth-robustness across wider $h$ choices is reported in \hyperref[sec:5e]{\S~5(e)}.
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{l c c}
+\toprule
+\textbf{Window} & $h$ in DA (EUR/MWh) & $h$ in IDA (EUR/MWh) \\
+\midrule
+ID15 real             & 50 & 62 \\
+ID15 placebo (2024)   & 45 & 46 \\
+DA15 real             & 50 & 58 \\
+DA15 placebo (2024)   & 45 & 49 \\
+\bottomrule
+\end{tabular}
+\end{center} Now define the in-band set, MW weights, and in-band weighted mean bid price:
 \[
 \mathcal{B}_{u,d,p} \;=\; \{k:\,|p_k-\text{MCP}_{d,p}|\le h\}, \qquad w_k \;=\; \frac{q_k}{\sum_{j\in\mathcal{B}_{u,d,p}} q_j}, \qquad \bar p_{u,d,p} \;=\; \sum_{k\in\mathcal{B}} w_k\,p_k.
 \]
