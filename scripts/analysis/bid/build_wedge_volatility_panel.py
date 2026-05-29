@@ -8,7 +8,9 @@
 #        natural follow-up).
 #
 # Also keeps |wedge| daily mean and the daily wedge p90 - p10 spread as
-# secondary volatility measures.
+# secondary volatility measures, plus the per-hour-class within-class SD
+# (critical / midday / flat) -- did the wedge SD increase more in critical
+# hours than in flat or midday ones?
 #
 # OUT: data/derived/panels/wedge_volatility_panel.parquet
 
@@ -67,6 +69,36 @@ def main():
     daily["wedge_iqr"] = daily["wedge_p90"] - daily["wedge_p10"]
     daily.loc[daily["n_hours"] < 20, ["wedge_sd", "wedge_abs", "wedge_iqr"]] = np.nan
     daily["d"] = pd.to_datetime(daily["d"])
+
+    # Within-hour-class SD of the wedge (SD across the clock-hours that
+    # belong to a given hour-class, on each day). Critical = 11 hours,
+    # midday = 4 hours, flat = 3 hours; min-hours guard requires the day
+    # to have at least 75% of the class's hours present.
+    CRITICAL = {5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22}
+    MIDDAY   = {11, 12, 13, 14}
+    FLAT     = {1, 2, 3}
+    def hc(h):
+        if h in CRITICAL: return "critical"
+        if h in MIDDAY:   return "midday"
+        if h in FLAT:     return "flat"
+        return None
+    print("Computing within-hour-class wedge SD...")
+    df["hour_class"] = df["clock_hour"].map(hc)
+    sub = df[df["hour_class"].notna()]
+    hc_sd = (sub.groupby(["d", "hour_class"])["wedge"]
+              .agg(["std", "count"])
+              .rename(columns={"std": "sd", "count": "n"})
+              .reset_index())
+    min_required = {"critical": 9, "midday": 3, "flat": 3}
+    hc_sd.loc[hc_sd.apply(
+        lambda r: r["n"] < min_required[r["hour_class"]], axis=1), "sd"] = np.nan
+    hc_sd_wide = (hc_sd.pivot(index="d", columns="hour_class", values="sd")
+                       .rename(columns={"critical": "wedge_sd_critical",
+                                         "midday":   "wedge_sd_midday",
+                                         "flat":     "wedge_sd_flat"})
+                       .reset_index())
+    hc_sd_wide["d"] = pd.to_datetime(hc_sd_wide["d"])
+    daily = daily.merge(hc_sd_wide, on="d", how="left")
 
     # Merge covariates from bsts_daily_panel
     base = pd.read_parquet(BASE)[["d", "wind_gwh", "solar_gwh", "gas_eur"]]

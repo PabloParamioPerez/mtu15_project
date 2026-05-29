@@ -24,12 +24,20 @@ panel_fp <- file.path(repo, "data/derived/panels/wedge_volatility_panel.parquet"
 out_dir <- file.path(repo, "results/regressions/bid/mtu15_critical_flat")
 
 COVARS <- c("wind_gwh", "solar_gwh", "gas_eur")
-OUTCOMES <- c("wedge_sd", "wedge_abs", "wedge_iqr")
+OUTCOMES <- c("wedge_sd", "wedge_abs", "wedge_iqr",
+              "wedge_sd_critical", "wedge_sd_midday", "wedge_sd_flat")
 CFGS <- list(
-  list("ID15", "real",    "2024-06-14", "2025-03-18", "2025-03-19", "2025-04-27"),
-  list("ID15", "placebo", "2023-06-14", "2024-03-18", "2024-03-19", "2024-04-27"),
-  list("DA15", "real",    "2025-04-28", "2025-09-30", "2025-10-01", "2025-12-31"),
-  list("DA15", "placebo", "2024-04-28", "2024-09-30", "2024-10-01", "2024-12-31")
+  # ID15 (intraday MTU60 -> MTU15, 2025-03-19): asymmetric granularity break
+  list("ID15",  "real",    "2024-06-14", "2025-03-18", "2025-03-19", "2025-04-27"),
+  list("ID15",  "placebo", "2023-06-14", "2024-03-18", "2024-03-19", "2024-04-27"),
+  # DA15 (day-ahead MTU60 -> MTU15, 2025-10-01): granularity becomes symmetric
+  list("DA15",  "real",    "2025-04-28", "2025-09-30", "2025-10-01", "2025-12-31"),
+  list("DA15",  "placebo", "2024-04-28", "2024-09-30", "2024-10-01", "2024-12-31"),
+  # ISP15 (REE settlement period 60 -> 15, 2024-12-11): NOT a granularity
+  # break at OMIE (OMIE contract grid still 60-min); pre = post-IDA-reform
+  # regime, post stops at ID15
+  list("ISP15", "real",    "2024-06-14", "2024-12-10", "2024-12-11", "2025-03-18"),
+  list("ISP15", "placebo", "2023-06-14", "2023-12-10", "2023-12-11", "2024-03-18")
 )
 
 
