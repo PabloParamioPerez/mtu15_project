@@ -16,10 +16,13 @@ PDBC = REPO / "data/processed/omie/mercado_diario/programas/pdbc_all.parquet"
 UMAP = REPO / "data/derived/panels/bid_shape_critical_flat/_unit_map.parquet"
 OUT  = REPO / "results/regressions/bid/mtu15_critical_flat/per_firm_da_cleared.csv"
 
-# DA15 windows (real and placebo, 2024 same-calendar)
+# DA15 + ID15 windows (real and 2024 same-calendar placebo). For ID15 the
+# placebo lives in 2024 with the same calendar offset.
 WINDOWS = {
     "DA15_real":    ("2025-04-28", "2025-09-30", "2025-10-01", "2025-12-31"),
     "DA15_placebo": ("2024-04-28", "2024-09-30", "2024-10-01", "2024-12-31"),
+    "ID15_real":    ("2024-12-11", "2025-03-18", "2025-03-19", "2025-04-27"),
+    "ID15_placebo": ("2023-12-11", "2024-03-18", "2024-03-19", "2024-04-27"),
 }
 
 
@@ -59,12 +62,16 @@ piv = df.pivot_table(index="firm_class",
                      columns=["label", "era"],
                      values="gwh_per_day", aggfunc="first")
 piv.columns = [f"{a}_{b}" for a, b in piv.columns]
-piv["delta_real"]    = piv["DA15_real_post"]    - piv["DA15_real_pre"]
-piv["delta_placebo"] = piv["DA15_placebo_post"] - piv["DA15_placebo_pre"]
-piv["placebo_net"]   = piv["delta_real"]        - piv["delta_placebo"]
+piv["DA15_delta_real"]    = piv["DA15_real_post"]    - piv["DA15_real_pre"]
+piv["DA15_delta_placebo"] = piv["DA15_placebo_post"] - piv["DA15_placebo_pre"]
+piv["DA15_placebo_net"]   = piv["DA15_delta_real"]   - piv["DA15_delta_placebo"]
+piv["ID15_delta_real"]    = piv["ID15_real_post"]    - piv["ID15_real_pre"]
+piv["ID15_delta_placebo"] = piv["ID15_placebo_post"] - piv["ID15_placebo_pre"]
+piv["ID15_placebo_net"]   = piv["ID15_delta_real"]   - piv["ID15_delta_placebo"]
 
-print("=== Per-firm-class CCGT DA cleared GWh/day (pre vs post DA15) ===")
-print(piv.round(3).to_string())
+print("=== Per-firm-class CCGT DA cleared GWh/day, placebo-net per reform ===")
+print("(post - pre, real - same-calendar placebo)")
+print(piv[["DA15_placebo_net", "ID15_placebo_net"]].round(3).to_string())
 
 OUT.parent.mkdir(parents=True, exist_ok=True)
 piv.to_csv(OUT)
