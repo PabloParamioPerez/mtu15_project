@@ -117,7 +117,7 @@ D_N      &= \mathrm{sd}_q(N_{\text{eff},q}).
 \]
 $D_{\text{price}}$, $D_{\text{qty}}$, $\text{SD}_{\text{price}}$ are across-quarter shifts in bid \textsc{level}, bid \textsc{volume}, and system clearing prices; $D_\sigma$, $D_N$ are across-quarter shifts in ladder \textsc{spread} and \textsc{tranche count}. All five are zero under the MTU60-equivalent strategy (identical bids in every quarter), so any positive value post-MTU15 is a direct trace of within-hour discrimination.
 
-\paragraph{Seasonality.} Spanish electricity has strong intra-year seasonality; the reform windows do not all sit in the same calendar months. We address this with the critical/flat within-day partition (bid-shape outcomes), regime-constant BSTS pre-windows plus a 2024 same-calendar placebo (level outcomes), and a same-calendar-month restriction for the supporting pump-storage DiD. Full specifications are in \hyperref[sec:identification]{\S~3}.
+\paragraph{Seasonality.} Spanish electricity has strong intra-year seasonality. It bites on the level outcomes --- clearing prices and per-tech cleared energy --- which co-move with heating demand in winter, cooling demand in summer, and the hydrological cycle. Bid-shape outcomes ($\sigma_p$, $N_{\text{eff}}$) are MCP-centered and MW-weighted on the in-band ladder, so price-level seasonality does not transmit.
 \vspace{6pt}
 
 \section*{2. The critical/flat partition: where granular pricing has economic content}
