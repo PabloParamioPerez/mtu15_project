@@ -26,10 +26,16 @@ out_dir  <- file.path(repo, "results/regressions/bid/mtu15_critical_flat")
 COVARS <- c("wind_gwh", "solar_gwh", "gas_eur")
 
 CFGS <- list(
+  # The reforzada-constant per-reform windows (kept for the per-reform table)
   list("ID15", "real",    "2024-06-14", "2025-03-18", "2025-03-19", "2025-04-27"),
   list("ID15", "placebo", "2023-06-14", "2024-03-18", "2024-03-19", "2024-04-27"),
   list("DA15", "real",    "2025-04-28", "2025-09-30", "2025-10-01", "2025-12-31"),
-  list("DA15", "placebo", "2024-04-28", "2024-09-30", "2024-10-01", "2024-12-31")
+  list("DA15", "placebo", "2024-04-28", "2024-09-30", "2024-10-01", "2024-12-31"),
+  # Single long-history BSTS on the wedge: pre = 2022-01-01 -> 2025-03-18
+  # (all available history before ID15), post = 2025-03-19 -> 2026-04-27
+  # (covers both reforms + the blackout). Lets the counterfactual extrapolate
+  # across both cutovers from a long pre-fit.
+  list("LONG", "real",    "2022-01-01", "2025-03-18", "2025-03-19", "2026-04-27")
 )
 
 

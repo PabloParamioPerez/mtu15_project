@@ -1,11 +1,10 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-29
-# FEEDS: advisor_memo.tex sec 4(ii) -- BSTS counterfactual on the DA - IDA
-#        daily wedge for both reforms, using the reforzada-constant windows
-#        from sec 3.A. Shows the full 2022--2026 observed wedge in black,
-#        with the BSTS in-sample fit on the pre-window in blue (with 95%
-#        credible band) and the out-of-sample counterfactual on the post-
-#        window in red dashed (with 95% credible band).
+# FEEDS: advisor_memo.tex sec 4(ii) -- single BSTS on the DA - IDA daily
+#        wedge over the full available history. Pre-window 2022-01-01 ->
+#        2025-03-18 (all data pre-ID15); post-window 2025-03-19 ->
+#        2026-04-27 (covers both reforms + the 2025-04-28 blackout). One
+#        BSTS, one counterfactual, full history overlaid.
 #
 # OUT: figures/thesis/fig_bsts_wedge.pdf
 
@@ -32,104 +31,87 @@ EVENT_COLOR = {
     "Blackout": "green", "ISP15": "gray", "IDA reform": "gray",
 }
 
-# (reform, side, cutover, pre_lo, post_hi)
-PANELS = [
-    ("ID15", "real",    pd.Timestamp("2025-03-19"),
-                          pd.Timestamp("2024-06-14"),
-                          pd.Timestamp("2025-04-27")),
-    ("ID15", "placebo", pd.Timestamp("2024-03-19"),
-                          pd.Timestamp("2023-06-14"),
-                          pd.Timestamp("2024-04-27")),
-    ("DA15", "real",    pd.Timestamp("2025-10-01"),
-                          pd.Timestamp("2025-04-28"),
-                          pd.Timestamp("2025-12-31")),
-    ("DA15", "placebo", pd.Timestamp("2024-10-01"),
-                          pd.Timestamp("2024-04-28"),
-                          pd.Timestamp("2024-12-31")),
-]
+CUTOVER = pd.Timestamp("2025-03-19")
+PRE_LO  = pd.Timestamp("2022-01-01")
+POST_HI = pd.Timestamp("2026-04-27")
 
 
 def smooth(s):
     return s.rolling(WINDOW, min_periods=1, center=True).mean()
 
 
-def panel_plot(ax, reform, side, cutover, pre_lo, post_hi):
+def main():
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+
     # Observed wedge (full panel, 7-day smoothed)
     base = pd.read_parquet(PANEL)[["d", "da_price_eur", "ida_price_eur"]].copy()
     base["d"] = pd.to_datetime(base["d"])
     base["wedge"] = base["da_price_eur"] - base["ida_price_eur"]
     base["w_smooth"] = smooth(base["wedge"])
-    ax.plot(base["d"], base["w_smooth"], color="black", lw=0.9, alpha=0.85,
-             label="Observed (7-day MA)", zorder=3)
 
-    # BSTS pointwise series
-    pw = pd.read_csv(PW / f"bsts_wedge_pointwise_{reform}_{side}.csv")
+    # BSTS pointwise series (LONG-real run)
+    pw = pd.read_csv(PW / "bsts_wedge_pointwise_LONG_real.csv")
     pw["date"] = pd.to_datetime(pw["date"])
-    in_pre = pw["date"] < cutover
-    in_post = pw["date"] >= cutover
+    in_pre = pw["date"] < CUTOVER
+    in_post = pw["date"] >= CUTOVER
 
-    # In-sample fit on pre-window (blue) + 95% band
+    fig, ax = plt.subplots(figsize=(14, 4.8))
+
+    # Observed
+    ax.plot(base["d"], base["w_smooth"], color="black", lw=1.0, alpha=0.85,
+             label="Observed wedge (7-day MA)", zorder=3)
+
+    # In-sample fit on pre-window + 95% band
     ax.fill_between(pw.loc[in_pre, "date"],
                      pw.loc[in_pre, "point.pred.lower"],
                      pw.loc[in_pre, "point.pred.upper"],
                      color="#3a7bd5", alpha=0.18, zorder=1)
     ax.plot(pw.loc[in_pre, "date"], pw.loc[in_pre, "point.pred"],
              color="#3a7bd5", lw=1.0, alpha=0.9,
-             label="BSTS in-sample fit (pre)", zorder=2)
+             label="BSTS in-sample fit (pre-ID15)", zorder=2)
 
-    # Counterfactual on post-window (red dashed) + 95% band
+    # Counterfactual on post-window + 95% band
     ax.fill_between(pw.loc[in_post, "date"],
                      pw.loc[in_post, "point.pred.lower"],
                      pw.loc[in_post, "point.pred.upper"],
                      color="#c0392b", alpha=0.18, zorder=1)
     ax.plot(pw.loc[in_post, "date"], pw.loc[in_post, "point.pred"],
-             color="#c0392b", ls="--", lw=1.4,
+             color="#c0392b", ls="--", lw=1.6,
              label="BSTS counterfactual (post)", zorder=4)
 
-    # Event vlines on the full panel range
+    # Event vlines + labels at top
+    ymin, ymax = -25, 25
     for ev_date, ev_label in EVENTS:
-        if ev_date < base["d"].min() or ev_date > base["d"].max():
+        if ev_date < PRE_LO or ev_date > POST_HI:
             continue
-        ax.axvline(ev_date, color=EVENT_COLOR.get(ev_label, "gray"),
-                    ls=":", lw=0.7, alpha=0.55, zorder=0)
+        color = EVENT_COLOR.get(ev_label, "gray")
+        ax.axvline(ev_date, color=color, ls=":", lw=0.8, alpha=0.7, zorder=0)
+        ax.annotate(ev_label, xy=(ev_date, ymax),
+                     xytext=(2, -4), textcoords="offset points",
+                     fontsize=8, color=color, ha="left", va="top", rotation=0)
 
-    # Cutover and pre-window markers
-    ax.axvline(cutover, color="black", lw=0.6, alpha=0.4, zorder=0)
-    ax.axvspan(pre_lo, cutover - pd.Timedelta(days=1),
+    # Pre/post shading
+    ax.axvspan(PRE_LO, CUTOVER - pd.Timedelta(days=1),
                 color="#3a7bd5", alpha=0.04, zorder=0)
-    ax.axvspan(cutover, post_hi, color="#c0392b", alpha=0.04, zorder=0)
+    ax.axvspan(CUTOVER, POST_HI, color="#c0392b", alpha=0.04, zorder=0)
 
     # Zero line
     ax.axhline(0, color="gray", lw=0.5, alpha=0.5, zorder=0)
 
-    title = f"{reform} {side.upper()}: DA $-$ IDA daily wedge, BSTS"
-    ax.set_title(title, fontsize=10.5, loc="left")
-    ax.set_ylabel("EUR/MWh")
-    ax.set_ylim(-25, 25)  # constrain to readable range; observed has outliers
-    ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10]))
+    ax.set_title("BSTS counterfactual on the daily DA $-$ IDA wedge "
+                  "(single run, pre-window 2022-01-01 to 2025-03-18, "
+                  "post covers both reforms)",
+                  fontsize=10.5, loc="left", pad=10)
+    ax.set_ylabel("DA $-$ IDA price (EUR/MWh)")
+    ax.set_ylim(ymin, ymax)
+    ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
-    for lbl in ax.get_xticklabels():
-        lbl.set_rotation(30); lbl.set_ha("right")
     ax.grid(axis="y", alpha=0.25, lw=0.5)
     for spine in ("top", "right"):
         ax.spines[spine].set_visible(False)
+    ax.legend(loc="lower left", fontsize=9, frameon=False)
 
-
-def main():
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    fig, axes = plt.subplots(2, 2, figsize=(14, 7.5),
-                              gridspec_kw={"hspace": 0.55, "wspace": 0.2})
-    for ax, (reform, side, cutover, pre_lo, post_hi) in zip(axes.flat, PANELS):
-        panel_plot(ax, reform, side, cutover, pre_lo, post_hi)
-
-    # Shared legend
-    handles, labels = axes[0, 0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="lower center", ncol=3, fontsize=9.5,
-                frameon=False, bbox_to_anchor=(0.5, 0.01))
-    fig.suptitle("BSTS counterfactual on the DA $-$ IDA daily wedge "
-                  "(2022--2026 history, reforzada-constant pre-windows)",
-                  fontsize=12, y=0.99)
-    fig.tight_layout(rect=[0, 0.05, 1, 0.97])
+    fig.tight_layout()
     fig.savefig(OUT, bbox_inches="tight")
     print(f"Wrote {OUT}")
 
