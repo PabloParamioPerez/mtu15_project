@@ -1,15 +1,11 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-29
-# FEEDS: thesis/provisional/advisor_memo.tex sec 4(ii) -- single BSTS on the
-#        DA - IDA wedge SEPARATELY by hour-class (critical / midday / flat).
-#        Mechanism check: if granularity-asymmetry is the wedge channel, the
-#        wedge effect should concentrate in critical hours where within-hour
-#        residual demand actually varies. Same long-history pre-window as
-#        the daily wedge BSTS: pre 2022-01-01 -> 2025-03-18, post 2025-03-19
-#        -> 2026-04-27.
+# FEEDS: thesis/provisional/advisor_memo.tex sec 4(ii) -- BSTS on the
+#        DA - IDA wedge by hour-class (critical / midday / flat) using the
+#        reforzada-constant per-reform pre/post windows. 12 BSTS runs
+#        (3 hour-classes x 2 reforms x real/placebo).
 #
 # OUT: results/regressions/bid/mtu15_critical_flat/bsts_wedge_hour_class.csv
-#      + pointwise/bsts_wedge_hour_class_pointwise_{critical,midday,flat}.csv
 
 suppressPackageStartupMessages({
   library(arrow); library(CausalImpact); library(zoo)
@@ -25,10 +21,37 @@ out_dir <- file.path(repo, "results/regressions/bid/mtu15_critical_flat")
 
 COVARS <- c("wind_gwh", "solar_gwh", "gas_eur")
 OUTCOMES <- c("wedge_critical", "wedge_midday", "wedge_flat")
-PRE_LO  <- as.Date("2022-01-01")
-PRE_HI  <- as.Date("2025-03-18")
-POST_LO <- as.Date("2025-03-19")
-POST_HI <- as.Date("2026-04-27")
+CFGS <- list(
+  list("ID15", "real",    "2024-06-14", "2025-03-18", "2025-03-19", "2025-04-27"),
+  list("ID15", "placebo", "2023-06-14", "2024-03-18", "2024-03-19", "2024-04-27"),
+  list("DA15", "real",    "2025-04-28", "2025-09-30", "2025-10-01", "2025-12-31"),
+  list("DA15", "placebo", "2024-04-28", "2024-09-30", "2024-10-01", "2024-12-31")
+)
+
+
+run_one <- function(response, pre_lo, pre_hi, post_lo, post_hi) {
+  ps <- as.Date(pre_lo); pe <- as.Date(post_hi)
+  cutover <- as.Date(post_lo)
+  sub <- panel[panel$d >= ps & panel$d <= pe, ]
+  sub <- sub[complete.cases(sub[, c(response, COVARS)]), ]
+  if (nrow(sub) < 30 || max(sub$d) < cutover) return(NULL)
+  data_mat <- as.matrix(sub[, c(response, COVARS)])
+  data_ts  <- zoo(data_mat, order.by = sub$d)
+  set.seed(42)
+  imp <- tryCatch(
+    CausalImpact(data_ts, c(ps, cutover - 1), c(cutover, pe),
+                  model.args = list(niter = 2000, nseasons = 7,
+                                     season.duration = 1)),
+    error = function(e) NULL)
+  if (is.null(imp)) return(NULL)
+  s <- imp$summary
+  list(eff = s["Average","AbsEffect"],
+       lo  = s["Average","AbsEffect.lower"],
+       hi  = s["Average","AbsEffect.upper"],
+       p   = s$p[1],
+       n_pre  = sum(sub$d < cutover),
+       n_post = sum(sub$d >= cutover))
+}
 
 
 panel <- read_parquet(panel_fp)
@@ -37,44 +60,23 @@ panel <- panel[order(panel$d), ]
 cat(sprintf("Panel: %d days, %s to %s\n", nrow(panel),
             min(panel$d), max(panel$d)))
 
-
-run_one <- function(response) {
-  sub <- panel[panel$d >= PRE_LO & panel$d <= POST_HI, ]
-  sub <- sub[complete.cases(sub[, c(response, COVARS)]), ]
-  data_mat <- as.matrix(sub[, c(response, COVARS)])
-  data_ts  <- zoo(data_mat, order.by = sub$d)
-  set.seed(42)
-  imp <- CausalImpact(data_ts, c(PRE_LO, PRE_HI), c(POST_LO, POST_HI),
-                       model.args = list(niter = 2000, nseasons = 7,
-                                          season.duration = 1))
-  pw <- as.data.frame(imp$series); pw$date <- as.Date(rownames(pw))
-  pw_dir <- file.path(out_dir, "pointwise")
-  dir.create(pw_dir, recursive = TRUE, showWarnings = FALSE)
-  write.csv(pw,
-             file.path(pw_dir,
-                        sprintf("bsts_wedge_hour_class_pointwise_%s.csv",
-                                 sub("^wedge_", "", response))),
-             row.names = FALSE)
-  s <- imp$summary
-  list(eff = s["Average","AbsEffect"],
-       lo  = s["Average","AbsEffect.lower"],
-       hi  = s["Average","AbsEffect.upper"],
-       p   = s$p[1],
-       n_pre  = sum(sub$d < POST_LO),
-       n_post = sum(sub$d >= POST_LO))
-}
-
-
 rows <- list()
-for (outcome in OUTCOMES) {
-  cat(sprintf("\n=== %s ===\n", outcome))
-  r <- run_one(outcome)
-  cat(sprintf("  eff=%+7.2f  [%+6.2f, %+6.2f]  p=%5.3f  n=%d/%d\n",
-              r$eff, r$lo, r$hi, r$p, r$n_pre, r$n_post))
-  rows[[length(rows)+1]] <- data.frame(
-    outcome=outcome, eff=r$eff, lo=r$lo, hi=r$hi, p=r$p,
-    n_pre=r$n_pre, n_post=r$n_post,
-    stringsAsFactors=FALSE)
+for (cfg in CFGS) {
+  reform <- cfg[[1]]; side <- cfg[[2]]
+  pre_lo <- cfg[[3]]; pre_hi <- cfg[[4]]
+  post_lo <- cfg[[5]]; post_hi <- cfg[[6]]
+  cat(sprintf("\n=== %s %s ===\n", reform, side))
+  for (outcome in OUTCOMES) {
+    r <- run_one(outcome, pre_lo, pre_hi, post_lo, post_hi)
+    if (is.null(r)) next
+    cat(sprintf("  %-15s eff=%+7.2f  [%+6.2f, %+6.2f]  p=%5.3f  n=%d/%d\n",
+                outcome, r$eff, r$lo, r$hi, r$p, r$n_pre, r$n_post))
+    rows[[length(rows)+1]] <- data.frame(
+      reform=reform, side=side, outcome=outcome,
+      eff=r$eff, lo=r$lo, hi=r$hi, p=r$p,
+      n_pre=r$n_pre, n_post=r$n_post,
+      stringsAsFactors=FALSE)
+  }
 }
 
 out_df <- do.call(rbind, rows)
