@@ -25,7 +25,11 @@ panel <- panel[order(panel$d), ]
 
 COVARS <- c("wind_gwh", "solar_gwh", "gas_eur")
 SAVE_PW <- c("ID15 IDA price", "DA15 DA price",
-              "DA15 q_ccgt_da", "ID15 q_ccgt_ida")
+              "DA15 q_ccgt_da", "ID15 q_ccgt_ida",
+              "DA15 q_hydro_pump_da", "ID15 q_hydro_pump_ida",
+              "PLB-DA q_ccgt_da", "PLB-ID q_ccgt_ida",
+              "PLB-DA q_hydro_pump_da", "PLB-ID q_hydro_pump_ida",
+              "PLB-DA DA price", "PLB-ID IDA price")
 
 
 run_bsts <- function(panel, response, pre_start, post_start, post_end,
@@ -84,7 +88,7 @@ ID_PRE <- "2024-06-14"; ID_REFORM <- "2025-03-19"; ID_POST_END <- "2025-04-27"
 r <- run_bsts(panel, "ida_price_eur", ID_PRE, ID_REFORM, ID_POST_END, COVARS,
               "ID15 IDA price")
 add("ID15", "price", NA, r)
-for (tech in c("ccgt", "hydro", "wind", "solar", "nuclear")) {
+for (tech in c("ccgt", "hydro", "hydro_pump", "wind", "solar", "nuclear")) {
   r <- run_bsts(panel, sprintf("q_%s_gwh_ida", tech),
                 ID_PRE, ID_REFORM, ID_POST_END, COVARS,
                 sprintf("ID15 q_%s_ida", tech))
@@ -99,7 +103,7 @@ DA_PRE <- "2025-04-28"; DA_REFORM <- "2025-10-01"; DA_POST_END <- "2025-11-09"
 r <- run_bsts(panel, "da_price_eur", DA_PRE, DA_REFORM, DA_POST_END, COVARS,
               "DA15 DA price")
 add("DA15", "price", NA, r)
-for (tech in c("ccgt", "hydro", "wind", "solar", "nuclear")) {
+for (tech in c("ccgt", "hydro", "hydro_pump", "wind", "solar", "nuclear")) {
   r <- run_bsts(panel, sprintf("q_%s_gwh_da", tech),
                 DA_PRE, DA_REFORM, DA_POST_END, COVARS,
                 sprintf("DA15 q_%s_da", tech))
@@ -114,7 +118,7 @@ P_ID_PRE <- "2023-06-14"; P_ID_REF <- "2024-03-19"; P_ID_END <- "2024-04-27"
 r <- run_bsts(panel, "ida_price_eur", P_ID_PRE, P_ID_REF, P_ID_END, COVARS,
               "PLB-ID IDA price")
 add("PLB_ID15", "price", NA, r)
-for (tech in c("ccgt", "hydro", "wind", "solar", "nuclear")) {
+for (tech in c("ccgt", "hydro", "hydro_pump", "wind", "solar", "nuclear")) {
   r <- run_bsts(panel, sprintf("q_%s_gwh_ida", tech),
                 P_ID_PRE, P_ID_REF, P_ID_END, COVARS,
                 sprintf("PLB-ID q_%s_ida", tech))
@@ -126,7 +130,7 @@ P_DA_PRE <- "2024-04-28"; P_DA_REF <- "2024-10-01"; P_DA_END <- "2024-11-09"
 r <- run_bsts(panel, "da_price_eur", P_DA_PRE, P_DA_REF, P_DA_END, COVARS,
               "PLB-DA DA price")
 add("PLB_DA15", "price", NA, r)
-for (tech in c("ccgt", "hydro", "wind", "solar", "nuclear")) {
+for (tech in c("ccgt", "hydro", "hydro_pump", "wind", "solar", "nuclear")) {
   r <- run_bsts(panel, sprintf("q_%s_gwh_da", tech),
                 P_DA_PRE, P_DA_REF, P_DA_END, COVARS,
                 sprintf("PLB-DA q_%s_da", tech))

@@ -25,7 +25,7 @@ UNIT_MAP = REPO / "data/derived/panels/bid_shape_critical_flat/_unit_map.parquet
 BASE_PANEL = REPO / "data/derived/panels/bsts_daily_panel.parquet"
 OUT = REPO / "data/derived/panels/bsts_quantities_panel.parquet"
 
-TECHS = ["CCGT", "Hydro", "Wind", "Solar PV", "Nuclear"]
+TECHS = ["CCGT", "Hydro", "Hydro_pump", "Wind", "Solar PV", "Nuclear"]
 
 
 def per_tech_daily(prog_path, market_tag):
@@ -43,8 +43,7 @@ def per_tech_daily(prog_path, market_tag):
              AND date >= '2022-01-01'
          )
     SELECT p.d,
-           CASE WHEN u.tech_group = 'Hydro_pump' THEN 'Hydro'
-                ELSE u.tech_group END AS tech,
+           u.tech_group AS tech,
            SUM(p.assigned_power_mw * p.mtu_minutes / 60.0) / 1000.0 AS gwh
     FROM p LEFT JOIN u ON p.unit_code = u.unit_code
     WHERE u.tech_group IS NOT NULL
