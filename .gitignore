@@ -65,6 +65,9 @@ results/attic/
 # Parquet panels in results/ are heavy panel outputs; track only CSVs
 results/**/*.parquet
 # Figures: track only thesis-promoted versions; ignore heavy working artefacts
+# (covers both top-level and any subdirectories under figures/working/)
+figures/working/**/*.png
+figures/working/**/*.pdf
 figures/working/*.png
 figures/working/*.pdf
 figures/attic/
