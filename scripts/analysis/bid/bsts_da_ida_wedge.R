@@ -33,7 +33,8 @@ CFGS <- list(
 )
 
 
-run_bsts <- function(panel, response, pre_lo, pre_hi, post_lo, post_hi) {
+run_bsts <- function(panel, response, pre_lo, pre_hi, post_lo, post_hi,
+                      save_pw_as = NULL) {
   ps <- as.Date(pre_lo); pe <- as.Date(post_hi)
   cutover <- as.Date(post_lo)
   sub <- panel[panel$d >= ps & panel$d <= pe, ]
@@ -50,6 +51,12 @@ run_bsts <- function(panel, response, pre_lo, pre_hi, post_lo, post_hi) {
                                      season.duration = 1)),
     error = function(e) NULL)
   if (is.null(imp)) return(NULL)
+  if (!is.null(save_pw_as)) {
+    pw <- as.data.frame(imp$series); pw$date <- as.Date(rownames(pw))
+    pw_dir <- file.path(out_dir, "pointwise")
+    dir.create(pw_dir, recursive = TRUE, showWarnings = FALSE)
+    write.csv(pw, file.path(pw_dir, save_pw_as), row.names = FALSE)
+  }
   s <- imp$summary
   list(eff = s["Average","AbsEffect"],
        lo  = s["Average","AbsEffect.lower"],
@@ -78,7 +85,11 @@ for (cfg in CFGS) {
   post_lo <- cfg[[5]]; post_hi <- cfg[[6]]
   cat(sprintf("\n=== %s %s ===\n", reform, side))
   for (outcome in OUTCOMES) {
-    r <- run_bsts(panel, outcome, pre_lo, pre_hi, post_lo, post_hi)
+    # Save pointwise series for the wedge outcome (used by the plot)
+    pw_name <- if (outcome == "wedge")
+      sprintf("bsts_wedge_pointwise_%s_%s.csv", reform, side) else NULL
+    r <- run_bsts(panel, outcome, pre_lo, pre_hi, post_lo, post_hi,
+                   save_pw_as = pw_name)
     if (is.null(r)) next
     cat(sprintf("  %-13s eff=%+7.2f  [%+6.2f, %+6.2f]  p=%5.3f  n=%d/%d\n",
                 outcome, r$eff, r$lo, r$hi, r$p, r$n_pre, r$n_post))
