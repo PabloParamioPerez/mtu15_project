@@ -23,7 +23,14 @@ repo <- normalizePath(file.path(dirname(sp), "..", "..", ".."))
 panel_fp <- file.path(repo, "data/derived/panels/wedge_volatility_panel.parquet")
 out_dir <- file.path(repo, "results/regressions/bid/mtu15_critical_flat")
 
-COVARS <- c("wind_gwh", "solar_gwh", "gas_eur")
+# Two BSTS specifications. The base spec uses the Spec A covariates; the
+# augmented spec adds Fase I (REE redispatch) volume to absorb the
+# reforzada-intensity drift across the DA15 window pair.
+COVAR_SPECS <- list(
+  base = c("wind_gwh", "solar_gwh", "gas_eur"),
+  aug  = c("wind_gwh", "solar_gwh", "gas_eur", "fase1_gwh")
+)
+COVARS <- COVAR_SPECS$base  # default for the original loop
 OUTCOMES <- c("wedge_sd", "wedge_abs", "wedge_iqr",
               "wedge_sd_critical", "wedge_sd_midday", "wedge_sd_flat")
 CFGS <- list(
@@ -41,13 +48,13 @@ CFGS <- list(
 )
 
 
-run_one <- function(response, pre_lo, pre_hi, post_lo, post_hi) {
+run_one <- function(response, pre_lo, pre_hi, post_lo, post_hi, covars) {
   ps <- as.Date(pre_lo); pe <- as.Date(post_hi)
   cutover <- as.Date(post_lo)
   sub <- panel[panel$d >= ps & panel$d <= pe, ]
-  sub <- sub[complete.cases(sub[, c(response, COVARS)]), ]
+  sub <- sub[complete.cases(sub[, c(response, covars)]), ]
   if (nrow(sub) < 30 || max(sub$d) < cutover) return(NULL)
-  data_mat <- as.matrix(sub[, c(response, COVARS)])
+  data_mat <- as.matrix(sub[, c(response, covars)])
   data_ts  <- zoo(data_mat, order.by = sub$d)
   set.seed(42)
   imp <- tryCatch(
@@ -74,22 +81,27 @@ cat(sprintf("Panel: %d days, %s to %s\n", nrow(panel),
             min(panel$d), max(panel$d)))
 
 rows <- list()
-for (cfg in CFGS) {
-  reform <- cfg[[1]]; side <- cfg[[2]]
-  pre_lo <- cfg[[3]]; pre_hi <- cfg[[4]]
-  post_lo <- cfg[[5]]; post_hi <- cfg[[6]]
-  cat(sprintf("\n=== %s %s ===\n", reform, side))
-  for (outcome in OUTCOMES) {
-    r <- run_one(outcome, pre_lo, pre_hi, post_lo, post_hi)
-    if (is.null(r)) next
-    cat(sprintf("  %-12s eff=%+6.2f  [%+6.2f, %+6.2f]  rel=%+5.1f%%  p=%5.3f  n=%d/%d\n",
-                outcome, r$eff, r$lo, r$hi, 100*r$rel, r$p,
-                r$n_pre, r$n_post))
-    rows[[length(rows)+1]] <- data.frame(
-      reform=reform, side=side, outcome=outcome,
-      eff=r$eff, lo=r$lo, hi=r$hi, rel=r$rel, p=r$p,
-      n_pre=r$n_pre, n_post=r$n_post,
-      stringsAsFactors=FALSE)
+for (spec_name in names(COVAR_SPECS)) {
+  covars <- COVAR_SPECS[[spec_name]]
+  cat(sprintf("\n##### Covariate spec: %s (%s) #####\n",
+              spec_name, paste(covars, collapse=", ")))
+  for (cfg in CFGS) {
+    reform <- cfg[[1]]; side <- cfg[[2]]
+    pre_lo <- cfg[[3]]; pre_hi <- cfg[[4]]
+    post_lo <- cfg[[5]]; post_hi <- cfg[[6]]
+    cat(sprintf("\n=== %s %s [%s] ===\n", reform, side, spec_name))
+    for (outcome in OUTCOMES) {
+      r <- run_one(outcome, pre_lo, pre_hi, post_lo, post_hi, covars)
+      if (is.null(r)) next
+      cat(sprintf("  %-17s eff=%+6.2f  [%+6.2f, %+6.2f]  rel=%+6.1f%%  p=%5.3f  n=%d/%d\n",
+                  outcome, r$eff, r$lo, r$hi, 100*r$rel, r$p,
+                  r$n_pre, r$n_post))
+      rows[[length(rows)+1]] <- data.frame(
+        spec=spec_name, reform=reform, side=side, outcome=outcome,
+        eff=r$eff, lo=r$lo, hi=r$hi, rel=r$rel, p=r$p,
+        n_pre=r$n_pre, n_post=r$n_post,
+        stringsAsFactors=FALSE)
+    }
   }
 }
 

@@ -100,8 +100,11 @@ def main():
     hc_sd_wide["d"] = pd.to_datetime(hc_sd_wide["d"])
     daily = daily.merge(hc_sd_wide, on="d", how="left")
 
-    # Merge covariates from bsts_daily_panel
-    base = pd.read_parquet(BASE)[["d", "wind_gwh", "solar_gwh", "gas_eur"]]
+    # Merge covariates from bsts_daily_panel (wind/solar/gas standard; plus
+    # fase1_gwh as REE-redispatch intensity, useful to absorb the reforzada-
+    # intensity drift that the reforzada-constant windows do not).
+    base = pd.read_parquet(BASE)[
+        ["d", "wind_gwh", "solar_gwh", "gas_eur", "fase1_gwh"]]
     base["d"] = pd.to_datetime(base["d"])
     out = daily.merge(base, on="d", how="left").sort_values("d").reset_index(drop=True)
     print(f"  {len(out):,} days; wedge_sd range "
