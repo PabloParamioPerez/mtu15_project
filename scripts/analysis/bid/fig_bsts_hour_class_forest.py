@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[3]
-SRC = REPO / "results/regressions/bid/mtu15_critical_flat/bsts_hour_class_p90_net.csv"
+SRC = REPO / "results/regressions/bid/mtu15_critical_flat/bsts_hour_class_p90.csv"
 OUT = REPO / "figures/thesis/fig_bsts_hour_class_forest.pdf"
 OUT.parent.mkdir(parents=True, exist_ok=True)
 
@@ -36,23 +36,40 @@ TM_GROUPS = [
     ("Pump-storage, IDA", "hydro_pump", "ida"),
 ]
 HC_LIST = [
-    ("critical", "Critical", "#c0392b"),
-    ("midday",   "Midday",   "#e08e1c"),
-    ("flat",     "Flat",     "#1f4e79"),
+    ("morning_ramp", "Morning ramp", "#c0392b"),
+    ("midday",       "Midday",       "#e08e1c"),
+    ("evening_ramp", "Evening ramp", "#7d2d8a"),
+    ("flat",         "Flat",         "#1f4e79"),
 ]
 HC_COLOR = {hc: c for hc, _, c in HC_LIST}
+HC_HOURS = {"morning_ramp": 4, "midday": 4, "evening_ramp": 7, "flat": 3}
 
-# Quantity x-axis: convert raw MW sums to thousands of MW.
+# Quantity x-axis: convert raw MWh-per-day sums to GWh per class-hour.
+#   raw value [MWh per day in class] / HC_HOURS[class] = MWh per class-hour
+#   then divide by 1000 -> GWh per class-hour. Same denominator for real and
+#   placebo so the placebo-net is invariant to the choice.
 Q_SCALE = 1000.0
-Q_XLAB  = "Thousands of MW"
+Q_XLAB  = "GWh per class-hour (in-band offered energy)"
 
 
 def placebo_net(df, reform):
-    """Take precomputed placebo-net effects per (outcome, tech, market,
-    hour_class) for one reform. CSV already has eff, lo, hi, surv columns."""
-    return df[df["reform"] == reform][
-        ["outcome", "tech", "market", "hour_class",
-         "eff", "lo", "hi", "surv"]].copy()
+    """Compute placebo-net per (outcome, tech, market, hour_class) for one
+    reform from the raw per-side CSV (real and placebo rows). Uses
+    independent-Gaussian-posterior approximation: se from (hi-lo)/(2*1.96)."""
+    sub = df[df["reform"] == reform].copy()
+    sub["se"] = (sub["hi"] - sub["lo"]) / (2 * 1.96)
+    real = sub[sub["side"] == "real"].set_index(
+        ["outcome", "tech", "market", "hour_class"])[["eff", "se"]]
+    plb  = sub[sub["side"] == "placebo"].set_index(
+        ["outcome", "tech", "market", "hour_class"])[["eff", "se"]]
+    j = real.join(plb, lsuffix="_r", rsuffix="_p", how="inner").reset_index()
+    j["eff"] = j["eff_r"] - j["eff_p"]
+    j["se"]  = np.sqrt(j["se_r"]**2 + j["se_p"]**2)
+    j["lo"]  = j["eff"] - 1.96 * j["se"]
+    j["hi"]  = j["eff"] + 1.96 * j["se"]
+    j["surv"] = (j["lo"] > 0) | (j["hi"] < 0)
+    return j[["outcome", "tech", "market", "hour_class",
+              "eff", "lo", "hi", "surv"]]
 
 
 def build_rows():
@@ -83,21 +100,27 @@ def panel(ax, sub, title, xlab, rows, scale=1.0):
         surviving = bool(r["surv"])
         alpha = 1.0 if surviving else 0.40
         lw = 2.0 if surviving else 1.6
-        ax.plot([r["lo"]/scale, r["hi"]/scale], [y, y],
+        # Per-class-hour normalisation: divide by number of hours in the class
+        # so morning ramp (4 h), midday (4 h), evening ramp (7 h) and flat (3 h)
+        # are directly comparable. Same constant applied to eff/lo/hi.
+        hr_scale = scale * HC_HOURS.get(hc, 1)
+        ax.plot([r["lo"]/hr_scale, r["hi"]/hr_scale], [y, y],
                 color=color, lw=lw, alpha=alpha,
                 solid_capstyle="round", zorder=2)
-        ax.plot([r["eff"]/scale], [y], marker="o",
+        ax.plot([r["eff"]/hr_scale], [y], marker="o",
                 markerfacecolor=color, markeredgecolor="white",
                 markersize=6.5, markeredgewidth=0.6,
                 alpha=alpha, zorder=3)
         y_ticks.append(y)
         y_labels.append(hc_label)
 
-    # Group labels on the right, at the centre of each 3-row block
+    # Group labels on the right, at the centre of each N-row block (N = #hour-classes)
+    n_hc = len(HC_LIST)
     centre_ys = []
     for g_idx, (label, _, _) in enumerate(TM_GROUPS):
-        if g_idx * 3 + 2 < len(y_ticks):
-            centre = (y_ticks[g_idx * 3] + y_ticks[g_idx * 3 + 2]) / 2.0
+        last_in_group = g_idx * n_hc + n_hc - 1
+        if last_in_group < len(y_ticks):
+            centre = (y_ticks[g_idx * n_hc] + y_ticks[last_in_group]) / 2.0
             centre_ys.append((centre, label))
 
     ax.set_yticks(y_ticks)
@@ -121,8 +144,9 @@ def panel(ax, sub, title, xlab, rows, scale=1.0):
     # Thin horizontal lines drawn in the middle of the whitespace gap that
     # already separates each (tech, market) group from the next.
     for g_idx in range(len(TM_GROUPS) - 1):
-        if (g_idx * 3 + 2) < len(y_ticks):
-            sep_y = y_ticks[g_idx * 3 + 2] - 1.0   # mid-point of the 2-unit gap
+        last_in_group = g_idx * n_hc + n_hc - 1
+        if last_in_group < len(y_ticks):
+            sep_y = y_ticks[last_in_group] - 1.0   # mid-point of the 2-unit gap
             ax.axhline(sep_y, color="0.55", lw=1.2, zorder=0)
     ymin, ymax = ax.get_ylim()
     ax.set_ylim(ymin - 0.3, ymax + 0.3)
@@ -136,33 +160,22 @@ def main():
     da_net = placebo_net(df, "DA15")
     rows = build_rows()
 
-    fig, axes = plt.subplots(2, 2, figsize=(13.0, 13.0),
-                              gridspec_kw={"wspace": 0.55, "hspace": 0.40})
-    panel(axes[0, 0], id_net[id_net["outcome"] == "p"],
-          "ID15 -- placebo-net level on mean in-band bid price",
-          "EUR / MWh", rows)
-    panel(axes[0, 1], da_net[da_net["outcome"] == "p"],
-          "DA15 -- placebo-net level on mean in-band bid price",
-          "EUR / MWh", rows)
-    panel(axes[1, 0], id_net[id_net["outcome"] == "q"],
-          "ID15 -- placebo-net level on total in-band quantity",
+    fig, axes = plt.subplots(1, 2, figsize=(13.0, 6.8),
+                              gridspec_kw={"wspace": 0.55})
+    panel(axes[0], id_net[id_net["outcome"] == "mwh"],
+          "ID15 -- placebo-net level on in-band offered energy",
           Q_XLAB, rows, scale=Q_SCALE)
-    panel(axes[1, 1], da_net[da_net["outcome"] == "q"],
-          "DA15 -- placebo-net level on total in-band quantity",
+    panel(axes[1], da_net[da_net["outcome"] == "mwh"],
+          "DA15 -- placebo-net level on in-band offered energy",
           Q_XLAB, rows, scale=Q_SCALE)
 
     handles = [
-        Line2D([0], [0], color=HC_COLOR["critical"], lw=2.0, marker="o",
-               markerfacecolor=HC_COLOR["critical"], markeredgecolor="white",
-               markersize=6.5, markeredgewidth=0.6, label="Critical hours"),
-        Line2D([0], [0], color=HC_COLOR["midday"], lw=2.0, marker="o",
-               markerfacecolor=HC_COLOR["midday"], markeredgecolor="white",
-               markersize=6.5, markeredgewidth=0.6, label="Midday hours"),
-        Line2D([0], [0], color=HC_COLOR["flat"], lw=2.0, marker="o",
-               markerfacecolor=HC_COLOR["flat"], markeredgecolor="white",
-               markersize=6.5, markeredgewidth=0.6, label="Flat hours"),
+        Line2D([0], [0], color=HC_COLOR[hc], lw=2.0, marker="o",
+               markerfacecolor=HC_COLOR[hc], markeredgecolor="white",
+               markersize=6.5, markeredgewidth=0.6, label=hc_label)
+        for hc, hc_label, _ in HC_LIST
     ]
-    fig.legend(handles=handles, loc="lower center", ncol=3, fontsize=9.5,
+    fig.legend(handles=handles, loc="lower center", ncol=4, fontsize=9.5,
                 frameon=False, bbox_to_anchor=(0.5, 0.005))
     fig.text(0.5, -0.012,
               "Faded markers and bars indicate the 95\\% credible interval brackets zero.",

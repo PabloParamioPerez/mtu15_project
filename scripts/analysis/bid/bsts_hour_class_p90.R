@@ -23,8 +23,8 @@ out_dir <- file.path(repo, "results/regressions/bid/mtu15_critical_flat")
 COVARS <- c("wind_gwh", "solar_gwh", "gas_eur")
 TECHS  <- c("ccgt", "hydro", "hydro_pump")
 MARKETS <- c("da", "ida")
-HCS    <- c("critical", "midday", "flat")
-OUTS   <- c("p", "q")
+HCS    <- c("morning_ramp", "midday", "evening_ramp", "flat")
+OUTS   <- c("p", "mwh")
 
 # (reform, real_or_placebo, panel_filename, cutover_date, post_end)
 CFGS <- list(

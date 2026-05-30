@@ -28,11 +28,12 @@ BSTS_BASE = REPO / "data/derived/panels/bsts_daily_panel.parquet"
 OUT_DIR = REPO / "data/derived/panels/bsts_hour_class_p90"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-CRITICAL = {5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22}
-MIDDAY   = {11, 12, 13, 14}
-FLAT     = {1, 2, 3}
+MORNING_RAMP = {5, 6, 7, 8}
+EVENING_RAMP = {16, 17, 18, 19, 20, 21, 22}
+MIDDAY       = {11, 12, 13, 14}
+FLAT         = {1, 2, 3}
 TECHS = ["CCGT", "Hydro", "Hydro_pump"]
-HOUR_CLASSES = ["critical", "midday", "flat"]
+HOUR_CLASSES = ["morning_ramp", "midday", "evening_ramp", "flat"]
 
 # (label,            lo,           hi,           h_DA, h_IDA)
 WINDOWS = [
@@ -44,7 +45,8 @@ WINDOWS = [
 
 
 def da_query(lo, hi, h):
-    crit_set = ",".join(str(k) for k in CRITICAL)
+    morn_set = ",".join(str(k) for k in MORNING_RAMP)
+    even_set = ",".join(str(k) for k in EVENING_RAMP)
     mid_set  = ",".join(str(k) for k in MIDDAY)
     flat_set = ",".join(str(k) for k in FLAT)
     return f"""
@@ -69,6 +71,7 @@ def da_query(lo, hi, h):
     ),
     inband AS (
       SELECT mp.d, c.unit_code, dv.q, dv.p,
+             COALESCE(mp.mtu_p, dv.mtu) AS mtu,
              CASE WHEN COALESCE(mp.mtu_p, dv.mtu) = 60 THEN mp.period - 1
                   ELSE CAST(FLOOR((mp.period - 1) / 4.0) AS INT) END AS clock_hour
       FROM det dv JOIN cab_l c ON dv.d=c.d AND dv.offer_code=c.offer_code
@@ -76,12 +79,13 @@ def da_query(lo, hi, h):
       WHERE dv.p BETWEEN mp.p_clear - {h} AND mp.p_clear + {h}
     )
     SELECT i.d,
-           CASE WHEN i.clock_hour IN ({crit_set}) THEN 'critical'
+           CASE WHEN i.clock_hour IN ({morn_set}) THEN 'morning_ramp'
+                WHEN i.clock_hour IN ({even_set}) THEN 'evening_ramp'
                 WHEN i.clock_hour IN ({mid_set})  THEN 'midday'
                 WHEN i.clock_hour IN ({flat_set}) THEN 'flat' END AS hour_class,
            CASE WHEN u.tech_group = 'Hydro_pump' THEN 'Hydro_pump'
                 ELSE u.tech_group END AS tech,
-           SUM(i.q) sum_q, SUM(i.q*i.p) sum_qp
+           SUM(i.q * i.mtu / 60.0) sum_mwh, SUM(i.q*i.p) sum_qp, SUM(i.q) sum_q
     FROM inband i JOIN '{UNIT_MAP}' u ON i.unit_code = u.unit_code
     WHERE u.tech_group IS NOT NULL
     GROUP BY 1, 2, 3
@@ -89,7 +93,8 @@ def da_query(lo, hi, h):
 
 
 def ida_query(lo, hi, h):
-    crit_set = ",".join(str(k) for k in CRITICAL)
+    morn_set = ",".join(str(k) for k in MORNING_RAMP)
+    even_set = ",".join(str(k) for k in EVENING_RAMP)
     mid_set  = ",".join(str(k) for k in MIDDAY)
     flat_set = ",".join(str(k) for k in FLAT)
     return f"""
@@ -115,6 +120,7 @@ def ida_query(lo, hi, h):
     ),
     inband AS (
       SELECT mp.d, c.unit_code, dv.q, dv.p,
+             COALESCE(mp.mtu_p, dv.mtu) AS mtu,
              CASE WHEN COALESCE(mp.mtu_p, dv.mtu) = 60 THEN mp.period - 1
                   ELSE CAST(FLOOR((mp.period - 1) / 4.0) AS INT) END AS clock_hour
       FROM idet dv JOIN icab_l c
@@ -126,12 +132,13 @@ def ida_query(lo, hi, h):
       WHERE dv.p BETWEEN mp.p_clear - {h} AND mp.p_clear + {h}
     )
     SELECT i.d,
-           CASE WHEN i.clock_hour IN ({crit_set}) THEN 'critical'
+           CASE WHEN i.clock_hour IN ({morn_set}) THEN 'morning_ramp'
+                WHEN i.clock_hour IN ({even_set}) THEN 'evening_ramp'
                 WHEN i.clock_hour IN ({mid_set})  THEN 'midday'
                 WHEN i.clock_hour IN ({flat_set}) THEN 'flat' END AS hour_class,
            CASE WHEN u.tech_group = 'Hydro_pump' THEN 'Hydro_pump'
                 ELSE u.tech_group END AS tech,
-           SUM(i.q) sum_q, SUM(i.q*i.p) sum_qp
+           SUM(i.q * i.mtu / 60.0) sum_mwh, SUM(i.q*i.p) sum_qp, SUM(i.q) sum_q
     FROM inband i JOIN '{UNIT_MAP}' u ON i.unit_code = u.unit_code
     WHERE u.tech_group IS NOT NULL
     GROUP BY 1, 2, 3
@@ -153,11 +160,11 @@ def pivot_wide(df):
     df["tech_lower"] = df["tech"].str.lower()
     p = df.pivot_table(index="d", columns=["tech_lower", "market", "hour_class"],
                        values="mean_p", aggfunc="first").reset_index()
-    q = df.pivot_table(index="d", columns=["tech_lower", "market", "hour_class"],
-                       values="sum_q", aggfunc="first").reset_index()
+    mwh = df.pivot_table(index="d", columns=["tech_lower", "market", "hour_class"],
+                         values="sum_mwh", aggfunc="first").reset_index()
     p.columns = ["d"] + [f"p_{t}_{m}_{hc}" for (t, m, hc) in p.columns[1:]]
-    q.columns = ["d"] + [f"q_{t}_{m}_{hc}" for (t, m, hc) in q.columns[1:]]
-    return p.merge(q, on="d", how="outer").sort_values("d").reset_index(drop=True)
+    mwh.columns = ["d"] + [f"mwh_{t}_{m}_{hc}" for (t, m, hc) in mwh.columns[1:]]
+    return p.merge(mwh, on="d", how="outer").sort_values("d").reset_index(drop=True)
 
 
 def build_one(label, lo, hi, h_da, h_ida):
