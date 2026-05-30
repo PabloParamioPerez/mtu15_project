@@ -1,4 +1,16 @@
 regime,component,mean_eur_mwh
+Pre-IDA (Jan-Jun 24),Restricciones PBF (780 PVPC),6.849037635766601
+Pre-IDA (Jan-Jun 24),Restricciones TR (781 PVPC),3.2404748673907666
+Pre-IDA (Jan-Jun 24),Restricciones IDA (783 PVPC),0.0
+Pre-IDA (Jan-Jun 24),Banda secundaria (785 PVPC),1.9669234655215957
+Pre-IDA (Jan-Jun 24),Desvíos medidos (786 PVPC),0.7260697145743924
+Pre-IDA (Jan-Jun 24),Saldo desvíos (787 PVPC),0.16336701187168473
+Pre-IDA (Jan-Jun 24),Restricciones tecnicas (10378 PVPC),10.089512503157334
+Pre-IDA (Jan-Jun 24),Restricciones PBF (793 free),6.849052791108858
+Pre-IDA (Jan-Jun 24),Restricciones TR (794 free),3.2404748673907666
+Pre-IDA (Jan-Jun 24),Banda secundaria (798 free),1.933377115433189
+Pre-IDA (Jan-Jun 24),Desvíos medidos (799 free),0.3850593584238403
+Pre-IDA (Jan-Jun 24),Saldo desvíos (800 free),0.16336701187168473
 3-sess (Jun-Nov 24),Restricciones PBF (780 PVPC),4.571355060034311
 3-sess (Jun-Nov 24),Restricciones TR (781 PVPC),3.5224895858858094
 3-sess (Jun-Nov 24),Restricciones IDA (783 PVPC),0.0

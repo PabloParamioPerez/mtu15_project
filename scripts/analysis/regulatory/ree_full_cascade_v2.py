@@ -39,6 +39,7 @@ FIG = REPO / "figures" / "working"
 FIG.mkdir(parents=True, exist_ok=True)
 
 REGIMES = {
+    "Pre-IDA (Jan-Jun 24)":   ("2024-01-01", "2024-06-13"),
     "3-sess (Jun-Nov 24)":    ("2024-06-14", "2024-11-30"),
     "ISP15-win (Dec24-Mar25)":("2024-12-01", "2025-03-18"),
     "DA60/ID15 pre-blk":      ("2025-03-19", "2025-04-27"),

@@ -1,4 +1,14 @@
 regime,service,cost_eur_m
+Pre-IDA (Jan-Jun 24),Fase I up cost (1373),822.04879604
+Pre-IDA (Jan-Jun 24),Fase I dn cost (1374),9.801029509999994
+Pre-IDA (Jan-Jun 24),Fase II up cost (1375),0.038258339999999995
+Pre-IDA (Jan-Jun 24),Fase II dn cost (1376),140.6306426100001
+Pre-IDA (Jan-Jun 24),TR up cost (1723),500.8226101499974
+Pre-IDA (Jan-Jun 24),TR dn cost (1724),0.20758624999998285
+Pre-IDA (Jan-Jun 24),aFRR reserve up cost (712),207.9477931400002
+Pre-IDA (Jan-Jun 24),aFRR reserve dn cost (2127),0.0
+Pre-IDA (Jan-Jun 24),"Imbalance excess (726, day)",0.09647721000000005
+Pre-IDA (Jan-Jun 24),"Imbalance deficit (727, day)",0.05464895000000001
 3-sess (Jun-Nov 24),Fase I up cost (1373),843.4271502399932
 3-sess (Jun-Nov 24),Fase I dn cost (1374),70.15117631999998
 3-sess (Jun-Nov 24),Fase II up cost (1375),4.20074585
