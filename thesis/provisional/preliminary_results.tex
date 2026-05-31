@@ -2,7 +2,7 @@
 % preliminary_results.tex
 % Master thesis preliminary results on the MTU15 (intraday and day-ahead)
 % reforms: effect on bids, prices and quantities, using the critical/flat
-% hour-class identification strategy. Companion: descriptive_facts.tex.
+% hour-class identification strategy. Companion: additional_results.tex.
 % ============================================================================
 
 \documentclass[11pt]{article}
@@ -686,6 +686,19 @@ Running Spec~A separately on each IDA session's daily mean price (Table~\ref{tab
 \captionof{table}{\textbf{Per-IDA-session BSTS on daily clearing prices.} BSTS posterior means in EUR/MWh; tail-probability stars $^{*}p{<}0.10$, $^{**}p{<}0.05$, $^{***}p{<}0.01$. ID15 placebo is the 2026 same-calendar window (3 sessions, matching real). DA15 placebo is 2024 same-calendar (3 sessions). Same windows and covariates as Spec~A. Session symmetry implies pooling across sessions in the headline IDA BSTS is innocuous: a session-specific bandwidth would not change the level conclusion.}
 \label{tab:bsts-per-session}
 \end{center}
+
+\subsubsection*{A.7. CCGT offer-type composition check \textnormal{(supportive)}}\phantomsection\label{sec:5-offertype}
+\addcontentsline{toc}{subsection}{A.7. CCGT offer-type composition check (supportive)}
+The three OMIE structural offer types introduced in \hyperref[sec:setup]{\S~1} (\emph{simple}, \emph{minimum-income condition} (MIC), and \emph{block}) raise a potential mechanical confound for the DA15 CCGT $\sigma_p$ widening of \hyperref[sec:4i]{\S~4.C.1}: a block offer is by construction a single tranche per period, so $\sigma_p=0$ and $N_{\text{eff}}=1$ mechanically. If CCGT's mix of structural types shifted across the reform, part of the pooled $\sigma_p$ DiD could be a composition effect rather than within-quarter strategic engagement.
+
+Figure~\ref{fig:ccgt-offer-type} addresses this directly. The CCGT in-band offer mix does shift across the reform, but in the direction that should \emph{dampen} the pooled $\sigma_p$ widening: the simple-offer share \emph{drops} from $\sim 29\%$ to $\sim 22\%$, the block share \emph{grows} from $\sim 30\%$ to $\sim 35\%$, and the MIC share is roughly stable. More block offers means more mechanical zeros in the pooled $\sigma_p$ average. Despite this dampening, the pooled $\sigma_p$ DiD is still $1.25^{**}$~EUR/MWh; restricting to simple offers only, the effect rises to $3.53^{***}$ (right panel). The $\sigma_p$ widening of \hyperref[sec:4i]{\S~4.C.1} is therefore real within-tranche behavior on the simple-offer arm, not a composition artefact --- and the pooled headline is a conservative read.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{../../figures/working/fig_ccgt_offer_type.pdf}
+\caption{\textbf{CCGT offer-type composition shift and $\sigma_p$ DiD by offer type.} \emph{Left}: composition of CCGT in-band sell curves, pre vs post DA15, critical vs flat. Simple share drops, block share grows. \emph{Right}: Spec~C $\sigma_p$ DiD coefficient by offer type, 95\% CI. The widening is concentrated in simple offers ($3.53^{***}$, t=$3.60$); the pooled estimate ($1.25^{**}$) is diluted by MIC (null) and block (mechanically near-zero by construction).}
+\label{fig:ccgt-offer-type}
+\end{figure}
 
 \section*{Appendix B. \textcolor{red}{Continuous-market response at the three structural reforms}}
 \addcontentsline{toc}{section}{Appendix B. Continuous-market response at the three structural reforms}
