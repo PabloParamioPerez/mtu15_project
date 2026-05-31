@@ -95,20 +95,18 @@ EUPHEMIA & Day-ahead pan-European auction algorithm (clears DA market). \\
 \bigskip
 
 % =====================================================================
-\section*{Reform-window timeline}\label{sec:bid_internal:timeline}
+\section*{Reform-window calendar and confounders}\label{sec:bid_internal:timeline}
 % =====================================================================
-\addcontentsline{toc}{section}{Reform-window timeline}
+\addcontentsline{toc}{section}{Reform-window calendar and confounders}
 
-\noindent The five reform windows used throughout this document are defined as follows. The ``pre-IDA window'' (pre 2024-06-14) is the baseline regime, never directly compared in the main tables but referenced for context.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.98\textwidth]{../../figures/thesis/timeline_reform_windows.pdf}
-\caption{\textbf{Reform-window timeline.} Five named windows partition the post-2024-06-14 sample; the pre-IDA window is the baseline regime. Dotted vertical lines mark the five reform dates that produce the window boundaries.}
-\label{fig:bid_internal:timeline}
-\end{figure}
-
-\bigskip
+\noindent We use the same five-regime reform-window timeline as the
+headline memo (see \emph{preliminary results} \S 1, Figure on
+\emph{Full reform-window timeline}). This section adds the two
+calendar/confounder pieces that are too long for that memo: a
+calendar-coverage table that tells the reader which months each
+regime actually spans (and where same-calendar baselines exist), and
+a cross-border interconnection sanity check on whether
+SDAC/SIDC/XBID changes co-treat the reform windows.
 
 % =====================================================================
 \subsection*{Calendar coverage and same-calendar baselines}\label{sec:bid_internal:calendar_discipline}
@@ -198,29 +196,33 @@ MTU15-DA  & net flow & $+\phantom{0}793$ & $1\,083$ & $+0.73$ & $+\phantom{0}419
 \noindent\emph{Reading guide for Part A.} Three setup sections come first. \S\ref{sec:prov:hour_class} defines the \textbf{hour-class taxonomy} (critical / flat / midday) used to slice every table and figure that follows. \S\ref{sec:prov:pricesetter} characterises \textbf{who price-sets} in the day-ahead market (\S\ref{sec:prov:pricesetter_da}) and, methodologically, in the intraday markets (\S\ref{sec:prov:pricesetter_ida}). \S\ref{sec:prov:dw_decomp} then defines the \textbf{bid-shape metrics} in two families: \emph{per-curve functionals} (one scalar per single bid curve --- $\sigma_p$, $N_{\text{eff}}$) and \emph{pairwise divergences} (a statistic of two curves --- $D_w$, $\Delta p$, $\Delta q$). Visual results (per tech $\times$ firm $\times$ quarter bid curves with mean clearing prices overlaid) come in \S\ref{sec:prov:bid_graphs}; quantitative tables come in \S\ref{sec:prov:dw_tables}.
 
 % =====================================================================
-\section{Hour-class taxonomy: critical, flat, midday}\label{sec:prov:hour_class}
+\section{Hour-class taxonomy --- supplementary classifier table}\label{sec:prov:hour_class}
 % =====================================================================
 
-\paragraph{Classifier: within-hour standard deviation of residual demand.}
-MTU15 granularity has economic content only where the within-hour profile actually moves: if residual demand is flat within a clock-hour the hourly clearing price already summarises it, and granular pricing adds no signal; if it ramps sharply (morning ramp, evening peak, solar fade) granular pricing unlocks quarter-specific discrimination. We therefore classify hours by within-hour \emph{variability}, not demand level. For clock-hour $h$, date $d$, residual demand $D_{h,q,d} = \text{load} - \text{wind} - \text{solar}$ at quarter $q$ with quarter-mean $\bar D_{h,d}$,
-\[
- \sigma_{\text{within}}(h) \;=\; \mathbb{E}_d\!\left[\sqrt{\tfrac{1}{4}\sum_{q=1}^{4}\bigl(D_{h,q,d} - \bar D_{h,d}\bigr)^2}\right] \quad [\text{MW}],
-\]
-computed from ENTSO-E A65 load and A75 wind+solar at 15-min ISP over 2023-01-01 to 2026-05-14 (the longest clean 15-min window). High $\sigma_{\text{within}}$ marks \textbf{critical} hours, where strategic within-hour bidding has scope; low marks \textbf{flat} hours, where it has none --- so flat is the within-day control, and the (critical $-$ flat) differential strips any day-level shock that hits both classes proportionally.
+\noindent The critical/flat partition is defined and motivated in
+\emph{preliminary results} \S 2 (which uses the morning-ramp $\cup$
+evening-ramp union as ``critical'', overnight hours as ``flat'',
+midday as a separate falsification class). This subsection only
+supplies the full per-hour classifier table that is too long for the
+headline memo, plus two validation checks.
 
 \begin{table}[H]
 \centering\footnotesize
-\caption{\textbf{Hour-of-day classification metrics, Spain 2023--2026} (ENTSO-E A65 + A75, 15-min ISP, $n \approx 3.4$ years of daily observations per hour). The classifier is $\sigma_{\text{within}}$ (column 6, MW). Critical hours: $\sigma_{\text{within}} \in [522, 1303]$. Flat hours: $\sigma_{\text{within}} \in [336, 357]$. Midday: $\sigma_{\text{within}} \in [468, 502]$ --- intermediate, but excluded for the separate reason discussed below. Dropped (transition) hours sit at the regime boundaries. \textit{Year-stability:} across the 3 full years 2023, 2024, 2025 (computed separately), the critical-set min $\sigma_{\text{within}}$ across years is 530 MW, exceeding the flat-set max (387 MW) by $1.4\times$; no within-class swaps across years.}
+\caption{\textbf{Hour-of-day classification metrics, Spain 2023--2026} (ENTSO-E A65 + A75, 15-min ISP, $n \approx 3.4$ years of daily observations per hour). The classifier is $\sigma_{\text{within}}$, the expected SD of residual demand (load $-$ wind $-$ solar) across the 4 quarters of each clock-hour. Critical hours: $\sigma_{\text{within}} \in [522, 1303]$. Flat hours: $\sigma_{\text{within}} \in [336, 357]$. Midday: $\sigma_{\text{within}} \in [468, 502]$ (intermediate; excluded from main specs because of the solar-saturation channel). Dropped (transition) hours sit at the regime boundaries. \textit{Year-stability:} across 2023, 2024, 2025 the critical-set min $\sigma_{\text{within}}$ exceeds the flat-set max by $1.4\times$; no within-class swaps across years.}
 \label{tab:hour_classification_full}
 \newcommand{\critrow}{\rowcolor{red!10}}%
 \newcommand{\flatrow}{\rowcolor{blue!10}}%
 \input{../paper/tables/tab_hour_classification.tex}
 \end{table}
 
-\paragraph{Classification rule.}
-Read off Table~\ref{tab:hour_classification_full} by contiguous-block structure: \textbf{critical} = morning ramp (5h--8h) + evening peak (16h--22h), 11 hours, $\sigma_{\text{within}} \in [522, 1303]$ MW; \textbf{flat} = overnight (1h--3h), 3 hours, $[336, 357]$ MW; \textbf{midday} = solar peak (11h--14h), 4 hours, intermediate $\sigma_{\text{within}}$ but residual demand $< 9$ GW. Midday is excluded from the control set: its low residual demand shifts the marginal technology from CCGT/hydro to solar PV $+$ storage, so pooling it into flat would absorb a separate operational channel. The 6 boundary hours (0, 4, 9, 10, 15, 23) straddle the thresholds and are dropped --- a 14-hour analytic sample (11 critical $+$ 3 flat). The CV column ($\sigma_{\text{within}}/\overline{\text{residual demand}}$) flags that ``critical'' is not uniform: evening-peak hours carry a large MW swing on a high demand base (low CV $\sim 2$--$4\%$), morning-ramp hours a large swing on a thin base (high CV $\sim 8$--$9\%$, more relative room for a within-hour price-setter).
-
-\paragraph{Validation.} Two checks. (i) \emph{No cost-shock confound}: CCGT price-setting share is $9.1\%$ critical vs $9.0\%$ flat --- gas-cost shocks cannot propagate asymmetrically across the two classes, so within-day differencing identifies behaviour, not cost. (ii) \emph{Outcome-side}: post-MTU15-DA the within-hour DA quarter clearing-price SD averages $6.58$ EUR/MWh in critical hours vs $2.13$ in flat ($3.1\times$), so the classifier correctly predicts where post-reform quarter prices actually diverge.
+\paragraph{Two validation checks.} (i) \emph{No cost-shock
+confound}: CCGT price-setting share is $9.1\%$ critical vs $9.0\%$
+flat --- gas-cost shocks cannot propagate asymmetrically across the
+two classes, so within-day differencing identifies behaviour, not
+cost. (ii) \emph{Outcome-side}: post-MTU15-DA the within-hour DA
+quarter clearing-price SD averages $6.58$~EUR/MWh in critical hours
+vs $2.13$ in flat ($3.1\times$), so the classifier correctly
+predicts where post-reform quarter prices actually diverge.
 
 
 % =====================================================================
@@ -307,15 +309,33 @@ DA60/ID15 post-blk & Flat & 19 & \textbf{80} & 0 & 0 & 0 \\
 \label{fig:ida_vs_da}
 \end{figure}
 
-\paragraph{Price spread $\sigma_p$ and effective tranche count $N_{\text{eff}}$.}
-For each (unit, date, market-period) sell bid curve, restricted to the band $|p - \text{MCP}| \le h$, we compute two scalars:
-\begin{itemize}\setlength{\itemsep}{2pt}
-\item \textbf{Price functional --- price spread $\sigma_p$}: the MW-weighted standard deviation of the in-band tranche prices (EUR/MWh). It measures how much the unit \emph{varies its price} across the MW it offers near the clearing price. A single flat block $\Rightarrow \sigma_p = 0$; a graded ladder spanning the band $\Rightarrow \sigma_p$ large.
-\item \textbf{Quantity functional --- effective tranche count $N_{\text{eff}}$}: the inverse Herfindahl of the tranche MW shares, $N_{\text{eff}} = (\sum_t q_t)^2 / \sum_t q_t^2$. It measures how the unit \emph{splits its quantity}: $N_{\text{eff}} = 1$ means all in-band MW sits in one block, larger $N_{\text{eff}}$ means the MW is divided into more comparable pieces.
-\end{itemize}
-\noindent Both are per-curve and require no curve-to-curve comparison, and are computed on the \emph{raw} bid curve (seasonality is handled at the aggregation step, by reading the values within calendar-matched windows). The two decouple: a unit can split into many tranches at nearly one price (high $N_{\text{eff}}$, low $\sigma_p$) or place two blocks far apart (low $N_{\text{eff}}$, high $\sigma_p$).
+\paragraph{Per-curve functionals --- definitions in the headline memo.}
+The two per-curve scalars $\sigma_p$ (MW-weighted SD of in-band
+tranche prices) and $N_{\text{eff}}$ (inverse Herfindahl of in-band
+tranche MW shares) are defined in \emph{preliminary results} \S 1
+and used as the bid-shape outcomes of Spec~C (\emph{preliminary
+results} \S 3.C, 4.C). We use the same definitions here without
+re-deriving them, and the same data-driven band $|p - \text{MCP}|
+\le h$ as in the strategic-band paragraph above. The functionals
+decouple cleanly: a unit can split into many tranches at nearly one
+price (high $N_{\text{eff}}$, low $\sigma_p$) or place two blocks
+far apart (low $N_{\text{eff}}$, high $\sigma_p$).
 
-\paragraph{Offer types: what the functionals see.} The functionals read the price-quantity tranche ladder a unit submits --- the \emph{simple offer}, in the offer-detail record. A unit may instead declare \emph{complex conditions}: a minimum-income condition (dispatch only if revenue clears a fixed-plus-variable floor), an indivisible first tranche, a load gradient, or a \emph{block order} (one price held across several periods, accepted whole). This is not innocuous: a near-zero $\sigma_p$ is genuine flat bidding for a pure simple offer, but for a minimum-income unit it can instead be strategy displaced onto the income floor; a block order contributes one price to every period it covers, mechanically forcing $\sigma_p \to 0$ and $N_{\text{eff}} \to 1$; an indivisible first tranche is a quantity lump, depressing $N_{\text{eff}}$ structurally. The offer-type mix is sharply tech-specific (DA15/ID15 sell offers): Wind, Solar, Hydro and pump-storage are $\sim\!100\%$ pure simple offers, so their functionals read at face value; Nuclear is $64\%$ simple ($36\%$ minimum-income); \textbf{CCGT is the outlier --- only $18\%$ simple, with $50\%$ carrying a minimum-income condition and $32\%$ a block order.} The functionals are clean for the renewable and hydro techs; for CCGT the step from geometry to \emph{strategic shaping} must be read conditional on offer type.
+\paragraph{Offer types: the warning for CCGT.} The three OMIE
+offer types (simple price-quantity ladder; minimum-income
+condition (MIC); block order) are described in \emph{preliminary
+results} \S 1 footnote and the composition shift across regimes is
+analysed in \emph{preliminary results} Appendix A.7. The take-away
+for the per-curve functionals: simple offers are read at face
+value; block orders mechanically force $\sigma_p \to 0$ and
+$N_{\text{eff}} \to 1$ (one price held across many periods, no
+within-period structure); MIC offers displace some shaping onto the
+income floor. The mix is sharply tech-specific (DA15/ID15 sell
+offers): wind / solar / hydro / pump-storage are
+$\sim\!100\%$ simple; nuclear is $64\%$ simple; \textbf{CCGT is
+$18\%$ simple, $50\%$ MIC, $32\%$ block} --- the functionals are
+clean for renewables and hydro, but for CCGT any geometry-to-conduct
+step must condition on offer type.
 
 % =====================================================================
 \subsection{Family 2 --- pairwise divergences: $D_w$, $\Delta p$, $\Delta q$}\label{sec:prov:dw_decomp_def}
