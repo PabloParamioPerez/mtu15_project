@@ -1,0 +1,483 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{enumitem}
+\setlist{nosep, leftmargin=*, topsep=2pt, itemsep=2pt}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, urlcolor=blue!50!black,
+            pdftitle={Outline -- Rewiring the market time clock in Spanish electricity markets},
+            pdfauthor={Pablo Paramio Perez}}
+\usepackage{microtype}
+\linespread{1.10}
+
+\title{Outline\\
+\large Rewiring the market time clock in Spanish electricity markets}
+\author{Pablo Paramio P\'erez}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{RAP}
+
+\noindent\textbf{Positioning.} How shorter trading intervals reshape
+wholesale electricity bidding and prices has been studied for Germany
+(M\"arkle-Hu\ss, Feuerriegel and Neumann, 2017, on the 2014 EPEX
+15-minute reform) and for Australia (Csereklyei and Khezr, 2024, on
+the 2021 five-minute settlement reform), but the recent Spanish move
+to 15-minute trading has not yet been evaluated. The Spanish case is
+distinctive: the reform was rolled out in two cutovers (intraday in
+March 2025, day-ahead in October 2025) and lands in the middle of a
+nationwide blackout (28 April 2025) and the post-blackout reinforced
+operation regime that has been expanding regulated redispatch since.
+
+\noindent\textbf{Research Question.} How did Spain's switch from
+hourly to 15-minute wholesale trading change the way generators bid,
+how the auctions clear, and how the system as a whole settles? In
+particular: who actually uses the new within-hour freedom, and where
+does it bite? Does the reform amplify market power, or does it
+compress it? Does it harm consumers? And how can the day-ahead
+reform's effect be separated from the concurrent post-blackout
+regulatory regime?
+
+\noindent\textbf{Answer.} The 15-minute trading reform acts not as a
+uniform technology shock but as a \emph{strategic-latitude reveal}:
+its uptake maps to who has the economic latitude to use it
+strategically. Dispatchable firms (combined-cycle gas, hydro,
+pumped-hydro) widen their within-quarter bid ladders in
+high-residual-demand hours (the morning ramp and evening peak), where
+within-hour residual demand actually varies and rewards finer pricing;
+flat hours barely move. Wind and solar aggregators also use the new
+grid, but for a different reason --- imbalance-penalty avoidance under
+the December 2024 settlement reform --- which applies equally in every
+hour, and so leaves no critical-flat differential. On the auction
+side, intraday clearing prices drop sharply under the March 2025
+reform with day-ahead co-moving down via cross-market anticipation;
+the day-ahead combined-cycle gas auction-cleared volume scales up by
+about $59$~GWh/day under the October 2025 reform in critical hours;
+the day-ahead/intraday wedge keeps its mean at zero but its within-day
+standard deviation jumps in critical hours under the intraday reform.
+Granularity does not amplify market power (prices fall, the wedge
+level is unchanged) and does not harm consumers (the granularity
+reforms compress the real-time redispatch and reserve activations REE
+has to call after the auction; the post-blackout reforzada cost rise
+is a separate mechanism that happens to share calendar time). The
+interpretive frame is that the reform restructures the whole
+sequential-market architecture even where it does not touch the
+auction directly: under the intraday cutover, combined-cycle gas
+widens its day-ahead bid-shape \emph{in anticipation} of finer
+intraday re-trading.
+
+\section*{Questions Provoked by the RAP}
+
+\begin{enumerate}
+  \item What does the move from hourly to 15-minute trading actually
+        change in the wholesale market, and how is the answer
+        different for dispatchable units vs.\ renewables?
+  \item How can the day-ahead reform's effect be separated from the
+        concurrent post-blackout reinforced-operation regime?
+  \item How does bid widening translate into the day-ahead
+        combined-cycle gas cleared-volume scale-up in critical hours?
+  \item Does the reform amplify market power, and does it harm
+        consumers, once both the wholesale auction and the system-cost
+        cascade are accounted for?
+  \item Could the March 2025 intraday reform have contributed to the
+        macro-conditions that made the April 2025 blackout possible?
+\end{enumerate}
+
+\section{Introduction}
+
+The two-step Spanish 15-minute trading reform --- intraday auctions in
+March 2025, day-ahead market in October 2025 --- arrives in an
+institutional setting that has been reshaped by a nationwide blackout
+(28 April 2025) and a continuous reinforced-operation
+(\emph{reforzada}) regime that has expanded regulated redispatch ever
+since. We ask whether the reform changed wholesale bidding, prices and
+cleared quantities; whether it amplifies market power or compresses
+it; whether it harms consumers; and how the day-ahead cutover can be
+identified given the concurrent regulatory regime. The answer is that
+the reform is a strategic-latitude reveal: dispatchable firms widen
+their within-quarter bid spreads where within-hour residual demand
+actually varies, renewables use the finer grid uniformly to manage
+imbalance, the intraday auction price drops by $\sim 80$~EUR/MWh
+placebo-net under the March 2025 reform, the day-ahead combined-cycle
+gas cleared volume scales up by $\sim 59$~GWh/day under the October
+2025 reform in critical hours, and a wedge-SD jump shows that
+within-hour bid behavior also restructures the day-ahead/intraday
+relationship even though the wedge's level stays at zero. The reform
+does not amplify market power or harm consumers: wholesale prices
+fall, the wedge level stays at zero, the up-direction adjustment-cost
+channels REE has to call shrink; the post-blackout cost rise is a
+separate, reforzada-driven effect that overlaps in calendar time but
+operates through a different mechanism (Fase~I redispatch).
+
+\textit{Questions answered by the introduction.}
+\begin{enumerate}
+  \item What is the puzzle, given the German and Australian
+        precedents and the recent Spanish reform?
+  \item What is the paper's precise answer, and what unifying
+        mechanism does it propose?
+  \item How does the rest of the paper establish the result, and
+        what does the institutional setting force us to control for?
+\end{enumerate}
+
+\section{Institutional Setting: Sequential Markets, Three Reforms, and a Blackout}
+
+Spanish wholesale clearing is sequential: a day-ahead auction first
+(OMIE), then three intraday auctions, then continuous trading
+(XBID/SIDC) and balancing. The 15-minute trading reform was rolled out
+in three steps that interact in sequence: a 15-minute settlement
+reform in December 2024 (ISP15), the intraday cutover in March 2025
+(ID15), and the day-ahead cutover in October 2025 (DA15). The blackout
+of 28 April 2025 switches the system into a continuous
+reinforced-operation regime that overlaps only with the day-ahead
+cutover, not with the intraday one. Granular pricing only has
+economic content where within-hour residual demand actually varies, so
+we partition clock-hours into ``critical'' (the morning ramp and the
+evening peak, where the standard deviation of 15-minute residual
+demand is high) and ``flat'' (overnight, the within-day control).
+
+\textit{Questions answered by this section.}
+\begin{enumerate}
+  \item How do day-ahead and intraday auctions relate, and where does
+        regulated redispatch sit on top of them?
+  \item What changed mechanically on 11 December 2024, 19 March 2025
+        and 1 October 2025, and what did not?
+  \item Why is the critical/flat partition the right place to look
+        for a granularity effect, and why is the partition itself
+        identification-relevant?
+\end{enumerate}
+
+\subsection{Three reforms and a blackout (Dec 2024, Mar 2025, Apr 2025, Oct 2025)}
+The December 2024 settlement reform (ISP15) moves the imbalance
+settlement period from 60 to 15 minutes but leaves the wholesale
+contract grid unchanged. The intraday cutover (19 March 2025) moves
+all three intraday auctions and the continuous intraday market to
+15-minute trading; the day-ahead cutover (1 October 2025) does the
+same for the day-ahead market. The 28 April 2025 blackout triggers a
+continuous reinforced-operation regime that overlaps only with the
+day-ahead cutover.
+
+\subsection{Where granular pricing has economic content: the critical/flat partition}
+A clock-hour is ``critical'' if the standard deviation of 15-minute
+residual demand exceeds the cross-hour median, and ``flat'' otherwise;
+the flat hours serve as the within-day control group for the bid-shape
+difference-in-differences. Critical here is the morning-ramp $\cup$
+evening-ramp union; midday (solar-saturated) is excluded from the
+main specifications and reserved as a falsification.
+
+\section{Data: OMIE Bid-Level Offers, ENTSO-E Weather and Load, ESIOS Redispatch}
+
+We use OMIE per-curve sell offers for every unit, date and period in
+the day-ahead and intraday-auction markets from 2022 to 2026, aligned
+to the corresponding OMIE clearing prices and complemented by 15-minute
+ENTSO-E wind, solar and load and by ESIOS Fase~I/II and aFRR
+regulated-redispatch volumes and prices. Bid tranches are restricted
+to a window-and-market-specific band around each clearing price (set
+to the $p_{90}-p_{50}$ spread of the MCP distribution in the analysis
+window) to isolate the bids that plausibly compete with the marginal
+price; the critical/flat partition is calibrated on
+post-15-minute-trading data.
+
+\textit{Questions answered by this section.}
+\begin{enumerate}
+  \item What is a ``curve'' here, and what bid-shape measures are
+        defined on it?
+  \item Why a window-specific bandwidth, and how sensitive are the
+        conclusions to this choice?
+  \item How are OMIE's three offer types (simple, MIC, block) used in
+        the analysis, and why does the offer-type composition matter
+        for the bid-shape DiD?
+\end{enumerate}
+
+\subsection{Per-curve bid-shape outcomes and the in-band offered energy}
+Each (unit, date, period) bid ladder yields two per-curve bid-shape
+measures: the MW-weighted in-band standard deviation of bid prices
+$\sigma_p$ and the effective tranche count $N_{\text{eff}}$. A
+complementary aggregate-volume primitive is the in-band offered energy
+$E^{\text{band}}$ (in MWh per class-hour, normalised so that the
+quarter-count expansion under 15-minute trading does not mechanically
+inflate the level).
+
+\subsection{Calibrating the critical/flat partition (post-only)}
+Date-fixed-effect regressions of within-hour dispersion on critical
+and midday dummies, fit on post-15-minute-trading data, confirm that
+critical hours are where within-hour bid-shape dispersion actually
+lives across all three dispatchable techs.
+
+\section{Empirical Strategy: Three Specifications for Three Economic Objects}
+
+The reform's effect lives in three economic objects --- bid shape,
+in-band offered energy, and auction-clearing outcomes --- and each
+calls for a different specification. The bid-shape DiD identifies the
+critical-minus-flat shift across each cutover under within-day
+parallel trends, with unit fixed effects and date-clustered standard
+errors. The auction-clearing and aggregate-volume outcomes use a
+Bayesian counterfactual model (BSTS / CausalImpact) with wind, solar
+and gas covariates plus a 2024 same-calendar placebo, mirroring
+M\"arkle-Hu\ss\ et al.\ (2017). Identification of the day-ahead
+cutover requires holding the post-blackout reinforced-operation
+regime constant: the day-ahead pre-window begins on 28 April 2025
+(the day of the blackout) and ends on 30 September 2025, so both pre
+and post sit inside the \emph{reforzada} period.
+
+\textit{Questions answered by this section.}
+\begin{enumerate}
+  \item Why difference-in-differences for bid shape and a Bayesian
+        counterfactual for prices and quantities?
+  \item What identifying assumption does the day-ahead pre-window
+        choice rely on, and what would break with a naive long pre?
+  \item How does the 2024 same-calendar placebo correct for residual
+        seasonal trend?
+\end{enumerate}
+
+\subsection{Spec A: Bayesian counterfactual for prices, cleared MW, and the day-ahead/intraday wedge SD}
+Daily outcomes (clearing prices, per-tech cleared GWh, within-day
+wedge SD) are modelled with a state-space local-linear trend, weekly
+seasonality and wind/solar/gas regressors trained pre-cutover and
+extrapolated forward; the post-cutover gap from the counterfactual is
+the treatment effect, with a 2024 same-calendar placebo subtracted
+for the joint $95\%$ test.
+
+\subsection{Spec B: per-hour-class BSTS on in-band offered energy}
+The same Spec~A architecture is run independently per (tech, market,
+hour-class) cell on $E^{\text{band}}$, the in-band offered energy
+normalised to MWh per class-hour. The readable summary is the real
+posterior and the 2024 placebo posterior reported side by side per
+hour-class; the reform-attributable shift is the gap.
+
+\subsection{Spec C: per-curve DiD for bid shape}
+Per-curve DiD on $\sigma_p$ and $N_{\text{eff}}$ with unit fixed
+effects and the critical/flat contrast. The DiD is the right tool
+here precisely because the granularity reform's effect on bid shape
+is structurally a critical-hours effect: differentiated bidding only
+pays off where within-hour residual demand actually varies. The
+critical $-$ flat differential $\theta$ \emph{is} the
+granularity-enabled discrimination, not a residual being netted out.
+
+\section{Results}
+
+The empirical findings sort into five clusters, layered from bidding
+behavior up to auction-clearing outcomes and cross-market spillovers.
+\emph{Bid-shape widening} shows up under both cutovers and
+concentrates in critical hours where the steep residual-demand curve
+rewards within-quarter discrimination. \emph{In-band offered energy}
+migrates toward the newly-granular market under both reforms, with
+the morning ramp leading under the day-ahead cutover. On the
+auction-clearing side, the intraday reform drops both intraday and
+day-ahead clearing prices through a cross-market anticipation
+channel; the day-ahead reform scales up combined-cycle gas
+auction-cleared volume in critical hours by $\sim 59$~GWh/day; the
+day-ahead/intraday wedge keeps its mean at zero but its within-day
+standard deviation jumps under the intraday cutover. Finally, a
+\emph{cross-market substitution} pattern --- combined-cycle gas
+widens its day-ahead bid-shape \emph{in anticipation} of finer
+intraday re-trading under the intraday cutover, and tightens its
+intraday bid-shape under the day-ahead cutover --- shows that the
+reform restructures the whole sequential-market architecture, not
+just the auction it directly touches. The \emph{operational vs.\
+strategic} distinction explains why wind shows null DiD: wind
+aggregators face operational (imbalance-driven) incentives that apply
+equally in every hour and so leave no critical-flat differential,
+while dispatchable firms face strategic (rent-maximising) incentives
+that concentrate in critical hours.
+
+\textit{Questions answered by this section.}
+\begin{enumerate}
+  \item Which findings survive both a within-pre placebo and a 2024
+        same-calendar placebo, and which need the joint $95\%$
+        bracket?
+  \item Why does the bid widening translate into more day-ahead
+        cleared volume but not into a day-ahead wholesale price
+        change?
+  \item How does the wedge-SD jump reconcile with the wedge-level
+        null --- and what does that say about the within-hour
+        restructuring?
+\end{enumerate}
+
+\subsection{Bid-shape widens in critical hours --- both reforms (Spec C, Finding 1)}
+Combined-cycle gas, hydro and pumped-hydro significantly widen their
+within-quarter bid-price spread $\sigma_p$ and effective tranche
+count $N_{\text{eff}}$ in critical hours after each reform; flat
+hours barely move. Wind widens with magnitudes an order of magnitude
+smaller --- the operational vs.\ strategic distinction is what
+collapses its critical-flat differential, not pure price-taking.
+
+\subsection{In-band offered energy migrates into the granular market --- both reforms (Spec B, Finding 2)}
+The dispatchable bid-side migration shows up directly as MWh shifting
+in-band toward the newly-granular market: under the day-ahead reform
+the MWh move into the day-ahead auctions (morning ramp dominates),
+under the intraday reform into the intraday auctions.
+
+\subsection{Auction-clearing outcomes (Spec A, Finding 3)}
+The intraday reform drops both intraday and day-ahead clearing prices
+by $\sim 80$~EUR/MWh placebo-net (the day-ahead drop is the
+rational-anticipation channel into day-ahead); the day-ahead reform
+scales up combined-cycle gas day-ahead cleared volume in critical
+hours by $\sim 59$~GWh/day; renewables reallocate cleared MW toward
+the granular market under both reforms (ISP15-driven imbalance
+avoidance); the intraday reform leaves the per-clock-hour day-ahead
+$-$ intraday wedge level at zero but jumps its within-day SD in
+critical hours.
+
+\subsection{Cross-market substitution: the reform restructures the whole sequential-market architecture (Spec C, Finding 4)}
+Under the intraday reform, combined-cycle gas widens its day-ahead
+$\sigma_p$ \emph{in anticipation} of finer intraday re-trading;
+under the day-ahead reform, combined-cycle gas tightens its intraday
+$\sigma_p$, pulling structured bidding into the now-granular
+day-ahead. The granularity instrument rearranges the whole sequential
+market, not just the auction it directly touches.
+
+\subsection{Operational vs.\ strategic incentives explain the wind/solar null DiD (Finding 5)}
+Wind and solar aggregators bid at quarter granularity in every hour
+to manage imbalance exposure under the December 2024 settlement
+reform; that engagement is real but uniform across hour-classes, so
+the critical-flat DiD collapses for the renewables even though they
+are not pure price-takers. Dispatchable firms have no comparable
+operational pressure and engage strategically only where
+within-hour residual demand actually varies.
+
+\section{Robustness}
+
+The bid-shape and auction-clearing findings survive the standard
+checks: a within-pre midpoint placebo (the intraday-reform bid-shape
+findings are clean; the day-ahead-reform combined-cycle gas
+$\sigma_p$ widening cleans up after de-trending), a midday-vs-flat
+hour-class falsification (sign-stable, smaller magnitudes), a
+cross-border-flow control on the intraday $\sigma_p$ (essentially
+unchanged), a per-CCGT-firm decomposition (the widening is driven by
+two of the four firms, the two most active in the day-ahead
+competing tier), a bandwidth sensitivity check (the $p_{90}$ choice
+isolates the competing tier from the parked scarcity tier; wider
+bandwidths contaminate the measure), a per-IDA-session BSTS for the
+intraday price drop (session-symmetric), and an \emph{offer-type
+composition check}: the combined-cycle gas in-band offer mix does
+shift across the day-ahead reform (simple-offer share drops $29\%
+\to 22\%$, block share grows $30\% \to 35\%$), but in the direction
+that should dampen the pooled $\sigma_p$ widening; restricting to
+simple offers only strengthens the effect from $1.25^{**}$ to
+$3.53^{***}$, so the pooled headline is a conservative read of the
+true within-tranche strategic engagement.
+
+\textit{Questions answered by this section.}
+\begin{enumerate}
+  \item Which findings rely on a single robustness leg, and which on
+        multiple?
+  \item Why is the offer-type composition shift not a confounder for
+        the bid-shape DiD?
+  \item Why is \emph{reforzada} a level confound rather than a
+        within-hour confound?
+\end{enumerate}
+
+\section{Mechanism: Where the Strategic Margin Lives and Where Granularity Efficiency Shows Up}
+
+Two market-structure facts frame the bidding evidence. First, each
+Big-4 combined-cycle fleet bids a two-tier day-ahead curve --- a
+``competing'' tier near marginal cost and a ``parked'' tier above
+the clearing-price ceiling --- and a single competitive tier at
+marginal cost in the intraday auction, indicating that the strategic
+margin is collected through regulated-redispatch recall, not through
+wholesale price-setting. Second, wholesale concentration (HHI $\sim$
+1,100) is moderate while ancillary-market concentration (HHI $>$
+4,000) is high, so market power migrated from wholesale to ancillary
+services as renewables eroded the wholesale margin. On the cost
+side, the granularity reforms compress the up-direction
+adjustment-cost channels REE has to call after the auction
+(real-time redispatch and aFRR reserve activations both shrink
+across the reform sequence) --- the efficiency channel of 15-minute
+trading. The post-blackout reforzada cost rise concentrates on
+combined-cycle gas (Fase~I up balloons; other technologies are flat)
+and is a separate policy effect that happens to overlap calendar-wise
+with the day-ahead cutover but operates on a different mechanism.
+
+\textit{Questions answered by this section.}
+\begin{enumerate}
+  \item What is the geometry of the two-tier combined-cycle gas
+        day-ahead curve, and why is the parked tier never recalled
+        by the wholesale auction?
+  \item Why is the absence of wholesale price effects under the
+        day-ahead reform consistent with the cleared-volume scale-up,
+        the cross-market substitution, and the migration of strategic
+        margin to ancillary services?
+  \item How do the granularity efficiency gains and the
+        reforzada-driven cost rise interact in calendar time, and
+        how do we keep them separate in the analysis?
+\end{enumerate}
+
+\subsection{Two-tier combined-cycle gas day-ahead curve and the day-ahead/intraday contrast}
+The same fleets bid a single competitive tier with negligible
+withholding in the intraday auction, after Fase~I has cleared ---
+indicating that the parked tier is a non-strategic placeholder
+rather than a Fase~I bid, and the strategic margin is collected
+through a separate restriction offer submitted to REE.
+
+\subsection{Concentration migrated from wholesale to ancillary services}
+Wholesale-market HHI hovers around 1,100 over 2016--2024 and falls
+mid-day when solar peaks; ancillary-market HHI sits above 4,000
+across the same window. The cleared-volume scale-up under the
+day-ahead reform is the combined-cycle gas competing tier expanding
+into the four quarters of each peak hour, scaling up the volume base
+that feeds the redispatch recall.
+
+\subsection{Granularity compresses the adjustment-cost channels --- the efficiency channel}
+Finer trading-period resolution lets the auction itself absorb
+within-hour variation that previously had to be cleaned up by
+ex-post REE intervention. Real-time redispatch falls roughly
+threefold across the reform sequence; aFRR follows. Solar
+aggregators exploit granularity in midday hours by committing to
+four quarter-level schedules that track cloud-cover variation,
+instead of being locked into a single hourly commitment.
+
+\subsection{Reforzada cost increase concentrates on combined-cycle gas --- a separate mechanism}
+Decomposing weekly dispatch into its components, the combined-cycle
+gas day-ahead-cleared layer collapses post-blackout while the
+intraday $+$ REE real-time top-up layer balloons; other technologies
+are flat. A granularity reform that touched all bid-side firms
+equally would not produce a combined-cycle-gas-only intervention
+pattern --- the reforzada cost rise is a separate policy effect from
+the granularity reforms.
+
+\section{Conclusion: Granularity Is a Strategic-Latitude Reveal}
+
+A market-microstructure reform that simply increases trading-period
+resolution acts not as a uniform technology shock but as a
+\emph{strategic-latitude reveal}: it does not change marginal costs,
+capacity, or who is in the market; it changes who has room to
+discriminate within the hour and where, and the equilibrium response
+traces exactly that --- strategic firms moving in strategic hours,
+operational firms moving uniformly, both rippling across the
+sequential markets through cross-market anticipation, and all of it
+within (not against) the competitive clearing. The reform does not
+amplify market power (wholesale prices fall, the wedge level is
+unchanged) and does not harm consumers (the granularity reforms
+compress the real-time adjustment-cost channels). The Fase~I cost
+rise on the same calendar window is the post-blackout
+reinforced-operation response, not the granularity reforms: the two
+policies overlap in time but operate on different mechanisms.
+Whether the March 2025 intraday reform was in some way responsible
+for the April 2025 blackout is out of scope here --- the ENTSO-E
+Expert Panel's final report does not list the reform as a
+contributing factor; the CNMC report does flag the move to
+quarter-hourly trading as one contributor to the abrupt voltage
+variations observed in the months around the incident. Answering it
+is beyond the scope of this thesis (it requires
+electrical-engineering knowledge we do not have) but it points to a
+strong research gap: the ENTSO-E report identifies the proximate
+technical triggers but does not engage with whether the
+market-microstructure reforms contributed to the macro-conditions
+that made the system fragile enough for those triggers to cascade.
+
+\textit{Questions answered by the conclusion.}
+\begin{enumerate}
+  \item What is the main empirical lesson, and what is the surviving
+        level-shift finding?
+  \item What is the interpretive frame, and what would tighten it
+        from descriptive to identified?
+  \item What extensions follow naturally (the ongoing
+        functional-factor regression for the full curve, a
+        firm-level decomposition, identifying the redispatch
+        channel)?
+\end{enumerate}
+
+\end{document}
