@@ -48,7 +48,20 @@
 \begin{document}
 \maketitle
 
-\noindent\emph{This file collects descriptive facts that any identification design must rest on: how firms bid across hour-classes (critical vs flat), how pivotal and non-pivotal firms differ, how technologies differ, and the regulatory / RT2 / reforzada context in which the reforms operate. Nothing here is an identification claim. The regression outputs from the current reform-window design are collected in a companion sibling document.}
+\noindent\emph{This file is the companion volume to
+\textbf{preliminary results}: it carries the descriptive cuts,
+per-firm decompositions, and regulatory / market-structure context
+that the headline memo only summarises. The headline methodology is
+the one of preliminary results --- Spec~A BSTS for prices and
+cleared MW, Spec~B per-hour-class BSTS on in-band offered energy,
+Spec~C per-curve DiD for bid shape, all with a 2024 same-calendar
+placebo. Where this document reports raw pre/post means or
+seasonality-adjusted (SA) values via a Fourier+DOW basis, those
+serve as descriptive sensitivity or supplementary readings, not as
+the identification claim --- which always defers to the BSTS / DiD
+verdict in the preliminary memo. The pure-regression identification
+outputs from the earlier reform-window design live in the sibling
+document below.}
 % Sibling file: thesis/provisional/regression_results.tex.
 
 
@@ -224,6 +237,114 @@ quarter clearing-price SD averages $6.58$~EUR/MWh in critical hours
 vs $2.13$ in flat ($3.1\times$), so the classifier correctly
 predicts where post-reform quarter prices actually diverge.
 
+
+% =====================================================================
+\section{Who clears in which hours: the tech-mix by hour-class}\label{sec:prov:tech_mix}
+% =====================================================================
+
+\noindent Before turning to who price-sets, it is worth fixing the
+basic descriptive picture: in each hour-class, what share of the
+final cleared MWh actually comes from each technology? The cross-tab
+in Table~\ref{tab:tech_mix_by_hourclass} is computed on the
+\emph{final program} (PHF, post-IDA) for the post-DA15 window
+(2025-10-01 to 2025-12-31), so it answers the natural question
+``after every market has cleared, who is actually delivering the
+energy in each hour-class?''
+
+\begin{table}[H]
+\centering\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l r r r r}
+\toprule
+\textbf{Tech} & \textbf{Morning ramp (5--8)} & \textbf{Evening ramp (16--22)} & \textbf{Midday (11--14)} & \textbf{Flat (1--3)} \\
+\midrule
+Nuclear      & \textbf{34.3} & \textbf{26.9} & 25.8 & \textbf{34.0} \\
+Wind         & 20.9 & 16.3 & 13.7 & 21.6 \\
+\textbf{CCGT}         & \textbf{14.0} & \textbf{13.2} & 9.2 & \textbf{13.6} \\
+\emph{Unknown}\,$^{\dagger}$ & 12.1 & 13.3 & 14.7 & 12.8 \\
+Hydro        & 10.0 & 13.4 & 4.6 & 9.7 \\
+\textbf{Cogen}        & 5.1 & 4.0 & 3.5 & 5.1 \\
+Hydro\_RES   & 1.4 & 1.2 & 1.0 & 1.4 \\
+Biomass      & 1.2 & 0.9 & 0.9 & 1.2 \\
+Hydro\_pump  & 0.9 & 1.9 & 0.1 & 0.5 \\
+Solar PV     & 0.0 & 8.7 & \textbf{26.4} & 0.0 \\
+Coal         & 0.1 & 0.1 & 0.1 & 0.1 \\
+\midrule
+\textbf{Hour-class total (TWh)} & 13.9 & 31.1 & 18.5 & 10.5 \\
+\bottomrule
+\end{tabular}
+\caption{\textbf{Final-program (PHF) share of cleared MWh by tech and hour-class, post-DA15 window.} Window 2025-10-01 to 2025-12-31 (92 days). Numbers are \% of total cleared MWh in each hour-class (column). PHF is the post-IDA program; we take the last-session assigned MW per (date, period, unit). The hour-class totals (TWh) reflect different hour counts per class per day (4 morning-ramp, 7 evening-ramp, 4 midday, 3 flat).
+$^{\dagger}$``Unknown'' is the $\sim\!13\%$ of cleared MWh from unit codes not in the unit-map (mostly HISVD*/GALVD*/GNVD*/GSVD* virtual-delivery families --- portfolio/aggregator units that the unit-map drops); not a tech category.
+Reproduction: \texttt{scripts/analysis/firm/tech\_mix\_by\_hour\_class.py}.}
+\label{tab:tech_mix_by_hourclass}
+\end{table}
+
+\paragraph{Reading the cross-tab.}
+\begin{itemize}\setlength{\itemsep}{2pt}
+\item \textbf{Nuclear is the largest single bucket in every
+non-midday hour-class} ($\sim\!34\%$ morning ramp and flat,
+$\sim\!27\%$ evening). Inframarginal baseload with no within-hour
+variation --- it sets the floor of the merit order in every hour.
+\item \textbf{Solar PV} is the headline midday tech ($26.4\%$
+midday, $\sim\!0\%$ overnight, $8.7\%$ in the evening ramp where the
+ramp extends past sunset). The diurnal cycle is fully visible.
+\item \textbf{Wind} is the second-largest in every hour-class except
+midday ($\sim\!20\%$ morning and flat), dropping to $\sim\!14\%$
+midday when solar takes share.
+\item \textbf{CCGT} (the strategic-bidder pool of
+\emph{preliminary results} \S 4.C) clears $\sim\!13$--$14\%$ of
+total in every non-midday hour-class --- sizeable but not dominant.
+Drops to $\sim\!9\%$ in midday when solar pushes it off the merit
+order. The strategic-engagement story of \emph{preliminary results}
+\S 4.C is therefore about restructuring the bid-shape of a
+$\sim\!13\%$-of-cleared-MWh fleet, not about reshuffling the merit
+order at any margin.
+\item \textbf{Cogen} (separate from CCGT, see below) clears
+$\sim\!3$--$5\%$ in every hour-class. \emph{Its share is roughly
+flat across hour-classes}, consistent with the heat-driven (non-
+strategic) dispatch story --- Cogen doesn't shift to follow the
+power-side demand profile because its operating decision is driven
+by industrial heat demand and a regulated remuneration regime, not
+by the wholesale price.
+\item \textbf{Hydro} is meaningfully higher in critical hours
+(evening $13.4\%$, morning $10\%$) than in midday ($4.6\%$),
+consistent with the reservoir-arbitrage story (dispatch into peaks).
+\item \textbf{Hydro\_pump} is small everywhere but skews toward
+critical evening ($1.9\%$ vs $0.1\%$ midday) --- discharges into the
+evening peak, near-zero in midday when it would be pumping.
+\end{itemize}
+
+\paragraph{Why CCGT and Cogen are kept separate.} The unit-map
+distinguishes \texttt{CCGT} (58 unit codes, large combined-cycle
+gas turbines, dominated by the Big-4 vertically-integrated fleets)
+from \texttt{Cogen} (434 small cogeneration units, mostly under
+the regulated-renewables-and-cogeneration remuneration regime;
+the ``$\sim\!5\%$ dispatchable tail'' referenced in
+\emph{preliminary results} Appendix C.1 footnote). They are
+economically distinct objects: CCGT is pure power generation with
+a two-tier strategic bid curve and Fase~I recall economics
+(\S\ref{sec:prov:per_curve_def}--\S\ref{sec:prov:phf_minus_pdbf});
+Cogen is electricity-plus-useful-heat with heat-driven dispatch
+and a regulated remuneration framework that pins its incentives
+differently. Pooling them would dilute the strategic-engagement
+story (CCGT's $\sigma_p$ widening in critical hours, the headline
+finding in \emph{preliminary results} \S 4.C, would be averaged
+against a much larger number of small heat-driven units whose
+bid-shape does not move with the granularity reform). The
+strategic-bidding analysis throughout this document and the
+preliminary memo therefore restricts to CCGT.
+
+\paragraph{What the table is and is not.} This is a descriptive
+post-DA15 snapshot, not a treatment effect. It tells the reader
+which technology buckets are sizeable in which hour-class, which
+contextualises every subsequent table in this document (a $3\%$
+share moving by $30\%$ is much less of a system event than a $14\%$
+share moving by $30\%$, even if the percentage-point change is the
+same). For pre-vs-post comparisons we use the BSTS / DiD machinery
+of \emph{preliminary results} \S 3.A--C; this table is not a
+reform-effect estimate.
+
+\bigskip
 
 % =====================================================================
 \section{Who price-sets}\label{sec:prov:pricesetter}
@@ -435,7 +556,7 @@ HC & 27.9 & 20.7 & $+7.2$ & 34.2 & 21.2 & $+13.0$ \\
 \label{fig:wind_within_hour}
 \end{figure}
 
-\paragraph{Pump-storage within-day arbitrage under MTU15-DA: the quantity-side trace.} The bid-shape evidence above is one side of the granular-pricing reform; the quantity-side mirror, after seasonality is absorbed, comes from pump-storage. Per-tech DA cleared-MW DiDs across the MTU15-DA cutover (critical vs flat, pre Jul--Sep vs post Oct--Dec 2025) look dramatic at the raw level --- Solar PV $-3\,282$ MW, CCGT $+1\,548$, others mixed --- but they are dominated by the Jul $\to$ Oct daylight-pattern seasonality (long-evening solar peak collapses into short-evening fall, CCGT and hydro rise to fill it). Adding the descriptive\_facts \S\ref{sec:bid_internal:calendar_discipline} Fourier basis interacted with the critical-hour indicator (4 annual harmonics $\times$ crit $+$ 6 DOW $\times$ crit, the date-FE-compatible form of the daily-aggregate SA) collapses essentially every per-tech DiD: Solar PV flips to $+730$ MW ($t=+2.81$), CCGT goes to $-343$ MW ($t=-0.30$, ns), run-of-river hydro to $+91$ ($t=+0.81$, ns), nuclear / coal / biomass / wind all null. \emph{Only Hydro pump survives} at $+482$ MW ($t=+2.87$). Reading the pre/post means on both sides of the pump-storage book makes the mechanism transparent:
+\paragraph{Pump-storage within-day arbitrage under MTU15-DA: a descriptive look (no causal claim).} The bid-shape evidence above is one side of the granular-pricing reform; one would naturally look at pump-storage for the quantity-side mirror. Pre/post means on the two sides of the pump-storage book, taken at face value, show a striking within-day reallocation:
 
 \begin{center}
 \footnotesize
@@ -452,7 +573,25 @@ Flat     & 724 & 258 ($-64\%$)    & &  52 & 566 ($+10\times$) \\
 \end{tabular}
 \end{center}
 
-\noindent Generation reallocates from flat hours ($-64\%$) to critical hours ($+20\%$); pumping mirrors it (critical $-52\%$, flat from near-zero to $566$ MW). \emph{Total daily generation is essentially unchanged} ($14\,874 \to 14\,250$ MWh, $-4\%$). This is textbook within-day arbitrage: pre-MTU15-DA, hourly bids could not price-discriminate across quarters and the pump/turbine schedule was messy; post-reform, the unit class with the largest within-hour arbitrage value exploits within-hour price spreads cleanly. It is the cleanest causal trace of MTU15-DA on the quantity side, and the only per-tech cleared-MW DiD robust to the Fourier $\times$ crit deseasonalisation. Source: \texttt{scripts/analysis/bid/fourier\_sa\_cleared\_mw\_did.py}.
+\noindent Generation appears to reallocate from flat hours
+($-64\%$) to critical hours ($+20\%$); pumping mirrors it. Total
+daily generation is essentially unchanged ($14\,874 \to 14\,250$
+MWh, $-4\%$). The reading would be textbook within-day arbitrage:
+pre-MTU15-DA, hourly bids could not price-discriminate across
+quarters; post-reform, the unit class with the largest within-hour
+arbitrage value exploits within-hour price spreads cleanly.
+
+\emph{The headline-methodology verdict is more cautious.} The BSTS
+counterfactual on per-tech cleared MWh (Spec~A in
+\emph{preliminary results} \S 4.A) does not retain the pump-storage
+MTU15-DA effect under the extrapolation-drift diagnostic (see
+\emph{preliminary results} \S 4.A.6, ``BSTS extrapolation drift
+cases''). The pre/post raw means above remain descriptively
+informative --- the within-day reallocation pattern is real in the
+data --- but we do not interpret them as a causal MTU15-DA effect
+for the reasons set out in the preliminary memo (cross-season pre/
+post, drift between the 14-day and 40-day post-windows, sensitivity
+to the choice of pre-window).
 
 % =====================================================================
 \section{Continuous-intraday repositioning}\label{sec:prov:ci_per_tech}
@@ -906,5 +1045,63 @@ Year & Firm / Plant & Expediente & LSE article & Sanction \\
 
 \subsection{Blackout-cohort expedientes (separate channel)}\label{sec:prov:cournot_cnmc:blackout}
 
-In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes (IB 22, GE 17, GN 5, others) under Art 65.8 of the LSE, for \textbf{voltage-control violations} on April 28, 2025 (the day of the blackout). This is a \emph{distinct regulatory channel}: it concerns failure to provide reactive support during the blackout sequence, not auction-shaping in DA. We flag it for completeness; the two channels are not conflated here.
+In April 2026 CNMC opened a parallel set of $\sim 56$ expedientes
+(IB 22, GE 17, GN 5, others) under Art 65.8 of the LSE, for
+\textbf{voltage-control violations} on April 28, 2025 (the day of
+the blackout). This is a \emph{distinct regulatory channel}: it
+concerns failure to provide reactive support during the blackout
+sequence, not auction-shaping in DA. We flag it for completeness;
+the two channels are not conflated here.
+
+\subsection{The blackout-attribution question: ENTSO-E vs CNMC}\label{sec:prov:cournot_cnmc:entsoe-cnmc}
+
+\noindent A separate but related question is whether the
+March 2025 intraday-granularity reform (ID15) contributed to the
+April 2025 blackout itself --- which would, indirectly, attribute
+the post-blackout reforzada cost rise to the same reform. The
+question is out of scope for this thesis (it requires
+electrical-engineering knowledge we do not have), but the two
+official investigations of the incident take different positions
+and the contrast is worth recording. \emph{Preliminary results}
+\S 5 quotes the full CNMC excerpt (in English translation with the
+original Spanish in footnote); we summarise the contrast here.
+
+\begin{itemize}\setlength{\itemsep}{3pt}
+\item \textbf{ENTSO-E Expert Panel final report
+(\texttt{ICS} investigation, March 2026)} does not list ID15 as a
+contributing factor. Its root-cause tree points to
+voltage- and reactive-power-control failures: renewable plants
+operating at fixed power factor, manually-operated shunt reactors,
+divergent overvoltage protection settings, converter-driven
+instability, absence of power-system stabilisers on several large
+units. The market-microstructure layer does not enter.
+\item \textbf{CNMC report on the incident}
+(\texttt{PRO/CNMC/001/26}, March 2026), by contrast,
+\emph{anecdotally} flags the move to quarter-hourly trading as one
+contributor to the abrupt voltage variations observed in the
+months around the incident: the report relays the system
+operator's reading that quarter-hourly intraday trading
+(in force from 2025-03-19, one month before the blackout) and
+quarter-hourly day-ahead trading (from 2025-10-01) increased the
+frequency of large within-hour production swings, including
+transitions between negative and positive prices that drive sharp
+volume changes in certain zones.
+\end{itemize}
+
+\noindent The two investigations are at different epistemic
+standing --- ENTSO-E is the authoritative technical investigation
+with full TSO access; CNMC's flag is a single paragraph relaying
+the system operator's reading without independent technical
+substantiation. We do not adjudicate. The preliminary memo treats
+the CNMC flag as an \emph{anecdotal pointer to a research gap}:
+the ENTSO-E report identifies the proximate technical triggers but
+does not engage with whether the market-microstructure reforms
+contributed to the macro-conditions (frequent within-hour swings,
+converter-driven volatility under fixed-power-factor RES dispatch)
+that made the system fragile enough for those triggers to cascade.
+This is the kind of question that would require a joint
+microstructure-and-electrical-engineering analysis --- a natural
+extension well beyond this thesis but worth flagging as the
+strongest implication of the empirical work documented here.
+
 \end{document}
