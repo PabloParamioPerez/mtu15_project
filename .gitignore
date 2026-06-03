@@ -114,6 +114,9 @@ renv/python/
 *.toc
 *.bbl
 *.blg
+*.nav
+*.snm
+*.vrb
 *.DS_Store
 .claude/
 

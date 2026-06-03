@@ -2,12 +2,12 @@
 
 Master's thesis (CEMFI, 2026) on the Spanish wholesale electricity market reforms that progressively reduced the **Market Time Unit** (MTU) from 60 to 15 minutes across three sequential stages, with the **Imbalance Settlement Period** (ISP) tightened in parallel. The project builds a fully reproducible data pipeline for OMIE (market operator), ESIOS / REE (system operator), and ENTSO-E (pan-European TSO data) to study (i) how dominant firms organise their bid stack within the hour, (ii) how the post-DA cascade of REE redispatch absorbs and re-monetises the bid-stack reallocation, and (iii) how the post-2025-04-28 *operación reforzada* regime interacts with the MTU15 reforms in the same calendar window.
 
-The empirical work is currently organised in two layers:
+The theoretical and empirical work is consolidated into a single deliverable:
 
-- **Descriptive evidence** (the primary deliverable at this stage) — bid-shape, price-setter, $D_w$, functional-PCA, and pairwise reform-window descriptive readings, plus the post-clearing cascade and zonal-concentration evidence. Lives in [`thesis/provisional/descriptive_facts.tex`](thesis/provisional/descriptive_facts.tex) → [`descriptive_facts.pdf`](thesis/provisional/descriptive_facts.pdf).
-- **Identification design** (deferred until the descriptive foundation is stable) — pairwise reform-window comparisons with calendar-shifted placebo years (DA-side), functional PCA score regressions with parametric Fourier(doy) seasonal control, and the regression-based reform-window evidence in [`thesis/provisional/regression_results.tex`](thesis/provisional/regression_results.tex).
+- [`thesis/paper/thesis.tex`](thesis/paper/thesis.tex) → [`thesis.pdf`](thesis/paper/thesis.pdf) — the thesis paper. Theory (sequential-market Cournot model with granularity selectors and an explicit operational aggregator); data and identification (per-curve DiD on bid shape with a critical/flat hour partition + BSTS counterfactuals on prices, cleared MW, and the within-hour wedge SD); results (bid-shape widening in critical hours, in-band offered-energy migration into the finer market, ID15 cross-market price drop, DA15 day-ahead CCGT cleared scale-up, wedge SD asymmetric persistence, production-unit arbitrageurs, granularity-vs-reforzada system-cost decomposition); conclusion (granularity as a strategic-latitude reveal); four-section appendix (robustness, continuous-market response, market-structure context, theoretical derivations).
+- [`thesis/provisional/additional_results.tex`](thesis/provisional/additional_results.tex) — working scratch pad of supplementary findings not in the main paper.
 
-The thesis paper itself, [`thesis/paper/paper.tex`](thesis/paper/paper.tex) → [`paper.pdf`](thesis/paper/paper.pdf), is the public-facing single-file deliverable; the provisional directory is a working set where the design is iterated before being folded into the paper.
+The two pre-pivot documents `descriptive_facts.tex` and `regression_results.tex` have been archived under [`attic/provisional/`](attic/provisional/); the older `model.tex` and `preliminary_results.tex` were merged into `thesis.tex` on 2026-06-02 and archived alongside.
 
 ---
 
@@ -15,9 +15,8 @@ The thesis paper itself, [`thesis/paper/paper.tex`](thesis/paper/paper.tex) → 
 
 | Where to look | What you'll find |
 |---|---|
-| [`thesis/paper/paper.tex`](thesis/paper/paper.tex) → [`paper.pdf`](thesis/paper/paper.pdf) | The thesis paper itself. Single-file LaTeX (sections, not chapters). |
-| [`thesis/provisional/descriptive_facts.tex`](thesis/provisional/descriptive_facts.tex) → [`descriptive_facts.pdf`](thesis/provisional/descriptive_facts.pdf) | The main descriptive-evidence document. Part A (bid-shape, price-setter, $D_w$, fPCA + parallel-trends placebos); Part B (REE post-clearing cascade, geographic concentration, system-cost view, apuntamiento, CNMC enforcement). |
-| [`thesis/provisional/regression_results.tex`](thesis/provisional/regression_results.tex) | Working regression results — reform-window pairwise designs and BA-vs-DDD comparisons. |
+| [`thesis/paper/thesis.tex`](thesis/paper/thesis.tex) → [`thesis.pdf`](thesis/paper/thesis.pdf) | The thesis paper itself. Single-file LaTeX (sections, not chapters). |
+| [`thesis/provisional/additional_results.tex`](thesis/provisional/additional_results.tex) | Working scratch pad of supplementary findings outside the main paper. |
 | [`CLAUDE.md`](CLAUDE.md) | Canonical project rules — data layers, OVB / seasonality protocols, file conventions, source-separation rule. |
 | [`docs/notes/SPANISH_MARKET_STRUCTURE.md`](docs/notes/SPANISH_MARKET_STRUCTURE.md) | Project reference for the sequential market structure (DA $\to$ IDA $\to$ continuous $\to$ balancing $\to$ P48), `tipo_redespacho` codes, TR cause-code dictionary, ESIOS indicator inventory. |
 | [`notebooks/memos/_esios_archive_catalog.md`](notebooks/memos/_esios_archive_catalog.md) | ESIOS API archive triage memo (which archives we ingest and why) — the only memo we actively maintain. |
@@ -213,7 +212,7 @@ mtu15_project/
 │   └── attic/                             # retired analytical outputs from pre-pivot framings
 │
 ├── figures/                               # ALL FIGURES (canonical location)
-│   ├── thesis/                            # figures referenced by paper.tex (via \graphicspath)
+│   ├── thesis/                            # figures referenced by thesis.tex (via \graphicspath)
 │   ├── presentation/                      # workshop / defense-only figures
 │   ├── working/                           # WIP figures during analysis
 │   └── attic/                             # retired figures
@@ -237,10 +236,10 @@ mtu15_project/
 │   └── attic/                             # superseded exploratory work
 │
 ├── thesis/
-│   ├── paper/                             # paper.tex + tables/, references.bib, paper.pdf — the deliverable
-│   ├── provisional/                       # descriptive_facts.tex + regression_results.tex + advisor_memo.tex —
-│   │                                      # the working descriptive-evidence + identification-design layer
-│   └── presentations/                     # workshop decks
+│   ├── paper/                             # thesis.tex + tables/, references.bib, thesis.pdf — the deliverable
+│   ├── provisional/                       # additional_results.tex — supplementary findings scratch pad
+│   ├── presentations/                     # workshop and defence decks
+│   └── research_workshop/                 # advisor outline (Outline_Paramio.tex) + spring 2026 materials
 │       ├── workshop_february_2026/
 │       └── workshop_may_2026/
 │
@@ -306,7 +305,7 @@ mtu15_project/
 
 OVB-robustness, good-vs-bad controls (the simultaneity / mediator-bias rules), seasonality + weather controls for cross-regime claims, and the power-vs-energy discipline (MW vs MWh under mixed-granularity samples) all live in [`CLAUDE.md`](CLAUDE.md) under the respective sections.
 
-The descriptive-evidence layer (`thesis/provisional/descriptive_facts.tex`) explicitly flags identification problems by outcome variable but **does not estimate** ATT / ATE / treatment effects — regressions there are instrumental tools for extracting descriptive patterns, not for causal estimation. See `thesis/provisional/regression_results.tex` for the regression-based identification work, which is kept in a separate document precisely so that the descriptive foundation is read independently of the identification design.
+The thesis paper itself (`thesis/paper/thesis.tex`) presents the integrated theory, identification and empirical evidence; the identification strategy (per-curve DiD on bid shape with a critical/flat hour partition, and BSTS counterfactuals with same-calendar placebos for prices and cleared MW) is documented in §5 and §6 of that document, with the pre-window choice and the solar-coefficient symmetry diagnostic in Appendix A.6.
 
 ---
 
