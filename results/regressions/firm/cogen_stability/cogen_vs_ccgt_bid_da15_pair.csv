@@ -1,0 +1,9 @@
+window,tech_group,n_units,qty_mw,n_tranches,p_50_qstd,mech_pct
+"post (Oct-Dec 2025, DA15/ID15)",Biomass,85,7.0,1.73,0.0,96.7
+"post (Oct-Dec 2025, DA15/ID15)",CCGT,50,393.0,4.28,7.25,83.0
+"post (Oct-Dec 2025, DA15/ID15)",Cogen,248,11.5,1.06,0.0,97.8
+"post (Oct-Dec 2025, DA15/ID15)",Nuclear,7,944.7,2.49,0.14,80.1
+"pre  (Oct-Dec 2024, pre-DA15)",Biomass,69,6.8,1.8,,
+"pre  (Oct-Dec 2024, pre-DA15)",CCGT,53,460.4,4.51,,
+"pre  (Oct-Dec 2024, pre-DA15)",Cogen,243,11.4,1.07,,
+"pre  (Oct-Dec 2024, pre-DA15)",Nuclear,7,664.6,2.77,,

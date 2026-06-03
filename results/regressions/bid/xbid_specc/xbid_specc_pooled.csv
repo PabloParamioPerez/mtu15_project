@@ -1,0 +1,5 @@
+win,hc,n_curves,n_units,mean_n_tr,sigma_p,n_eff
+post,Critical,2874,27,13.13,2.808,12.234
+post,Flat,683,24,13.25,2.107,13.138
+pre,Critical,3710,32,16.22,3.446,15.098
+pre,Flat,1366,30,12.89,3.551,12.271

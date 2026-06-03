@@ -1,0 +1,349 @@
+% ============================================================================
+% slides.tex --- 30-minute thesis presentation
+% Rewiring the market time clock in Spanish electricity markets
+% Pablo Paramio Perez, CEMFI Master in Economics and Finance, June 2026
+% Slides are cues, not text-walls. Verbal explanation carries the detail.
+% ============================================================================
+
+\documentclass[10pt,aspectratio=169]{beamer}
+
+\usetheme{default}
+\usecolortheme{seahorse}
+\useinnertheme{circles}
+\useoutertheme{infolines}
+\setbeamertemplate{navigation symbols}{}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamercolor{frametitle}{fg=black,bg=blue!10}
+\setbeamerfont{title}{size=\Large,series=\bfseries}
+\setbeamercolor{title}{fg=blue!50!black}
+\setbeamercolor{structure}{fg=blue!50!black}
+
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,decorations.pathreplacing}
+\usepackage{xcolor}
+\graphicspath{{../../../figures/thesis/}{../../../figures/working/}}
+
+\title[Granularity in Spanish electricity markets]{Rewiring the market time clock in Spanish electricity markets:\\
+strategic behaviour and market power with higher granularity}
+\author[Pablo Paramio P\'erez]{Pablo Paramio P\'erez}
+\institute[CEMFI]{CEMFI Master in Economics and Finance}
+\date{June 2026}
+
+\begin{document}
+
+% ---------------------------------------------------------------------------
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Outline}
+\begin{enumerate}\setlength{\itemsep}{8pt}
+  \item Motivation, question, headline
+  \item The Spanish reform sequence
+  \item Model sketch
+  \item Outcomes and identification
+  \item Main results
+  \item Conclusion
+\end{enumerate}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Motivation, question, headline}
+\textbf{Setting.} Europe moved electricity trading from 60-min to 15-min. Spain: two reforms in 2025.
+
+\bigskip
+\textbf{Question.} Does finer granularity reshape \emph{strategic} bidding? Who, when, which channel, market power up or down?
+
+\bigskip
+\textbf{Headline.} Granularity is a \textcolor{blue!50!black}{\textbf{strategic-latitude reveal}}:
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item Dispatchables widen ladders in critical hours.
+  \item Granular-side prices fall; other market follows by anticipation.
+  \item Wedge dispersion jumps and does not collapse.
+\end{itemize}
+
+\bigskip
+$\Rightarrow$ Market power \textbf{compressed}, not amplified. Post-blackout cost rise is a separate story.
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{The Spanish reform sequence}
+\begin{center}
+\includegraphics[width=0.92\linewidth]{timeline_reform_windows.pdf}
+\end{center}
+
+\vspace{-0.2cm}
+\footnotesize
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item Three reforms in seven months: ISP15, ID15, DA15.
+  \item April 2025 blackout $\to$ continuous \emph{reforzada} regime.
+  \item ID15 windows: pre-blackout. DA15 windows: hold reforzada constant by design.
+\end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Model sketch}
+\textbf{Setup.} Sequential Cournot, extends Ito \& Reguant (2016) with a granularity selector at each stage. Three agents: strategic bidder, operational aggregator, capacity-bound arbitrageur.
+
+\bigskip
+\textbf{Reform path:} $(1,1) \to (1,Q) \to (Q,Q)$.
+
+\bigskip
+\textbf{Key predictions to test:}
+\begin{itemize}\setlength{\itemsep}{3pt}
+  \item Bid ladders widen on the granular side.
+  \item Aggregator shifts quantity into the granular market.
+  \item Granular-side price drops; other market drops by anticipation.
+  \item Cournot scale-up at $(Q,Q)$.
+  \item Wedge SD does \emph{not} collapse at $(Q,Q)$ --- limited per-product arbitrage.
+  \item Production-unit arbitrageurs exist and bind.
+\end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{In-band region and bid-shape outcomes}
+\begin{columns}[T]
+\begin{column}{0.50\textwidth}
+\centering
+\begin{tikzpicture}[scale=0.45, every node/.style={font=\tiny}]
+  \def\xmax{12.5} \def\ymax{8.4} \def\mcp{4} \def\h{1.15} \def\ceiling{6.6}
+  \fill[orange!18] (0, \mcp-\h) rectangle (\xmax-0.3, \mcp+\h);
+  \draw[->, thick, gray!75] (0,0) -- (\xmax,0) node[below, black]{Cumulative MW};
+  \draw[->, thick, gray!75] (0,0) -- (0,\ymax);
+  \node[rotate=90, anchor=south, black] at (-0.55, \ymax/2){Bid price (EUR/MWh)};
+  \draw[red!80!black, very thick, dashed] (0, \mcp) -- (\xmax-0.3, \mcp);
+  \node[red!80!black, anchor=west] at (\xmax-0.25, \mcp){MCP};
+  \draw[gray!60, dotted, thick] (0, \ceiling) -- (\xmax-0.3, \ceiling);
+  \node[gray!60!black, anchor=west] at (\xmax-0.25, \ceiling){ceiling};
+  \draw[blue!60!black, very thick]
+       (0, 0.4) -- (1, 0.4) -- (1, 0.9) -- (1.8, 0.9) -- (1.8, 1.3) -- (2.7, 1.3)
+    -- (2.7, 1.9) -- (3.4, 1.9) -- (3.4, 2.5) -- (4, 2.5) -- (4, 3.05) -- (4.7, 3.05)
+    -- (4.7, 3.55) -- (5.4, 3.55) -- (5.4, 3.95) -- (6, 3.95) -- (6, 4.30) -- (6.5, 4.30)
+    -- (6.5, 4.75) -- (7.1, 4.75) -- (7.1, 5.10) -- (7.5, 5.10) -- (7.5, 7.45) -- (8.5, 7.45)
+    -- (8.5, 7.75) -- (10, 7.75);
+  \draw[red!80!black, very thick, dashed] (6, 0) -- (6, \mcp);
+  \draw[decorate, decoration={brace, amplitude=4pt, mirror}, thick]
+    (\xmax-2.2, \mcp+\h) -- (\xmax-2.2, \mcp-\h);
+  \node[anchor=west] at (\xmax-2.05, \mcp+\h/2){$+h$};
+  \node[anchor=west] at (\xmax-2.05, \mcp-\h/2){$-h$};
+  \node[orange!60!black, anchor=south west, fill=white, rounded corners, inner sep=2pt, draw=orange!50]
+    at (0.2, \mcp+\h+0.10) {\textbf{in-band: competing tier}};
+  \node[gray!50!black, anchor=south west, fill=white, rounded corners, inner sep=2pt, draw=gray!40]
+    at (7.5, \ceiling+1.0) {\textbf{parked tier}};
+\end{tikzpicture}
+\end{column}
+\begin{column}{0.50\textwidth}
+\footnotesize
+\textbf{In-band set} (per curve $u,d,p$):
+\[
+\mathcal{B} \;=\; \{k:\,|p_k - \text{MCP}_{d,p}| \le h\}, \quad
+w_k \;=\; \frac{\Delta q_k}{\sum_{j\in\mathcal{B}} \Delta q_j}.
+\]
+
+\textbf{In-band weighted mean:}
+\[
+\bar p \;=\; \sum_{k\in\mathcal{B}} w_k\,p_k.
+\]
+
+\textbf{Bid-shape outcomes:}
+\[
+\sigma_p \;=\; \sqrt{\sum_{k\in\mathcal{B}} w_k\,(p_k - \bar p)^2},
+\]
+\[
+N_{\text{eff}} \;=\; \Big(\sum_{k\in\mathcal{B}} w_k^2\Big)^{-1}.
+\]
+
+\bigskip
+\textbf{Bandwidth:} $h = p_{90} - p_{50}$ of MCP per (window, market).
+\end{column}
+\end{columns}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Identification}
+\textbf{Data.} OMIE bid-level (2022--2026), ENTSO-E weather, ESIOS ajuste costs.
+
+\bigskip
+\textbf{Critical / flat partition} from 15-min residual demand $\sigma_{\text{within}}$:
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item Critical $=$ morning $+$ evening ramp.
+  \item Flat $=$ overnight $\Rightarrow$ within-day low-exposure control.
+\end{itemize}
+
+\bigskip
+\textbf{Three specifications:}
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item Spec A --- BSTS on prices, cleared MWh, wedge SD.
+  \item Spec B --- per-hour-class BSTS on in-band offered energy.
+  \item Spec C --- per-curve DiD on bid shape, critical $-$ flat differential.
+\end{itemize}
+
+\bigskip
+\textbf{Same-calendar placebos} (2024, plus 2026 for ID15) net out recurring calendar shifts. DA15 pre-window starts at the blackout $\Rightarrow$ holds \emph{reforzada} constant.
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Result 1 --- Bid ladders widen in critical hours}
+\begin{center}
+\includegraphics[width=0.92\linewidth]{fig_sigma_p_forest.pdf}
+\end{center}
+
+\vspace{-0.2cm}
+\footnotesize
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item DA15: CCGT $\sigma_p$ widens in DA critical hours.
+  \item ID15: hydro and pump-storage $N_{\text{eff}}$ widen in IDA critical hours.
+  \item Cross-market substitution: CCGT widens DA under ID15, tightens IDA under DA15.
+\end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Result 2 --- ID15 price drop in both markets}
+\begin{center}
+\includegraphics[width=0.72\linewidth]{fig_bsts_id15_effects.pdf}
+\end{center}
+
+\vspace{-0.2cm}
+\footnotesize
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item Both DA and IDA prices drop on the same day, even though only IDA became finer.
+  \item Cross-market symmetry $=$ rational-anticipation channel.
+  \item Spain-specific: France (same SIDC) does not move.
+\end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Result 3 --- DA15 CCGT cleared scale-up (critical hours)}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+\centering
+\includegraphics[width=\linewidth]{fig_bsts_da15_effects.pdf}
+\end{column}
+\begin{column}{0.45\textwidth}
+\centering
+\includegraphics[width=\linewidth]{fig_bsts_hour_class_forest.pdf}
+\end{column}
+\end{columns}
+
+\vspace{0.1cm}
+\footnotesize
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item Only level-shift surviving the joint placebo-net ($+59$ GWh/day).
+  \item Concentrates in critical hours (right panel).
+  \item DA only; IDA arm unchanged $\Rightarrow$ migration into DA.
+\end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Result 4 --- Wedge SD jumps, does not collapse}
+\centering
+\footnotesize
+\begin{tabular}{l c c}
+\toprule
+\textbf{Wedge SD placebo-net (EUR/MWh)} & \textbf{ID15} & \textbf{DA15} \\
+\midrule
+Overall                                  & $+2.16^{**}$  & null \\
+Critical hours                           & $+3.14^{***}$ & null (non-reversion) \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.6cm}
+\normalsize
+\begin{itemize}\setlength{\itemsep}{4pt}
+  \item Wedge \emph{mean}: null. Wedge \emph{SD}: jumps under ID15.
+  \item DA15 does not revert it $\Rightarrow$ consistent with limited per-product arbitrage ($\sigma_\mu / (4 b_1)$, not the strategic $\sigma_\mu / (8 b_1)$).
+  \item Bonus: ISP15 alone produces a same-sign jump $\Rightarrow$ bidders respond to the settlement reference itself.
+\end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Conclusion --- granularity is a strategic-latitude reveal}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+\centering
+\includegraphics[width=\linewidth]{efficiency_gains_timeseries.pdf}\\
+\footnotesize\emph{Granularity channels shrink. Reforzada Fase~I inflates.}
+\end{column}
+\begin{column}{0.45\textwidth}
+\textbf{Market power:} \emph{compressed}.
+
+\bigskip
+\textbf{Consumers:} auction channel favourable.
+
+\bigskip
+\textbf{Granularity $\neq$ reforzada.} The cost rise is post-blackout, CCGT-only --- not MTU15.
+
+\bigskip
+\textbf{Takeaway:} granularity reveals \emph{who} discriminates, \emph{where}, and \emph{when} within the day.
+\end{column}
+\end{columns}
+
+\bigskip
+\begin{center}\large\bfseries\color{blue!50!black}
+Thank you. \qquad Questions?
+\end{center}
+\end{frame}
+
+% ===========================================================================
+% BACKUP SLIDES (Q\&A)
+% ===========================================================================
+
+\begin{frame}{Backup --- Production-unit arbitrageurs (P7)}
+\centering
+\footnotesize
+\begin{tabular}{l r r r r r}
+\toprule
+Tech-group & n unit-sessions & \% dual & Mean sell MW & Mean buy MW & Buy/Sell \\
+\midrule
+Solar PV    & 2\,093\,392 & 26.9 &     54 &     55 & \textbf{101\%} \\
+Wind        & 2\,313\,441 & 16.2 &    133 &    167 & \textbf{126\%} \\
+Cogen       &   334\,852 &  3.8 &     85 &     92 & 108\% \\
+Biomass     &   112\,548 &  6.4 &     27 &     28 & 104\% \\
+\midrule
+Hydro       &   339\,500 &  5.7 & 8\,654 & 3\,711 &  43\% \\
+Hydro pump  &    53\,763 &  4.6 & 3\,462 & 1\,737 &  50\% \\
+CCGT        &   266\,085 &  4.0 & 4\,625 & 2\,001 &  43\% \\
+Nuclear     &    13\,054 &  4.1 & 1\,225 &    360 &  29\% \\
+\bottomrule
+\end{tabular}
+
+\bigskip\normalsize
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item VRE / small: buy $\approx$ sell $\Rightarrow$ forecast-driven rebalancing.
+  \item Thermal / storage: buy/sell $\in [23\%,50\%]$ $\Rightarrow$ sell-dominated rebalancing.
+  \item Arbitrageur active across every tech.
+\end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Backup --- Reforzada cost is CCGT-only (post-blackout)}
+\begin{center}
+\includegraphics[width=0.9\linewidth]{fig_q_components_by_tech_weekly.pdf}
+\end{center}
+
+\vspace{-0.2cm}
+\footnotesize
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item CCGT day-ahead-cleared layer (blue) collapses post-blackout; IDA + REE-RT (red) balloons.
+  \item Other technologies flat across the same window.
+  \item $\Rightarrow$ CCGT-specific intervention, not a uniform reform effect.
+\end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Backup --- Robustness summary}
+\begin{itemize}\setlength{\itemsep}{4pt}
+  \item \textbf{Pre-trend placebo.} ID15 IDA $\sigma_p$ clean. DA15 DA: CCGT clean; pump-storage not separable from trend.
+  \item \textbf{Cross-border + reforzada.} Hourly cross-border control leaves per-tech DiDs essentially unchanged. Reforzada acts on Fase~I level, not within-hour SD.
+  \item \textbf{Per-IDA-session BSTS.} ID15 price drop near-identical across S1, S2, S3.
+  \item \textbf{Per-firm.} DA15 CCGT $\sigma_p$ widening driven by Naturgy and Iberdrola.
+  \item \textbf{Offer-type.} Restricting to simple offers, CCGT $\sigma_p$ DiD rises to $3.53^{***}$.
+\end{itemize}
+\end{frame}
+
+\end{document}

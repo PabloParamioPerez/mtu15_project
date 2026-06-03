@@ -1,0 +1,25 @@
+tech_group,regime,n_days,gwh_per_day
+Biomass,1.pre-IDA,165,8.69
+Biomass,2.3-sess,169,9.51
+Biomass,3.ISP15-win,108,10.65
+Biomass,4.MTU15-IDA pre-blk,40,9.25
+Biomass,5.MTU15-IDA post-blk,155,10.83
+Biomass,6.DA15/ID15,125,10.48
+CCGT,1.pre-IDA,165,38.98
+CCGT,2.3-sess,169,65.84
+CCGT,3.ISP15-win,108,88.37
+CCGT,4.MTU15-IDA pre-blk,40,47.64
+CCGT,5.MTU15-IDA post-blk,155,105.17
+CCGT,6.DA15/ID15,125,129.43
+Cogen,1.pre-IDA,165,35.08
+Cogen,2.3-sess,169,42.59
+Cogen,3.ISP15-win,108,44.05
+Cogen,4.MTU15-IDA pre-blk,40,34.01
+Cogen,5.MTU15-IDA post-blk,155,41.37
+Cogen,6.DA15/ID15,125,44.33
+Nuclear,1.pre-IDA,165,292.26
+Nuclear,2.3-sess,169,354.56
+Nuclear,3.ISP15-win,108,371.01
+Nuclear,4.MTU15-IDA pre-blk,40,232.82
+Nuclear,5.MTU15-IDA post-blk,155,319.03
+Nuclear,6.DA15/ID15,125,323.48

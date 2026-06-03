@@ -1,0 +1,7 @@
+regime,n_days,avg_unavail_mw_total,avg_unavail_mw_forced,avg_unavail_mw_planned
+1.pre-IDA,165,4741.0,815.0,3925.0
+2.3-sess,170,3962.0,762.0,3200.0
+3.ISP15-win,108,5538.0,683.0,4855.0
+4.MTU15-IDA pre-blk,40,5692.0,683.0,5009.0
+5.MTU15-IDA post-blk,156,4895.0,726.0,4170.0
+6.DA15/ID15,212,4885.0,2389.0,2495.0

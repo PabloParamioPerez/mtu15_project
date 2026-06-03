@@ -38,15 +38,15 @@ The project is organised by purpose at the top level. Each top-level directory h
 - Thesis-grade LaTeX tables live under `thesis/paper/tables/` (force-added under the paper); historical tables in `results/attic/tables/`.
 
 **Figures:**
-- `figures/thesis/` — final figures referenced by the thesis text. `paper.tex` resolves them via `\graphicspath{{../../figures/thesis/}}` so the canonical figures location and the paper's relative-include syntax stay decoupled. (Consolidated 2026-05-14: 94 figures migrated here from the historical `thesis/paper/figures/`.)
+- `figures/thesis/` — final figures referenced by the thesis text. `thesis.tex` resolves them via `\graphicspath{{../../figures/thesis/}}` so the canonical figures location and the paper's relative-include syntax stay decoupled. (Consolidated 2026-05-14: 94 figures migrated here from the historical `thesis/paper/figures/`.)
 - `figures/presentation/` — presentation-specific figures
 - `figures/working/` — work-in-progress figures from analysis
 - `figures/attic/` — retired figures from pre-pivot framings
 
 **Writing:**
-The thesis output is a single academic paper (`thesis/paper/paper.tex`, sections not chapters). Drafting is active (currently ~37 pages including appendices).
-- `thesis/paper/paper.tex` (and `paper.pdf`) — single LaTeX file with `\section{}` blocks (intro, theoretical model, data + identification, bidding-behaviour evidence, main results, appendices). `\input{tables/<name>.tex}` for tables.
-- `thesis/paper/tables/` — auto-generated LaTeX tables consumed by `paper.tex`.
+The thesis output is a single academic paper (`thesis/paper/thesis.tex`, sections not chapters). Drafting is active (~45 pages including appendices after the merge).
+- `thesis/paper/thesis.tex` (and `thesis.pdf`) — single LaTeX file with `\section{}` blocks (intro, institutional setting, theory, data, empirical strategy, results, conclusion, appendices). `\input{tables/<name>.tex}` for tables. Merged 2026-06-02 from the former `thesis/provisional/model.tex` and `thesis/provisional/preliminary_results.tex` under the outline in `thesis/research_workshop/Outline_Paramio.tex`.
+- `thesis/paper/tables/` — auto-generated LaTeX tables consumed by `thesis.tex`.
 - `thesis/paper/references.bib` — bibliography.
 - `thesis/model/` — directory reserved for a separate structural-model write-up if it grows out of the paper (the pre-pivot `model.tex` was deleted 2026-05-04 since its asymmetric-granularity framing was superseded by the within-day DiD design and within-market granularity model).
 - `thesis/presentations/workshop_february_2026/` — first thesis-progress presentation

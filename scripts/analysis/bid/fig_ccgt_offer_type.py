@@ -85,7 +85,7 @@ def main():
                  fontsize=9.5)
     for yi, v, s in zip(y, SIGMA["did"].values, SIGMA["se"].values):
         ax.text(v + (0.25 if v >= 0 else -0.25), yi,
-                f"{v:+.2f}", va="center", fontsize=8,
+                f"{v:.2f}", va="center", fontsize=8,
                 ha="left" if v >= 0 else "right")
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(axis="x", labelsize=8)

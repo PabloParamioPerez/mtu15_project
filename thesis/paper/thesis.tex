@@ -1,0 +1,1583 @@
+% ============================================================================
+% paper.tex
+% Master thesis: Rewiring the market time clock in Spanish electricity markets.
+% Merges the theory (model) and the preliminary results into one coherent
+% document, organised per the outline (Outline_Paramio.tex).
+% ============================================================================
+
+\documentclass[11pt,a4paper]{article}
+
+\PassOptionsToPackage{table}{xcolor}
+
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{graphicx, booktabs, subcaption, tikz, float}
+\graphicspath{{../../figures/thesis/}{../../figures/working/}}
+\usepackage{array, makecell, multirow}
+\providecommand{\sym}[1]{\ensuremath{^{#1}}}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{longtable}
+\usepackage[round,authoryear]{natbib}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, citecolor=black, urlcolor=blue!50!black,
+            pdftitle={Rewiring the market time clock in Spanish electricity markets},
+            pdfauthor={Pablo Paramio Perez}}
+\usepackage{microtype}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*, itemsep=5pt, topsep=5pt}
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{18pt}{10pt}
+\titlespacing*{\subsection}{0pt}{12pt}{6pt}
+\titlespacing*{\subsubsection}{0pt}{10pt}{4pt}
+\titleformat*{\subsubsection}{\bfseries\itshape}
+\titlespacing*{\paragraph}{0pt}{10pt}{8pt}
+\usepackage{caption}
+\captionsetup{font=footnotesize, labelfont=bf}
+\usepackage[most]{tcolorbox}
+\newtcolorbox{takeaway}{
+  enhanced,
+  colback=black!3,
+  colframe=black!55,
+  boxrule=0.5pt,
+  arc=2pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt,
+  before skip=6pt, after skip=8pt,
+}
+\renewcommand{\arraystretch}{1.18}
+\linespread{1.12}
+
+% TikZ libraries used by the theory section's structure figure
+\usetikzlibrary{positioning, arrows.meta, calc, shapes.geometric, decorations.pathreplacing}
+
+% Colour tints for critical / flat hour-class table rows
+\definecolor{critfill}{rgb}{0.98, 0.88, 0.88}
+\definecolor{flatfill}{rgb}{0.86, 0.91, 0.98}
+\newcommand{\critrow}{\rowcolor{critfill}}
+\newcommand{\flatrow}{\rowcolor{flatfill}}
+\newcolumntype{C}{>{\columncolor{critfill}}c}
+\newcolumntype{F}{>{\columncolor{flatfill}}c}
+
+% Theorem environment used by the theory appendix
+\newtheorem{proposition}{Proposition}
+
+\title{Rewiring the market time clock in Spanish electricity markets:\\
+       strategic behaviour and market power with higher granularity}
+\author{Pablo Paramio P\'erez \\ CEMFI Master in Economics and Finance}
+\date{June 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+% TBD
+\end{abstract}
+
+{\hypersetup{linkcolor=black}\tableofcontents}
+\clearpage
+
+% =====================================================================
+\section*{Glossary of acronyms}\label{sec:glossary}
+\addcontentsline{toc}{section}{Glossary of acronyms}
+% =====================================================================
+
+\noindent\footnotesize
+\begin{tabular}{@{}l p{0.36\textwidth}@{\hspace{1em}}l p{0.36\textwidth}@{}}
+\toprule
+OMIE      & Operador del Mercado Ib\'erico de Energ\'ia  & PDBC     & Programa Diario Base de Casaci\'on \\
+REE       & Red El\'ectrica de Espa\~na                  & PDBF     & PDBC plus bilateral contracts \\
+CNMC      & Comisi\'on Nacional de los Mercados y la Competencia & PIBCI & Programa Intradiario Base de Casaci\'on Incremental \\
+ENTSO-E   & European Network of TSOs for Electricity     & TR       & Tiempo Real (real-time technical restrictions) \\
+ESIOS     & Sistema de Informaci\'on del Operador del Sistema & Fase~I/II & pre-/post-IDA technical-restriction redispatch \\
+EU        & European Union                                & PO       & Procedimientos de Operaci\'on \\
+DA        & day-ahead auction                             & aFRR     & automatic Frequency Restoration Reserve \\
+IDA       & intraday auctions                             & mFRR     & manual Frequency Restoration Reserve \\
+SIDC      & Single Intraday Coupling                      & RR       & Replacement Reserve \\
+XBID      & cross-border intraday continuous market       & BRP      & Balance Responsible Party \\
+EPEX      & European Power Exchange                       & BSP      & Balance Service Provider \\
+MTU       & market time unit (MTU60 hourly; MTU15 15-min) & CCGT     & combined-cycle gas turbine \\
+ISP15     & imbalance settlement at 15 min (2024-12-11)   & RES      & renewable energy sources \\
+ID15      & intraday at 15 min (2025-03-19)               & PV       & photovoltaic \\
+DA15      & day-ahead at 15 min (2025-10-01)              & MIC      & minimum-income condition (offer type) \\
+DA60      & pre-DA15 hourly day-ahead                     & HHI      & Herfindahl--Hirschman Index \\
+MCP       & market clearing price                         & MW / MWh / GWh & megawatt / megawatt-hour / gigawatt-hour \\
+\bottomrule
+\end{tabular}\normalsize
+
+\clearpage
+
+% =====================================================================
+% RAP ----- TO BE REMOVED BEFORE FINAL SUBMISSION -----
+% Sharing the document with the advisor on 2026-06-02; the RAP below
+% is the cover summary requested. To remove: delete everything between
+% the BEGIN RAP and END RAP markers.
+% =====================================================================
+% BEGIN RAP
+\setcounter{section}{-1}
+\section{Research abstract paper (RAP) \textnormal{\textit{(to be deleted)}}}\label{sec:rap}
+
+\paragraph{Positioning.} How shorter trading intervals reshape wholesale electricity bidding and prices has been studied for Germany (M\"arkle-Hu\ss, Feuerriegel and Neumann, 2017) and Australia (Csereklyei and Khezr, 2024). The recent two-step Spanish move to 15-minute trading --- intraday auctions in March 2025, day-ahead market in October 2025 --- has not yet been evaluated, and it lands in a setting reshaped by the April 2025 blackout and the continuous reinforced-operation regime that followed, requiring a careful empirical strategy to disentangle the reform's effect from the regulatory response to the blackout.
+
+\paragraph{Research Question.} Does shorter trading-period granularity reshape the strategic margin in sequential electricity markets? Who uses the within-hour freedom, when during the day is it used, through which equilibrium channel does the reform operate, and does it amplify or compress market power? Do prices fall or rise, and how does the price gap between sequential markets evolve?
+
+\paragraph{Answer.} Granularity acts as a \emph{strategic-latitude reveal}: it does not change marginal costs, capacity or who participates; it expands the room for within-hour bid discrimination, and the equilibrium response traces exactly that.
+
+We build a sequential-market Cournot model with a strategic bidder, a forecast-driven renewable aggregator, and a capacity-bound arbitrageur linking the sequential markets, and show that the reform expands within-hour bid-ladder discrimination, pushes prices down on the side of the market that becomes finer (with the other market co-moving down in anticipation), and shifts forecast-driven volumes into the finer market while the average price gap between sequential markets stays at zero. The arbitrageur's bounded capacity prevents the within-hour price-gap dispersion from collapsing, so within-hour heterogeneity persists across both reform steps, and the welfare reading is consumer-favourable on the auction side.
+
+We confirm these mechanisms in rich Spanish market and bid-level data. Conventional generators widen their within-hour bidding schedules where within-hour residual demand actually varies; prices on the side of the market that becomes finer fall sharply with the other market following down in anticipation; more conventional generation clears after the day-ahead reform; the within-hour price-gap dispersion jumps under the first reform and does not collapse at the second; and the intraday bid stack itself reveals active position rebalancing by producers across every technology. The reform therefore compresses rather than amplifies market power, and the post-blackout cost rise on the same calendar window is a separate regulatory response, not a granularity effect.
+
+\clearpage
+% END RAP
+% =====================================================================
+
+% =====================================================================
+\section{Introduction}\label{sec:intro}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+% INTRODUCTION DRAFT --- HIDDEN FROM PDF (\iffalse ... \fi) ---
+% The draft below was generated 2026-06-02 and is not yet reviewed.
+% To restore: change \iffalse to \iftrue (or remove the wrappers).
+% ---------------------------------------------------------------------
+\iffalse
+
+\subsection{Motivation and research question}
+
+Wholesale electricity markets in continental Europe cleared at a 60-minute resolution for decades. Over the past decade, several jurisdictions have moved trading to a finer 15-minute resolution to keep pace with the within-hour variability that the renewable transition has injected into the system. Germany was first (EPEX, 2011 for continuous, 2017 for the day-ahead auction); the Single Intraday Coupling (SIDC) project then standardised the move across the European intraday market. Spain completed its own transition in two structural reforms in 2025: intraday auctions and the continuous intraday market switched to 15-minute trading on 19 March 2025; the day-ahead market followed on 1 October 2025. A separate but related reform on 11 December 2024 moved the system operator's imbalance settlement period from 60 to 15 minutes, leaving the auction contract grid unchanged. The Spanish two-step reform is the first European case where both the day-ahead and intraday auctions have moved to a finer grid in close succession, with the day-ahead reform layered on top of the intraday reform rather than in isolation.
+
+The reform's stated rationale is operational --- a finer grid lets schedules track within-hour renewable variability and reduces ex-post imbalance --- but the economic question is whether it also reshapes \emph{strategic} bidding. A finer grid does not change marginal costs, capacity, or who participates; it changes the dimensionality of the bid stack. Where producers previously committed a single price--quantity ladder per hour, they now submit four; the within-hour heterogeneity that an hourly auction had to average is now priced directly. Whether firms use that latitude, who uses it, when in the day they use it, and whether the equilibrium response amplifies or compresses market power are open questions. So is the price response: a richer ladder per producer can either raise prices via finer discrimination or compress them via more granular competition, and theory does not pin the sign without further structure. We address all of these.
+
+\subsection{Related literature}
+
+The closest direct precedents are \citet{markle_huss_2017} on Germany's EPEX 15-minute reform and \citet{csereklyei_khezr_2024} on the Australian National Electricity Market's move from 30-minute to 5-minute settlement. Both find that finer trading periods reshape bidding behaviour and clearing-price levels, but in different markets with different concentration profiles and different reform sequences. The Spanish case is distinct: it telescopes both the intraday and day-ahead reforms into seven months, and the day-ahead reform lands in the middle of a regulatory cascade triggered by the 28 April 2025 Iberian blackout (\S\ref{sec:institutional}). \citet{brown_reguant_2026} is the closest contemporary work on Spain, focused on the price impact of renewable supply through 2024; we share the Spanish bid-level data infrastructure but ask a different question (the granularity reform itself) and use a different identification strategy (per-curve DiD and BSTS with placebos rather than IV).
+
+On theory, our model extends \citet{ito_reguant_2016}'s sequential-markets framework: their setup delivers the forward--spot wedge, the role of arbitrage, and the strategic-bidder benchmarks (full, limited, strategic arbitrage), to which we add a granularity selector at each stage and an explicit operational aggregator that scales its forward--spot allocation with within-hour forecast variance. The forward-market literature \citep{allaz_vila_1993} provides the welfare baseline for sequential trading; the supply-function equilibrium concept of \citet{klemperer_meyer_1989} is the textbook benchmark for uniform-price multi-unit auctions and is the comparison point for our Cournot reduction (\S\ref{sec:theory:setup}). For empirical identification we draw on Bayesian Structural Time Series \citep{brodersen_2015} for level outcomes and on standard two-by-two difference-in-differences for the bid-shape outcomes \citep[\S 3]{de_chaisemartin_2026}.
+
+\subsection{Mechanism summary and contribution}
+
+We make four contributions. \emph{Theory:} a sequential-market model with granularity selectors at each stage, explicit operational aggregator, and per-product arbitrage capacity that delivers seven sign predictions across the three reform states $(1,1) \to (1,Q) \to (Q,Q)$, including the (empirically observed) asymmetric persistence of within-hour wedge dispersion under per-product limited arbitrage. \emph{Identification:} a hour-class-partitioned bid-shape DiD that uses flat hours as a within-day control and isolates the granularity-enabled discrimination in critical hours; combined with a Bayesian counterfactual on level outcomes that holds the post-blackout reinforced-operation regime constant by window construction. \emph{Empirics:} on rich OMIE bid-level data (every unit, every period, every offer tranche), we find bid-shape widening in critical hours across both reforms, in-band offered energy migrating into the finer market, a sharp ID15 price drop in both auctions via cross-market anticipation, a DA15 combined-cycle gas cleared scale-up concentrated in critical hours, and an ID15 within-hour wedge SD jump that does not collapse at DA15 --- consistent with the model's per-product limited-arbitrage account. Direct intraday bid-stack evidence confirms that production-unit arbitrageurs are empirically active across every technology. \emph{Headline reading:} granularity is a \emph{strategic-latitude reveal}, not a market-power amplifier. The reform compresses rather than amplifies rents in the auction channel; the post-blackout cost rise on the same calendar window is a separate regulatory response, not a granularity effect.
+
+\subsection{Roadmap}
+
+\S\ref{sec:institutional} maps the Spanish sequential market and the three reforms. \S\ref{sec:theory} builds the model. \S\ref{sec:data} introduces the bid-level data, the bandwidth construction that isolates the competing tier, and the critical/flat partition of clock-hours. \S\ref{sec:empirical} lays out the three identification specifications. \S\ref{sec:results} reports the empirical findings. \S\ref{sec:conclusion} reads them against the welfare benchmark. Appendices collect the robustness checks, the continuous-market response, the market-structure context, and the full theoretical derivations.
+
+\fi
+% ---------------------------------------------------------------------
+% END HIDDEN INTRODUCTION DRAFT
+% ---------------------------------------------------------------------
+
+% =====================================================================
+\section{Institutional setting: sequential markets, three reforms, and a blackout}\label{sec:institutional}
+% =====================================================================
+
+\subsection{Spanish wholesale architecture: sequential auctions and balancing}
+
+The Iberian wholesale market (MIBEL) clears in a sequence of auctions operated by OMIE, the market operator. The headline auction is the \textbf{day-ahead market} (DA), a uniform-price hourly (since 1 October 2025, quarter-hourly) auction held at noon for the following day's 24 clock-hours. The day-ahead clearing produces the day-ahead programme (PDBC), to which traders add their bilateral contract executions to form the day-ahead final programme (PDBF). After DA, the system operator REE checks the schedule for network feasibility and runs a \textbf{technical-restrictions} process (\emph{Fase~I}), which procures up-redispatch or curtailment from specific units through a separate pay-as-bid restriction-offer market (PO~3.2, settlement PO~14.4 ap.~20.1). The post-Fase-I schedule is then re-balanced by participants in the \textbf{intraday auctions} (IDA), a sequence of three European auctions cleared at standardised hours through the Single Intraday Coupling (SIDC) mechanism. Between and after the IDAs, the \textbf{continuous intraday market} (XBID-coupled) lets participants adjust positions until shortly before delivery. A second restrictions process (\emph{Fase~II}) clears after IDA. The balancing market and ex-post settlement close the sequence; the system operator's reference for imbalance accounting is the \textbf{imbalance settlement period} (ISP), historically 60 minutes, switched to 15 minutes on 11 December 2024.
+
+Three structural features of this sequence matter for the analysis. First, the day-ahead and intraday auctions both use uniform-price multi-unit clearing, so within-hour discrimination is possible only through the bid stack itself (the price of marginal accepted tranches), not through differential clearing rules. Second, the OMIE auction-cleared programmes (PDBC, PIBCI) are \emph{pre-restriction by construction}: REE's redispatch enters through separate restriction offers, not through the auction clear, so OMIE-cleared volumes track competitive clearing decisions rather than the system operator's restriction call. Third, the relevant strategic margin is per-product within the competing tier of each unit's bid, not the aggregate wholesale clear: market concentration at the wholesale level is moderate (Herfindahl-Hirschman Index around 1\,100 over 2016--2024), while the ancillary-services side that REE procures through restrictions is highly concentrated (HHI above 4\,000 for up-restrictions; Appendix~\ref{app:context}.2 collects the evidence).
+
+\subsection{The three 15-minute reforms: ISP15, ID15, DA15}
+
+Three reforms within seven months changed the market time unit of three different layers of this architecture. \textbf{ISP15} (11~December~2024) moved REE's imbalance settlement reference from 60 to 15 minutes. The OMIE auction contract grid was unchanged --- DA and IDA still cleared hourly --- but the penalty for deviating from a scheduled position now resolved at the quarter-hour rather than the hour, so any within-hour gap between scheduled and realised generation triggered a 15-minute imbalance bill rather than being averaged into the hourly position. \textbf{ID15} (19~March~2025) moved the intraday auctions and the continuous intraday market from 60 to 15 minutes: each clock-hour of delivery in IDA now hosted four 15-minute products where it previously hosted one 60-minute product. \textbf{DA15} (1~October~2025) extended the move to the day-ahead market on the same logic. A separate prior reform (14~June~2024) replaced the six MIBEL intraday auctions with three European SIDC auctions; the post-IDA-reform three-session architecture is the pre-window for our ID15 analyses.
+
+The reforms are layered rather than independent: ISP15 changes the settlement reference that bidders face in every subsequent auction; ID15 lands on top of the new ISP15 reference; DA15 lands on top of both. Wherever an effect could plausibly be attributed to more than one reform, we report the channel separately --- the ISP15 settlement-only wedge SD jump (\S\ref{sec:results:6-5isp15}) and the ID15 incremental effect on top of it are an example.
+
+\subsection{The April 2025 blackout and the reinforced-operation regime}
+
+On 28~April~2025, the Iberian peninsula suffered a system-wide blackout. The ENTSO-E Expert Panel's final report \citep{entsoe_blackout_iberia_2026} attributes the cascade to voltage- and reactive-power-control failures: renewable plants operating at fixed power factor, manually-operated shunt reactors, divergent overvoltage protection settings, converter-driven instability, and absence of power-system stabilisers on several large units. The market microstructure layer is not in the panel's root-cause tree. REE responded by introducing a continuous \emph{reinforced-operation} regime (\emph{operaci\'on reforzada}), formally codified in \citet{boe_a_2025_21198} but effectively in force from the blackout date onward. The regime tightens voltage-control requirements on conventional units and substantially expands the use of Fase~I redispatch to keep combined-cycle gas plants synchronised for voltage support, even when they would not have cleared in the day-ahead auction. The cost footprint is large: Fase~I up-redispatch payments balloon by approximately EUR\,5\,M per day after the blackout and concentrate almost entirely on combined-cycle gas (Appendix~\ref{app:context}.4).
+
+\paragraph{Identification consequence.} The reforzada regime is continuous from 28~April~2025 onward; it therefore overlaps in calendar terms with the DA15 reform (1~October~2025) but not with the ID15 reform (19~March~2025, with a clean 40-day pre-blackout post-window). The DA15 BSTS analyses use a pre-window that starts on the blackout date (2025-04-28), so reforzada is held constant across the DA15 pre- and post-windows by construction (\S\ref{sec:empirical:specA}). For the ID15 reform there is no reforzada overlap: both the pre- and post-windows sit entirely before the blackout. This window construction is the key identification move that separates the granularity reforms from the reforzada regulatory response --- a separation that is essential because the headline ajuste-cost rise across the reform window is reforzada-driven (Fase~I up-redispatch growth) rather than MTU15-driven (the granularity channels themselves shrink across the same window; Appendix~\ref{app:context}.3).
+
+% =====================================================================
+\section{Theory: a sequential-market Cournot model with granularity selectors}\label{sec:theory}
+% =====================================================================
+
+\subsection{Setup: three sequential auctions, three agents}\label{sec:theory:setup}
+
+We extend \citet{ito_reguant_2016}'s sequential-markets framework on two dimensions --- an explicit operational aggregator and a granularity selector $Q^m \in \{1, Q\}$ at each stage --- and trace the Spanish backward reform path $(1,1) \to (1,Q) \to (Q,Q)$. The headline mechanism is that aggregator quantity shifts to the more granular market in proportion to within-hour forecast-error variance; equilibrium prices, bid ladders, cleared MWh, and within-hour wedge dispersion all adjust in response. Full derivations live in Appendix~\ref{app:derivations}; the main body collects the comparative-statics output of each state along the path and the eight mechanisms that explain the empirical patterns of \S\ref{sec:results}.
+
+A representative clock-hour contains $Q$ equal-length subperiods. Three sequential stages operate in order: a \textbf{forward} auction (Stage 1, $m=F$), a \textbf{spot} auction (Stage 2, $m=S$), and ex-post \textbf{balancing} settlement (Stage 3, $m=B$). Each stage has its own \emph{granularity} $Q^m \in \{1, Q\}$ --- it clears either once per hour or once per subperiod --- defining a $2^3 = 8$-state policy space. The main analysis fixes the auction-side path $(Q^{F}, Q^{S}) = (1,1) \to (1,Q) \to (Q,Q)$. The forward and spot markets map empirically to the electricity day-ahead and intraday auctions respectively; we use the more general terminology throughout. Figure~\ref{fig:model-structure} summarises.
+
+\begin{figure}[h]
+\centering
+\hspace*{-2.6cm}%
+\begin{tikzpicture}[
+  node distance=0pt,
+  stage/.style={draw, rounded corners=4pt, fill=blue!8, thick, minimum width=3.0cm, minimum height=1.6cm, align=center, font=\small},
+  pathstate/.style={draw, rounded corners=3pt, fill=red!10, minimum width=1.2cm, minimum height=0.6cm, font=\small\bfseries, align=center},
+  rowhead/.style={font=\small\bfseries, anchor=east, align=right},
+  rolelbl/.style={font=\scriptsize, anchor=north east, align=right, gray!45!black, inner sep=1pt},
+  collbl/.style={font=\scriptsize\itshape, anchor=south, align=center, gray!45!black},
+  act/.style={font=\small\bfseries, anchor=center, align=center},
+  arrtime/.style={->, >=Stealth, thick, gray!50!black},
+  arrarb/.style={->, >=Stealth, ultra thick, orange!80!black},
+  arrpath/.style={->, >=Stealth, thick, red!55!black},
+  infolabel/.style={font=\footnotesize\itshape, gray!55!black, fill=white, inner sep=2pt},
+]
+
+\node[stage] (F) at (0, 0)   {\textbf{Forward}\\[2pt] {\footnotesize Stage 1}\\[1pt] {\footnotesize $Q^{F}\!\in\!\{1,Q\}$}};
+\node[stage] (S) at (4.5, 0) {\textbf{Spot}\\[2pt]     {\footnotesize Stage 2}\\[1pt] {\footnotesize $Q^{S}\!\in\!\{1,Q\}$}};
+\node[stage] (B) at (9, 0)   {\textbf{Balancing}\\[2pt] {\footnotesize Stage 3}\\[1pt] {\footnotesize $Q^{B}\!\in\!\{1,Q\}$}};
+
+\draw[arrtime] (F.east) -- node[above=1pt, infolabel]{$\mu_t$ realises} (S.west);
+\draw[arrtime] (S.east) -- node[above=1pt, infolabel]{$\varepsilon_t$ realises} (B.west);
+
+\draw[gray!30, thick] (-5.6, -1.5) -- (10.6, -1.5);
+\node[collbl] at (0,   -1.7) {Forward};
+\node[collbl] at (4.5, -1.7) {Spot};
+\node[collbl] at (9,   -1.7) {Balancing};
+
+\node[rowhead] at (-2.0, -2.3) {Strategic bidder};
+\node[rolelbl] at (-2.0, -2.55) {residual monopolist; \\ produces \emph{without} shock};
+\node[act, blue!60!black] at (0,   -2.3) {\large $\bullet$};
+\node[act, blue!60!black] at (4.5, -2.3) {\large $\bullet$};
+
+\node[rowhead] at (-2.0, -3.8) {Operational aggregator};
+\node[rolelbl] at (-2.0, -4.05) {price-taker, $y_t=\bar y_t+\eta_t$; \\ bears imbalance $\gamma$};
+\node[act, blue!60!black] at (0,   -3.8) {\large $\bullet$};
+\node[act, blue!60!black] at (4.5, -3.8) {\large $\bullet$};
+\node[act, blue!60!black] at (9,   -3.8) {\large $\bullet$};
+
+\node[rowhead] at (-2.0, -5.3) {Arbitrageur};
+\node[rolelbl] at (-2.0, -5.55) {position $s$ (or $\{s_t\}$); \\ regimes 1--4 of \citeauthor{ito_reguant_2016}};
+\draw[arrarb] (-0.05, -5.3) -- (4.45, -5.3);
+\node[act, orange!80!black] at (0,   -5.3) {\large $\bullet$};
+\node[act, orange!80!black] at (4.5, -5.3) {\large $\bullet$};
+
+\draw[gray!30, thick] (-5.6, -6.4) -- (10.6, -6.4);
+
+\node[rowhead, gray!55!black] at (-2.0, -7.0) {Reform path};
+\node[pathstate] (s1) at (0,   -7.0) {$(1,1)$};
+\node[pathstate] (s2) at (4.5, -7.0) {$(1,Q)$};
+\node[pathstate] (s3) at (9,   -7.0) {$(Q,Q)$};
+\draw[arrpath] (s1.east) -- node[above, font=\footnotesize, gray!45!black]{spot reform} (s2.west);
+\draw[arrpath] (s2.east) -- node[above, font=\footnotesize, gray!45!black]{forward reform} (s3.west);
+
+\end{tikzpicture}
+\caption{\textbf{Sequential markets, granularity, and agents.} \textit{Top:} a forward market, a spot market, and a balancing settlement on a timeline; each has its own granularity selector $Q^m \in \{1, Q\}$ and information resolves between them. The forward market maps empirically to the electricity day-ahead auction, the spot market to the intraday auction. \textit{Middle:} which agents act at which stages (blue dots), and the arbitrageur position $s$ linking forward to spot (orange arrow). The strategic bidder produces without uncertainty and does not internalise the imbalance penalty; only the operational aggregator does, since it bears $\eta_t$. \textit{Bottom:} the auction-side reform path $(Q^F, Q^S) = (1,1) \to (1,Q) \to (Q,Q)$ traversed in the main analysis.}
+\label{fig:model-structure}
+\end{figure}
+
+\paragraph{Bidders and primitives.} The \textbf{strategic bidder} is a residual monopolist with constant marginal cost $c$ and capacity $K$, which it can deliver \emph{exactly} (no production shock); it therefore does not internalise the imbalance penalty $\gamma$. It posts a two-tranche ladder per delivery product to discriminate against the within-hour demand shock $\mu_t$ (variance $\sigma_\mu^2$). The \textbf{operational aggregator} is a price-taker with stochastic production $y_t = \bar y_t + \eta_t$ (forecast-error variance $\sigma_\eta^2$); it allocates total hourly MWh $\bar Y_h$ across forward and spot and \emph{does} internalise the imbalance penalty, which scales with $\gamma(Q^B)$. The \textbf{arbitrageur} carries a net position $s$ from forward to spot, in one of the four regimes of \citeauthor{ito_reguant_2016} (\S\ref{sec:theory:arbitrage}); arbitrage transmits price impact but not imbalance risk. The \citeauthor{ito_reguant_2016} residual-demand specification --- forward intercept $\bar A_t = \bar A + \mu_t$, spot demand inheriting the spread $p_1 - p_2$ with per-subperiod thinness $b_{2t}$, both net of $s$ and aggregator supply --- is stated in full in Appendix~\ref{app:setup}; we keep the primitives $(\sigma_\mu^2, \sigma_\eta^2, b_{mt})$ general.
+
+\paragraph{Solution concept.} We solve the game by \textbf{backward induction}: at Stage~2 the strategic bidder takes the forward position as given and best-responds to spot residual demand; the arbitrageur takes the implied price spread and chooses $s$ within its regime; at Stage~1 the strategic bidder commits its forward ladder using rational expectations of the Stage-2 best responses. Full step-by-step backward induction in Appendix~\ref{app:state-60-60}--\ref{app:state-15-15}.
+
+\paragraph{Model abstractions: residual monopolist and Cournot vs supply-function.} Two simplifications deserve flagging. First, the strategic bidder is a single residual monopolist with constant marginal cost $c$ and capacity $K$, even though Spanish wholesale concentration is moderate (HHI $\sim$1\,100) and several firms compete on the bid stack. We use the residual-monopolist as a stylised device that delivers qualitative comparative statics on within-band conduct: the relevant strategic margin in this market is per-product within the competing tier, not aggregate wholesale, and the residual-monopolist abstraction concentrates the analysis on that within-band margin without quantitatively calibrating the broader wholesale game. The market-structure context that supports this within-band relevant-market interpretation --- concentration that has migrated from wholesale to the ancillary segment --- is collected in Appendix~\ref{app:context}.2. Second, we use Cournot best responses rather than supply-function equilibria; the latter is the textbook equilibrium concept for uniform-price multi-unit auctions \citep{klemperer_meyer_1989} but does not admit closed forms under the sequential structure plus granularity selectors. The Cournot reduction trades quantitative calibration for tractability of the comparative statics; the signs of the seven predictions of \S\ref{sec:theory:speaks} are robust to either equilibrium concept.
+
+\paragraph{Renewable fringe and our relation to \citeauthor{ito_reguant_2016}.} \citeauthor{ito_reguant_2016}'s residual-demand interpretation already absorbs a renewable (or thermal) competitive fringe into the slope $b_m$: the strategic bidder serves $A - b_m p_m$, the implicit fringe serves the complement. Their setup is sufficient to deliver the strategic-bidder, arbitrage, and price-wedge mechanisms but is silent on \emph{why} the fringe's willingness to supply changes with granularity. We make the fringe explicit (the operational aggregator with $\sigma_\eta^2$ and an imbalance penalty $\gamma$) so the quantity-shift channel (M1) can be derived from first principles rather than absorbed into a granularity-dependent slope $b_m(Q^S, \sigma_\eta^2)$. We do not claim our setup is strictly preferable: it adds clarity on the quantity-shift mechanism at the cost of one extra agent. Reverting to the \citeauthor{ito_reguant_2016} interpretation --- $b_m$ parameterised on granularity and forecast variance --- delivers the same comparative statics.
+
+\subsection{Arbitrage regimes: four benchmarks, one empirical}\label{sec:theory:arbitrage}
+
+Arbitrage closes the forward-spot price wedge only partially in practice. Real arbitrageurs have bounded capacity and internalise price impact, so the empirically relevant regime is limited arbitrage (\citeauthor{ito_reguant_2016} Result~3); the full and strategic-arbitrage benchmarks below are useful comparators but neither holds in data.
+
+Following \citet[\S I.A and Table 1]{ito_reguant_2016}, arbitrage profit per matched product is $\pi^A(s) = s\,(p_1 - p_2)$. Four regimes pin $s$:
+\begin{itemize}
+\item[(1)] \emph{No arbitrage}: $s = 0$, positive forward premium $p_1 > p_2 > c$.
+\item[(2)] \emph{Full / competitive arbitrage}: $s$ closes the spread, $p_1 = p_2$; the strategic bidder withholds more in response.
+\item[(3)] \emph{Limited arbitrage}: a capacity ceiling $s \le K$ binds, sustaining a positive wedge whose size depends on $K$.
+\item[(4)] \emph{Strategic arbitrage}: the arbitrageur internalises price impact and stops short of full, giving the closed-form benchmark
+\begin{equation}
+\boxed{\;p_1 - p_2 \;=\; \frac{p_1 - c}{4} \;>\; 0.\;}
+\label{eq:strategic-arb}
+\end{equation}
+\end{itemize}
+\textbf{Arbitrageurs have market power too} --- their participation and balance sheets are bounded. The empirically relevant regime in electricity is (3), limited arbitrage: full and strategic are useful benchmarks, but the persistent positive forward premium observed everywhere rules out (2), and per-product capacity binding rules out (4) at the granular state. Comparative-statics signs are the same across (1), (3), (4) (\citeauthor{ito_reguant_2016} Table 1).
+
+\subsection{Pre-reform $(1,1)$: scarcity wedge, no within-hour dispersion}\label{sec:theory:pre}
+
+With both auctions hourly, no within-hour wedge dispersion is mechanically feasible --- each market has one product per clock-hour. Two features carry through every subsequent reform: the \citeauthor{ito_reguant_2016} scarcity wedge $p_1 > p_2 > c$ survives under any non-full-arbitrage regime, and both within-hour shocks ($\mu_t$ on demand, $\eta_t$ on aggregator production) load onto the balancing residual because neither hourly market can absorb them.
+
+Both auctions hourly. The \citeauthor{ito_reguant_2016} scarcity wedge $p_1 > p_2 > c$ obtains; neither the hourly forward nor the hourly spot can absorb within-hour shocks, so the balancing discrepancy is $\Delta_t = \mu_t + \eta_t + \varepsilon_t$.
+
+\subsection{Asymmetric state $(1,Q)$: four spot-side mechanisms}\label{sec:theory:id15}
+
+Spot granularity simultaneously activates four mechanisms: (M1) the aggregator shifts quantity to the granular market, in proportion to forecast-error variance; (M2) the granular-side price drops in response; (M3) within-hour wedge dispersion emerges from per-subperiod thinness asymmetry; and (M4) the strategic bidder's spot-side two-tranche ladder widens. The forward market is unchanged, so the balancing discrepancy still carries $\mu_t$.
+
+The spot market becomes per-period; the forward market stays hourly.
+
+\paragraph{(M1) The aggregator shifts quantity to the granular market.} Per-period spot scheduling matches per-subperiod expected production, collapsing within-hour imbalance to residual noise; the hourly forward cannot adjust per subperiod and incurs a mismatch cost. The aggregator therefore shifts $\Delta^*$ MWh from forward to spot, and \textbf{the shift is larger when within-hour forecast uncertainty is larger}:
+\begin{equation}
+\boxed{\;\partial \Delta^* / \partial \sigma_\eta^2 \;>\; 0.\;}
+\label{eq:shift}
+\end{equation}
+Derivation in Appendix~\ref{app:aggregator}.
+
+\paragraph{(M2) The granular-side price drops.} More aggregator supply on spot reduces the strategic bidder's spot residual demand. The equilibrium spot price drops on average by an amount of order $\Delta^*/b_2$; through the aggregator channel alone, the forward price drifts up modestly as the strategic bidder serves a larger forward share. Two channels operate simultaneously on the forward side, however, and they cut in opposite directions. The Stage-1 option-value channel introduced for the symmetric state in \S\ref{sec:theory:da15}(v) is already active here: by backward induction, once Stage-2 becomes finer the Stage-1 bidder anticipates the spot-side ladder widening of (M4) and restructures its forward bid accordingly, which can push the forward price down. The empirical DA-side drop under ID15 (\S\ref{sec:results:6-3}) is consistent with the anticipation channel dominating the aggregator channel on the forward leg. The net cross-market effect remains positive-sum.
+
+\paragraph{(M3) Block parity reveals within-hour spot dispersion.} The hourly forward can be arbitraged only against the \emph{average} of spot per-period prices --- under full arbitrage, $p_1 = (1/Q)\sum_t p_{2t}$ (block parity); under strategic arbitrage, the same average condition plus the \citeauthor{ito_reguant_2016} wedge $(p_1-c)/4$. This leaves room for within-hour spot dispersion whenever per-subperiod thinness $b_{2t}$ varies across products: thinner products carry higher clearing prices for the same aggregate block. The wedge SD inherits this thinness asymmetry directly, attenuated by half under strategic vs full arbitrage (Appendix~\ref{app:state-60-15}).
+
+\paragraph{(M4) Spot-side bid ladders widen.} Per-period clearing rewards two-tranche discrimination across products: the strategic bidder posts a low tranche for low-$\mu_t$ states and a high tranche for high-$\mu_t$ states. The optimal pre-realisation spread is
+\begin{equation}
+\boxed{\;\Delta p^*_{2t} \;=\; \frac{\Delta_\mu}{2\, b_{2t}},\;}
+\label{eq:tranche-id}
+\end{equation}
+strictly larger than the hourly counterpart (Appendix~\ref{app:tranche}). Empirical measures of within-product bid-shape dispersion (e.g.\ MW-weighted price SDs, effective tranche counts) are motivated by this widening but are not derived from the two-tranche reduction directly; we use them as empirical proxies, not as model objects.
+
+Balancing discrepancy unchanged at $\Delta_t = \mu_t + \varepsilon_t$: the forward is still hourly so $\mu_t$ still loads onto balancing.
+
+\subsection{Symmetric state $(Q,Q)$: limited per-product arbitrage}\label{sec:theory:da15}
+
+When the forward also becomes per-period, six mechanisms operate; the empirically critical one is per-product limited arbitrage. Per-product arbitrage capacity binds at $K_t \approx K/Q$, so the within-hour wedge SD does not collapse to the strategic-arbitrage benchmark but stabilises at $\sigma_\mu/(4 b_1)$ plus thinness asymmetry --- exactly twice the unlimited strategic benchmark and consistent with the empirical asymmetric-persistence finding. The Cournot scale-up of per-clock-hour cleared MWh and the cross-market option-value substitution of bid shapes complete the symmetric-state predictions.
+
+The forward market also becomes per-period.
+
+\paragraph{(i) Aggregator allocation equalises.} The forward-vs-spot hedging differential closes once both markets accept per-subperiod schedules.
+
+\paragraph{(ii) Per-product arbitrage --- and arbitrageur market power.} The full-arbitrage benchmark gives $p_{1t} = p_{2t}$ per product (wedge SD zero); the strategic-arbitrage benchmark gives the \citeauthor{ito_reguant_2016} wedge \eqref{eq:strategic-arb} per product, collapsing the wedge SD to $\sigma_\mu/(8\, b_1)$. \emph{Both benchmarks rely on the arbitrageur being able to build any per-product position, and both fail empirically.} Arbitrage capacity $K$ is bounded; with $Q$ matched products per clock-hour, per-product capacity is $K_t \approx K/Q$, which binds tightly. The symmetric state is therefore in the \textbf{limited-arbitrage regime} (\citeauthor{ito_reguant_2016} Result 3) applied per product: the per-product wedge becomes $(p_{1t}-c)/2$ rather than $(p_{1t}-c)/4$, doubling the wedge SD to $\sigma_\mu/(4\,b_1)$ (Appendix~\ref{app:15-15:limited}); if per-period thinness $b_{2t}$ also varies across products this contributes an additional thinness-asymmetry component. The wedge SD therefore does \emph{not} collapse from the asymmetric-state magnitude. \emph{This is the model-internal structural account of empirical asymmetric persistence: arbitrageur market power generates the non-collapse. Residual dispersion the model does not pin down may reflect additional channels (e.g.\ behavioural inertia or renewable-penetration trends not absorbed by the covariates); the structural and residual accounts are complementary, not exclusive.}
+
+\paragraph{(iii) Forward-side bid ladders widen.} The same mechanism as (M4) on the forward side: optimal spread $\Delta p^*_{1t} = \Delta_\mu/(2 b_1)$.
+
+\paragraph{(iv) Cournot scale-up from per-period thinness.} Per-period clearing thins the per-product residual demand: each per-subperiod product has fewer competing units than the hourly aggregate, so $b_{1t} < b_1$ on average. Cournot quantity is decreasing in elasticity, so per-product cleared MWh exceeds $1/Q$ of the hourly value and total hourly cleared MWh rises. The condition is $\sum_t b_{1t} < Q\, b_1$ (Appendix~\ref{app:15-15:scaleup}); the scale-up concentrates in subperiods where per-period thinness drops most relative to the hourly aggregate. No external withholding mechanism is needed --- this is the standard Cournot quantity comparative static.
+
+\paragraph{(v) Cross-market bid-shape substitution via Stage-1 option value.} Stage-1 forward bidding is optimised by backward induction against expected Stage-2 outcomes. Per-period spot makes Stage-2 profit convex in $\mu_t$ (per-period Cournot gives $\partial^2 \pi_{2t}/\partial \mu_t^2 = 1/(2 b_{2t})$), so Stage-2 expected profit acquires a positive variance correction $\sigma_\mu^2 / (4 b_{2t})$. The Stage-1 bidder responds by widening the forward ladder to capture both sides of the variation it anticipates downstream. Symmetrically, once the forward is per-period the within-hour discrimination is absorbed at Stage 1 directly and the residual spot ladder tightens. (Derivation in Appendix~\ref{app:15-15:option}.)
+
+\paragraph{(vi) Balancing efficiency.} The per-period forward schedule absorbs $\mu_t$, so only the residual post-Stage-2 noise loads onto the balancing reference: $\Delta_t = \varepsilon_t$.
+
+\subsection{Comparative statics across the reform path}\label{sec:theory:speaks}
+
+The model delivers seven comparative-statics predictions across the three states $(1,1) \to (1,Q) \to (Q,Q)$, summarised in Table~\ref{tab:comparative}. The wedge-SD row reports the empirically relevant limited-arbitrage benchmark; the full and strategic benchmarks are derived in eq.~\eqref{eq:wedge-sd-asym-full-strat} for comparison.
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Comparative statics across the reform path under limited per-product arbitrage (empirical regime). Imbalance row reports $E[\Delta_t^2]$ for the quadratic-cost penalty (\S\ref{sec:theory:welfare}); under uniform $\mu_t \sim U[-\Delta_\mu, \Delta_\mu]$ and $\eta_t \sim U[-\Delta_\eta, \Delta_\eta]$, $E[\mu_t^2] = \Delta_\mu^2/3$ and $E[\eta_t^2] = \Delta_\eta^2/3$.}
+\label{tab:comparative}
+\begin{tabular}{p{4.6cm} c c c}
+\toprule
+Outcome & $(1,1)$ & $(1,Q)$ & $(Q,Q)$ \\
+\midrule
+Aggregator fwd$\to$spot shift
+ & $0$
+ & $\Delta^*(\sigma_\eta^2) > 0$
+ & equalised \\
+Spot ladder spread $\Delta p^*_{2t}$
+ & ---
+ & $\dfrac{\Delta_\mu}{2 b_{2t}}$
+ & $\dfrac{\Delta_\mu}{2 b_{2t}}$ \\
+Forward ladder spread $\Delta p^*_{1t}$
+ & ---
+ & via Stage-1 option
+ & $\dfrac{\Delta_\mu}{2 b_1}$ \\
+Wedge SD (limited arb.)
+ & $0$
+ & $\dfrac{K|b_{22}-b_{21}|}{8 b_{21} b_{22}}$ ($Q\!=\!2$)
+ & $\dfrac{\sigma_\mu}{4 b_1}$ + thin. asym. \\
+Cleared MWh / clock-hour
+ & baseline
+ & forward unchanged
+ & $+\dfrac{c(Q b_1 - \sum_t b_{1t})}{2}$ \\
+Balancing $\Delta_t$
+ & $\mu_t+\eta_t+\varepsilon_t$
+ & $\mu_t+\varepsilon_t$
+ & $\varepsilon_t$ \\
+Imbalance cost $C^I/(\gamma Q)$, quadratic
+ & $(\Delta_\mu^2+\Delta_\eta^2)/3$
+ & $\Delta_\mu^2/3$
+ & $0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Arbitrage regime is empirical.} Real arbitrageurs have market power and bounded balance sheets: the persistent forward premium observed across electricity markets rules out full arbitrage, and the per-product capacity constraint binds at $(Q,Q)$. The relevant \citeauthor{ito_reguant_2016} column is Result~3 (limited), not Result~4 (strategic, unlimited); per-product limited arbitrage at $(Q,Q)$ delivers the model's account of the empirical asymmetric-persistence of wedge dispersion (\S\ref{sec:theory:da15}(ii)).
+
+\paragraph{Predictions to test empirically.} The model delivers seven sign predictions across the reform path; \S\ref{sec:results} verifies them in turn:
+(P1) quantity shifts from forward to spot at the spot reform, larger in clock-hours with bigger forecast uncertainty;
+(P2) the granular-side equilibrium price drops in response;
+(P3) within-hour wedge dispersion emerges from per-subperiod thinness asymmetry (largest in ramp hours);
+(P4) the strategic bidder's two-tranche ladders widen on the granular side;
+(P5) total cleared MWh per clock-hour rises at the symmetric state;
+(P6) within-hour wedge SD does not collapse at $(Q,Q)$ --- the empirical asymmetric-persistence finding;
+(P7) production-unit arbitrageurs exist and are capacity-constrained (we test this directly by checking whether production plants submit both buy and sell offers in OMIE data).
+
+\subsection{Welfare across reforms and arbitrage regimes}\label{sec:theory:welfare}
+
+Under uniform shocks $\mu_t \sim U[-\Delta_\mu, \Delta_\mu]$ and $\eta_t \sim U[-\Delta_\eta, \Delta_\eta]$, the reform's welfare effect decomposes into three positive channels and one distributional one. The dominant gain is the imbalance saving from finer scheduling; a secondary gain is the Cournot scale-up at $(Q,Q)$; a third per-product gain comes from limited arbitrage replacing the strategic-arbitrage benchmark, where \citet{ito_reguant_2016} Result~2 implies less arbitrage activity reduces strategic withholding and raises output. The richer two-tranche ladder is mostly distributional. The empirical asymmetric-persistence of within-hour wedge SD (\S\ref{sec:theory:da15}(ii)) characterises the limited regime; it is not a welfare cost.
+
+\paragraph{Components.} Per clock-hour, $W = CS + \pi^{SB} + \pi^{Agg,\text{net}} + \pi^{Arb} - C^I_{\text{sys}}$. We model the imbalance penalty as quadratic in the deviation ($\gamma \mathcal{I}^2$ per subperiod); $\pi^{Agg,\text{net}}$ is the aggregator's profit net of its own quadratic penalty on $\eta_t$, and $C^I_{\text{sys}}$ is the system-side cost from $\mu_t$. The two channels are disjoint by construction --- $\eta_t$ only enters $\pi^{Agg,\text{net}}$, $\mu_t$ only enters $C^I_{\text{sys}}$.
+
+\paragraph{Gain: imbalance saving falls along the reform path.} Spot granularity absorbs $\eta_t$ via aggregator per-subperiod hedging; forward granularity absorbs $\mu_t$ via per-product forward clearing. Under uniform shocks ($E[\mu_t^2] = \Delta_\mu^2/3$, $E[\eta_t^2] = \Delta_\eta^2/3$) and quadratic penalty:
+\begin{center}
+\footnotesize
+\begin{tabular}{l c c c}
+\toprule
+& $(1,1)$ & $(1,Q)$ & $(Q,Q)$ \\
+\midrule
+Aggregator-internalised cost (from $\eta_t$ when spot hourly) & $\gamma Q \Delta_\eta^2/3$ & $0$ & $0$ \\
+System cost $C^I_{\text{sys}}$ (from $\mu_t$ when forward hourly) & $\gamma Q \Delta_\mu^2/3$ & $\gamma Q \Delta_\mu^2/3$ & $0$ \\
+\textbf{Total imbalance cost} & $\boldsymbol{\gamma Q(\Delta_\mu^2+\Delta_\eta^2)/3}$ & $\boldsymbol{\gamma Q \Delta_\mu^2/3}$ & $\boldsymbol{0}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\paragraph{Gain: Cournot scale-up at $(Q,Q)$.} Per-period elasticities are smaller than the hourly aggregate ($\sum_t b_{1t} < Q b_1$), so $(c/2)(Q b_1 - \sum_t b_{1t})$ additional MWh clear at the pre-reform mark-up, delivering a welfare gain $\Delta W^{\text{scale}} = c(\bar A - b_1 c - S^{op}_1)(Q b_1 - \sum_t b_{1t})/(4 b_1)$.
+
+\paragraph{Gain: less strategic withholding under limited per-product arbitrage.} The spot reform stretches per-product arbitrage capacity to $K/Q$, moving the regime from strategic to limited per product. Per \citet{ito_reguant_2016} Result~2, less arbitrage means less strategic withholding: the strategic bidder's spot markup falls from $3(p_1-c)/4$ (strategic) to $(p_1-c)/2$ (limited), and the per-product deadweight loss falls by $\Delta W^{\text{lim-arb}} = 5 b_2(p_1-c)^2/32 > 0$. The empirical asymmetric-persistence of wedge SD (\S\ref{sec:theory:da15}(ii)) is the equilibrium signature of this regime change, not a welfare cost.
+
+\paragraph{Net effect.} All channels positive: $\Delta W^{\text{spot}} = \gamma Q \Delta_\eta^2/3 + (\text{per-product lim-arb gain})$; $\Delta W^{\text{forward}} = \gamma Q \Delta_\mu^2/3 + \Delta W^{\text{scale}}$. The bid-ladder rent $\Delta\pi^{2T} = \Delta_\mu[4(\bar A - bc) + \Delta_\mu]/(16 b)$ (Appendix~\ref{app:tranche}) is mostly a CS-to-$\pi^{SB}$ transfer. The reform is welfare-improving at each step.
+
+% =====================================================================
+\section{Data: OMIE bid-level offers, weather, redispatch}\label{sec:data}
+% =====================================================================
+
+\subsection{Sources: OMIE bid-level offers, ENTSO-E weather and load, ESIOS redispatch}\label{sec:data:sources}
+
+% TBD: short description of OMIE bid-level files (PDBC, PDBF, PIBCI; cab/det
+% and icab/idet headers + tranches; v1.37 OMIE spec); ENTSO-E A65 / A75 for
+% load and per-tech generation; ESIOS for ajuste cost components.
+
+\subsection{Outcomes by family}\label{sec:data:outcomes}
+
+\paragraph{(Two) reforms.} The Spanish wholesale electricity market shifted from a 60-minute to a 15-minute market time unit in two steps: \textbf{ID15} (2025-03-19, intraday auctions and continuous market) and \textbf{DA15} (2025-10-01, day-ahead). After each reform there are four periods per clock-hour; before, one. A third granularity reform, \textbf{ISP15} (2024-12-11), moved REE's settlement period\footnote{There are penalizations for the units when they deviate from their scheduled production.} from 60 to 15 minutes but left the OMIE contract grid unchanged. The \emph{operaci\'on reforzada} regulatory stance (REE's post-blackout reinforced operation, continuous from 2025-04-28) is a continuous confound that forces CCGT post-dayahead inclusion; tight pre/post windows around each reform date hold its level constant within each arm. Figure~\ref{fig:bid_internal:timeline} summarises the full timeline, including other reforms that are not directly relevant for our research question but are important for context.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{../../figures/thesis/timeline_reform_windows.pdf}
+\caption{\textbf{Full reform-window timeline.} Five named windows partition the post-2024-06-14 sample; the pre-IDA window is the baseline regime. Dotted vertical lines mark the five reform dates that produce the window boundaries.}
+\label{fig:bid_internal:timeline}
+\end{figure}
+
+\paragraph{Variables.} Each (unit $u$, date $d$, period $p$) sell offer is a tranche ladder $\{(p_k, \Delta q_k)\}_{k=1}^{K_{u,d,p}}$ sorted by ascending price, where $p_k$ is the bid price (EUR/MWh) and $\Delta q_k$ is the \emph{incremental} MW added to the unit's step supply function at $p_k$\footnote{Following OMIE \emph{Potencia} field in \textit{ficheros OMIE v1.37} \S 5.1.4.2. $\Delta q_k$ is the marginal MW at tranche $k$; the unit's total offered capacity in the period is $\sum_k \Delta q_k$, and the cumulative supply at any price $p$ is $S(p)=\sum_{k:\,p_k\le p}\Delta q_k$.}. Offers carry one of three structural types: \emph{simple} (a bare price--quantity ladder), \emph{minimum-income condition} (MIC), or \emph{block} (all-or-nothing across periods). Most technologies use simple bids, but CCGT is the outlier with the bulk of its offers in MIC or block form (\hyperref[sec:results]{\S~\ref*{sec:results}}, \hyperref[sec:5d]{Appendix~\ref*{app:robustness}.3})\footnote{Approximate sell-offer shares by structural type (DA15/ID15): wind, solar, hydro and pump-storage $\sim\!100\%$ simple; nuclear $64\%$ simple, $36\%$ MIC; CCGT $18\%$ simple, $50\%$ MIC, $32\%$ block.}.
+
+\subsection{Window-and-market-specific bandwidth and the in-band region}\label{sec:data:bandwidth}
+
+Let $\text{MCP}_{d,p}$ be the OMIE clearing price \emph{of the market in which the offer was submitted} and $h$ a bandwidth that isolates the bids in contention: tranches close enough to the clearing price to plausibly compete in the \emph{competing tier} of the offer (CCGT's two-tier structure makes this distinction explicit, \hyperref[app:context]{Appendix~\ref*{app:context}}). We anchor $h$ to the \emph{contemporary contested margin}: $h$ is computed as $p_{90}-p_{50}$ of the MCP distribution \emph{in the analysis window of the comparison, market by market}. The resulting eight bandwidths (one per reform $\times$ \{real, placebo\} $\times$ \{DA, IDA\}) are summarised in the table below; bandwidth-robustness across wider $h$ choices is reported in \hyperref[sec:5e]{Appendix~\ref*{app:robustness}.5}.
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{l c c}
+\toprule
+\textbf{Window} & $h$ in DA (EUR/MWh) & $h$ in IDA (EUR/MWh) \\
+\midrule
+ID15 real             & 50 & 62 \\
+ID15 placebo (2024)   & 45 & 46 \\
+DA15 real             & 50 & 58 \\
+DA15 placebo (2024)   & 45 & 49 \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Bandwidths $h$ used to define the in-band region.} $h$ is set to $p_{90}-p_{50}$ of the MCP distribution in each (window, market). Window-and-market-specific by construction. Bandwidth robustness in \hyperref[sec:5e]{Appendix~\ref*{app:robustness}.5}.}
+\end{center}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.82, every node/.style={font=\footnotesize}]
+  \def\xmax{12.5}
+  \def\ymax{8.4}
+  \def\mcp{4}
+  \def\h{1.15}
+  \def\ceiling{6.6}
+  \fill[orange!18] (0, \mcp-\h) rectangle (\xmax-0.3, \mcp+\h);
+  \draw[-{Latex[length=2.4mm]}, thick, gray!75] (0,0) -- (\xmax,0)
+    node[below left=2pt and -10pt, black] {Cumulative offered quantity (MW)};
+  \draw[-{Latex[length=2.4mm]}, thick, gray!75] (0,0) -- (0,\ymax);
+  \node[rotate=90, anchor=south, black] at (-0.55, \ymax/2)
+    {Bid price (EUR/MWh)};
+  \draw[red!80!black, very thick, dash pattern=on 4pt off 2pt]
+    (0, \mcp) -- (\xmax-0.3, \mcp);
+  \node[red!80!black, anchor=west] at (\xmax-0.25, \mcp) {MCP};
+  \draw[gray!60, dotted, thick] (0, \ceiling) -- (\xmax-0.3, \ceiling);
+  \node[gray!60!black, anchor=west] at (\xmax-0.25, \ceiling) {ceiling};
+  \draw[blue!60!black, very thick, line cap=round]
+       (0,    0.4) -- (1.0,  0.4)
+    -- (1.0,  0.9) -- (1.8,  0.9)
+    -- (1.8,  1.3) -- (2.7,  1.3)
+    -- (2.7,  1.9) -- (3.4,  1.9)
+    -- (3.4,  2.5) -- (4.0,  2.5)
+    -- (4.0,  3.05)-- (4.7,  3.05)
+    -- (4.7,  3.55)-- (5.4,  3.55)
+    -- (5.4,  3.95)-- (6.0,  3.95)
+    -- (6.0,  4.30)-- (6.5,  4.30)
+    -- (6.5,  4.75)-- (7.1,  4.75)
+    -- (7.1,  5.10)-- (7.5,  5.10)
+    -- (7.5,  7.45)-- (8.5,  7.45)
+    -- (8.5,  7.75)-- (10.0, 7.75);
+  \draw[red!80!black, very thick, dash pattern=on 4pt off 2pt]
+    (6.0, 0) -- (6.0, \mcp);
+  \node[red!80!black, below] at (6.0, -0.05) {$Q^\star$};
+  \draw[decorate, decoration={brace, amplitude=5pt, mirror},
+        thick] (\xmax-2.2, \mcp+\h) -- (\xmax-2.2, \mcp-\h);
+  \node[anchor=west] at (\xmax-2.05, \mcp+\h/2) {$+h$};
+  \node[anchor=west] at (\xmax-2.05, \mcp-\h/2) {$-h$};
+  \node[orange!60!black, anchor=south west, fill=white, rounded corners,
+        inner sep=2pt, draw=orange!50, line width=0.4pt]
+    at (0.3, \mcp+\h+0.10) {\textbf{in-band: competing tier}};
+  \node[gray!50!black, anchor=south west, fill=white, rounded corners,
+        inner sep=2pt, draw=gray!40, line width=0.4pt]
+    at (7.55, \ceiling+1.1) {\textbf{parked tier} (above ceiling, non-strategic)};
+\end{tikzpicture}
+\caption{\textbf{Bandwidth $h$ and the in-band region.} The supply curve is the sorted sell-bid ladder for one quarter and one market. The market clears where supply meets demand, fixing the MCP. Bid-shape outcomes ($\sigma_p$, $N_{\text{eff}}$) are computed only on tranches in the in-band region $[\text{MCP}-h,\ \text{MCP}+h]$ --- the competing tier where strategic action lives. The parked tier above the clearing-price ceiling is a non-strategic placeholder (\hyperref[app:context]{Appendix~\ref*{app:context}}) and is excluded by construction.}
+\label{fig:in-band-bandwidth}
+\end{figure}
+
+Now define the in-band set, the MW weights, and the in-band weighted mean bid price that anchor every per-curve outcome:
+\[
+\mathcal{B}_{u,d,p} \;=\; \{k:\,|p_k-\text{MCP}_{d,p}|\le h\}, \qquad w_k \;=\; \frac{\Delta q_k}{\sum_{j\in\mathcal{B}_{u,d,p}} \Delta q_j}, \qquad \bar p_{u,d,p} \;=\; \sum_{k\in\mathcal{B}} w_k\,p_k.
+\]
+
+The outcomes used in this paper sort into four families.
+
+\textbf{(i) Bid-shape (per-curve, in-band, MW-weighted; one value per (unit, date, period)).}
+\[
+\sigma_{p,\,u,d,p} \;=\; \sqrt{\sum_{k\in\mathcal{B}_{u,d,p}} w_k\,(p_k-\bar p_{u,d,p})^2}, \qquad
+N_{\text{eff},\,u,d,p} \;=\; \Big(\sum_{k\in\mathcal{B}_{u,d,p}} w_k^2\Big)^{-1}.
+\]
+$\sigma_p$ is the price spread of the bid ladder within a single quarter; $N_{\text{eff}}$ is the effective tranche count of that quarter ($1$ = single block, large = many equal-sized tranches).
+\vspace{6pt}
+
+\textbf{(ii) In-band quantity --- per-curve primitive and its hour-class aggregate.} The per-curve primitive is the total tranche MW falling in the $\pm h$ band around the MCP of the curve:
+\[
+m_{u,d,p[,s]} \;=\; \sum_{k\in\mathcal{B}_{u,d,p[,s]}} \Delta q_k.
+\]
+Aggregated across units of tech $t$, periods $p$ inside an hour, hours in a class $\mathcal{X}$, and IDA sessions $s$ when applicable, then converted to energy and normalised by class size:
+\[
+E^{\text{band}}_{t,m,d,\mathcal{X}} \;=\; \frac{1}{|\mathcal{X}|}\sum_{h\in\mathcal{X}}\;\sum_{p\in h}\;\sum_{u\in t,[s]} m_{u,d,p[,s]} \cdot \tau_p,
+\]
+where $\tau_p$ is the period length in hours ($1$ pre-MTU15, $1/4$ post-MTU15). The $m\cdot\tau_p$ product converts MW to MWh so the sum is invariant to the period count (MTU15 quadrupling does not inflate it mechanically); the $1/|\mathcal{X}|$ normalisation expresses the result as MWh per class-hour, directly comparable across classes of different sizes.
+\vspace{6pt}
+
+\textbf{(iii) System aggregates (per (date, period)).} $\text{MCP}_{d,p}$ is the OMIE clearing price (EUR/MWh); $Q_{d,p}=\sum_{u,k} q^{\text{cleared}}_{u,d,p,k}$ is the system DA cleared quantity\footnote{The OMIE assigned-power field is per-period instantaneous power (MW), invariant to period length, so one 15-min quarter and one 60-min hour at the same MW are directly comparable as rates. Aggregating MW across the four quarters of a clock-hour gives the stock of energy delivered in that clock-hour, $\text{MWh}_h = \sum_{q\in h}\text{MW}_q\,\Delta t_q$. Aggregate-quantity coefficients below are reported as MWh per clock-hour (numerically equal to the per-period mean MW because the integration is over 1 h, but the unit is energy, not power).}.
+\vspace{6pt}
+
+\textbf{(iv) Cross-market wedge (per clock-hour).}
+\[
+\Delta_{d,h} \;=\; \text{MCP}^{\text{DA}}_{d,h} - \text{MCP}^{\text{IDA}}_{d,h}, \qquad
+\Delta^{\text{SD}}_d \;=\; \mathrm{sd}_h(\Delta_{d,h}).
+\]
+$\Delta_{d,h}$ is the day-ahead/intraday clearing-price gap at clock-hour $h$; $\Delta^{\text{SD}}_d$ is how much that gap varies across the 24 clock-hours of day $d$. Both $\text{MCP}^{\text{DA}}_{d,h}$ and $\text{MCP}^{\text{IDA}}_{d,h}$ are computed at the clock-hour level by averaging \emph{within each market} over whatever sub-hour structure that market has on date $d$\footnote{Aggregating to the clock-hour for the wedge is deliberate: it isolates the cross-market gap from the within-hour dimension, which is captured separately by $D_{\text{price}}$, $D_{\text{qty}}$, $\text{SD}_{\text{price}}$, $D_\sigma$, $D_N$ below. The wedge then compares two equally-aggregated clock-hour means, which is what makes $\Delta_{d,h}$ directly comparable across pre- and post-MTU15 regimes.}: DA collapses the four 15-min quarters post-DA15 (one observation pre-DA15); IDA collapses the three auction sessions and (post-ID15) the four within-hour quarters. The wedge then compares two equally-aggregated clock-hour means and is therefore directly comparable across regimes --- it does not mechanically widen just because IDA gains a quarter dimension. Under asymmetric granularity (ID15: DA 60-min, IDA 15-min), each clock-hour hosts four IDA quarter-prices against a single DA price, so $\Delta_{d,h}$ can move further where within-hour residual demand actually varies --- this is a behavioural channel, not a mechanical one.
+\vspace{6pt}
+
+\textbf{Within-hour dispersion (post-MTU15 only; used to calibrate the critical/flat partition in \S\ref{sec:data:partition}).} For a clock-hour with four quarters $q=1,\dots,4$ post-MTU15, let $\bar{m}=\tfrac{1}{4}\sum_q m_q$. For each (unit, date, clock-hour) we compute the standard deviation across the four quarters for each of the five outcomes above\footnote{We omit the $u,h$ subscripts for readability.}:
+\[
+\begin{aligned}
+D_{\text{price}} &= \mathrm{sd}_q(\bar p_q), &
+D_{\text{qty}}   &= \mathrm{sd}_q(m_q)/\overline{m}, &
+\text{SD}_{\text{price}} &= \mathrm{sd}_q(\text{MCP}_q), \\
+D_\sigma &= \mathrm{sd}_q(\sigma_{p,q}), &
+D_N      &= \mathrm{sd}_q(N_{\text{eff},q}).
+\end{aligned}
+\]
+$D_{\text{price}}$, $D_{\text{qty}}$, $\text{SD}_{\text{price}}$ are across-quarter shifts in bid \textsc{level}, bid \textsc{volume}, and system clearing prices; $D_\sigma$, $D_N$ are across-quarter shifts in ladder \textsc{spread} and \textsc{tranche count}. All five are zero under the MTU60-equivalent strategy (identical bids in every quarter), so any positive value post-MTU15 is a direct trace of within-hour discrimination.
+
+\paragraph{Seasonality.} Spanish electricity has strong intra-year seasonality. It bites on the level outcomes --- clearing prices and per-tech cleared energy --- which co-move with heating demand in winter, cooling demand in summer, and the hydrological cycle. Bid-shape outcomes ($\sigma_p$, $N_{\text{eff}}$) are MCP-centered and MW-weighted on the in-band ladder, so price-level seasonality does not transmit.
+
+\subsection{The critical/flat partition: where granular pricing has economic content}\label{sec:data:partition}
+
+\paragraph{Intuition.} Granular pricing only has economic content where within-hour residual demand\footnote{Spanish-market convention calls this the \emph{hueco t\'ermico} (thermal gap) --- the load that thermal and other dispatchable generation must cover after subtracting wind and solar.} actually varies; if a clock-hour is internally flat, the four quarters look the same and there is nothing to discriminate on. We measure within-hour variation by $\sigma_{\text{within}}(h,d) = \mathrm{sd}_q[\text{load}-\text{wind}-\text{solar}]_{q,h,d}$ on 15-min residual-demand data\footnote{ENTSO-E Transparency Platform: A65 (actual total load) and the wind/solar component of A75 (actual generation per type, PSR codes B16, B18, B19); window 2023-01-01 to 2026-05-14.} and partition clock-hours by median $\sigma_{\text{within}}$:
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item \textbf{Critical} $\mathcal{C}=\mathcal{C}_M\cup\mathcal{C}_E$ with $\mathcal{C}_M=\{5,\dots,8\}$ (\emph{morning ramp}) and $\mathcal{C}_E=\{16,\dots,22\}$ (\emph{evening ramp}); $\sigma_{\text{within}}\in[522,1303]$ MW overall. The two sub-classes have different seasonal patterns (sunrise/sunset timing shifts the start of solar generation across the class boundaries), and bid-side analyses below treat them separately so each sub-class's seasonality is modelled on its own pattern.
+\item \textbf{Flat} $\mathcal{F}=\{1,2,3\}$: overnight; $\sigma_{\text{within}}\in[336,357]$ MW.
+\item \textbf{Midday} $\{11,\dots,14\}$ (solar-marginal, $\sigma_{\text{within}}\in[468,502]$ MW): excluded from main specs; kept for falsification (\hyperref[sec:5a]{Appendix~\ref*{app:robustness}.2}).
+\end{itemize}
+
+\paragraph{Formal calibration of the partition (post-only).} Let $D_{d,h}$ stand for any one of the five within-hour dispersion outcomes ($D_{\text{price}}$, $D_{\text{qty}}$, $\text{SD}_{\text{price}}$, $D_\sigma$, $D_N$) on date $d$, clock-hour $h$. Under MTU60 the within-hour quarter dimension does not exist, so $D_{d,h}$ is mechanically zero pre-reform; we use the post-MTU15 sample to \emph{describe} where within-hour dispersion lives across hour-classes. A date-FE regression is a convenient way to summarise the critical$-$flat differential:
+\[
+D_{d,h} \;=\; \delta_d \;+\; \theta\,\mathbf{1}\{h\in\mathcal{C}\} \;+\; \varepsilon,
+\]
+fit per outcome. $\theta$ is the post-MTU15 critical$-$flat dispersion gap. This is a \textbf{descriptive contrast, not a causal estimate}.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l l c c c}
+\toprule
+\textbf{Outcome} & \textbf{Subsample} & \textbf{ID15} & \textbf{DA15} & \textbf{crit/flat ratio (IDA, DA)} \\
+\midrule
+$D_{\text{price}}$ (EUR/MWh)         & per unit (pooled) & $0.39^{***}$ (0.05)    & $1.35^{***}$ (0.11)   & $4.1\times,\ 7.4\times$ \\
+$D_{\text{qty}}$ (CV)                & per unit (pooled) & $0.024^{***}$ (0.003)  & $0.033^{***}$ (0.002) & $4.3\times,\ 4.9\times$ \\
+$\text{SD}_{\text{price}}$ (EUR/MWh) & system            & $4.55^{***}$ (0.40)    & $3.97^{***}$ (0.37)   & $2.8\times,\ 2.6\times$ \\
+\addlinespace
+$D_\sigma$ (EUR/MWh)                 & CCGT       & $-0.24$ (0.35)         & $0.57^{***}$ (0.10)    & --,\ $5.9\times$ \\
+                                     & Hydro      & $0.48^{***}$ (0.07)    & $1.22^{***}$ (0.16)    & $2.2\times,\ 3.1\times$ \\
+                                     & Hydro pump & $0.16^{***}$ (0.03)    & $0.66^{***}$ (0.15)    & $3.7\times,\ 10.6\times$ \\
+                                     & Wind       & $-0.003$ (0.005)       & $0.04^{***}$ (0.02)    & $1.0\times,\ 2.3\times$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Post-MTU15 critical$-$flat within-hour dispersion gap, by outcome.} \textit{SE clustered by date}; $^{***}p<0.01$. Bid-level rows ($D_{\text{price}}$, $D_{\text{qty}}$, $\text{SD}_{\text{price}}$) are bandwidth-free. The per-tech $D_\sigma$ rows are computed at the new $p_{90}$ baseline (\hyperref[sec:data:bandwidth]{\S~\ref*{sec:data:bandwidth}}): ID15 column uses post-ID15 IDA data with $h{=}62$; DA15 column uses post-DA15 DA data with $h{=}50$. \emph{Reading.} Under DA15, $D_\sigma$ is positive and significant for all three dispatchable techs in DA --- CCGT $0.57$, hydro $1.22$, pump-storage $0.66$ --- with the largest critical/flat ratio for CCGT ($5.9\times$). Under ID15, hydro and pump-storage widen their IDA within-hour ladders ($0.48$ and $0.16$), while CCGT IDA $D_\sigma$ is not distinguishable from zero --- consistent with combined-cycle gas mostly competing in DA rather than IDA at this stage. Wind stays small everywhere, consistent with its operational, uniform-across-hour-classes engagement (\hyperref[sec:results:6-5]{\S~\ref*{sec:results:6-5}}).}
+\end{center}
+
+% =====================================================================
+\section{Empirical strategy: three specifications for three economic objects}\label{sec:empirical}
+% =====================================================================
+
+$u$ unit; $d$ date; $p$ period; $h$ clock-hour; $s$ IDA session; $T_r$ reform date. Treatment status $D_{d,h} \equiv \mathbf{1}\{d\ge T_r\}\cdot\mathbf{1}\{h\in\mathcal{C}\}$; sample restricted to $h\in\mathcal{C}\cup\mathcal{F}$ for the DiD.
+
+\subsection{Spec A: Bayesian Structural Time Series for prices, cleared energy, and wedge SD}\label{sec:empirical:specA}
+
+\emph{Idea.} A Bayesian Structural Time Series (BSTS) model \citep{brodersen_2015}, as applied to the EPEX 15-min reform by \citet{markle_huss_2017}, fits a flexible state-space decomposition of the response on the pre-reform window and extrapolates forward to construct a counterfactual: what the outcome \emph{would} have looked like in the post-window absent the reform. The treatment effect is the gap between observed and counterfactual. The strength over other methods is that BSTS handles complex seasonality and trend \emph{internally}, useful here since the pre-windows are short.
+
+\emph{Model.} The daily response decomposes additively into trend, weekly cycle, exogenous covariates, and noise:
+\[
+y_t \;=\; \underbrace{\mu_t}_{\text{trend}} \;+\; \underbrace{\gamma_t}_{\text{weekly cycle}} \;+\; \underbrace{X_t'\beta}_{\text{exogenous covariates}} \;+\; \underbrace{\varepsilon_t}_{\text{noise}}.
+\]
+$\mu_t$ is a random walk with stochastic slope (a slowly evolving local level), $\gamma_t$ a 7-day cycle, and $X_t = (\text{wind GWh}, \text{solar GWh}, \text{gas price EUR})$ exogenous covariates that absorb merit-order shifts driven by renewable supply and fuel prices (a spike-and-slab prior on $\beta$ shrinks unused regressors). Demand is excluded to avoid simultaneity.
+
+\emph{Outcomes $y_t$.} DA or IDA daily-average clearing prices, per-tech daily cleared GWh, within-day wedge SD $\Delta^{\text{SD}}_d$ overall and per hour-class $\Delta^{\text{SD},\mathcal{X}}_d = \mathrm{sd}_{h\in\mathcal{X}}(\Delta_{d,h})$ for $\mathcal{X}\in\{\mathcal{C}_M, \mathcal{C}_E, \mathcal{M},\mathcal{F}\}$.
+
+\emph{Estimand.} Conditional on $X_t$, the post-cutover counterfactual equals the pre-trained extrapolation $\hat y_t(0)$. The average treatment effect on the post-window is
+\[
+\bar\tau \;=\; \tfrac{1}{|\text{post}|}\textstyle\sum_{t\ge T_r}\bigl(y_t - \hat y_t(0)\bigr),
+\]
+reported together with its 95\% credible interval from the MCMC posterior produced by the \texttt{CausalImpact} R package.
+
+\emph{Windows} hold the relevant regulatory regime constant across pre and post (Figure~\ref{fig:bsts-windows}): DA15 pre starts at the reforzada onset; ID15 pre starts at the post-IDA-reform 3-session architecture and stops at the blackout.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.85, every node/.style={font=\footnotesize}]
+  \def\xs{0.40}
+  \def\yIDpA{4.4} \def\yIDr{3.4} \def\yIDpB{2.4} \def\yDAp{1.4} \def\yDAr{0.4}
+  \def\hbar{0.25}
+  \draw[gray!60, thick] (0,0) -- (\xs*37,0);
+  \foreach \m/\lbl in {1/{Jul 23}, 7/{Jan 24}, 13/{Jul 24}, 19/{Jan 25}, 25/{Jul 25}, 31/{Jan 26}, 37/{Jul 26}} {
+    \draw[gray!60] (\xs*\m, 0) -- (\xs*\m, -0.1);
+    \node[anchor=north, gray!40!black, font=\scriptsize] at (\xs*\m, -0.1) {\lbl};
+  }
+  \foreach \m in {7, 19, 31} {
+    \draw[gray!20, very thin] (\xs*\m, 0) -- (\xs*\m, 4.8);
+  }
+  \foreach \m/\lbl in {12.45/{IDA-3s}, 18.35/{ISP15}, 21.6/{ID15}, 22.9/{blackout}, 28.0/{DA15}} {
+    \draw[red!50!black, dashed, thin] (\xs*\m, 0) -- (\xs*\m, 5.0);
+    \node[anchor=south west, red!50!black, font=\scriptsize, rotate=55]
+      at (\xs*\m, 5.05) {\lbl};
+  }
+  \fill[gray!30] (\xs*0.45,\yIDpA-\hbar) rectangle (\xs*9.6,\yIDpA+\hbar);
+  \fill[blue!55] (\xs*9.6,\yIDpA-\hbar) rectangle (\xs*10.9,\yIDpA+\hbar);
+  \draw[blue!70!black, thick] (\xs*9.6,\yIDpA-\hbar-0.05) -- (\xs*9.6,\yIDpA+\hbar+0.05);
+  \node[anchor=east] at (-0.1, \yIDpA) {ID15 placebo (2024)};
+  \fill[gray!30] (\xs*12.45,\yIDr-\hbar) rectangle (\xs*21.6,\yIDr+\hbar);
+  \fill[red!65] (\xs*21.6,\yIDr-\hbar) rectangle (\xs*22.9,\yIDr+\hbar);
+  \draw[red!70!black, thick] (\xs*21.6,\yIDr-\hbar-0.05) -- (\xs*21.6,\yIDr+\hbar+0.05);
+  \node[anchor=east] at (-0.1, \yIDr) {ID15 real (2025-03-19)};
+  \fill[gray!30] (\xs*24.45,\yIDpB-\hbar) rectangle (\xs*33.6,\yIDpB+\hbar);
+  \fill[blue!55] (\xs*33.6,\yIDpB-\hbar) rectangle (\xs*34.9,\yIDpB+\hbar);
+  \draw[blue!70!black, thick] (\xs*33.6,\yIDpB-\hbar-0.05) -- (\xs*33.6,\yIDpB+\hbar+0.05);
+  \node[anchor=east] at (-0.1, \yIDpB) {ID15 placebo (2026)};
+  \fill[gray!30] (\xs*10.9,\yDAp-\hbar) rectangle (\xs*16.0,\yDAp+\hbar);
+  \fill[blue!55] (\xs*16.0,\yDAp-\hbar) rectangle (\xs*17.3,\yDAp+\hbar);
+  \draw[blue!70!black, thick] (\xs*16.0,\yDAp-\hbar-0.05) -- (\xs*16.0,\yDAp+\hbar+0.05);
+  \node[anchor=east] at (-0.1, \yDAp) {DA15 placebo (2024)};
+  \fill[gray!30] (\xs*22.9,\yDAr-\hbar) rectangle (\xs*28.0,\yDAr+\hbar);
+  \fill[red!65] (\xs*28.0,\yDAr-\hbar) rectangle (\xs*29.3,\yDAr+\hbar);
+  \draw[red!70!black, thick] (\xs*28.0,\yDAr-\hbar-0.05) -- (\xs*28.0,\yDAr+\hbar+0.05);
+  \node[anchor=east] at (-0.1, \yDAr) {DA15 real (2025-10-01)};
+  \fill[gray!30] (\xs*0, 6.5) rectangle (\xs*1.4, 6.75);
+  \node[anchor=west] at (\xs*1.5, 6.62) {train};
+  \fill[red!65] (\xs*5.5, 6.5) rectangle (\xs*6.9, 6.75);
+  \node[anchor=west] at (\xs*7.0, 6.62) {post};
+  \fill[blue!55] (\xs*10.5, 6.5) rectangle (\xs*11.9, 6.75);
+  \node[anchor=west] at (\xs*12.0, 6.62) {placebo};
+\end{tikzpicture}
+\captionof{figure}{\textbf{Spec~A windows.} Each row is one BSTS run. Grey: pre-window (model training). Red: post-window after the real reform cutover. Blue: post-window after a same-calendar placebo cutover (one year before or after the real reform). Pre-windows are restricted so that the relevant regulatory regime is held constant across pre and post: DA15 pre starts at the reforzada onset (2025-04-28); ID15 pre starts at the post-IDA-reform 3-session architecture (2024-06-14) and stops at the blackout (2025-04-28). The independent 2026 placebo for ID15 doubles the falsifier --- a calendar-symmetric counterpart on the other side of the real reform.}
+\label{fig:bsts-windows}
+\end{figure}
+
+\emph{Placebo cross-check and the joint 95\% credible interval.} The same BSTS is re-run on a same-calendar window one year before each reform with a fake cutover. This gives a \emph{placebo posterior}: what BSTS attributes to that date in a year with no reform. Two cases:
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item \emph{Real significant, placebo near zero}: the effect is reform-attributable.
+\item \emph{Real and placebo both significant and similar in magnitude}: BSTS is picking up a recurring calendar shift its seasonality model does not fully absorb, and the ``real'' estimate is not separable from that shift.
+\end{itemize}
+A sharp filter is the \emph{joint 95\% credible interval}: treating real and placebo posteriors as independent, the difference $\bar\tau_{\text{real}} - \bar\tau_{\text{placebo}}$ has variance $\sigma^2_{\text{real}} + \sigma^2_{\text{placebo}}$, and a 95\% interval excluding zero rejects the recurring-calendar story. Reform attribution requires (i) a significant real-window estimate \emph{and} (ii) the placebo not running in the same direction with similar magnitude; the joint interval is reported as a check.
+
+\emph{Drift diagnostic: near-window vs.\ full-window estimate.}\phantomsection\label{sec:empirical:drift} A characteristic signature of BSTS counterfactual error is an effect that emerges only in the late segment of the post-window: the observed series tracks the counterfactual closely for the first weeks after the cutover and then diverges as the pre-trained extrapolation drifts away from the realised series. We diagnose this by re-running BSTS with a near-cutover post-window (14 days instead of 40); a genuine reform response is similar in sign and magnitude at both window lengths, while drift collapses the near-window estimate toward zero.
+
+\subsection{Spec B: per-hour-class BSTS on bid-level outcomes}\label{sec:empirical:specB}
+
+To identify within-day reallocation in bid \emph{levels}, the same Spec~A BSTS is run \emph{independently} on each (tech, market, hour-class) cell for two bid-level outcomes:
+\begin{itemize}\setlength{\itemsep}{1pt}
+  \item $\bar p_{t,m,d,\mathcal{X}}$: MW-weighted mean of in-band tranche prices, aggregated across units of tech $t$ and hours in class $\mathcal{X}$ on date $d$ in market $m$ (the cell-level counterpart of the per-curve $\bar p_{u,d,p}$ defined in \S\ref{sec:data:outcomes}).
+  \item $E^{\text{band}}_{t,m,d,\mathcal{X}}$: in-band offered energy in MWh per class-hour (\S\ref{sec:data:bandwidth}). The $\tau_p$ factor makes the post-MTU15 quarter-sum invariant to the period count; the $1/|\mathcal{X}|$ normalisation makes the levels comparable across hour-classes of different sizes.
+\end{itemize}
+The readable summary is the real-window posterior \emph{and the same-calendar 2024 placebo posterior reported side by side for each hour-class separately} (\hyperref[tab:specB-id15]{Tables}), not the (critical $-$ flat) differential, which would collapse information when two hour-classes move in the same direction at different magnitudes. For each (tech, market, outcome, hour-class) we form $\bar\tau_{\text{real}} - \bar\tau_{\text{placebo}}$ from two BSTS posteriors (real and placebo) that are independent across years, and use the same joint 95\% credible-interval reading as in \S\ref{sec:empirical:specA}\footnote{Real and placebo posteriors come from BSTS runs on disjoint same-calendar windows one year apart. The within-window dependence (weekly seasonality, daily autocorrelation) is absorbed by the BSTS state-space model itself; what matters for the joint-Gaussian approximation is cross-window dependence at one-year separation, which is small once seasonal and trend components are accounted for.}. We avoid per-(single-hour) BSTS because at that resolution residual noise dominates the seasonal signal.
+
+\subsection{Spec C: per-curve DiD for bid shape}\label{sec:empirical:specC}
+
+For per-tech bid-shape outcomes $Y\in\{\sigma_p, N_{\text{eff}}\}$ we use the DiD:
+\[
+Y_{u,d,p[,s]} = \alpha_u + \beta\,\mathbf{1}\{d\ge T_r\} + \xi\,\mathbf{1}\{h\in\mathcal{C}\} + \theta\,D_{d,h} + \varepsilon, \qquad \text{SEs clustered by date.}
+\]
+The justification is mechanism-based. \textbf{The granularity reform's bid-shape effect is structurally a critical-hours effect.} Differentiated bidding only pays off where the residual demand curve is steep enough to reward it: in critical hours that condition holds, so $4$ quarter-prices instead of $1$ unlock real price discrimination; in flat hours the curve is shallow and the extra granularity is mostly wasted optionality. The (critical $-$ flat) differential $\theta$ therefore IS the granularity-enabled discrimination, not a residual we are netting out. Flat hours act as a low-exposure within-day control --- not a zero-exposure one, since MTU15 reaches them too.
+
+For the level outcomes --- prices and cleared MW in \S\ref{sec:empirical:specA}, in-band offered energy per hour-class in \S\ref{sec:empirical:specB} --- we keep BSTS: per-hour-class BSTS already lets the data reveal any critical-hour concentration as heterogeneity across the four estimates, without imposing the critical-flat differential as the identifying restriction.
+
+Since each MTU15 reform is studied separately, this is a standard $2\times 2$ DiD without staggered-treatment negative weights \citep[ch.~3]{de_chaisemartin_2026}.
+
+\subsection{Out of scope: full-curve counterfactual via functional factor regression}\label{sec:empirical:fbr}
+
+A natural generalisation of Spec~B would replace the scalar in-band summaries ($\bar p$ and $E^{\text{band}}$) with the full submitted-bid step function and predict its post-reform counterfactual at the curve level, treating each daily aggregate supply curve as a functional observation. The attractive feature is that seasonality is more naturally modelled on $S(p)$, defined on the same price domain every day, than on MCP-relative scalar summaries whose band slides with MCP. Functional factor regression \citep{otto_winter_2025} delivers exactly this object --- a curve-level placebo-net shift $\Delta S(p)$ with hourly weather as functional regressors --- but is out of scope for this thesis.
+
+% =====================================================================
+\section{Results}\label{sec:results}
+% =====================================================================
+
+\noindent Findings are organised one per model prediction. All three specs share the same wind+solar+gas covariates and the 2024 same-calendar placebo.
+
+\subsection{Bid-shape widening in critical hours (Spec C)}\label{sec:results:6-1}
+
+Spec~C identifies within-quarter bid-\emph{shape} effects per (tech, market): two outcomes on the in-band tranches of each curve, $\sigma_p$ (within-quarter SD of in-band bid prices) and $N_{\text{eff}}$ (effective tranche count, $1$ for a single block, large for many equal tranches). Table~\ref{tab:spec-c} reports the per-curve DiD coefficient $\theta$ for each cell. The DiD uses the critical/flat contrast of \S\ref{sec:data:partition}, where ``critical'' is the morning-ramp $\cup$ evening-ramp union; unlike Spec~B the regression does not decompose the union into its sub-classes. Tech scope: CCGT, hydro, pump-storage, wind.\footnote{Wind is not the marginal price-setter --- \citet{cnmc_supervision_2025} defines the marginal technologies as coal, CCGT, hydro, and a small dispatchable tail of the regulated-renewables-and-cogeneration regime (mostly biomass, biogas, and gas cogeneration, roughly $5\%$ of that fleet) --- but its small DiD magnitudes are not pure price-taking either; see \S\ref{sec:results:6-5} for why the critical/flat differential collapses for wind even though aggregators do engage with granularity (operational vs strategic incentives).} Solar excluded (no in-band scarcity-tier capacity); nuclear excluded (mostly bilateral).
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l l c c c c}
+\toprule
+                                &              & \multicolumn{2}{c}{\textbf{ID15}} & \multicolumn{2}{c}{\textbf{DA15}} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6}
+\textbf{Outcome (DiD $\theta$)} & \textbf{Subsample} & DA ($h{=}50$) & IDA ($h{=}62$) & DA ($h{=}50$) & IDA ($h{=}58$) \\
+\midrule
+$\sigma_p$ (EUR/MWh)            & CCGT          & $4.17^{***}$ (0.44)  & $0.10$ (0.53)          & $0.68^{***}$ (0.22)  & $-0.68^{*}$ (0.36) \\
+                                & Hydro         & $-0.53^{*}$ (0.29)   & $0.43^{*}$ (0.25)      & $1.80^{***}$ (0.34)  & $0.30$ (0.25) \\
+                                & Hydro pump    & $-0.73^{***}$ (0.27) & $-0.01$ (0.18)         & $0.92^{***}$ (0.35)  & $0.32^{*}$ (0.19) \\
+                                & Wind$^{\dagger}$ & $-0.10^{***}$ (0.03) & $0.04^{**}$ (0.02)  & $-0.02$ (0.03)       & $-0.02^{***}$ (0.003) \\
+\addlinespace
+$N_{\text{eff}}$                & CCGT          & $-0.08$ (0.21)       & $0.79$ (0.73)          & $1.89^{***}$ (0.15)  & $-0.17$ (0.53) \\
+                                & Hydro         & $-0.24^{***}$ (0.06) & $0.18^{***}$ (0.05)    & $0.51^{***}$ (0.09)  & $0.00$ (0.06) \\
+                                & Hydro pump    & $0.07$ (0.05)        & $0.12^{*}$ (0.07)      & $-0.06$ (0.07)       & $-0.16$ (0.13) \\
+                                & Wind$^{\dagger}$ & $0.01$ (0.02)     & $0.03^{***}$ (0.01)    & $-0.01$ (0.01)       & $-0.01$ (0.01) \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Spec~C per-curve DiD on bid-shape outcomes.} SEs in parentheses, clustered by date. $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$. Per-(tech, market) subsample regressions, unit FE absorbed via within-unit demeaning. Bandwidth $h$ is window-and-market-specific (the p90 of the MCP distribution in that window, market by market): see \S\ref{sec:data:bandwidth} and \S\ref{sec:empirical:specC}. Sensitivity to wider bandwidths is reported in \hyperref[sec:5e]{Appendix~\ref*{app:robustness}.5}. $^{\dagger}$Wind magnitudes are an order of magnitude smaller than the dispatchable techs and $84\%$ of in-band wind sell curves are a single block, because wind aggregators engage with granularity uniformly across hour-classes (operational/imbalance-driven) rather than concentrating it in critical hours (strategic/rent-driven, the dispatchable case) --- see \S\ref{sec:results:6-5}.}
+\label{tab:spec-c}
+\end{center}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{fig_sigma_p_forest.pdf}
+\caption{\textbf{Spec~C per-curve DiD on bid-shape outcomes at the window-specific p90 bandwidth.} \emph{Top row:} $\sigma_p$ DiD (within-quarter price SD); \emph{Bottom row:} $N_{\text{eff}}$ DiD (effective tranche count). \emph{Left column:} ID15. \emph{Right column:} DA15. Each row inside a panel is one (tech, market) cell; blue = day-ahead, red = intraday auctions. Faded markers indicate the 95\% CI brackets zero. Bandwidth $h$ varies by (window, market): ID15 uses h=50 (DA) / h=62 (IDA); DA15 uses h=50 (DA) / h=58 (IDA). The picture is genuinely market-specific: ID15's effects concentrate in IDA $N_{\text{eff}}$ (more granular intraday ladders) and DA CCGT $\sigma_p$ (anticipation-channel widening); DA15's effects concentrate in DA across all dispatchables, with CCGT IDA $\sigma_p$ tightening (substitution into DA).}
+\label{fig:sigma-p-forest}
+\end{figure}
+
+\paragraph{DA15 widens day-ahead CCGT bid-shape in critical hours --- the bid-side primitive of the cleared scale-up.}\phantomsection\label{sec:results:4i}
+Under DA15, day-ahead CCGT $\sigma_p$ and $N_{\text{eff}}$ widen substantially in critical hours (Table~\ref{tab:spec-c}; Figure~\ref{fig:sigma-p-forest}). The granularity reform expands CCGT's strategy set: pre-DA15 a single bid ladder had to cover the whole hour, post-DA15 the unit submits four distinct per-quarter ladders. The bid-shape widening here and the cleared-MW expansion of \S\ref{sec:results:6-4} are two independent traces of the same strategic engagement --- CCGT is both rebuilding its per-quarter ladders and clearing more MW in critical hours --- rather than the former mechanically causing the latter. Hydro and pump-storage widen their DA $\sigma_p$ on the same window with the same sign, smaller magnitude. Critical here is the morning $\cup$ evening ramp union; the morning-ramp dominance visible in Spec~B's in-band offered energy (Table~\ref{tab:specB-da15}) is consistent with the bid-shape widening here but cannot be cross-validated at sub-class resolution because the DiD pools the two sub-classes.
+
+\paragraph{ID15 widens IDA dispatchable bid ladders --- the bid-side primitive of the IDA price drop and wedge SD jump.}\phantomsection\label{sec:results:4-c-id15-ida}
+Under ID15, IDA $N_{\text{eff}}$ widens significantly for hydro and pump-storage in critical hours (Table~\ref{tab:spec-c}; Figure~\ref{fig:sigma-p-forest}) --- more granular ladders in the now-15-min IDA, exploiting the within-hour residual-demand variation that becomes priceable. The dispatchable techs' incentive to use granularity is \emph{strategic} (capture more rent where MCP varies most within the hour), and that concentrates in critical hours --- which is what the DiD picks up. CCGT $N_{\text{eff}}$ in IDA does not widen significantly under ID15 --- combined-cycle gas competes primarily in DA at this stage, and its IDA-side bid-volume shift in Spec~B comes from broadening at the existing tranche prices rather than adding granularity.
+
+\paragraph{Cross-market substitution: DA15 tightens CCGT IDA bid-shape; ID15 widens CCGT DA bid-shape.}\phantomsection\label{sec:results:4-c-cross}
+The reform that lands the granularity instrument on one market sets off a complementary bid-shape adjustment on the other (Table~\ref{tab:spec-c}):
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item Under ID15, CCGT widens its DA $\sigma_p$ substantially even though only IDA became granular --- combined-cycle gas restructures its DA ladder \emph{in anticipation} of finer IDA re-trading. This is the cross-market spillover behind the DA-side ID15 price drop in \S\ref{sec:results:6-3}: DA prices fall on the same day as IDA prices because DA bidders adjust to the new IDA-anchored expectation.
+\item Under DA15, CCGT IDA $\sigma_p$ \emph{tightens}: combined-cycle gas pulls its structured ladder out of IDA \emph{into} DA in critical hours, consistent with the one-sided DA-only cleared scale-up in \S\ref{sec:results:6-4} and the negative DA15 IDA CCGT cells in Table~\ref{tab:specB-da15}.
+\end{itemize}
+
+\subsection{In-band offered energy migrates into the granular market (Spec B)}\label{sec:results:6-2}
+
+Spec~B isolates one bid-side primitive at within-day resolution: $E^{\text{band}}_{t,m,d,\mathcal{X}}$ (in-band offered energy per class-hour, \S\ref{sec:data:bandwidth}), for each (tech, market, hour-class) cell. The companion $\bar p$ outcome of Spec~B shows no reform-attributable shift on any cell and is not reported here. Tables~\ref{tab:specB-id15} and~\ref{tab:specB-da15} report the real-window and 2024 same-calendar placebo effects side by side per cell; the reform-attributable shift is the real-vs-placebo gap.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l l r r r r r r}
+\toprule
+                & & \multicolumn{3}{c}{\textbf{DA}} & \multicolumn{3}{c}{\textbf{IDA}} \\
+\cmidrule(lr){3-5} \cmidrule(lr){6-8}
+\textbf{Tech} & \textbf{Hour-class} & Real & Placebo & Net & Real & Placebo & Net \\
+\midrule
+CCGT        & morning ramp  & $-593^{**}$    & $-670^{***}$   & $77$           & $-603^{***}$   & $-2693^{***}$  & $2090^{***}$ \\
+            & midday        & $-2092^{***}$  & $-594^{***}$   & $-1497^{***}$  & $-1006^{***}$  & $-2432^{***}$  & $1426^{***}$ \\
+            & evening ramp  & $-166$         & $-357$         & $191$          & $-623^{***}$   & $-2481^{***}$  & $1859^{***}$ \\
+            & flat          & $-1227^{***}$  & $-364$         & $-863^{**}$    & $-1210^{***}$  & $-2615^{***}$  & $1405^{***}$ \\
+\addlinespace
+Hydro       & morning ramp  & $1685^{***}$   & $2755^{***}$   & $-1070^{**}$   & $-632^{**}$    & $2265^{***}$   & $-2898^{***}$ \\
+            & midday        & $2304^{***}$   & $1476^{***}$   & $828$          & $43$           & $5691^{***}$   & $-5648^{***}$ \\
+            & evening ramp  & $1903^{**}$    & $3156^{***}$   & $-1253$        & $-287$         & $5023^{***}$   & $-5310^{***}$ \\
+            & flat          & $2312^{***}$   & $1984^{***}$   & $328$          & $-880^{***}$   & $1545^{**}$    & $-2424^{***}$ \\
+\addlinespace
+Hydro pump  & morning ramp  & $-291^{***}$   & $-237^{***}$   & $-54$          & $-206^{**}$    & $-622^{**}$    & $416$ \\
+            & midday        & $-15$          & $-166^{*}$     & $151$          & $-365^{**}$    & $-1344^{***}$  & $979^{**}$ \\
+            & evening ramp  & $-270^{***}$   & $-269^{***}$   & $-1$           & $-346^{***}$   & $-1121^{***}$  & $775^{*}$ \\
+            & flat          & $-205^{***}$   & $-95$          & $-110$         & $-226^{**}$    & $-237$         & $12$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{ID15 Spec~B: in-band offered energy (MWh per class-hour, BSTS) by tech, market and hour-class.} Real/Placebo cells: BSTS posterior point estimates from the real reform window and the same calendar in 2024 (fake cutover); tail-probability stars $^{*}p{<}0.10$, $^{**}p{<}0.05$, $^{***}p{<}0.01$ on each individual posterior. Net column: placebo-net (Real $-$ Placebo) with joint $z$-test stars (independent-posterior approximation).}
+\label{tab:specB-id15}
+\end{center}
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l l r r r r r r}
+\toprule
+                & & \multicolumn{3}{c}{\textbf{DA}} & \multicolumn{3}{c}{\textbf{IDA}} \\
+\cmidrule(lr){3-5} \cmidrule(lr){6-8}
+\textbf{Tech} & \textbf{Hour-class} & Real & Placebo & Net & Real & Placebo & Net \\
+\midrule
+CCGT        & morning ramp  & $1583$         & $-1879^{***}$  & $3462^{**}$   & $-334^{*}$    & $1292^{***}$  & $-1627^{***}$ \\
+            & midday        & $540^{**}$     & $-448^{*}$     & $988^{**}$    & $1046^{***}$  & $273^{*}$     & $773^{*}$ \\
+            & evening ramp  & $2851^{***}$   & $392^{**}$     & $2458^{***}$  & $126$         & $278$         & $-152$ \\
+            & flat          & $1296$         & $-1671^{***}$  & $2966^{**}$   & $-719^{**}$   & $438^{*}$     & $-1157^{***}$ \\
+\addlinespace
+Hydro       & morning ramp  & $-42$          & $-82$          & $40$          & $-218$        & $2605^{***}$  & $-2822^{***}$ \\
+            & midday        & $1226^{***}$   & $904^{***}$    & $322$         & $1010^{***}$  & $2660^{**}$   & $-1650^{*}$ \\
+            & evening ramp  & $901^{***}$    & $627^{**}$     & $274$         & $116$         & $1873^{**}$   & $-1756^{*}$ \\
+            & flat          & $-242$         & $-55$          & $-187$        & $-171$        & $1294^{***}$  & $-1466^{**}$ \\
+\addlinespace
+Hydro pump  & morning ramp  & $115^{*}$      & $25$           & $89$          & $-312^{***}$  & $297$         & $-609^{**}$ \\
+            & midday        & $380^{***}$    & $-53$          & $433^{**}$    & $505^{***}$   & $-363$        & $868^{**}$ \\
+            & evening ramp  & $408^{***}$    & $156$          & $251$         & $-134^{***}$  & $274$         & $-408$ \\
+            & flat          & $206^{**}$     & $3$            & $203$         & $-289^{**}$   & $-252$        & $-37$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{DA15 Spec~B: in-band offered energy (MWh per class-hour, BSTS) by tech, market and hour-class.} Same format as Table~\ref{tab:specB-id15}.}
+\label{tab:specB-da15}
+\end{center}
+
+Under DA15 (Table~\ref{tab:specB-da15}), CCGT offers more in-band energy in DA across all four hour-classes than the 2024 placebo would predict, and less in IDA across all hour-classes except midday. The morning ramp shows the largest real-vs-placebo gap, followed by flat and evening ramp; midday is smallest. The granularity instrument lets combined-cycle gas discriminate within the hour where residual demand actually ramps, and the morning ramp is precisely when that residual demand swings hardest (heating demand rising, solar still negligible). This is the bid-side primitive behind the day-ahead CCGT cleared scale-up of \S\ref{sec:results:6-4}, and the per-class-hour view shows the within-day source: the morning ramp leads, not the evening ramp despite the latter holding the evening peak prices.
+
+Under ID15 the mirror holds (Table~\ref{tab:specB-id15}): CCGT and pump-storage offer more in-band energy in IDA across hour-classes than the placebo would predict, and less in DA. The placebo intercept itself is large and negative for ID15 IDA --- a recurring cross-year shift the reform reading sits on top of --- so the reform-attributable shift is the gap (real $-$ placebo), not the absolute real-window value. The migration is broad-based on the dispatchable side, not concentrated in any one sub-class.
+
+\emph{Pump-storage in midday under both reforms.} Pump-storage shows a midday-specific expansion in DA under DA15 and in IDA under ID15 --- the within-day arbitrage value of pump-storage peaks at the solar-saturated midday window, and the granularity instrument lets that arbitrage be priced more finely.
+
+\emph{Hydro is the exception.} Under both reforms, hydro pulls in-band offered energy \emph{out} of IDA across hour-classes --- the opposite of the dispatchable migration story. The most plausible reading is that the 2024 same-calendar placebo is a poor benchmark for hydro: reservoir filling and inflows differ substantially across years, and Spec~A's wind+solar+gas covariates do not absorb this hydro-specific seasonal variation. We do not lean on hydro for the migration story.
+
+\emph{Bid vs.\ clearing caveat.} Bidding migrates into the granular market; clearing follows only for DA15 CCGT. ID15 CCGT cleared MW (Spec~A) is essentially unchanged in IDA --- the in-band offered energy expansion does not translate to a cleared-MW expansion at the IDA clearing price (there was too much renewable).
+
+\subsection{ID15 clearing-price drop in both markets via cross-market anticipation (Spec A)}\label{sec:results:6-3}
+
+Spec~A applies BSTS to system-level outcomes: clearing prices, per-tech daily cleared GWh, and the within-day wedge SD $\Delta^{\text{SD}}_d$. Table~\ref{tab:bsts-spec-a} reports the Real, Placebo, and placebo-net (Net) posterior means for each outcome and each reform; Figures~\ref{fig:bsts-id15}--\ref{fig:bsts-da15} show observed-vs-counterfactual series.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l l r r r r r r}
+\toprule
+                & & \multicolumn{3}{c}{\textbf{ID15}} & \multicolumn{3}{c}{\textbf{DA15}} \\
+\cmidrule(lr){3-5} \cmidrule(lr){6-8}
+\textbf{Outcome} & \textbf{Tech} & Real & Placebo & Net & Real & Placebo & Net \\
+\midrule
+DA clearing price (EUR/MWh)  & ---        & $-38.39^{***}$ & $-13.71$       & $-24.68$         & $2.97$         & $-8.54$         & $11.51$ \\
+IDA clearing price (EUR/MWh) & ---        & $-38.34^{***}$ & $-18.08^{*}$   & $-20.26$         & $5.13$         & $-6.55$         & $11.68$ \\
+\addlinespace
+DA cleared (GWh/day)         & CCGT       & $10.48$        & $-10.83$       & $21.31$          & $40.31^{***}$  & $-18.69^{***}$  & $58.99^{***}$ \\
+                             & Hydro      & $-4.36$        & $15.71^{***}$  & $-20.07^{**}$    & $6.16^{*}$     & $9.28^{***}$    & $-3.12$ \\
+                             & Hydro pump & $-0.82$        & $-0.30$        & $-0.52$          & $4.43^{***}$   & $1.42^{*}$      & $3.02^{*}$ \\
+                             & Wind       & $9.64^{*}$     & $9.54^{*}$     & $0.10$           & $13.16^{***}$  & $2.15$          & $11.00^{*}$ \\
+                             & Solar      & $11.28^{***}$  & $10.53^{***}$  & $0.74$           & $-3.37$        & $1.38$          & $-4.74$ \\
+                             & Nuclear    & $53.69^{**}$   & $-50.45$       & $104.14^{*}$     & $-18.21^{**}$  & $-34.77^{***}$  & $16.56$ \\
+\addlinespace
+IDA cleared (GWh/day)        & CCGT       & $-8.08^{***}$  & $-9.18^{***}$  & $1.10$           & $0.68$         & $-2.38$         & $3.06$ \\
+                             & Hydro      & $-1.27^{***}$  & $4.98^{***}$   & $-6.25^{***}$    & $-0.41$        & $1.20^{*}$      & $-1.60^{*}$ \\
+                             & Hydro pump & $-0.37^{*}$    & $0.54^{**}$    & $-0.91^{**}$     & $0.10$         & $-0.27$         & $0.37$ \\
+                             & Wind       & $5.34^{***}$   & $7.99^{***}$   & $-2.65^{**}$     & $-2.63^{***}$  & $2.28^{*}$      & $-4.91^{***}$ \\
+                             & Solar      & $6.70^{***}$   & $2.55^{***}$   & $4.16^{***}$     & $-5.86^{***}$  & $-0.34$         & $-5.52^{***}$ \\
+                             & Nuclear    & $11.51^{***}$  & $19.06^{***}$  & $-7.56$          & $1.68$         & $-5.43$         & $7.11$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Spec~A BSTS effects on clearing prices and per-tech cleared energy.} Bayesian posterior point estimates; stars in Real/Placebo cells are tail-probability stars on each individual posterior ($^{*}p{<}0.10$, $^{**}p{<}0.05$, $^{***}p{<}0.01$). The Net column is the placebo-net effect (Real $-$ Placebo) with joint $z$-test stars derived under independent-Gaussian-posterior approximation: $\text{Net}/\sqrt{\text{SE}^2_{\text{real}}+\text{SE}^2_{\text{placebo}}}$. Windows in \S\ref{sec:empirical:specA}; placebo columns re-run BSTS on the same calendar window in 2024 with a fake cutover. Observed-vs-counterfactual series in Figures~\ref{fig:bsts-id15}--\ref{fig:bsts-da15}.}
+\label{tab:bsts-spec-a}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\linewidth]{fig_bsts_id15_effects.pdf}
+\caption{\textbf{ID15 effects on both markets} (2$\times$2 zoomed view, 40-day pre-blackout post-window). Black: observed (7-day MA). Blue: BSTS in-sample fit on the pre-window with 95\% band. Red dashed: out-of-sample counterfactual with 95\% band. Cutover 2025-03-19; blackout 2025-04-28. Both IDA and DA clearing prices (top row) drop below the counterfactual by similar magnitudes on the same day, even though ID15 only changed intraday granularity --- the cross-market rational-anticipation channel into day-ahead.}
+\label{fig:bsts-id15}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\linewidth]{fig_bsts_da15_effects.pdf}
+\caption{\textbf{DA15 effects on both markets} (2$\times$2 zoomed view, post-window through 2026-02-26). Same colour scheme as Figure~\ref{fig:bsts-id15}. Cutover 2025-10-01; reforzada-constant pre-window starts 2025-04-28. The DA CCGT panel (bottom-right) is the one quantity outcome where the observed series visibly departs from the counterfactual post-cutover --- the CCGT scale-up of \S\ref{sec:results:6-4}.}
+\label{fig:bsts-da15}
+\end{figure}
+
+Both DA and IDA clearing prices drop sharply under ID15 (Table~\ref{tab:bsts-spec-a}, top row of Figure~\ref{fig:bsts-id15}). The cross-market symmetry is the signature: both markets drop by similar magnitudes on the same day even though ID15 only changed \emph{intraday} granularity --- the rational-anticipation channel into day-ahead. The BSTS conditions on wind, solar, and gas, so the drop is net of the merit-order shift; the pre-window in-sample fit is tight. \emph{Verdict.} The 2024 same-calendar placebo also runs negative; the joint placebo-net 95\% interval brackets zero, so the level effect is not retained as a single number. A cross-border control reads the drop as Spain-specific: the Spain$-$France hourly DA-price gap widens against Spain across the 40-day pre-blackout MTU15-IDA window --- France is on the same SIDC mechanism but does not show the same drop --- then reverts once both continental MTU15 reforms are in and reforzada has settled.\footnote{Spain$-$France hourly DA-price gap (EUR/MWh): $-4.27$ in ISP15-win $\to$ $-21.51$ in MTU15-IDA pre-blk (a $\sim\!17$~EUR/MWh Spain-specific shift) $\to$ $-8.48$ in DA15/ID15.} The IDA-side bid-shape primitive driving the drop is the dispatchable $N_{\text{eff}}$ widening of \S\ref{sec:results:6-1}; the DA-side anticipation channel is the CCGT $\sigma_p$ widening of the same section. DA15 price effects are small and not directional.
+
+\emph{Pre-window choice.} We use the full post-IDA-reform pre-window (2024-06-14 onwards, $n=278$ days) rather than a shorter post-ISP15 window. The long window covers a full year of renewable variation, so the BSTS solar coefficient is identified across the seasonal range and the spring post-window surge is absorbed through the covariate channel; the residual is the underlying reform effect. A winter-only pre-window would identify the solar coefficient on $\sim$60\% of the long-window variation and the spike-and-slab prior would retain solar in only $48\%$ of the MCMC draws, leaving most of the surge to load on the local-level component and inflate the placebo-net by a factor of roughly two. Table~\ref{tab:bsts-solar-symmetry} in \hyperref[sec:5f]{Appendix~\ref*{app:robustness}.6} reports the diagnostic explicitly: under the long window the real and placebo posteriors absorb solar surges of nearly identical size ($+15.4$ vs $+17.1$ GWh/day) through fully-included coefficients of comparable magnitude, exactly the symmetry the joint placebo-net test requires. The per-IDA-session decomposition in the same appendix reproduces the pooled estimate at $\sim$EUR\,$-45$/MWh, confirming that the headline pooling does not mask cross-session heterogeneity.
+
+\emph{ID15 CCGT cleared.} CCGT IDA shows a tiny drop under ID15 that does not survive the placebo net (Table~\ref{tab:bsts-spec-a}, placebo-net $+1.10$), and the DA side does not move either --- but the latter is a floor effect, not a null: by the MTU15-IDA window CCGT DA-cleared volume is already near zero (CCGT was crowded out of the merit order by solar), so even if granularity gave CCGT an instrument to shift out of DA there is essentially no room to do so.
+
+\subsection{DA15 day-ahead CCGT cleared scale-up in critical hours (Spec A)}\label{sec:results:6-4}
+
+The only level-shift finding to survive the joint 95\% placebo-net test (Figure~\ref{fig:bsts-da15}, bottom-right; Table~\ref{tab:bsts-spec-a}, DA15 CCGT placebo-net $+58.99^{***}$). MTU15-DA lets combined-cycle gas discriminate finely within the hour, raising its expected acceptance probability across the four quarters of a peak hour --- same channel as the bid-shape widening in \S\ref{sec:results:6-1}. Running the Spec~A BSTS at hour-class resolution on cleared MWh shows the scale-up concentrates almost entirely in critical hours, with a smaller flat-hour contribution and essentially nothing in midday (where solar saturation displaces gas) --- the granularity-bites-where-within-hour-residual-demand-varies channel made direct. The scale-up is also one-sided across markets: substantial in DA, essentially unchanged in IDA --- CCGT migrates \emph{into} DA without losing its IDA arm in cleared terms. Extending the post-window through winter shrinks but does not flip the estimate. Hydro and nuclear are essentially null.
+
+\emph{Note.} OMIE auction-cleared MW is pre-restriction by construction: the adjustments REE makes through the technical-restrictions process do not enter in these programs\footnote{Programa Diario Base de Casaci\'on (PDBC), for DA; and Programa Intradiario Base de Casaci\'on Incremental (PIBCI), for IDA.}. The scale-up reported here is therefore a shift in the day-ahead \emph{competitive clearing}, not in REE's restriction call (see Appendix~\ref{app:context}).
+
+However, \textbf{competitive clearing anticipates expected REE's intervention}: bidders factor the probability of being called in Fase~I --- pay-as-bid and typically more profitable than the day-ahead clearing price --- into their day-ahead offer, so the DA-cleared scale-up still partly reflects Fase~I anticipation.\footnote{Illustrative precedent: CNMC \emph{Resoluci\'on del Consejo de 14 de mayo de 2019} (expediente SNC/DE/175/17) sanctioned Naturgy Generaci\'on with EUR 19.5~M for eight serious infractions of Art.~65.34 of Ley 24/2013 (LSE), for offering eight combined-cycle plants above marginal cost in the day-ahead market between October~2016 and January~2017 so the units were called instead through technical restrictions (pay-as-bid Fase~I). The Audiencia Nacional dismissed the appeal in 2024 (SAN 1405/2024).}
+
+\paragraph{BSTS drift diagnostic.} Applying the drift diagnostic of \S\ref{sec:empirical:specA} to the Table~\ref{tab:bsts-spec-a} cells: the headline findings of \S\ref{sec:results:6-3} (ID15 price drop) and \S\ref{sec:results:6-4} (DA15 day-ahead CCGT scale-up) are visible from the first post-cutover days and stable between 14-day and 40-day post-windows. The pump-storage cleared-MW level effects --- on both reforms --- fail the diagnostic and we do not interpret them.
+
+\subsection{Within-hour wedge SD jumps under ID15 and persists at DA15 (Spec A)}\label{sec:results:6-5wedge}
+
+The wedge \emph{level} BSTS is null in both reforms. The within-day wedge SD $\Delta^{\text{SD}}_d$, by contrast, jumps sharply under ID15 and concentrates in critical hours.\footnote{Wedge SD placebo-net under ID15: $2.16$~EUR/MWh (joint 95\% $[0.62, 3.70]$) overall; $3.14$ in critical hours (z $\approx 4.4$). DA15 placebo-net is null.} Robust to both a 2024 and an independent 2026 same-calendar placebo.
+
+\emph{Mechanism.} ID15 makes intraday 15-min while day-ahead stays 60-min, so each clock-hour hosts four IDA quarter-prices against one DA price; $\Delta_{d,h}$ moves more where within-hour residual demand actually varies.
+
+\emph{Asymmetric persistence.} The symmetric reform (DA15, both markets 15-min) does \emph{not} revert the wedge SD: the theory's account is per-product limited arbitrage (\S\ref{sec:theory:da15}(ii)). The model predicts a non-collapsing wedge SD of order $\sigma_\mu/(4 b_1)$ under binding per-product arbitrage capacity, which is consistent with the observed DA15 non-reversion; we do not directly identify the binding-capacity channel. Residual dispersion the model does not pin down may reflect additional channels --- behavioural hysteresis or a renewable-penetration trend the covariates do not fully absorb --- as complements to, not substitutes for, the structural account.
+
+\paragraph{ISP15 isolates a settlement-only channel.}\phantomsection\label{sec:results:6-5isp15}
+ISP15 changed REE's settlement period from 60 to 15 min on 2024-12-11 but left the OMIE auction grid unchanged --- DA and IDA both still hourly. Mechanically the wedge SD should not move. It does (placebo-net $+3.92$~EUR/MWh, same direction as ID15). The natural reading is that bidders respond to the finer \emph{settlement} reference itself, not only to a finer auction grid. ID15 then stacks both channels (finer settlement \emph{and} finer auction); ISP15 isolates the settlement-only channel.
+
+\subsection{Production-unit arbitrageurs are empirically active in intraday auctions}\label{sec:results:6-6}
+
+Table~\ref{tab:arb-units} reports, by technology, the share of OMIE intraday-auction (IDA) unit-sessions in which a production unit submits both a sell and a buy offer (the unit-level signature of position rebalancing or arbitrage), together with the mean sell and buy capacity offered within those dual-direction sessions. The day-ahead auction is omitted because no production unit ever submits a buy offer there: with a single product per unit per hour, there is no within-day spread for a producer to arbitrage on the same auction. Two patterns emerge in IDA. Variable renewables and small dispatchable techs (Solar PV, Wind, Cogen, Biomass) run buy volumes within 1\% of sell volumes inside dual-direction sessions --- consistent with forecast-driven rebalancing that can revise in either direction. Thermal and large-storage techs (CCGT, Coal, Nuclear, Hydro, Hydro-pump) keep buy volumes at 23--50\% of sell volumes --- consistent with sellers periodically rebalancing a sell-dominated portfolio rather than running paired positions. The thermal rows in particular average over the full 2018--2026 sample; in the post-MTU15-IDA window itself, CCGT was crowded out of the merit order by solar and produced almost nothing, so the absence of a CCGT response to the intraday cutover in this measure is largely a no-production result, not evidence against arbitrage. A further caveat applies to the post-blackout window: during reforzada (continuous from 2025-04-28), the dominant CCGT arbitrage is between Fase~I up-redispatch (pay-as-bid, REE-paid) and the wholesale auction clear, a between-market channel that the within-OMIE dual-direction measure does not see by construction. Both patterns nonetheless confirm an arbitrageur agent of the kind the sequential-market theory presupposes is empirically operating on the intraday bid stack across every production technology that is actually clearing volume --- the empirical confirmation of P7 (\S\ref{sec:theory:speaks}).
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{\textbf{Production-unit dual-direction (sell + buy) offers in OMIE intraday auctions, 2018-01-01 to 2026-01-31.} ``\% dual'' is the share of unit-sessions with at least one sell \emph{and} at least one buy offer. Mean sell and buy MW are averaged over the dual-direction sessions. The day-ahead market is omitted: across 2.7~M unit-days, zero production-unit buy offers were submitted in DA.}
+\label{tab:arb-units}
+\begin{tabular}{l r r r r r}
+\toprule
+Tech-group & n unit-sessions & \% dual & Mean sell MW & Mean buy MW & Buy/Sell \\
+\midrule
+Solar PV    & 2{,}093{,}392 & 26.9 &     54 &     55 & 101\% \\
+Wind        & 2{,}313{,}441 & 16.2 &    133 &    167 & 126\% \\
+Cogen       &   334{,}852 &  3.8 &     85 &     92 & 108\% \\
+Biomass     &   112{,}548 &  6.4 &     27 &     28 & 104\% \\
+\addlinespace
+Hydro\_RES  &   434{,}887 &  3.9 &     73 &     63 &  86\% \\
+Hydro       &   339{,}500 &  5.7 &  8{,}654 &  3{,}711 &  43\% \\
+Hydro\_pump &    53{,}763 &  4.6 &  3{,}462 &  1{,}737 &  50\% \\
+\addlinespace
+CCGT        &   266{,}085 &  4.0 &  4{,}625 &  2{,}001 &  43\% \\
+Nuclear     &    13{,}054 &  4.1 &  1{,}225 &    360 &  29\% \\
+Coal        &     7{,}073 &  0.8 &    993 &    232 &  23\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{System-cost decomposition: granularity shrinks ajuste; reforzada inflates Fase~I}\label{sec:results:granularity-vs-reforzada}
+
+After the OMIE auction clears, REE may still need to act on the schedule in several ways --- buying MW from units to dispatch them \emph{up} (when the system runs short or needs voltage support), or paying units to reduce output \emph{down} (including renewable curtailment when there is excess supply). The four UP channels and four DN channels are all costs that REE pays to providers. Figure~\ref{fig:efficiency_gains} stacks them by regime, using the six reform-window regimes of Figure~\ref{fig:bid_internal:timeline} --- UP at the bottom (solid), DN on top (hatched) --- and shades pre-blackout regimes blue and post-blackout regimes (reforzada in force) red, because the granularity reforms and the reforzada response operate on different mechanisms and should not be conflated.
+
+The cleanest evidence for the granularity channel is \emph{within the pre-blackout zone}: from ISP15-win to DA60/ID15-pre (the 40-day MTU15-IDA window before the April 2025 blackout), total per-day ajuste cost drops from $\sim$EUR\,16M to $\sim$EUR\,14M, driven by real-time redispatch falling by roughly a third, aFRR up shrinking by about half, and the down-direction channels shrinking in parallel. With a quarter-level cleared schedule, the auction itself absorbs within-hour variation that previously had to be cleaned up ex post, in either direction.
+
+The channel is most visible in renewables. Solar aggregators exploit granularity in midday hours --- when solar actually produces --- by committing to four quarter-level schedules that track cloud-cover variation instead of a single hourly commitment. The Spec~A finding that solar cleared MW shifts into midday DA under DA15 (\S\ref{sec:results:6-5}) is the auction-side footprint of exactly this channel: less within-hour mismatch upstream, less imbalance for REE to absorb downstream.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../../figures/working/efficiency_gains_timeseries.pdf}
+\caption{\textbf{Evolution of daily ajuste-cost composition (EUR M / day, $14$-day rolling mean): UP (solid) and DN (hatched) stacked.} All eight channels are gross costs REE pays providers, so all are stacked positive. UP layers at the bottom (REE buys MW to dispatch up), DN layers on top (REE pays units to come down, including renewable curtailment under Fase~I dn and Fase~II dn). Background shading splits the timeline into pre-blackout (blue) and post-blackout / reforzada (red); vertical dotted lines mark the five reform dates of Figure~\ref{fig:bid_internal:timeline}. The granularity-only signal is clearest in the pre-blackout zone: TR up (blue) starts large and falls sharply after MTU15-IDA; aFRR follows. Post-blackout, Fase~I up (red) balloons (CCGT dispatched up for voltage support; CCGT-only pattern shown in Appendix~\ref{app:context}.3, Figure~\ref{fig:ree_intervention_by_tech}) and the DN side grows (renewables curtailed to make room); the granularity channels continue to shrink, but the reforzada-driven growth dominates the headline total. TR dn is reported in the source data net of a small refund; we take its absolute value here for the gross-cost reading. \emph{Figures are raw per-day rates with a $14$-day rolling mean for readability --- not seasonally adjusted.}}
+\label{fig:efficiency_gains}
+\end{figure}
+
+In the post-blackout regimes, the headline total \emph{rises} despite the granularity channels continuing to shrink. Fase~I up balloons by $\sim$EUR\,5M/day (CCGT dispatched up for voltage support) and Fase~II dn grows by $\sim$EUR\,2--3M/day (units, including renewables, curtailed to make room). These are reforzada-driven, not MTU15. The granularity channels within the post-blackout zone keep shrinking (TR up falls further from DA60/ID15 post to DA15/ID15 once the day-ahead grid moves to 15-min), but they are overwhelmed in the headline total by the reforzada growth. A cost analysis that does not separate the two policies will read the MTU15 reforms as a net cost increase, when the granularity channels themselves are cost reducers in both directions and the post-blackout reinforced-operation regime is the actual driver of the headline cost rise. The complementary per-technology evidence in Appendix~\ref{app:context}.3 shows that the post-blackout cost spike is CCGT-only --- consistent with a voltage-support intervention, not a uniform granularity effect.
+
+\subsection{Cross-market substitution and the wind null}\label{sec:results:6-5}
+
+Two patterns in Tables~\ref{tab:bsts-spec-a}--\ref{tab:specB-da15} require their own reading.
+
+\paragraph{Renewable cleared MW reallocates toward the granular market.} Renewables cannot reposition their physical generation --- it follows weather --- but aggregators can reposition where the generation is \emph{offered}. Under DA15, day-ahead cleared MW rises broadly across hour-classes for wind (aggregators push the entire output into DA), while the intraday side falls. Solar reallocates time-of-day rather than only market-side: DA cleared rises in midday (where solar generates) and falls in critical hours; IDA cleared falls across the day. Under ID15, intraday cleared MW rises for solar while day-ahead is unchanged.
+
+\emph{Mechanism.} The same upstream-migration logic as the dispatchable fleet in \S\ref{sec:results:6-4} (finer offering raises expected acceptance probability), reinforced by a renewable-specific channel: ISP15 (December 2024) moved REE's imbalance settlement to 15-min, so any intra-hour gap between scheduled and realised generation now triggers a 15-min imbalance penalty. Scheduling into a 60-min market locks the unit into a single hourly schedule even when its 15-min forecast varies within the hour; scheduling into the granular (15-min) market lets the unit submit a schedule that tracks its 15-min forecast and minimises the imbalance bill. Wind and solar have the largest within-hour forecast variance among Spanish techs, so they benefit most from the granular-market shift.
+
+\paragraph{Why the wind DiD coefficients are small even though aggregators \emph{do} engage with granularity.} Wind's IDA $N_{\text{eff}}$ in Table~\ref{tab:spec-c} widens under ID15 but with magnitudes an order of magnitude smaller than the dispatchable techs. This small DiD does not mean wind is price-taking. Wind aggregators face an \emph{operational} incentive to bid at quarter granularity in \emph{every} hour --- imbalance penalties under ISP15 reward accurate quarter-level forecasting equally in critical and flat hours --- so wind's granularity engagement is roughly uniform across hour-classes and the critical/flat differential collapses. The DiD measures concentration in critical hours, not engagement per se; for wind the engagement is real but uniformly spread, so it cancels out of the DiD. This is the operational-vs-strategic distinction that distinguishes the renewable and dispatchable sides of the same reform: both use the granularity, but only the dispatchable side concentrates that use in critical hours where the per-quarter mark-up is highest.
+
+% =====================================================================
+\section{Conclusion: granularity is a strategic-latitude reveal, not a market-power amplifier}\label{sec:conclusion}
+% =====================================================================
+
+A market-microstructure reform that simply increases trading-period resolution acts not as a uniform technology shock but as a \emph{strategic-latitude reveal}. It does not change marginal costs, capacity, or who is in the market. It changes who has room to discriminate within the hour and where --- and the equilibrium response traces exactly that, with the dispatchable fleet --- most robustly combined-cycle gas, with hydro and pump-storage subject to the per-tech caveats of \S\ref{sec:5b} --- restructuring bids in critical hours, operational firms (wind and solar aggregators) using the finer grid uniformly to manage imbalance, and both rippling across the sequential markets through cross-market anticipation. Direct intraday bid-stack evidence (\S\ref{sec:results:6-6}) confirms that unit-level position rebalancing is active across every production technology: 4--30\% of intraday-auction unit-sessions carry both a sell and a buy offer, with the volume balance stratifying along forecast-driven vs sell-dominated lines.
+
+\paragraph{Does granularity amplify market power?} The wholesale-price evidence runs the other way: intraday clearing prices fall under ID15 with day-ahead prices co-moving down via cross-market anticipation, and the Spain--France cross-border control localises the move to Spain (\S\ref{sec:results:6-3}). The mechanism is more granular ladders intensifying within-quarter competition at the competing-tier prices that set MCP, plus a DA-side anticipation channel: bidders restructure their day-ahead ladders ahead of the finer intraday re-trading. The day-ahead/intraday wedge keeps its mean at zero. The strategic engagement we document is not rent extraction at consumer expense --- it is firms competing more granularly. More tranches in critical hours expose more of the competing tier to within-hour competition rather than averaging it into a single hourly clearing.
+
+\paragraph{Does it harm consumers?} The wedge mean stays at zero; the system-cost decomposition of \S\ref{sec:results:granularity-vs-reforzada} shows the granularity reforms shrink the up-direction adjustment-cost channels REE has to call --- real-time redispatch and aFRR\footnote{aFRR (automatic Frequency Restoration Reserve) is a continuous balancing service: units that have committed an aFRR band are automatically signalled to ramp up or down within seconds to correct system frequency deviations.} reserve activations both shrink across the reform sequence (Figure~\ref{fig:efficiency_gains}). The DA15 CCGT cleared scale-up of \S\ref{sec:results:6-4} is the auction-side footprint of the same channel: more CCGT clearing in DA, less ex-post redispatch needed downstream. The only ajuste channel that grows across the same window is Fase~I\footnote{Fase~I is REE's primary up-redispatch market: after the OMIE day-ahead auction clears, REE may need extra generation in specific zones (to ease grid congestion or restore voltage margins) and procures it through a separate pay-as-bid restriction offer.} up-redispatch, but this is the response to the post-blackout reinforced-operation regime, not to MTU15: the two policies overlap calendar-wise but operate on different mechanisms (Appendix~\ref{app:context}.3, Figure~\ref{fig:ree_intervention_by_tech}). Net of the reforzada-driven Fase~I growth, the granularity reforms are cost-reducing for the system.
+
+A deeper question is whether the March 2025 ID15 reform was in some way responsible for the April 2025 blackout, and therefore indirectly for the post-blackout rise in consumer prices through reforzada-driven REE restrictions.
+
+Two facts in our data sharpen the question. The first is that REE's response is technology-specific. Under the reinforced-operation regime the system operator systematically calls combined-cycle gas up for voltage support and curtails solar and hydro to make room. The CCGT post-day-ahead call-up roughly doubles after the blackout (\S\ref{sec:results:granularity-vs-reforzada}, Figure~\ref{fig:ree_intervention_by_tech}); the curtailment of solar and hydro grows alongside it. This is a standing operating posture, not a market-driven dispatch outcome.
+
+The second is that renewable conditions in spring 2024 and spring 2025 were near-identical. The three weeks around the blackout date averaged solar 153 vs 143 GWh/day and wind 163 vs 146 GWh/day across the two years, with day-ahead prices of EUR\,19 vs 22/MWh. On the blackout day itself, solar was a moderate 125 GWh and wind only 70 GWh. Yet only the 2025 system blacked out. A weather-driven explanation does not survive the year-over-year check: spring renewable supply was comparable, and the cleanest systemic change between the two springs is the three-step MTU15 sequence. \emph{One caveat:} installed solar capacity grew about $10\%$ over the year, so production parity hides higher dispatchable variability in 2025. Production levels constrain the renewable-only explanation; they do not by themselves prove an alternative.
+
+The most authoritative investigation on the incident --- the ENTSO-E Expert Panel's final report \citep{entsoe_blackout_iberia_2026} --- does not list ID15 as a contributing factor: its root-cause tree points to voltage- and reactive-power-control failures rather than to anything in the market-microstructure layer.\footnote{ENTSO-E technical root causes: renewable plants operating at fixed power factor, manually-operated shunt reactors, divergent overvoltage protection settings, converter-driven instability, and absence of power-system stabilisers on several large units.}
+
+Anecdotally, the parallel CNMC report does flag the move to quarter-hourly trading as one contributor to the abrupt voltage variations observed in the months around the incident \citep[p.~44]{cnmc_blackout_recommendations_2026}:
+\begin{quote}
+\itshape It is worth recalling that the implementation of the 15-minute trading unit in the Spanish intraday market was completed on 18 March 2025, one month before the incident, with the entry into force of quarter-hourly trading in both the intraday auctions and the continuous intraday market. The implementation was carried out within the framework of the European intraday coupling projects in line with Regulation (EU) 2017/2195. The evolution to quarter-hourly trading and settlement has made the appearance of transitions between negative and positive prices increasingly frequent, leading to strong changes in production volumes in certain zones.\footnote{Original (CNMC report, p.~44): \emph{``A este respecto, cabe recordar que el proceso de implantaci\'on de la unidad de negociaci\'on de 15 minutos en el mercado intradiario espa\~nol se complet\'o el 18 de marzo de 2025, 1 mes antes del incidente, con la entrada en vigor de la negociaci\'on cuarto-horaria tanto en las subastas intradiarias como en el mercado intradiario continuo. La implementaci\'on se realiz\'o en el marco de los proyectos europeos de acoplamiento intradiario en coherencia con el Reglamento (UE) 2017/2195. La evoluci\'on a una negociaci\'on y liquidaci\'on de productos cuarto horarios ha hecho cada vez m\'as frecuente la aparici\'on de transiciones entre precios negativos y positivos que conducen a fuertes cambios del volumen de producci\'on en determinadas zonas.''}}
+\end{quote}
+
+\textbf{Answering this question is beyond the scope of this thesis} --- it requires electrical-engineering knowledge we do not have --- but it points to a strong research gap: the ENTSO-E report may be identifying the proximate technical triggers but not engaging with whether the market-microstructure reforms contributed to the macro-conditions (frequent within-hour swings, converter-driven volatility under fixed-power-factor RES dispatch) that made the system fragile enough for those triggers to cascade. The CNMC's anecdotal flag points exactly there.
+
+\newpage
+
+\bibliographystyle{plainnat}
+\addcontentsline{toc}{section}{References}
+\bibliography{references}
+
+\newpage
+
+% Drop subsections (and below) from the TOC for the appendix.
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
+
+\appendix
+
+% =====================================================================
+\section{Robustness}\label{app:robustness}
+% =====================================================================
+
+A few caveats up front: bid-shape DiDs in a market this complex (overlapping reforms, regulatory regime changes, weather-driven dispatch) will not deliver textbook causal cleanliness on every cell. The robustness checks below flag where the headline reading is solid and where it rests on shakier ground.
+
+\subsection{Pre-trend placebo --- the headline check (partially supportive)}\label{sec:5b}
+A pre-only midpoint placebo splits each reform's pre-window at its midpoint and runs a fake critical-flat DiD on the same outcome. ID15 IDA dispatchable $\sigma_p$ placebos all bracket zero --- the ID15 bid-shape findings rest on a clean pre-trend. For DA15 day-ahead: hydro $\sigma_p$ placebo is clean, CCGT $\sigma_p$ placebo runs opposite the headline (so de-trending strengthens it), and pump-storage $\sigma_p$'s placebo exceeds the headline DiD --- not separable from a pre-existing trend.
+
+\subsection{Hour-class falsification (midday vs.\ flat) (supportive)}\label{sec:5a}
+A midday-vs-flat falsification gives sign-stable but smaller-magnitude DiDs at $p_{90}$: the reform reshapes the entire non-flat zone, consistent with Spec~B. The cleaner critical-vs-flat contrast remains the headline because flat hours are the unambiguous within-day control.
+
+\subsection{Cross-border and reforzada --- the two natural confounds (supportive)}\label{sec:5d}
+SIDC/XBID also moved to 15-min on the same date as ID15 --- a sibling treatment on the same reform, not an omitted-variable bias: adding hourly cross-border net flow as a control on ID15 IDA $\sigma_p$ leaves the per-tech DiDs essentially unchanged. The reforzada regulatory stance acts on the \emph{level} of Fase~I up-redispatch, not its \emph{within-hour SD}: reforzada parks capacity in the scarcity tier and recalls it through restriction offers (Appendix~\ref{app:context}), while MTU15 reshapes the competing tier within the band --- two non-overlapping mechanisms.
+
+\subsection{Per-CCGT-firm decomposition of the DA15 $\sigma_p$ widening (heterogeneity description, not a validation)}
+The pooled DA15 CCGT day-ahead $\sigma_p$ widening of \S\ref{sec:results:6-1} is driven primarily by Naturgy and to a lesser extent Iberdrola; Endesa and EDP-HC do not contribute. The Naturgy effect is not a flat-baseline artefact: $\sigma_p$ rises in both arms but more in critical hours. The bid-shape engagement is therefore not Big-4-uniform; it concentrates in the two firms that have historically been most active in the day-ahead competing tier.
+
+\subsection{Bandwidth $h$ (supportive at $p_{90}$, problematic at wider bandwidths)}\label{sec:5e}
+We anchor the bandwidth to the contested margin of the market: $h = p_{90} - p_{50}$ of the MCP distribution per (window, market) (\S\ref{sec:data:bandwidth}). The choice of $p_{90}$ has an economic rationale: it separates the competing tier --- tranches close enough to the clearing price to be in real contention for marginal acceptance --- from the parked tier above the clearing-price ceiling, which is a placeholder rather than a strategic bid (Appendix~\ref{app:context}). Including the parked tier would mix non-strategic prices into $\sigma_p$, inflating it through a cross-tier spread that has nothing to do with within-tier behaviour. The picture is robust to small shifts around $p_{90}$; at much wider bandwidths, CCGT $\sigma_p$ magnitudes inflate and several DiD coefficients flip sign --- exactly the parked-tier contamination we anticipate, since widening the band past the tier-2 cutoff pulls those non-strategic prices into $\sigma_p$. The IDA bandwidth pools the three sessions; session~3 has a materially wider $p_{90}-p_{50}$ than sessions~1--2, but a session-specific $h$ cannot flip signs --- the per-session BSTS in \S\ref{sec:5f} shows the price-level effect is uniform across sessions.
+
+\subsection{Per-IDA-session BSTS and the solar-coefficient symmetry test}\label{sec:5f}
+The long pre-window of \S\ref{sec:empirical:specA} earns its specification two ways: real and placebo absorb the spring solar surge through the same covariate channel (Table~\ref{tab:bsts-solar-symmetry}), and the per-session decomposition reproduces the pooled estimate (Table~\ref{tab:bsts-per-session}). The two tables together pin down the ID15 price effect at $\sim$EUR\,$-40$ to $-50$/MWh and show why a winter-only pre-window would have inflated the estimate to twice that.
+
+\emph{Why the symmetry test matters.} The placebo-net reading $\bar\tau_{\text{real}}-\bar\tau_{\text{placebo}}$ identifies a reform effect only if the BSTS treats the same calendar surge consistently across the two posteriors. The covariate channel for solar is the one most exposed to mis-identification, because solar output rises sharply between the late-winter pre-window and the spring post-window in every recent year. If the pre-window covers a full year of solar variation, the BSTS solar coefficient is identified across the full seasonal range and the post-window surge is absorbed through the covariate; the residual is the reform effect. If the pre-window is winter-only, the coefficient is identified off a narrow range and the surge partly bypasses the covariate, loading on the local-level component instead.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{l l r r c c r}
+\toprule
+\textbf{Pre-window} & \textbf{Arm} & $n_{\text{pre}}$ & \textbf{Effect (EUR/MWh)} & \textbf{Solar $\hat\beta$} & \textbf{Incl. prob.} & \textbf{Solar $\Delta$ (GWh/d)} \\
+\midrule
+\multirow{3}{*}{Long (Jun 2024 onwards)}  & Real 2025       & $278$ & $-38.3^{***}$ & $-0.354$ & $1.00$ & $+15.4$ \\
+                                          & Placebo 2024    & $279$ & $-18.1^{*}$   & $-0.273$ & $1.00$ & $+17.1$ \\
+                                          & Placebo 2026    & $278$ & $-2.4$        & $-0.400$ & $1.00$ & $+35.3$ \\
+\addlinespace
+\multirow{2}{*}{Short (Dec 2024 onwards)} & Real 2025       & $80$  & $-78.8^{***}$ & $-0.213$ & $\mathbf{0.48}$ & $+48.7$ \\
+                                          & Placebo 2026    & $80$  & $-8.9$        & $-0.298$ & $0.73$         & $+80.9$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Solar-coefficient symmetry test for the ID15 IDA-price BSTS.} The long-window real and placebo absorb almost identical solar surges (+15 to +17 GWh/day post above pre) through fully-included solar coefficients of comparable magnitude --- the symmetry the joint placebo-net test requires. The short-window real has a solar surge nearly three times larger than the long-window placebo's, attempted to be absorbed through a solar coefficient included only $48\%$ of the time and biased toward zero --- the asymmetry that inflates the short-window real residual. Inclusion probability is the share of MCMC draws in which the spike-and-slab prior retains the solar regressor.}
+\label{tab:bsts-solar-symmetry}
+\end{center}
+
+\emph{Per-session decomposition.} With the long pre-window in place, the per-IDA-session BSTS reproduces the pooled estimate within a few EUR/MWh and confirms session symmetry (Table~\ref{tab:bsts-per-session}). All three sessions land at $\sim$EUR\,$-45$/MWh; the long-window 2026 placebo runs flat at $\sim$EUR\,$-10$/MWh per session, so the per-session placebo-nets cluster around $-37$ EUR/MWh and remain marginally significant on the joint test. The earlier $\sim$EUR\,$-80$/MWh per-session estimates reported in our draft of this table used the short post-ISP15 pre-window inherited from the 2026-placebo session-comparability constraint; in light of Table~\ref{tab:bsts-solar-symmetry} we read them as inflated by the same channel and report the long-window numbers instead. The 2024 placebo for ID15 is not session-comparable (the pre-IDA-reform regime had six sessions rather than three), so we report it only at the pooled level.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{l l c c c c}
+\toprule
+\textbf{Reform} & \textbf{Session} & \textbf{Effect (real)} & \textbf{Placebo 2024} & \textbf{Placebo 2026} & \textbf{Placebo-net (vs 2024)} \\
+\midrule
+\multirow{4}{*}{ID15 IDA (long pre)} & S1 & $-48.4^{***}$ & ---       & $-11.0$ & --- \\
+                                     & S2 & $-41.6^{***}$ & ---       & $-8.4$  & --- \\
+                                     & S3 & $-47.6^{***}$ & ---       & $-8.4$  & --- \\
+                                     & Pooled & $-38.3^{***}$ & $-18.1^{*}$ & $-2.4$ & $-20.3$ \\
+\addlinespace
+\multirow{3}{*}{DA15 IDA} & S1 & $15.4^{***}$  & $3.9$        & ---  & $11.5^{**}$   \\
+                          & S2 & $14.4^{***}$  & $-1.8$       & ---  & $16.2^{***}$  \\
+                          & S3 & $19.0^{***}$  & $10.6^{**}$  & ---  & $8.4$         \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Per-IDA-session and pooled BSTS on daily clearing prices.} ID15 uses the long post-IDA-reform pre-window (2024-06-14 onwards) and is reported with both same-calendar placebos at the pooled level; the 2024 placebo predates the $6\!\to\!3$ session reform and is not session-comparable, so per-session ID15 rows show only the 2026 placebo. DA15 uses the reforzada-constant pre-window (2025-04-28 onwards) and a 2024 same-calendar placebo. Tail-probability stars $^{*}p{<}0.10$, $^{**}p{<}0.05$, $^{***}p{<}0.01$ on each individual posterior; the placebo-net column for the pooled rows reports the joint difference (covered in the main-text \S\ref{sec:results:6-3} discussion). Per-session and pooled estimates agree at $\sim$EUR\,$-40$ to $-50$/MWh under ID15, supporting the pooling in the headline Spec~A table.}
+\label{tab:bsts-per-session}
+\end{center}
+
+\subsection{CCGT offer-type composition check (supportive)}\label{sec:5-offertype}
+The three OMIE structural offer types introduced in \S\ref{sec:data:outcomes} (\emph{simple}, \emph{minimum-income condition} (MIC), and \emph{block}) raise a potential mechanical confound for the DA15 CCGT $\sigma_p$ widening of \S\ref{sec:results:6-1}: a block offer is by construction a single tranche per period, so $\sigma_p=0$ and $N_{\text{eff}}=1$ mechanically. If CCGT's mix of structural types shifted across the reform, part of the pooled $\sigma_p$ DiD could be a composition effect rather than within-quarter strategic engagement.
+
+Figure~\ref{fig:ccgt-offer-type} addresses this directly. The CCGT in-band offer mix does shift across the reform, but in the direction that should \emph{dampen} the pooled $\sigma_p$ widening: the simple-offer share \emph{drops} from $\sim 29\%$ to $\sim 22\%$, the block share \emph{grows} from $\sim 30\%$ to $\sim 35\%$, and the MIC share is roughly stable. More block offers means more mechanical zeros in the pooled $\sigma_p$ average. Despite this dampening, the pooled $\sigma_p$ DiD is still $1.25^{**}$~EUR/MWh; restricting to simple offers only, the effect rises to $3.53^{***}$ (right panel). The $\sigma_p$ widening of \S\ref{sec:results:6-1} is therefore real within-tranche behavior on the simple-offer arm, not a composition artefact --- and the pooled headline is a conservative read.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{../../figures/working/fig_ccgt_offer_type.pdf}
+\caption{\textbf{CCGT offer-type composition shift and $\sigma_p$ DiD by offer type.} \emph{Left}: composition of CCGT in-band sell curves, pre vs post DA15, critical vs flat. Simple share drops, block share grows. \emph{Right}: Spec~C $\sigma_p$ DiD coefficient by offer type, 95\% CI. The widening is concentrated in simple offers ($3.53^{***}$, t=$3.60$); the pooled estimate ($1.25^{**}$) is diluted by MIC (null) and block (mechanically near-zero by construction).}
+\label{fig:ccgt-offer-type}
+\end{figure}
+
+% =====================================================================
+\section{Continuous-market response at the three structural reforms}\label{app:continuous}
+% =====================================================================
+
+\paragraph{Specification.} BSTS counterfactual on daily ES-leg continuous-market series with wind+solar+gas covariates and a weekly seasonal cycle (same setup as \S\ref{sec:empirical:specA}). Quantity outcomes are reported in \emph{energy} (MWh per trade $\times$ delivery hours, summed per day) rather than raw MW sums --- post-MTU15 each clock-hour holds four 15-min contracts where pre-MTU15 it held one 60-min contract, so a raw MW sum would be mechanically inflated. The volume-weighted price is energy-weighted. Three reform cutovers (ISP15 2024-12-11, ID15 2025-03-19, DA15 2025-10-01), each with a 2023/2024 same-calendar placebo.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l l r r r}
+\toprule
+\textbf{Reform} & \textbf{Outcome} & \textbf{Real} & \textbf{Placebo} & \textbf{Placebo-net} \\
+\midrule
+\multirow{3}{*}{ISP15}  & $n_{\text{trades}}$/day  & $-3{,}120^{***}$ & $-1{,}231^{***}$ & $-1{,}889$ \\
+                        & GWh/day                  & $-3.85^{*}$      & $-2.23^{**}$     & $-1.62$ \\
+                        & VW-price (EUR/MWh)       & $-15.1$          & $-27.4^{***}$    & $12.3$ \\
+\addlinespace
+\multirow{3}{*}{ID15}   & $n_{\text{trades}}$/day  & $22{,}335^{***}$ & $1{,}381^{*}$    & $20{,}954^{***}$ \\
+                        & GWh/day                  & $-7.19^{***}$    & $6.72^{***}$     & $-13.91^{***}$ \\
+                        & VW-price (EUR/MWh)       & $-80.1^{***}$    & $-14.1^{***}$    & $-66.0^{***}$ \\
+\addlinespace
+\multirow{3}{*}{DA15}   & $n_{\text{trades}}$/day  & $5{,}018^{**}$   & $257$            & $4{,}761$ \\
+                        & GWh/day                  & $3.85^{***}$     & $-1.35$          & $5.20^{**}$ \\
+                        & VW-price (EUR/MWh)       & $4.7$            & $-4.7$           & $9.4$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Continuous-market response at the three structural reforms.} BSTS posterior means; tail-probability stars $^{*}p{<}0.10$, $^{**}p{<}0.05$, $^{***}p{<}0.01$. Placebo-net joint significance based on independent posteriors propagating two variances.}
+\end{center}
+
+\subsection{ISP15 (settlement-only): a methodological null}
+ISP15 changed how REE settles imbalance positions (60$\to$15 min) but left the OMIE continuous-market contract grid unchanged --- traders still bought and sold hourly delivery contracts. A null effect is the right prediction here. Raw trade count and energy turnover both fall, but the same drift appears in the 2023 placebo (settlement bookkeeping innovations are not the source), and all three placebo-net intervals bracket zero. A settlement-only reform shows nothing on contract-structure outcomes --- the specification reads the reform where it lives.
+
+\subsection{ID15 (60$\to$15 min): the structural continuous-market reform}
+Pre-reform, each clock-hour of delivery hosted a single 60-min contract; post-reform, four 15-min contracts. The three outcomes move accordingly:
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item \emph{Trade count.} Each hour now offers four matching opportunities instead of one, so the trade-count surge is mechanical at first order --- but informative: it confirms participants actually \emph{used} the new finer grid rather than continuing to aggregate to the hourly contract.
+\item \emph{Energy turnover.} Placebo-net is \emph{negative}: more contracts, each smaller, and total energy changing hands drops. Two reasons: some hourly counterparties drop out when they don't see a 60-min match on offer, and some dispatchable bidding migrated into the now-finer IDA auctions instead (\S\ref{sec:results:6-2}).
+\item \emph{Volume-weighted price.} The continuous market clears in equilibrium with the auctions, so the ID15 cutover price drop on auction-cleared prices (\S\ref{sec:results:6-3}) shows up here too --- the cross-market spillover documented for ID15.
+\end{itemize}
+
+\subsection{DA15: a smaller, indirect continuous-market effect}
+DA15 does not touch the continuous-market contract grid (already 15-min post-ID15); only the day-ahead \emph{reference price} that continuous traders watch becomes finer. With a finer DA reference, traders reposition more aggressively in continuous: daily GWh up (joint 95\% retains), trade count borderline, price effect statistical noise. DA15's continuous-market footprint is incremental and proportional to how much tighter the day-ahead reference now is --- not a structural break, as expected from a reform that touches the reference market but not the continuous-market contract architecture.
+
+% =====================================================================
+\section{Market-structure context}\label{app:context}
+% =====================================================================
+
+\subsection{The two-tier CCGT bid curve and the day-ahead/intraday contrast}
+Every Big-4 CCGT fleet runs a two-tier day-ahead offer: a low \emph{competing} tier near marginal cost and a high \emph{parked} tier above the clearing-price ceiling. Withholding is firm-wide, not a Naturgy story. The same fleets bid a single competitive tier with negligible withholding in the intraday auction, after Fase~I has cleared. A unit's marginal cost does not change between two auctions hours apart. The parked tier is a placeholder rather than a Fase~I bid: Fase~I up-redispatch is settled through a separate restriction offer submitted to REE.\footnote{Procedure PO 3.2, settlement PO 14.4 ap.~20.1; see also \citet{boe_a_2025_5342,boe_a_2025_13076}. Earlier drafts conflated the two; the distinction justifies measuring bid shape and bid levels in the competing tier only, which is what the window-specific $p_{90}$ bandwidth in \S\ref{sec:data:bandwidth} achieves.} MTU15-DA grants CCGT a within-hour degree of freedom over its competing tier; the CCGT auction-cleared scale-up in \S\ref{sec:results:6-4} is the competing tier expanding into the four quarters of each peak hour.
+
+\subsection{Market concentration migrated from wholesale to ancillary services}
+Wholesale-market HHI hovers around 1\,100 over 2016--2024 (below the moderate-concentration threshold of 1\,500) and falls mid-day when solar peaks (solar is less concentrated than the Big-3). Day-ahead restrictions upward HHI above 4\,000; deviations upward above 6\,000; tertiary upward around 5\,000. Median of 4 firms with accepted upward restrictions bids. As renewables eroded wholesale-market power, technical and locational requirements concentrated the ancillary markets that absorb their variability.
+
+\subsection{The reforzada cost increase concentrates on CCGT}
+The post-blackout REE intervention is technology-specific. Decomposing weekly dispatch into its components --- the day-ahead-cleared base (PDBC), bilateral executions, and the post-DA top-up routed through IDA and REE real-time redispatch --- the CCGT panel of Figure~\ref{fig:ree_intervention_by_tech} shows the day-ahead-cleared layer (blue) collapsing post-blackout while the IDA+REE-RT layer (red) balloons. Other technologies are largely flat across the same window.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../../figures/working/fig_q_components_by_tech_weekly.pdf}
+\caption{\textbf{Weekly three-component decomposition of dispatch, by technology.} PDBC (blue, day-ahead-cleared) $+$ bilateral executions (green) $+$ IDA $+$ REE real-time top-up (red) $=$ final post-IDA dispatch (black). CCGT's day-ahead-cleared layer collapses post-blackout while the IDA $+$ REE-RT layer balloons; other technologies are flat. Vertical guides mark MTU15-IDA, the April 2025 blackout, and MTU15-DA.}
+\label{fig:ree_intervention_by_tech}
+\end{figure}
+
+This per-technology pattern is the cleanest evidence that the reforzada cost increase is a separate policy effect from the granularity reforms: a granularity reform that touched all bid-side firms equally would not produce a CCGT-only intervention pattern. The day-ahead CCGT cleared scale-up of \S\ref{sec:results:6-4} (DA15 only, critical hours) sits alongside this REE-intervention story: both are CCGT-side responses to the operational environment, but the granularity-driven response is competitive-clearing (and consumer-favourable) while the reforzada-driven response is REE-paid redispatch.
+
+% =====================================================================
+\section{Theoretical derivations}\label{app:derivations}
+% =====================================================================
+
+\subsection{Setup details and information arrival}\label{app:setup}
+
+This subsection records the timing of information arrival, the \citeauthor{ito_reguant_2016} residual-demand specification used throughout, and how that specification specialises when one or both markets are hourly.
+
+\paragraph{Timing.} Stage~1 (DA): only $\bar A$ and the distribution of $\mu_t$ are known to the strategic bidder; the aggregator knows $\bar Y_h$, $\{\bar y_t\}$ and the distribution of $\eta_t$. Stage~2 (ID): $\mu_t$ has realised and is common knowledge to first order. Stage~3 (balancing): $\eta_t$ realises and settlement occurs at the balancing reference.
+
+\paragraph{Residual demand (\citet{ito_reguant_2016} form).} The strategic residual monopolist with constant marginal cost $c$ serves what the operational aggregator does not cover, net of any arbitrage position $s_t$ carried from forward to spot. Per delivery product:
+\begin{equation}
+q_{1t} \;=\; \bar A_t \;-\; b_{1t}\, p_{1t} \;-\; s_t \;-\; S^{op}_{1t},
+\qquad
+q_{2t} \;=\; b_{2t}\,(p_1^{(t)} - p_{2t}) \;+\; s_t \;-\; S^{op}_{2t},
+\label{eq:rd}
+\end{equation}
+where $\bar A_t = \bar A + \mu_t$ is the per-subperiod demand intercept, $p_1^{(t)} = p_1$ when DA is hourly and $p_{1t}$ when DA is per-period, $S^{op}_{mt}$ is the aggregator's offered MWh in market $m \in \{1, 2\}$ at subperiod $t$ (uniform $S^{op}_m / Q$ when market $m$ is hourly), and $b_{mt}$ is market thinness (with per-subperiod asymmetry allowed). The within-hour demand shock satisfies $\mathbb{E}[\mu_t] = 0$ and $\mathrm{Var}(\mu_t) = \sigma_\mu^2$; the aggregator's per-subperiod realisation is $y_t = \bar y_t + \eta_t$ with forecast-error variance $\sigma_\eta^2$.
+
+\paragraph{Hourly residual demand by specialisation.} The general residual demand \eqref{eq:rd} specialises by setting $\bar A_t \equiv \bar A$, $b_{mt} \equiv b_m$ and $S^{op}_{mt} \equiv S^{op}_m / Q$ when market $m$ is hourly. In $(1,1)$ both reduce to one product apiece; in $(1,Q)$ only the spot demand keeps the per-period index.
+
+\paragraph{Empirical scope.} The two-stage analysis here covers the forward-spot auction pair. The balancing market enters only as the ex-post settlement reference; we collapse it into the discrepancy $\Delta_t$ used in \S\ref{app:balancing}.
+
+\subsection{Operational aggregator: full scheduling problem}\label{app:aggregator}
+
+We solve the aggregator's full scheduling problem in four steps: the problem statement, the closed-form equilibrium when both markets are hourly, the equilibrium under spot-per-period scheduling, and the comparative static $\partial \Delta^*/\partial \sigma_\eta^2 > 0$ that closes \eqref{eq:shift}.
+
+\subsubsection{Problem statement}\label{app:aggregator:problem}
+The aggregator chooses $(S^{op}_{1t}, S^{op}_{2t})_{t=1}^{Q}$ to solve
+\begin{equation}
+\max_{(S^{op}_{1t},\, S^{op}_{2t})_t}\;
+\mathbb{E}\!\left[\sum_t \big(p_1^{(t)} S^{op}_{1t} + p_{2t} S^{op}_{2t}\big) \;-\; \gamma\,\mathcal{I}\right]
+\quad\text{s.t.}\quad \sum_t (S^{op}_{1t} + S^{op}_{2t}) = \bar Y_h,
+\label{eq:agg-problem}
+\end{equation}
+with quadratic imbalance penalty $\mathcal{I} = \sum_t (y_t - S^{op}_{1t} - S^{op}_{2t})^2$ under per-period settlement and uniform-across-$t$ allocation in any market that is hourly.
+
+\subsubsection{Equilibrium under hourly schedules ($(1,1)$ and $(1,Q)$ with hourly aggregator)}\label{app:aggregator:hourly}
+With both markets hourly the aggregator chooses scalar $(S^{op}_1, S^{op}_2)$ with $S^{op}_1 + S^{op}_2 = \bar Y_h$. The per-subperiod implementation is uniform: $S^{op}_{1t} = S^{op}_1/Q$ and $S^{op}_{2t} = S^{op}_2/Q$. Per-subperiod imbalance under per-period settlement is
+\[
+\mathcal{I} \;=\; \sum_t \big(y_t - (S^{op}_1 + S^{op}_2)/Q\big)^2 \;=\; \sum_t \big((\bar y_t - \bar Y_h/Q) + \eta_t\big)^2,
+\]
+which depends on $(\bar y_t - \bar Y_h/Q)$ and $\eta_t$, not on the forward-vs-spot split. The aggregator's allocation is therefore driven purely by the price differential: it commits at forward if $p_1 > p_2$ and indifferent if $p_1 = p_2$. We normalise $S^{op}_1 = S^{op}_2 = \bar Y_h / 2$ as a tie-break.
+
+\subsubsection{Equilibrium under DA-hourly + ID-granular (state $(1,Q)$)}\label{app:aggregator:60-15}
+
+\paragraph{Notation for forecast resolution.} The within-hour heterogeneity that loads onto the aggregator's imbalance has two components: a structural per-subperiod expected production variation $(\bar y_t - \bar Y_h/Q)$, known already at Stage~1, and a forecast update $\eta_t$ resolved between Stages~1 and~2 (i.e.\ between the forward close and the spot close). $\eta_t$ has variance $\sigma_\eta^2$ and is the empirically relevant ``forecast-error shock'': bigger $\sigma_\eta^2$ means more within-hour production information that materialises after the forward allocation is fixed.
+
+\paragraph{Optimal per-subperiod spot schedule.} The aggregator chooses per-subperiod $\{S^{op}_{2t}\}_t$ at spot using its Stage-2 forecast $\bar y_t^{(2)} \equiv \bar y_t + \eta_t$ (the updated expected production at the time of the spot close). Setting
+\begin{equation}
+S^{op}_{2t}{}^{*} \;=\; \bar y_t^{(2)} - \frac{S^{op}_1}{Q} \;=\; \bar y_t + \eta_t - \frac{S^{op}_1}{Q},
+\label{eq:agg-perperiod-id}
+\end{equation}
+matches the Stage-2 forecast net of the uniformly-allocated forward commitment. The realised per-subperiod imbalance under \eqref{eq:agg-perperiod-id} reduces to the residual post-Stage-2 noise $\varepsilon_t$ (independent of $\eta_t$, with small variance), so the expected aggregate imbalance under per-period scheduling is
+\[
+\mathbb{E}\!\left[\,\mathcal{I}_{\text{granular}}\,\right] \;=\; Q\cdot\mathbb{E}\!\left[\,|\varepsilon_t|\,\right].
+\]
+Under the hourly schedule (\S\ref{app:aggregator:hourly}) the aggregator must commit at Stage~1 using the Stage-1 forecast $\bar y_t^{(1)} = \bar y_t$; the Stage-1-to-Stage-2 update $\eta_t$ then loads onto the imbalance:
+\[
+\mathbb{E}\!\left[\,\mathcal{I}_{\text{hourly}}\,\right] \;=\; \sum_{t=1}^{Q} \mathbb{E}\!\left[\,\big|(\bar y_t - \bar Y_h/Q) + \eta_t + \varepsilon_t\big|\,\right].
+\]
+
+The aggregator's net gain from per-period spot scheduling is
+\begin{equation}
+G(\sigma_\eta^2) \;\equiv\; \gamma\!\sum_t\!\Big[\mathbb{E}\big|(\bar y_t - \bar Y_h/Q) + \eta_t + \varepsilon_t\big| \;-\; \mathbb{E}\big|\varepsilon_t\big|\Big],
+\label{eq:agg-gain}
+\end{equation}
+strictly increasing in $\sigma_\eta^2$ (the avoided Stage-1-to-Stage-2 forecast shock) and in $\sigma_a^2 \equiv \mathrm{Var}(\bar y_t - \bar Y_h/Q)$ (the structural within-hour variation). Both components map empirically to within-hour heterogeneity: clock-hours where production swings within the hour carry larger $\sigma_\eta^2$ and larger $\sigma_a^2$.
+
+\subsubsection{Quantity shift $\Delta^*(\sigma_\eta^2)$ and its comparative static}\label{app:aggregator:shift}
+The aggregator's marginal trade-off in $S^{op}_1$ is the forward-vs-spot price differential against the marginal change in $G$. The first-order condition gives an implicit $\Delta^*(\sigma_\eta^2)$:
+\begin{equation}
+(p_1 - p_2) \;=\; \gamma \cdot \frac{\partial}{\partial S^{op}_1}\!\bigg[\sum_t \mathbb{E}\big|(\bar y_t - (\bar Y_h - \Delta^*)/Q) + \eta_t\big|\bigg]\bigg|_{\Delta^*}.
+\label{eq:agg-foc}
+\end{equation}
+The right-hand side is monotone in $\Delta^*$ by convexity of the absolute-value expectation in its argument. Differentiating implicitly in $\sigma_\eta^2$,
+\[
+\frac{\partial \Delta^*}{\partial \sigma_\eta^2} \;=\; \frac{-\,\partial^2 G/\partial S^{op}_1 \partial \sigma_\eta^2}{\partial^2 G / \partial (S^{op}_1)^2} \;>\; 0,
+\]
+since the numerator is positive (a larger forecast-error variance increases the marginal cost of an extra forward-committed MWh, because the realised $|\eta_t|$ contribution to imbalance does not net out across subperiods under per-period settlement) and the denominator is positive by convexity. This establishes \eqref{eq:shift}: the aggregator's quantity shift from forward to spot is strictly increasing in the forecast-error variance.
+
+\subsection{Strategic bidder: optimal two-tranche ladder}\label{app:tranche}
+
+We derive the strategic bidder's closed-form two-tranche ladder under uniform-price clearing, the FOCs in $(p^L, p^H, k^L)$, the equilibrium spread $\Delta p^* = \Delta_\mu/(2 b)$, and a stylisation note that flags the simplification absorbed into the boundary condition.
+
+\subsubsection{Profit under uniform-price clearing}\label{app:tranche:profit}
+The strategic bidder is the residual monopolist; there is no higher-priced fringe bid above its top tranche. Under uniform-price clearing (as in OMIE day-ahead and intraday auctions), the clearing price is therefore set by the marginal accepted tranche of the strategic bidder's own ladder: $p^L$ when only the low tranche clears, $p^H$ when both clear. For a delivery product at which the residual-demand intercept is $\bar A + \mu$ (with $\mu \sim \mathrm{Uniform}[-\Delta_\mu, +\Delta_\mu]$), the strategic bidder commits a ladder $\{(p^L, k^L), (p^H, k^H)\}$ with $p^L \le p^H$, $k^L + k^H = K$ \emph{before} $\mu$ realises. The cleared MWh at $\mu$ is
+\[
+q(\mu) = \begin{cases} k^L = q^L & \text{if } \mu \le \mu^*, \\ k^L + k^H = K & \text{if } \mu > \mu^*, \end{cases}
+\qquad \mu^* \;\equiv\; k^L + b \, p^L - \bar A,
+\]
+where $b$ is the market thinness (either $b_{1t}$ or $b_{2t}$ depending on which market the ladder is on). The clearing price is uniformly $p^L$ when only the low tranche clears and uniformly $p^H$ when both clear --- the marginal accepted tranche price, applied to the entire accepted volume. Expected profit per delivery product is therefore
+\begin{equation}
+\mathbb{E}[\pi]
+\;=\; \frac{1}{2\Delta_\mu}\!\left[\int_{-\Delta_\mu}^{\mu^*}\!(p^L - c)\,q^L\,d\mu \;+\; \int_{\mu^*}^{\Delta_\mu}\!(p^H - c)\,K\,d\mu\right],
+\label{eq:Epi-uniform}
+\end{equation}
+with $(p^H - c)\,K$ in the second integrand reflecting that all $K$ units fetch $p^H$ when the high tranche is marginal.
+
+\subsubsection{First-order conditions}\label{app:tranche:foc}
+Take derivatives in $(p^L, p^H, k^L)$ holding $K = k^L + k^H$ fixed. Define $w^L = k^L/K$, $w^H = k^H/K$.
+
+\paragraph{FOC in $p^H$.} $\frac{\partial \mathbb{E}[\pi]}{\partial p^H} = \frac{1}{2 \Delta_\mu} \int_{\mu^*}^{\Delta_\mu} K\, d\mu = \frac{K(\Delta_\mu - \mu^*)}{2\Delta_\mu} > 0$ unless $\mu^* = \Delta_\mu$; at an interior optimum the bidder pushes $p^H$ to the boundary of acceptance, with the binding condition $p^H = (\bar A + \Delta_\mu - K)/b$ at the highest $\mu$. Substituting $\mu^* = 0$ at the symmetric solution gives $p^{H*} = (\bar A + b c)/(2 b) + \Delta_\mu/(4 b)$.
+
+\paragraph{FOC in $p^L$.}
+\[
+\frac{\partial \mathbb{E}[\pi]}{\partial p^L} \;=\; \frac{1}{2\Delta_\mu}\!\left[\int_{-\Delta_\mu}^{\mu^*}\!q^L \, d\mu \;+\; (p^L - c) q^L \cdot \frac{\partial \mu^*}{\partial p^L}\right] \;=\; \frac{1}{2\Delta_\mu}\!\left[(\mu^* + \Delta_\mu)\, q^L \;+\; (p^L - c) q^L\, b\right] \;=\; 0.
+\]
+Solving: $\mu^* + \Delta_\mu + b(p^L - c) = 0$, i.e.\ $\mu^* = -\Delta_\mu - b(p^L - c)$. Combined with the definition $\mu^* = k^L + b p^L - \bar A$, this gives $k^L = \bar A - b p^L + \mu^*$. At $\mu^* = 0$: $p^{L*} = (\bar A + b c)/(2 b) - \Delta_\mu/(4 b)$.
+
+\paragraph{FOC in $k^L$.}
+\[
+\frac{\partial \mathbb{E}[\pi]}{\partial k^L} \;=\; \frac{p^L - c}{2 \Delta_\mu}(\mu^* + \Delta_\mu) \;-\; \frac{p^H - c}{2\Delta_\mu}(\Delta_\mu - \mu^*) \;=\; 0.
+\]
+At the symmetric optimum $\mu^* = 0$ this reduces to $p^L - c = p^H - c$ when $\Delta_\mu - \mu^* = \mu^* + \Delta_\mu$, but the asymmetric prices $p^L = p^{L*}$, $p^H = p^{H*}$ require $\mu^* = 0$ exactly. Substituting $\mu^* = 0$ in $k^L = \bar A - b p^{L*}$ and the closed form for $p^{L*}$,
+\[
+k^{L*} \;=\; \bar A - b\bigg(\frac{\bar A + bc}{2b} - \frac{\Delta_\mu}{4b}\bigg) \;=\; \frac{\bar A - b c}{2} + \frac{\Delta_\mu}{4}.
+\]
+
+\paragraph{Closed-form interior optimum.}
+\begin{equation}
+\boxed{\;p^{L*} = \frac{\bar A + b\, c}{2 b} - \frac{\Delta_\mu}{4 b},
+\quad
+p^{H*} = \frac{\bar A + b\, c}{2 b} + \frac{\Delta_\mu}{4 b},
+\quad
+\mu^{**} = 0,
+\quad
+k^{L*} = \frac{\bar A - b\, c}{2} + \frac{\Delta_\mu}{4}.\;}
+\label{eq:tranche-spread}
+\end{equation}
+
+\paragraph{Comparative statics.} From \eqref{eq:tranche-spread}, the optimal pre-realisation tranche spread is
+\begin{equation}
+\Delta p^* \;=\; p^{H*} - p^{L*} \;=\; \frac{\Delta_\mu}{2 b}.
+\label{eq:spread-cs}
+\end{equation}
+Running the same argument on the hourly aggregate $\tilde\mu = Q^{-1} \sum_t \mu_t$ (variance $\sigma_\mu^2/Q < \sigma_\mu^2$) gives a strictly smaller optimal spread, $\Delta p^*|_{\text{hourly}} = \tilde\Delta_\mu/(2 b)$ with $\tilde\Delta_\mu = \Delta_\mu/\sqrt{Q}$. The per-period ladder is therefore strictly richer than its hourly counterpart by a factor $\sqrt{Q}$.
+
+\paragraph{Stylisation note.} The closed-form \eqref{eq:tranche-spread} requires that the capacity $K$ be tuned to the boundary condition $p^{H*}$ binds at the highest demand realisation $\mu = \Delta_\mu$; for general $K$ the FOC in $p^L$ also picks up a term $-bK(p^H-c)$ from the second integrand of \eqref{eq:Epi-uniform}, and the optimum shifts off the symmetric form. The closed form is therefore a stylised approximation, with the auction microfoundation absorbed into the boundary condition. Comparative statics in $\Delta_\mu$ and $b$ are robust to this stylisation: $\Delta p^*$ widens with the demand range and contracts with thinness.
+
+Empirical measures of within-curve bid-shape dispersion (MW-weighted price SDs, effective tranche counts) are motivated by this widening but are not derived from the two-state reduction --- they require richer bid-curve structure than the two-tranche approximation supports.
+
+\subsection{$(1,1)$ equilibrium}\label{app:state-60-60}
+
+We solve the pre-reform game by backward induction: the Stage~2 best response (\S\ref{app:60-60:stage2}), then the four arbitrage regimes at Stage~1 (\S\ref{app:60-60:stage1}). The scarcity wedge $p_1 > p_2 > c$ survives in regimes (1), (3), and (4); only competitive full arbitrage closes it.
+
+\subsubsection{Stage 2 best response}\label{app:60-60:stage2}
+The strategic bidder's Stage~2 problem, taking $p_1$, $q_1$ and $s$ as given:
+\[
+\max_{p_2} (p_2 - c) q_2 \quad\text{s.t.}\quad q_2 = b_2(p_1 - p_2) + s - S^{op}_2.
+\]
+FOC: $b_2(p_1 - p_2) + s - S^{op}_2 + (p_2 - c)(-b_2) = 0$, giving
+\begin{equation}
+p_2^*(p_1, s) \;=\; \frac{p_1 + c}{2} + \frac{s - S^{op}_2}{2\, b_2}.
+\label{eq:p2-60-60}
+\end{equation}
+
+\subsubsection{Stage 1 best response and equilibrium in $(p_1, s)$}\label{app:60-60:stage1}
+Substituting \eqref{eq:p2-60-60} into the strategic bidder's total profit and using $q_1 = \bar A - b_1 p_1 - s - S^{op}_1$,
+\[
+\Pi(p_1, s) \;=\; (p_1 - c)(\bar A - b_1 p_1 - s - S^{op}_1) \;+\; (p_2^*(p_1, s) - c) q_2^*(p_1, s).
+\]
+The four arbitrage cases pin $s$ differently.
+
+\paragraph{(R1) No arbitrage ($s = 0$).} The strategic bidder solves a Cournot problem in each market separately. The forward FOC gives $p_1^* = (\bar A - S^{op}_1 + b_1 c)/(2 b_1)$. Combining with \eqref{eq:p2-60-60} yields $p_1^* > p_2^* > c$ and $q_1, q_2 > 0$ (\citeauthor{ito_reguant_2016} Result~1).
+
+\paragraph{(R2) Full arbitrage ($p_1 = p_2$).} Setting $p_1 = p_2$ in \eqref{eq:p2-60-60} gives $s = b_2(p_1 - c) + S^{op}_2$. Substituting back, total cleared MWh $q_1 + q_2 = \bar A - b_1 p_1 - S^{op}_1 - S^{op}_2 = \bar A - b_1 p_1 - \bar Y_h$ (using $S^{op}_1 + S^{op}_2 = \bar Y_h$). The strategic bidder maximises $(p_1 - c)(\bar A - b_1 p_1 - \bar Y_h)$, giving
+\begin{equation}
+p_1^{*,F} \;=\; \frac{\bar A - \bar Y_h + b_1 c}{2 b_1}, \qquad p_2^{*,F} \;=\; p_1^{*,F}.
+\label{eq:p1-60-60-full}
+\end{equation}
+Note that $s > 0$ \emph{reduces} the strategic bidder's total output relative to no arbitrage (\citeauthor{ito_reguant_2016} Result~2): even competitive arbitrage does not restore competitive prices, because the bidder withholds more in response.
+
+\paragraph{(R3) Limited arbitrage ($s \le K$ binding).} If $K$ is below the full-arbitrage level, $s = K$ binds and $p_1 - p_2 > 0$. From \eqref{eq:p2-60-60}, $p_1 - p_2 = (p_1 - c)/2 - (K - S^{op}_2)/(2 b_2)$; the wedge depends on $K$ and on $S^{op}_2$ (\citeauthor{ito_reguant_2016} Result~3). The smaller $K$, the larger the residual wedge.
+
+\paragraph{(R4) Strategic arbitrage.} The arbitrageur maximises $\pi^A(s) = s(p_1 - p_2)$ subject to \eqref{eq:p2-60-60}:
+\[
+\pi^A(s) \;=\; s\!\left[\frac{p_1 - c}{2} - \frac{s - S^{op}_2}{2\, b_2}\right].
+\]
+FOC in $s$:
+\[
+\frac{p_1 - c}{2} - \frac{2 s - S^{op}_2}{2\, b_2} \;=\; 0
+\quad\Longleftrightarrow\quad
+s^{*,S}(p_1) \;=\; \frac{b_2 (p_1 - c)}{2} + \frac{S^{op}_2}{2}.
+\]
+Substituting into \eqref{eq:p2-60-60} (with $S^{op}_2 \to 0$ for clarity in the wedge derivation),
+\begin{equation}
+p_2^{*,S} \;=\; \frac{p_1 + c}{2} + \frac{b_2(p_1 - c)/2}{2\, b_2} \;=\; \frac{p_1 + c}{2} + \frac{p_1 - c}{4} \;=\; \frac{3 p_1 + c}{4}.
+\label{eq:p2-strategic-derived}
+\end{equation}
+The forward-spot wedge is $p_1 - p_2^{*,S} = (p_1 - c)/4$, matching \eqref{eq:strategic-arb} in the main body (\citeauthor{ito_reguant_2016} Result~4). The Stage~1 forward price $p_1^{*,S}$ is the maximiser of the strategic bidder's compound profit; algebra in the standard quadratic gives $p_1^{*,S} - c = 8 (\bar A - b_1 c - \bar Y_h)/(16 b_1 - b_2)$ at $S^{op}_2 = 0$, $S^{op}_1 = \bar Y_h$. The wedge $(p_1^{*,S} - c)/4 > 0$ persists at the equilibrium price.
+
+\subsection{$(1,Q)$ equilibrium}\label{app:state-60-15}
+
+Forward hourly, spot per-period. We derive the per-product spot best response, work through full and strategic arbitrage to obtain the within-block dispersion equations, and finally compute the within-hour wedge SD in this asymmetric state.
+
+The strategic bidder's Stage~2 problem now has $Q$ spot products. Directly from the spot residual demand $q_{2t} = b_{2t}(p_1 - p_{2t}) + s_t - S^{op}_{2t}$ in \eqref{eq:rd} and the FOC $q_{2t} = b_{2t}(p_{2t}-c)$, the strategic per-period spot best response is
+\begin{equation}
+p_{2t}^*(p_1, s_t) \;=\; \frac{p_1 + c}{2} \;+\; \frac{s_t - S^{op}_{2t}}{2\, b_{2t}}.
+\label{eq:p2-60-15-foc}
+\end{equation}
+The cross-product variation in $p_{2t}^*$ in this state comes purely from per-subperiod variation in $b_{2t}$, $s_t$, $S^{op}_{2t}$ --- the forward price $p_1$ is hourly and shared, and $\mu_t$ does not enter the spot demand directly (it acts only through the forward-cleared volume, which is uniform per subperiod when forward is hourly).
+
+\subsubsection{Full arbitrage: block parity and within-block dispersion}\label{app:60-15:full}
+Block parity requires $p_1 = (1/Q) \sum_t p_{2t}$. Substituting \eqref{eq:p2-60-15-foc},
+\[
+p_1 \;=\; \frac{p_1 + c}{2} + \frac{1}{2 Q}\!\sum_t\!\frac{s_t - S^{op}_{2t}}{b_{2t}}
+\quad\Longleftrightarrow\quad
+p_1 - c \;=\; \frac{1}{Q}\!\sum_t\!\frac{s_t - S^{op}_{2t}}{b_{2t}}.
+\]
+Setting $S^{op}_{2t} \equiv 0$ and uniform arbitrage $s_t \equiv \bar s$ to isolate the thinness mechanism, and $Q = 2$ for concreteness,
+\[
+p_1 - c \;=\; \frac{\bar s}{2}\!\left(\frac{1}{b_{21}} + \frac{1}{b_{22}}\right) \;=\; \frac{\bar s}{2}\cdot\frac{b_{21}+b_{22}}{b_{21} b_{22}}
+\quad\Longleftrightarrow\quad
+\bar s \;=\; \frac{2(p_1 - c)\, b_{21} b_{22}}{b_{21} + b_{22}}.
+\]
+The within-block dispersion follows from differencing $p_{2t}^*$ across $t$:
+\[
+p_{21} - p_{22} \;=\; \bigg(\frac{\bar s}{2 b_{21}} - \frac{\bar s}{2 b_{22}}\bigg) \;=\; \frac{\bar s}{2}\cdot\frac{b_{22} - b_{21}}{b_{21}\, b_{22}}.
+\]
+Substituting $\bar s$ from above,
+\begin{equation}
+\boxed{\;p_{21} - p_{22} \;=\; (p_1 - c)\cdot \frac{b_{22} - b_{21}}{b_{21} + b_{22}}\;}\qquad\text{(full arbitrage)}.
+\label{eq:within-block-full}
+\end{equation}
+
+\subsubsection{Strategic arbitrage: block wedge and attenuated dispersion}\label{app:60-15:strategic}
+The strategic arbitrageur internalises price impact and stops at
+\[
+p_1 - (1/Q)\sum_t p_{2t} \;=\; \frac{p_1 - c}{4}.
+\]
+The block-wedge condition is the average of \eqref{eq:strategic-arb} across the $Q$ matched spot products. Repeating the algebra of \S\ref{app:60-15:full} with this modified parity, the arbitrage position $\bar s$ falls to exactly half of the full-arbitrage value:
+\[
+\bar s^{S} \;=\; \frac{(p_1 - c)\, b_{21} b_{22}}{b_{21} + b_{22}} \;=\; \frac{\bar s^{F}}{2}.
+\]
+The within-block dispersion correspondingly becomes
+\begin{equation}
+\boxed{\;p_{21} - p_{22} \;=\; \frac{p_1 - c}{2}\cdot\frac{b_{22} - b_{21}}{b_{21} + b_{22}}\;}\qquad\text{(strategic arbitrage)}.
+\label{eq:within-block-strategic}
+\end{equation}
+The dispersion is attenuated by a factor of two relative to the full-arbitrage case, reflecting the smaller arbitrage volume traded under strategic incentives.
+
+\subsubsection{Two-tranche ladder on the spot side}\label{app:60-15:ladder}
+The strategic bidder posts per-product spot ladders. Applying \S\ref{app:tranche} with $b \to b_{2t}$ gives ladder spread $\Delta p^*_{2t} = \Delta_\mu/(2 b_{2t})$, strictly larger than the spread under hourly spot (which uses $\tilde\Delta_\mu = \Delta_\mu / \sqrt{Q}$). This is the spot-side richer-ladder mechanism reported in the main body, eq.~\eqref{eq:tranche-id}.
+
+\subsubsection{Wedge SD in the asymmetric state}\label{app:60-15:wedgesd}
+The per-subperiod wedge $w_t = p_1 - p_{2t}^*$ inherits the per-period variation in $p_{2t}^*$; $p_1$ is constant across $t$. From \eqref{eq:p2-60-15-foc}, $p_{2t}^*$ varies across $t$ only through per-subperiod thinness $b_{2t}$ (and the arbitrage and aggregator terms when those vary by $t$). For two matched products ($Q=2$) the population SD of $w_t$ equals half the within-block price difference, so the full and strategic arbitrage benchmarks give
+\begin{equation}
+\mathrm{sd}_t^{F}(w_t) \;=\; \frac{(p_1 - c)\,|b_{22} - b_{21}|}{2(b_{21} + b_{22})}, \qquad
+\mathrm{sd}_t^{S}(w_t) \;=\; \frac{(p_1 - c)\,|b_{22} - b_{21}|}{4(b_{21} + b_{22})},
+\label{eq:wedge-sd-asym-full-strat}
+\end{equation}
+the strategic value exactly half of the full-arbitrage value. Under limited arbitrage with per-product capacity $s_t = K/Q$ binding, the wedge becomes $w_t = (p_1-c)/2 - K/(2Q b_{2t})$, and
+\begin{equation}
+\mathrm{sd}_t^{L}(w_t) \;=\; \frac{K\,|b_{22} - b_{21}|}{8\, b_{21}\, b_{22}} \qquad (Q=2,\; s_t = K/2),
+\label{eq:wedge-sd-asym-limited}
+\end{equation}
+which scales with $K$ rather than with $(p_1-c)$ but inherits the same $|b_{22}-b_{21}|$ thinness asymmetry.
+
+\subsection{$(Q,Q)$ equilibrium}\label{app:state-15-15}
+
+Both markets per-period. We derive the strategic forward best response per product, work through full, strategic, and (the empirically relevant) limited-arbitrage regimes, and close with the Cournot scale-up of cleared MWh and the Stage-1 option-value mechanism.
+
+The strategic per-period forward best response from \eqref{eq:rd} with $\bar A_t = \bar A + \mu_t$:
+\begin{equation}
+p_{1t}^* \;=\; \frac{\bar A + \mu_t - S^{op}_{1t} + b_{1t}\, c}{2\, b_{1t}}.
+\label{eq:p1t-15-15}
+\end{equation}
+
+\subsubsection{Full arbitrage: product parity}\label{app:15-15:full}
+Per-product parity $p_{1t} = p_{2t}$ pins $s_t$ at $s_t = b_{2t}(p_{1t} - c) + S^{op}_{2t}$ (same structure as the $(1,1)$ full-arbitrage condition, but per product). The wedge SD is zero by construction.
+
+\subsubsection{Strategic arbitrage: product wedge and SD}\label{app:15-15:strategic}
+Per-product strategic arbitrage gives \eqref{eq:strategic-arb} applied per product: $p_{2t} = (3 p_{1t} + c)/4$. The per-product wedge is $p_{1t} - p_{2t} = (p_{1t} - c)/4$. Cross-period SD:
+\[
+\mathrm{sd}_t(p_{1t} - p_{2t}) \;=\; \tfrac{1}{4}\,\mathrm{sd}_t(p_{1t}^*).
+\]
+From \eqref{eq:p1t-15-15} with $S^{op}_{1t}$ approximately matched to $\bar y_t$:
+\[
+\mathrm{sd}_t(p_{1t}^*) \;=\; \mathrm{sd}_t\!\bigg(\frac{\mu_t}{2 b_1}\bigg) \;=\; \frac{\sigma_\mu}{2\, b_1}.
+\]
+Therefore
+\begin{equation}
+\boxed{\;\mathrm{sd}_t(p_{1t} - p_{2t}) \;=\; \frac{1}{4}\cdot\frac{\sigma_\mu}{2\, b_1} \;=\; \frac{\sigma_\mu}{8\, b_1}.\;}
+\label{eq:wedge-sd-15-15}
+\end{equation}
+
+\subsubsection{Two-tranche ladder on the forward side}\label{app:15-15:ladder}
+Applying \S\ref{app:tranche} with $b \to b_{1t}$ gives forward-side per-product ladder spread $\Delta p^*_{1t} = \Delta_\mu/(2 b_{1t})$, mirroring the spot-side result of \S\ref{app:60-15:ladder}.
+
+\subsubsection{Limited arbitrage at the symmetric state (empirical regime)}\label{app:15-15:limited}
+
+The strategic-arbitrage wedge \eqref{eq:wedge-sd-15-15} assumes the arbitrageur can build any per-product position. With $Q$ matched products per clock-hour the arbitrageur's capacity $K$ is spread over $Q$ positions, so the effective per-product capacity is $K_t \approx K/Q$. When this capacity binds --- the empirically relevant case in electricity (see \S\ref{sec:theory:speaks}) --- the per-product equilibrium is \citeauthor{ito_reguant_2016} Result~3 (limited arbitrage) applied product by product.
+
+\paragraph{Strategic spot best response under binding per-product capacity.} Setting $s_t = K_t$ in the strategic Stage~2 FOC \eqref{eq:p2-60-15-foc}:
+\[
+p_{2t}^* \;=\; \frac{p_{1t}^* + c}{2} + \frac{K_t - S^{op}_{2t}}{2\, b_{2t}}.
+\]
+The forward per-product cleared price $p_{1t}^*$ depends on $\mu_t$ through the forward demand $\bar A_t = \bar A + \mu_t$; from \eqref{eq:p1t-15-15} (corrected to include the arbitrage position), $p_{1t}^* = (\bar A + \mu_t - S^{op}_{1t} - s_t + b_{1t} c)/(2 b_{1t})$ so $\mathrm{sd}_t(p_{1t}^*) = \sigma_\mu/(2 b_1)$ (under uniform $s_t = K_t$ and $S^{op}_{1t}$ matched to structural production). The per-product wedge is
+\[
+p_{1t}^* - p_{2t}^* \;=\; \frac{p_{1t}^* - c}{2} \;-\; \frac{K_t - S^{op}_{2t}}{2\, b_{2t}}.
+\]
+
+\paragraph{Wedge SD.} Taking the cross-product SD:
+\[
+\mathrm{sd}_t(p_{1t}^* - p_{2t}^*) \;=\; \tfrac{1}{2}\,\mathrm{sd}_t(p_{1t}^*) \;=\; \frac{\sigma_\mu}{4\, b_1}.
+\]
+Compare to the strategic-arbitrage closed-form \eqref{eq:wedge-sd-15-15}: under unlimited strategic arbitrage the wedge is $(p_{1t}-c)/4$ giving wedge SD $\sigma_\mu/(8\, b_1)$; under limited arbitrage the wedge is $(p_{1t}-c)/2$ giving wedge SD $\sigma_\mu/(4\, b_1)$, exactly twice the strategic-arbitrage value. The wedge SD does \emph{not} collapse fully even at the symmetric state. If per-period thinness $b_{2t}$ also varies across $t$ (as in the asymmetric state) the wedge inherits an additional thinness-asymmetry component on top of $\sigma_\mu/(4 b_1)$; the empirically observed sustaining of wedge SD at granular-state magnitudes is consistent with this combined effect.
+
+\paragraph{Per-product capacity binding.} For the limited regime to bind, $K_t$ must be smaller than the strategic-arbitrage equilibrium $s_t^{\text{strat}} = b_{2t}(p_{1t}-c)/2$. With $K_t \approx K/Q$ and $s_t^{\text{strat}}$ proportional to a per-product mark-up, binding requires $K \le Q\cdot \bar s^{\text{strat}}$ where $\bar s^{\text{strat}}$ is the average per-product strategic position. Empirically, hourly arbitrage capacity is set by participation rules and balance-sheet limits that do not scale with $Q$ when granularity reforms multiply products; the constraint binds at the granular state by construction.
+
+\subsubsection{Cournot cleared-MWh under per-period thinness}\label{app:15-15:scaleup}
+
+The strategic best response \eqref{eq:p1t-15-15} gives per-period cleared quantity $q_{1t}^* = (\bar A_t - b_{1t} c - S^{op}_{1t} - s_t)/2$. Summing across $t$ and taking expectation over $\mu_t$:
+\[
+\mathbb{E}\!\bigg[\sum_t q_{1t}^*\bigg] \;=\; \frac{Q \bar A - c \sum_t b_{1t} - \sum_t S^{op}_{1t} - \sum_t s_t}{2}.
+\]
+The hourly counterpart is $Q\cdot q_1^*|_{(1,1)} = Q\cdot(\bar A - b_1 c - S^{op}_1 - s)/2$. Comparing:
+\begin{equation}
+\mathbb{E}\!\bigg[\sum_{t=1}^{Q} q_{1t}^*\bigg]\bigg|_{(Q,Q)} \;-\; Q\cdot q_1^*\big|_{(1,1)} \;=\; \frac{c}{2}\,\bigg(Q\, b_1 - \sum_{t=1}^{Q} b_{1t}\bigg).
+\label{eq:scale-up}
+\end{equation}
+Positive whenever $\sum_{t=1}^{Q} b_{1t} < Q\,b_1$ --- i.e.\ when per-period thinness is on average smaller than the hourly aggregate elasticity, as expected (each 15-min product is thinner than the hourly aggregate it replaces). This is the Cournot scale-up of main-body \S\ref{sec:theory:da15}(iv), obtained without any imported mechanism.
+
+\subsubsection{Stage-1 option value (cross-market substitution)}\label{app:15-15:option}
+
+Stage-1 expected profit including Stage~2 is, at second order in $\mu_t$,
+\[
+\mathbb{E}[\Pi(p_1)] \;=\; \pi_1(p_1) \;+\; \pi_2(p_1, 0) \;+\; \tfrac{1}{2}\sigma_\mu^2 \cdot \frac{\partial^2 \pi_2}{\partial \mu_t^2}\bigg|_{\mu_t = 0}.
+\]
+Per-period spot Cournot makes $\pi_2$ convex in $\mu_t$. The second derivative is positive: the variance correction \emph{raises} Stage-1 expected profit. The Stage-1 FOC in $p_1$ shifts accordingly: the bidder optimises against a more valuable Stage-2 option, widening the forward ladder to capture both sides of the variation. Symmetrically when the forward is per-period: the within-hour discrimination is absorbed at Stage~1 directly, so the Stage-2 option value drops and the spot ladder tightens. This is the model-internal account of the cross-market substitution pattern of \S\ref{sec:results:6-1}.
+
+\subsection{Balancing discrepancy}\label{app:balancing}
+
+The balancing-stage discrepancy is the difference between realised demand plus aggregator under-/over-production and the auction-scheduled supply, summed per subperiod. With $\bar A_t = \bar A + \mu_t$ and aggregator realisation $y_t = \bar y_t + \eta_t$,
+\begin{equation}
+\Delta_t \;=\; (\bar A_t - q^{\text{cleared}}_t) \;+\; (y_t - S^{op}_t) \;+\; \varepsilon_t,
+\label{eq:balancing-disc}
+\end{equation}
+where $S^{op}_t = S^{op}_{1t} + S^{op}_{2t}$ is the aggregator's total scheduled MWh at subperiod $t$ and $\varepsilon_t$ is residual noise unrelated to $\mu_t$ and $\eta_t$.
+
+\emph{State $(1,1)$.} Forward and spot are both hourly: under the structural assumption $\bar y_t \equiv \bar Y_h / Q$ (no within-hour structural production variation), $\Delta_t = \mu_t + \eta_t + \varepsilon_t$.
+
+\emph{State $(1,Q)$.} The spot becomes per-period: the aggregator re-schedules at Stage~2 using its updated forecast, absorbing the $\eta_t$ shock. The forward remains hourly so $\mu_t$ is still unabsorbed: $\Delta_t = \mu_t + \varepsilon_t$.
+
+\emph{State $(Q,Q)$.} The forward also becomes per-period: per-product forward clearing $q_{1t}$ responds to $\bar A_t = \bar A + \mu_t$ through \eqref{eq:p1t-15-15}, absorbing $\mu_t$. The aggregator's $\eta_t$ remains absorbed at spot per-period. The balancing discrepancy reduces to $\Delta_t = \varepsilon_t$.
+
+These reductions are mechanical in the contracting grid and hold under any arbitrage regime.
+
+\subsection{Note on the alternative sequence}\label{app:alt-sequence}
+
+The mirror path $(1,1) \to (Q,1) \to (Q,Q)$ swaps the order of the two auction reforms. After relabelling, the same per-state algebra of \S\ref{app:state-60-60}--\S\ref{app:state-15-15} applies. The end-state $(Q,Q)$ is identical. The intermediate state $(Q,1)$ produces a within-hour \emph{DA} dispersion driven by per-subperiod $b_{1t}$ asymmetry (mirror of \eqref{eq:within-block-full}--\eqref{eq:within-block-strategic} but with roles of $b_{1t}$ and $b_{2t}$ swapped); the aggregator's quantity-shift mechanism activates already at the forward reform; the balancing-discrepancy gain $\Delta_t : \mu_t + \varepsilon_t \to \varepsilon_t$ realises at the forward reform under either path. The peak wedge SD ($\sigma_\mu / (2\, b_2)$ in the original path, $\sigma_\mu/(2\, b_1)$ in the mirror) and the final wedge SD ($\sigma_\mu/(8\, b_1)$ in both) are sequence-invariant up to the relabelling of the dominant elasticity.
+
+\subsection{Welfare derivations}\label{app:welfare}
+
+We collect the closed-form welfare components by state and arbitrage regime under uniform $\mu_t \sim [-\Delta_\mu, \Delta_\mu]$ and $\eta_t \sim [-\Delta_\eta, \Delta_\eta]$ (residual noise $\varepsilon_t$ negligible). The aggregator's penalty enters $\pi^{Agg,\text{net}}$ through $\eta_t$ and the system imbalance cost $C^I_{\text{sys}}$ enters through $\mu_t$; the two channels are disjoint.
+
+\subsubsection{Components}\label{app:welfare:components}
+
+Per clock-hour:
+\begin{equation}
+W \;=\; CS \;+\; \pi^{SB} \;+\; \pi^{Agg,\text{net}} \;+\; \pi^{Arb} \;-\; C^I_{\text{sys}}.
+\label{eq:welfare-app}
+\end{equation}
+The aggregator's net profit $\pi^{Agg,\text{net}}$ is its revenue $\sum_t (p_1^{(t)} S^{op}_{1t} + p_{2t} S^{op}_{2t})$ minus its internalised quadratic penalty $\gamma\, E[\mathcal{I}^{Agg}] = \gamma \sum_t E[(\eta_t^{\text{unhedged}})^2]$ (\S\ref{app:aggregator}). The system imbalance cost is $C^I_{\text{sys}} = \gamma \sum_t E[\Delta_t^2]$ with $\Delta_t$ from \S\ref{app:balancing}. $\pi^{Arb} = s(p_1 - p_2)$ is the arbitrageur's revenue ($\pi^{Arb} = 0$ under no arbitrage and full arbitrage). For linear residual demand $q = \bar A - b p$, consumer surplus at $p^*$ is
+\begin{equation}
+CS \;=\; \frac{(\bar A - b p^*)^2}{2 b}.
+\label{eq:cs-formula}
+\end{equation}
+
+\subsubsection{Imbalance cost decomposition (closed form, uniform shocks)}\label{app:welfare:imbalance}
+
+Under $\mu_t \sim U[-\Delta_\mu, \Delta_\mu]$ and $\eta_t \sim U[-\Delta_\eta, \Delta_\eta]$ independent (and $\varepsilon_t \approx 0$): $E[\mu_t^2] = \Delta_\mu^2/3$, $E[\eta_t^2] = \Delta_\eta^2/3$. The aggregator's unhedged shock is $\eta_t$ when spot is hourly and $0$ once spot is per-period; the system discrepancy is $\mu_t$ when forward is hourly and $0$ once forward is per-period. The quadratic-penalty costs decompose as
+\begin{equation}
+\renewcommand{\arraystretch}{1.2}
+\begin{array}{l c c c}
+& (1,1) & (1,Q) & (Q,Q) \\ \hline
+\gamma\, E[\mathcal{I}^{Agg}]\ \text{(in }\pi^{Agg,\text{net}}\text{)} & \gamma Q \Delta_\eta^2 / 3 & 0 & 0 \\
+C^I_{\text{sys}}\ \text{(separate)} & \gamma Q \Delta_\mu^2 / 3 & \gamma Q \Delta_\mu^2 / 3 & 0 \\
+\text{Total imbalance cost} & \gamma Q(\Delta_\mu^2 + \Delta_\eta^2)/3 & \gamma Q \Delta_\mu^2 / 3 & 0
+\end{array}
+\label{eq:imb-table}
+\end{equation}
+The two channels are disjoint ($\eta_t$ only enters $\pi^{Agg,\text{net}}$, $\mu_t$ only enters $C^I_{\text{sys}}$).
+
+\subsubsection{Welfare at state $(1,1)$ by arbitrage regime}\label{app:welfare:1-1}
+
+\paragraph{No arbitrage (R1).} From \S\ref{app:60-60:stage1}: $p_1^{NA} = (\bar A + b_1 c - S^{op}_1)/(2 b_1)$, $q_1^{NA} = (\bar A - b_1 c - S^{op}_1)/2$, $\pi^{SB,NA}_1 = (\bar A - b_1 c - S^{op}_1)^2/(4 b_1)$. Consumer surplus at the forward stage is, by \eqref{eq:cs-formula}, $CS^{NA}_1 = (\bar A - b_1 p_1^{NA})^2/(2 b_1) = (q_1^{NA} + S^{op}_1)^2/(2 b_1)$.
+
+\paragraph{Full arbitrage (R2).} At $p_1 = p_2 = p_1^{F} = (\bar A - \bar Y_h + b_1 c)/(2 b_1)$ from \eqref{eq:p1-60-60-full}, strategic-bidder profit is $\pi^{SB,F} = (\bar A - b_1 c - \bar Y_h)^2/(4 b_1)$. The cleared MWh stays below the competitive benchmark (\citeauthor{ito_reguant_2016} Result~2): with monopoly market power, even competitive arbitrage cannot restore the first-best.
+
+\paragraph{Strategic arbitrage (R4).} The arbitrageur extracts $\pi^{Arb,S} = b_2(p_1 - c)^2/4$, a pure transfer that subtracts from the strategic bidder's rent.
+
+\paragraph{Limited arbitrage (R3, empirical).} With $s = K < b_2(p_1 - c)/2$ binding, the arbitrageur extracts $\pi^{Arb,L} = K\, [(p_1 - c)/2 - (K - S^{op}_2)/(2 b_2)]$.
+
+\subsubsection{Welfare at $(1,Q)$ and $(Q,Q)$ --- delta from $(1,1)$}\label{app:welfare:reform}
+
+\paragraph{Spot reform, $(1,1)\to(1,Q)$: aggregator hedging.} $E[\mathcal{I}^{Agg}]$ drops from $Q\,\Delta_\eta^2/3$ to $0$, so $\Delta \pi^{Agg,\text{net}} = +\gamma Q\,\Delta_\eta^2/3$.
+
+\paragraph{Spot-side ladder rent.} The strategic bidder's spot-side two-tranche ladder \eqref{eq:tranche-id} replaces a single-price Cournot with a $\Delta_\mu$-discriminated ladder. By \S\ref{app:tranche} closed form:
+\begin{equation}
+\Delta \pi^{SB,2T}_{\text{spot}} \;=\; \frac{\Delta_\mu\,\big[4(\bar A - b_{2t} c) + \Delta_\mu\big]}{16\, b_{2t}}.
+\label{eq:ladder-rent-spot}
+\end{equation}
+On the inframarginal volume this is a CS-to-$\pi^{SB}$ transfer; on the marginal extension this is new surplus.
+
+\paragraph{Forward reform, $(1,Q)\to(Q,Q)$: system imbalance.} Per-product forward absorbs $\mu_t$, so $C^I_{\text{sys}}$ drops from $\gamma Q\,\Delta_\mu^2/3$ to $0$:
+\[
+\Delta(-C^I_{\text{sys}}) \;=\; +\gamma Q\,\Delta_\mu^2/3.
+\]
+
+\paragraph{Forward-side ladder rent.}
+\begin{equation}
+\Delta \pi^{SB,2T}_{\text{forward}} \;=\; \frac{\Delta_\mu\,\big[4(\bar A - b_1 c) + \Delta_\mu\big]}{16\, b_1}.
+\label{eq:ladder-rent-forward}
+\end{equation}
+
+\paragraph{Cournot scale-up at $(Q,Q)$.} Total cleared MWh per clock-hour rises by $(c/2)(Q b_1 - \sum_t b_{1t})$ via \eqref{eq:scale-up}. At the mark-up $p_1 - c = (\bar A - b_1 c - S^{op}_1)/(2 b_1)$,
+\begin{equation}
+\Delta W^{\text{scale}} \;=\; \frac{c\,(\bar A - b_1 c - S^{op}_1)}{4\, b_1}\,\Big(Q b_1 - \sum_t b_{1t}\Big).
+\label{eq:scaleup-welfare-app}
+\end{equation}
+
+\paragraph{Limited-arbitrage gain at $(1,Q)$ and $(Q,Q)$.} Per-product capacity $K/Q$ binds, leaving a per-product wedge $(p_{1t}-c)/2$ instead of the unlimited-strategic $(p_{1t}-c)/4$ (\S\ref{app:15-15:limited}). The strategic bidder's spot markup falls from $3(p_1-c)/4$ to $(p_1-c)/2$, so the per-product deadweight loss falls by $5 b_2(p_1-c)^2/32$ (\citet{ito_reguant_2016} Result~2). This is the welfare counterpart of the empirical asymmetric-persistence wedge-SD finding --- not a welfare cost.
+
+\subsubsection{Net welfare deltas (closed form)}\label{app:welfare:deltas}
+
+Combining the channels for each reform step (writing $a_m \equiv \bar A - b_m c$ for $m \in \{1, 2\}$):
+\begin{align}
+\Delta W^{\text{spot}} \;&=\; \frac{\gamma Q \Delta_\eta^2}{3} \;+\; \frac{5\, b_2 (p_1-c)^2}{32} \;+\; \frac{\Delta_\mu\,[4 a_2 + \Delta_\mu]}{16\, b_2}, \label{eq:DeltaW-spot-app}\\
+\Delta W^{\text{forward}} \;&=\; \frac{\gamma Q \Delta_\mu^2}{3} \;+\; \frac{c\, a_1}{4\, b_1}\,\Big(Q b_1 - \!\sum_t b_{1t}\Big) \;+\; \frac{\Delta_\mu\,[4 a_1 + \Delta_\mu]}{16\, b_1}, \label{eq:DeltaW-fwd-app}
+\end{align}
+where the second term of \eqref{eq:DeltaW-spot-app} is the per-product limited-arbitrage gain at the regime change, and the third terms in both lines are the bid-ladder rent extensions (mostly distributional).
+
+\paragraph{Sign and dominance.} Both deltas are unconditionally positive --- the model predicts welfare improvement at each reform step, with imbalance saving the dominant channel given that balancing prices in Spanish electricity markets exceed day-ahead clearing prices by a factor of $2$--$10$.
+
+\end{document}
