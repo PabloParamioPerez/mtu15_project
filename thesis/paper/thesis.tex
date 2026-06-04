@@ -799,15 +799,15 @@ Since each MTU15 reform is studied separately, this is a standard $2\times 2$ Di
 \cmidrule(lr){3-4} \cmidrule(lr){5-6}
 \textbf{Outcome (DiD $\theta$)} & \textbf{Tech} & DA & IDA & DA & IDA \\
 \midrule
-$\hat\alpha$ (EUR/MWh)               & CCGT          & $\mathbf{-40.2}^{***}$ & $11.8^{*}$         & $\mathbf{30.3}^{***}$   & $1.4$ \\
-                                     & Hydro         & $0.2$                  & $87.3$             & $\mathbf{43.3}^{**}$    & $\mathbf{5.3}^{***}$ \\
-                                     & Pump-storage  & $1.1$                  & $-3.0$             & $\mathbf{-6.6}^{***}$   & $80.2$ \\
-$\hat\beta$ (EUR/MWh per MW)         & CCGT          & $\mathbf{0.27}^{***}$  & $-0.88^{*}$        & $\mathbf{-0.17}^{***}$  & $0.52$ \\
-                                     & Hydro         & $0.15$                 & $-1.50$            & $\mathbf{-1.27}^{***}$  & $-0.01$ \\
-                                     & Pump-storage  & $-0.01$                & $0.07$             & $\mathbf{0.02}^{**}$    & $-1.69$ \\
-$\hat\gamma$ ($\times 10^{3}$)       & CCGT          & $\mathbf{-3.99}^{***}$ & $10.0$             & $\mathbf{1.29}^{***}$   & $7.5$ \\
-                                     & Hydro         & $-305$                 & $-109$             & $\mathbf{-5{,}228}^{***}$ & $15$ \\
-                                     & Pump-storage  & $0.07$                 & $1.45$             & $-0.02$                 & $0.20$ \\
+$\hat\alpha$ (EUR/MWh)               & CCGT          & $\mathbf{-40.2}^{***}$ & $11.8^{*}$         & $\mathbf{27.8}^{***}$   & $5.7^{**}$ \\
+                                     & Hydro         & $0.2$                  & $87.3$             & $13.6$                  & $\mathbf{9.3}^{***}$ \\
+                                     & Pump-storage  & $1.1$                  & $-3.0$             & $-1.7$                  & $16.9$ \\
+$\hat\beta$ (EUR/MWh per MW)         & CCGT          & $\mathbf{0.27}^{***}$  & $-0.88^{*}$        & $\mathbf{-0.15}^{***}$  & $0.22$ \\
+                                     & Hydro         & $0.15$                 & $-1.50$            & $\mathbf{-1.72}^{***}$  & $-0.02$ \\
+                                     & Pump-storage  & $-0.01$                & $0.07$             & $0.01$                  & $-0.28$ \\
+$\hat\gamma$ ($\times 10^{3}$)       & CCGT          & $\mathbf{-3.99}^{***}$ & $10.0$             & $\mathbf{1.04}^{***}$   & $7.6$ \\
+                                     & Hydro         & $-305$                 & $-109$             & $\mathbf{-7{,}555}^{***}$ & $2.2$ \\
+                                     & Pump-storage  & $0.07$                 & $1.45$             & $0.06$                  & $-0.19$ \\
 $N_{\text{eff}}$                     & CCGT          & $-0.08$                & $0.79$             & $\mathbf{1.89}^{***}$   & $-0.17$ \\
                                      & Hydro         & $-0.24^{***}$          & $\mathbf{0.18}^{***}$ & $\mathbf{0.51}^{***}$ & $0.00$ \\
                                      & Pump-storage  & $0.07$                 & $\mathbf{0.12}^{*}$ & $-0.06$                & $-0.16$ \\
@@ -829,7 +829,7 @@ $N_{\text{eff}}$                     & CCGT          & $-0.08$                & 
 
 \smallskip
 \noindent
-\textbf{DA15 DA Pump-storage}: $\hat\alpha\!\downarrow$, $\hat\beta\!\uparrow$ (storage arbitrage instrument). Lower opening price, steeper marginal ramp; pump-storage uses granularity to widen its buy-low / sell-high spread rather than to add committed MW.
+\textbf{DA15 DA Pump-storage}: not retained. The earlier 40-day post-window read $\hat\alpha\!\downarrow$, $\hat\beta\!\uparrow$ as a storage-arbitrage instrument, but extending the post-window to 148 days (the full 2026-02-26 OMIE coverage) collapses both coefficients toward zero ($\hat\alpha=-1.7$, $\hat\beta=0.01$, both insignificant). The original sign was a short-window artefact; we no longer claim a DA15 pump-storage bid-shape effect.
 
 \smallskip
 \noindent
@@ -1074,19 +1074,19 @@ The ID15 own-market cells survive the placebo cleanly: CCGT $\alpha$ collapses f
 \textbf{Tech} & Hdln & Plac & Hdln & Plac & Hdln & Plac & Hdln & Plac \\
 \midrule
 \multicolumn{9}{l}{\emph{Intercept $\alpha$ (EUR/MWh; positive = higher curve)}} \\
-CCGT      & $11.8^{*}$           & $4.9$            & $-40.2^{***}$       & $1.8$            & $30.3^{***}$       & $40.2^{***}$ & $1.4$            & $3.8^{**}$ \\
-Hydro     & $87.3$               & $10.2^{***}$     & $0.2$               & $-0.4$           & $43.3^{**}$        & $53.3^{*}$   & $5.3^{***}$      & $6.3^{***}$ \\
-Pump-storage & $-3.0$            & $-12.7^{***}$    & $1.1$               & $1.3$            & $-6.6^{***}$       & $-4.3$       & $80.2$           & $-4.9$ \\
+CCGT      & $11.8^{*}$           & $4.9$            & $-40.2^{***}$       & $1.8$            & $27.8^{***}$       & $40.2^{***}$ & $5.7^{**}$       & $3.8^{**}$ \\
+Hydro     & $87.3$               & $10.2^{***}$     & $0.2$               & $-0.4$           & $13.6$             & $53.3^{*}$   & $9.3^{***}$      & $6.3^{***}$ \\
+Pump-storage & $-3.0$            & $-12.7^{***}$    & $1.1$               & $1.3$            & $-1.7$             & $-4.3$       & $16.9$           & $-4.9$ \\
 \addlinespace
 \multicolumn{9}{l}{\emph{Slope $\beta$ (EUR/MWh per MW; more negative = steeper)}} \\
-CCGT      & $-0.881^{*}$         & $0.146$          & $0.269^{***}$       & $0.004$          & $-0.171^{***}$     & $-0.206^{***}$ & $0.518$        & $-0.101$ \\
-Hydro     & $-1.498$             & $-0.156^{**}$    & $0.154$             & $-1.703^{***}$   & $-1.272^{***}$     & $1.176^{***}$  & $-0.006$       & $-0.022$ \\
-Pump-storage & $0.071$           & $0.248$          & $-0.010$            & $0.015^{*}$      & $0.019^{**}$       & $0.046^{***}$  & $-1.691$       & $0.007$ \\
+CCGT      & $-0.881^{*}$         & $0.146$          & $0.269^{***}$       & $0.004$          & $-0.149^{***}$     & $-0.206^{***}$ & $0.217$        & $-0.101$ \\
+Hydro     & $-1.498$             & $-0.156^{**}$    & $0.154$             & $-1.703^{***}$   & $-1.720^{***}$     & $1.176^{***}$  & $-0.018$       & $-0.022$ \\
+Pump-storage & $0.071$           & $0.248$          & $-0.010$            & $0.015^{*}$      & $0.008$            & $0.046^{***}$  & $-0.281$       & $0.007$ \\
 \addlinespace
 \multicolumn{9}{l}{\emph{Curvature $\gamma$ (EUR/MWh per MW$^2$; positive = convex)}} \\
-CCGT      & $0.0100$             & $0.0334^{*}$     & $-0.0040^{***}$     & $0.0015^{***}$   & $0.0013^{***}$     & $0.0022^{***}$ & $0.0075$       & $0.0002$ \\
-Hydro     & $-0.1088$            & $0.2455$         & $-0.3055$           & $-1.3947$        & $-5.2281^{***}$    & $1.6198$       & $0.0150$       & $-0.0105$ \\
-Pump-storage & $0.0014$          & $0.0005$         & $0.0001$            & $0.0002$         & $-0.0000$          & $0.0000$       & $0.0002$       & $-0.0002$ \\
+CCGT      & $0.0100$             & $0.0334^{*}$     & $-0.0040^{***}$     & $0.0015^{***}$   & $0.0010^{***}$     & $0.0022^{***}$ & $0.0076$       & $0.0002$ \\
+Hydro     & $-0.1088$            & $0.2455$         & $-0.3055$           & $-1.3947$        & $-7.5555^{***}$    & $1.6198$       & $0.0022$       & $-0.0105$ \\
+Pump-storage & $0.0014$          & $0.0005$         & $0.0001$            & $0.0002$         & $0.0001$           & $0.0000$       & $-0.0002$      & $-0.0002$ \\
 \bottomrule
 \end{tabular}
 \captionof{table}{\textbf{Pre-only midpoint placebo for Spec~C bid-shape DiD, all four (reform, market) cells.} ``Hdln'' reproduces the headline DiD from \S\ref{sec:results:6-1}; ``Plac'' fits the same critical/flat DiD on the pre-window split at its midpoint. Stars: $^{*}p<0.1$, $^{**}p<0.05$, $^{***}p<0.01$.}
@@ -1113,19 +1113,19 @@ Re-running Spec~C with midday hours (\S\ref{sec:data:partition}) substituted for
 \textbf{Tech} & Crit & Midd & Crit & Midd & Crit & Midd & Crit & Midd \\
 \midrule
 \multicolumn{9}{l}{\emph{Intercept $\alpha$}} \\
-CCGT      & $11.8^{*}$       & $8.3$          & $-40.2^{***}$ & ---            & $30.3^{***}$  & $1.1$            & $1.4$    & $-1.6$ \\
-Hydro     & $87.3$           & $84.3$         & $0.2$         & $14.8^{***}$   & $43.3^{**}$   & $14.0^{***}$     & $5.3^{***}$ & $4.5$ \\
-Pump-storage & $-3.0$        & $-7.5$         & $1.1$         & $-6.3^{**}$    & $-6.6^{***}$  & $25.0^{***}$     & $80.2$    & $174.8$ \\
+CCGT      & $11.8^{*}$       & $8.3$          & $-40.2^{***}$ & ---            & $27.8^{***}$  & $1.2$            & $5.7^{**}$   & $0.8$ \\
+Hydro     & $87.3$           & $84.3$         & $0.2$         & $14.8^{***}$   & $13.6$        & $33.2^{***}$     & $9.3^{***}$  & $17.9^{***}$ \\
+Pump-storage & $-3.0$        & $-7.5$         & $1.1$         & $-6.3^{**}$    & $-1.7$        & $21.3^{***}$     & $16.9$       & $139.6$ \\
 \addlinespace
 \multicolumn{9}{l}{\emph{Slope $\beta$}} \\
-CCGT      & $-0.881^{*}$     & $-0.460$       & $0.269^{***}$ & ---            & $-0.171^{***}$ & $-0.007$        & $0.518$   & $-0.645$ \\
-Hydro     & $-1.498$         & $-1.977$       & $0.154$       & $-2.306^{***}$ & $-1.272^{***}$ & $-1.794$        & $-0.006$  & $-0.004$ \\
-Pump-storage & $0.071$       & $0.146$        & $-0.010$      & $-0.023^{*}$   & $0.019^{**}$   & $0.022^{***}$   & $-1.691$  & $-2.548$ \\
+CCGT      & $-0.881^{*}$     & $-0.460$       & $0.269^{***}$ & ---            & $-0.149^{***}$ & $-0.006$        & $0.217$   & $-0.013$ \\
+Hydro     & $-1.498$         & $-1.977$       & $0.154$       & $-2.306^{***}$ & $-1.720^{***}$ & $-4.025^{***}$  & $-0.018$  & $-0.186$ \\
+Pump-storage & $0.071$       & $0.146$        & $-0.010$      & $-0.023^{*}$   & $0.008$        & $0.028^{***}$   & $-0.281$  & $-1.508$ \\
 \addlinespace
 \multicolumn{9}{l}{\emph{Curvature $\gamma$}} \\
-CCGT      & $0.0100$         & $-0.0002$      & $-0.0040^{***}$ & ---          & $0.0013^{***}$ & $0.0002$        & $0.0075$  & $0.0354^{**}$ \\
-Hydro     & $-0.1088$        & $-0.0367$      & $-0.3055$       & $18.7^{***}$ & $-5.2281^{***}$& $-30.8^{***}$   & $0.0150$  & $-0.0785$ \\
-Pump-storage & $0.0014$      & $0.0006$       & $0.0001$        & $-0.0000$    & $-0.0000$      & $0.0000$        & $0.0002$  & $-0.0025^{**}$ \\
+CCGT      & $0.0100$         & $-0.0002$      & $-0.0040^{***}$ & ---          & $0.0010^{***}$ & $0.0006^{**}$   & $0.0076$  & $0.0198^{*}$ \\
+Hydro     & $-0.1088$        & $-0.0367$      & $-0.3055$       & $18.7^{***}$ & $-7.5555^{***}$& $-34.1^{***}$   & $0.0022$  & $-0.0079$ \\
+Pump-storage & $0.0014$      & $0.0006$       & $0.0001$        & $-0.0000$    & $0.0001$       & $0.0002^{*}$    & $-0.0002$ & $-0.0008$ \\
 \bottomrule
 \end{tabular}
 \captionof{table}{\textbf{Midday-vs-flat falsification, Spec~C bid-shape DiD.} Same construction as the headline of \S\ref{sec:results:6-1} with midday $\mathcal{M}=\{11,\dots,14\}$ substituted for critical hours $\mathcal{C}=\{5\text{--}8, 16\text{--}22\}$. A clean ``---'' indicates an unidentified cell (insufficient observations after restriction).}
@@ -1165,9 +1165,10 @@ The pooled CCGT bid-shape DiDs of \S\ref{sec:results:6-1} mask substantial firm 
 \textbf{Firm} & $\alpha$ & $\beta$ & $\gamma$ & Units \\
 \midrule
 \multicolumn{5}{l}{\emph{DA15 DA (own-market)}} \\
-Naturgy      & $86.9^{***}$ & $-0.487^{***}$ & $0.0028^{***}$  & $16$ \\
-Iberdrola    & $-0.8$       & $0.004^{**}$   & $-0.0000$       & $10$ \\
-EDP-HC       & $2.9^{**}$   & $-0.024^{***}$ & $-0.0001$       & $7$  \\
+Naturgy      & $69.4^{***}$ & $-0.404^{***}$ & $0.0022^{**}$   & $17$ \\
+Iberdrola    & $-0.4$       & $0.001$        & $0.0000$        & $10$ \\
+Endesa       & $-26.4$      & $0.104$        & ---             & $6$  \\
+EDP-HC       & $4.7^{*}$    & $-0.018$       & $-0.0002$       & $7$  \\
 \addlinespace
 \multicolumn{5}{l}{\emph{ID15 IDA (own-market)}} \\
 Naturgy      & $10.3$       & $-1.197^{*}$   & $0.0109$        & $17$ \\
