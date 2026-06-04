@@ -821,7 +821,7 @@ $N_{\text{eff}}$                     & CCGT          & $-0.08$                & 
 
 \smallskip
 \noindent
-\textbf{DA15 DA CCGT}: $\hat\alpha\!\uparrow$, $\hat\beta\!\downarrow$, $\hat\gamma\!\uparrow$ (convex). The curve translates up, has a flatter average slope, and bends \emph{convex} $\Rightarrow$ locally flat at low MW (more in-band capacity at competitive prices --- Cournot scale-up at $(Q,Q)$, mechanism (iv) of \S\ref{sec:theory:da15}) and locally steep at high MW (forward-side ladder widening, mechanism (iii)). The same joint signature appears for hydro.
+\textbf{DA15 DA CCGT}: $\hat\alpha\!\uparrow$, $\hat\beta\!\downarrow$, $\hat\gamma\!\uparrow$ (convex). The curve translates up, has a flatter average slope, and bends \emph{convex} $\Rightarrow$ locally flat at low MW (more in-band capacity at competitive prices --- Cournot scale-up at $(Q,Q)$, mechanism (iv) of \S\ref{sec:theory:da15}) and locally steep at high MW (forward-side ladder widening, mechanism (iii)). The CCGT signature is robust to wider bandwidths ($\hat\beta$ steepens monotonically from $-0.17$ at $p_{90}$ to $-0.51$ at $\delta=200$; $\hat\gamma$ stays convex at $+0.0013$ to $+0.0048$, see Table~\ref{tab:bandwidth-robustness}); a small same-sign pre-trend (Table~\ref{tab:pretrend-placebo}) means the reform-period coefficient is continuation-plus-augmentation rather than a clean jump. Hydro shows the same headline joint signature on the $p_{90}$ window, but its $\hat\gamma$ collapses from $-5.2$ at $p_{90}$ to $-0.006$ at $\delta=200$ --- hydro's apparent strong curvature is a narrow-band artefact, not a robust shape change.
 
 \smallskip
 \noindent
@@ -1317,6 +1317,24 @@ Spec~C identifies within-day redistribution (critical hours moving relative to f
 \end{center}
 
 \emph{Reading.} BSTS-on-$\alpha$ adds two pieces of evidence and one explicit null. (i) ID15 IDA hydro and pump-storage show a roughly EUR\,$-10$ to $-30$/MWh placebo-net level drop in $\alpha$ --- a small, same-direction independent corroboration of the Spec~C ID15 IDA hydro/pump $\alpha$ readings. (ii) ID15 IDA CCGT is null and noisy. (iii) DA15 DA cells are all uninformative under BSTS: daily-mean CCGT $\alpha$ in particular swings by hundreds of EUR/MWh day-to-day, so the BSTS CIs span thousands of EUR/MWh. The Spec~C DiD is much more powerful here because unit FE plus the critical-flat partition absorb the day-to-day daily-mean noise. BSTS-on-$\alpha$ is therefore a corroborating test for the ID15 IDA hydro/pump $\alpha$ reading rather than an alternative headline.
+
+\emph{Restricted-pre DA15 cross-check.} Restricting the DA15 pre-window to the reforzada-constant interval 2025-04-28 -- 2025-09-30 (rather than 2022-01-01 onwards) tightens the BSTS substantially (Table~\ref{tab:bsts-alpha-restricted}). On the restricted-pre, DA15 DA CCGT $\alpha$ rises by EUR\,$+19.9$ ($p=0.031$) post-reform --- in level. But the same-calendar 2024 placebo runs EUR\,$+61.0$ ($p<0.001$): the autumn 2024 $\alpha$ rise was larger than the autumn 2025 rise, despite no reform between 2024-Apr-28 and 2024-Sep-30. The placebo-net is negative ($-41.1$). \emph{The reform did not raise the daily-mean $\alpha$ of CCGT in level} --- the Spec~C $\alpha$ DiD of EUR\,$+30.3$/MWh is a within-day \emph{critical-relative-to-flat} widening, not a level shift, which is exactly the object that Spec~C is designed to identify and exactly the object that BSTS is the wrong tool for.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l r r r}
+\toprule
+\textbf{Tech} & \textbf{Real 2025} (EUR/MWh) & \textbf{Placebo 2024} & \textbf{Placebo-net} \\
+\midrule
+CCGT          & $19.9^{**}$ & $61.0^{***}$ & $-41.1$ \\
+Hydro         & $-9.0$      & $-23.3$      & $+14.3$ \\
+Pump-storage  & $25.6$      & $45.3^{***}$ & $-19.7$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{BSTS on daily-mean $\alpha$, DA15 with restricted reforzada-constant pre-window (2025-04-28 -- 2025-09-30).} 2024 same-calendar placebo. The negative placebo-nets confirm that the daily-mean $\alpha$ did not move beyond the same-calendar 2024 baseline at DA15 --- the within-day Spec~C $\alpha$ DiD identifies a critical-vs-flat redistribution, not a level rise.}
+\label{tab:bsts-alpha-restricted}
+\end{center}
 
 \subsection{Demand-side bid shape: a symmetric Spec~C check}\label{sec:5-demand-side}
 The headline Spec~C applies to sell offers; the OMIE feed also exposes the buy side, with each buy unit carrying a structural agent type (retailer, direct industrial consumer, customer-of-last-resort distributor, portfolio aggregator, pump-storage charging-mode buyer). Running the same per-curve OLS (with tranches sorted descending in price so that $\beta$ has the opposite sign convention than on the sell side) and the same critical/flat DiD on the four headline (reform, market) cells produces Table~\ref{tab:demand-did}. Pump-buy unit FE work on a small but informative set; the customer-of-last-resort and distributor classes have too few units after FE to identify in all cells (rows suppressed).
