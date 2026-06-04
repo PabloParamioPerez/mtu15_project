@@ -708,53 +708,6 @@ reported together with its 95\% credible interval from the MCMC posterior produc
 
 \emph{Windows.} Pre-windows are long: 2022-01-01 onwards through the day before each reform cutover. The long pre-window is what makes the year-by-year renewable interaction identified (each calendar year contributes its own renewable response). Post-windows are short: $40$ days at each cutover. For ID15 the $40$-day post-window stops at the April 2025 blackout; for DA15 the pre-window straddles the blackout so the post-window does not need a separate reforzada-constant truncation. (A pre-window that respects the regulatory regime in a narrower sense --- short-pre BSTS with a flat renewable coefficient --- is reported as a robustness check in Appendix~\ref{app:robustness}.1; the headline spec uses the long pre with year interactions because the short-pre flat-coefficient configuration mis-fits the cross-year renewable shift and reports artificially confident effects on multiple level outcomes.)
 
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[scale=0.85, every node/.style={font=\footnotesize}]
-  % x scale: 1 unit = 1 month after 2022-01-01. Window covers Jan22 -> Jul26.
-  \def\xs{0.28}
-  \def\yIDp{3.4} \def\yIDr{2.6} \def\yDAp{1.8} \def\yDAr{1.0}
-  \def\hbar{0.22}
-  \draw[gray!60, thick] (0,0) -- (\xs*54,0);
-  \foreach \m/\lbl in {0/{Jan 22}, 6/{Jul 22}, 12/{Jan 23}, 18/{Jul 23}, 24/{Jan 24},
-                       30/{Jul 24}, 36/{Jan 25}, 42/{Jul 25}, 48/{Jan 26}, 54/{Jul 26}}{
-    \draw[gray!60] (\xs*\m,0) -- (\xs*\m,-0.10);
-    \node[anchor=north, gray!40!black, font=\scriptsize] at (\xs*\m,-0.10) {\lbl};
-  }
-  \foreach \m in {12, 24, 36, 48}{
-    \draw[gray!20, very thin] (\xs*\m,0) -- (\xs*\m, 4.2);
-  }
-  \foreach \m/\lbl in {29.5/{IDA-3s}, 35.3/{ISP15}, 38.6/{ID15}, 39.9/{blackout}, 45.0/{DA15}}{
-    \draw[red!50!black, dashed, thin] (\xs*\m,0) -- (\xs*\m, 4.4);
-    \node[anchor=south west, red!50!black, font=\scriptsize, rotate=55] at (\xs*\m, 4.45) {\lbl};
-  }
-  \fill[gray!30] (0,\yIDp-\hbar) rectangle (\xs*26.6,\yIDp+\hbar);
-  \fill[blue!55] (\xs*26.6,\yIDp-\hbar) rectangle (\xs*27.95,\yIDp+\hbar);
-  \draw[blue!70!black, thick] (\xs*26.6,\yIDp-\hbar-0.05) -- (\xs*26.6,\yIDp+\hbar+0.05);
-  \node[anchor=east] at (-0.15,\yIDp) {ID15 placebo (2024)};
-  \fill[gray!30] (0,\yIDr-\hbar) rectangle (\xs*38.6,\yIDr+\hbar);
-  \fill[red!65] (\xs*38.6,\yIDr-\hbar) rectangle (\xs*39.95,\yIDr+\hbar);
-  \draw[red!70!black, thick] (\xs*38.6,\yIDr-\hbar-0.05) -- (\xs*38.6,\yIDr+\hbar+0.05);
-  \node[anchor=east] at (-0.15,\yIDr) {ID15 real (2025-03-19)};
-  \fill[gray!30] (0,\yDAp-\hbar) rectangle (\xs*33,\yDAp+\hbar);
-  \fill[blue!55] (\xs*33,\yDAp-\hbar) rectangle (\xs*34.3,\yDAp+\hbar);
-  \draw[blue!70!black, thick] (\xs*33,\yDAp-\hbar-0.05) -- (\xs*33,\yDAp+\hbar+0.05);
-  \node[anchor=east] at (-0.15,\yDAp) {DA15 placebo (2024)};
-  \fill[gray!30] (0,\yDAr-\hbar) rectangle (\xs*45,\yDAr+\hbar);
-  \fill[red!65] (\xs*45,\yDAr-\hbar) rectangle (\xs*46.3,\yDAr+\hbar);
-  \draw[red!70!black, thick] (\xs*45,\yDAr-\hbar-0.05) -- (\xs*45,\yDAr+\hbar+0.05);
-  \node[anchor=east] at (-0.15,\yDAr) {DA15 real (2025-10-01)};
-  \fill[gray!30] (\xs*0, 5.6) rectangle (\xs*2, 5.85);
-  \node[anchor=west] at (\xs*2.2, 5.72) {long pre (training)};
-  \fill[red!65] (\xs*15, 5.6) rectangle (\xs*17, 5.85);
-  \node[anchor=west] at (\xs*17.2, 5.72) {real post (40\,d)};
-  \fill[blue!55] (\xs*28, 5.6) rectangle (\xs*30, 5.85);
-  \node[anchor=west] at (\xs*30.2, 5.72) {2024 placebo post (40\,d)};
-\end{tikzpicture}
-\captionof{figure}{Spec~A windows under the long-pre + year-interaction headline spec. Each row is one BSTS run; pre-windows start 2022-01-01 and post-windows are $40$ days. Wind\,$\times$\,year and solar\,$\times$\,year interactions in the covariate set absorb the cross-year renewable-penetration trend.}
-\label{fig:bsts-windows}
-\end{figure}
-
 \emph{Placebo cross-check.} The same BSTS is re-run on a same-calendar window one year before each reform with a fake cutover. The real-window 95\% credible interval must exclude zero AND the placebo must be either null or opposite-signed for a finding to be retained as a reform-attributable effect; placebos that move in the same direction as the real estimate flag a recurring calendar shift the seasonality model has not absorbed.
 
 \emph{MCMC and prior settings.}\phantomsection\label{sec:empirical:drift} $\texttt{niter}=2{,}000$ MCMC iterations after burn-in (a $5\times$ increase changes point estimates and 95\% intervals by $<2\%$ across all reported cells, Appendix~\ref{app:robustness}.1). $\texttt{prior.level.sd}=0.005$ as a fraction of the response SD; the result is insensitive to this choice over $[0.005, 0.01]$ but distorts under an aggressive $0.001$ (Appendix~\ref{app:robustness}.1).
