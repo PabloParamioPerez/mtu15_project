@@ -1348,26 +1348,26 @@ The headline Spec~C applies to sell offers; the OMIE feed also exposes the buy s
 \textbf{Demand class} & \textbf{ID15 IDA} & \textbf{ID15 DA} & \textbf{DA15 DA} & \textbf{DA15 IDA} \\
 \midrule
 \multicolumn{5}{l}{\emph{Intercept $\alpha$ (EUR/MWh)}} \\
-Retailer            & $-10.6^{**}$        & $5.4$       & $14.2^{***}$       & $22.2^{***}$ \\
-DirectCons          & $0.2$               & ---         & $11.9^{***}$       & $18.9^{***}$ \\
-PumpBuy             & $0.3$               & $-4.9$      & $-0.2$             & $-0.1$ \\
+Retailer            & $-10.6^{**}$        & $5.4$       & $14.4^{***}$       & $33.3^{***}$ \\
+DirectCons          & $0.2$               & ---         & $-0.6$             & $19.8^{***}$ \\
+PumpBuy             & $0.3$               & $-4.9$      & $-1.8$             & $1.1$ \\
 \addlinespace
 \multicolumn{5}{l}{\emph{Slope $\beta$ (EUR/MWh per buy MW; on a descending price-ordered curve)}} \\
-Retailer            & $-1.688$            & $-1.624$    & $1.993^{**}$       & $-2.462^{**}$ \\
-DirectCons          & $-5.308^{***}$      & ---         & $-2.180^{***}$     & $0.947^{***}$ \\
-PumpBuy             & $-0.012$            & $0.133$     & $0.031^{**}$       & $0.016^{**}$ \\
+Retailer            & $-1.688$            & $-1.624$    & $2.842^{***}$      & $-2.375^{**}$ \\
+DirectCons          & $-5.308^{***}$      & ---         & $-3.797^{***}$     & $1.511^{***}$ \\
+PumpBuy             & $-0.012$            & $0.133$     & $0.038^{***}$      & $0.017^{***}$ \\
 \addlinespace
 \multicolumn{5}{l}{\emph{Curvature $\gamma$ (EUR/MWh per buy MW$^2$)}} \\
-Retailer            & $-6.1746$           & $-0.7050$   & $2.4732$           & $0.5744$ \\
-DirectCons          & $-25.4^{***}$       & ---         & $1.2655^{*}$       & $-0.2535$ \\
-PumpBuy             & $-0.0002$           & $0.0002$    & $0.0009^{**}$      & $0.0002$ \\
+Retailer            & $-6.1746$           & $-0.7050$   & $2.3054$           & $6.8098$ \\
+DirectCons          & $-25.4^{***}$       & ---         & $-4.2976$          & $-0.0259$ \\
+PumpBuy             & $-0.0002$           & $0.0002$    & $0.0008^{**}$      & $0.0002^{**}$ \\
 \bottomrule
 \end{tabular}
 \captionof{table}{\textbf{Demand-side Spec~C DiD, critical vs.\ flat, unit FE.} Per-curve OLS on the buy side with tranches sorted descending in price; $\beta$ measures how price falls as cumulative buy MW expands down the demand ladder. Retailer = competitive supplier (BIG-4 dominated); DirectCons = large direct industrial buyer; PumpBuy = pump-storage in charging mode.}
 \label{tab:demand-did}
 \end{center}
 
-\emph{Reading.} The demand-side $\alpha$ moves \emph{up} at DA15 (retailers willing to pay EUR\,$+14$/MWh more at the top of the ladder in critical relative to flat hours post-reform; direct consumers similarly), \emph{down} at ID15 IDA (EUR\,$-11$ for retailers). The DA15 demand-side $\alpha$ rise sits next to the headline sell-side $\alpha$ rise of EUR\,$+30$ for CCGT in the same cell: the cleared price in the contested band must reconcile sellers asking more with buyers willing to pay more --- consistent with a Cournot-style equilibrium where both sides re-coordinate at a higher reservation price, not a one-sided supply shift. Pump-storage charging-mode buyers respond to DA15 with a flatter buy curve ($\beta>0$, $\gamma>0$ convex) consistent with the same operational logic as pump-storage on the sell side: greater willingness to absorb energy through the cheap end of the demand ladder once 15-min granularity allows finer-grain arbitrage of intra-hour price variation. The ID15 demand-side $\alpha$ drop at the IDA is small but worth flagging as a corroborating piece of the ID15 IDA equilibrium-price compression documented in \S\ref{sec:results:6-3}.
+\emph{Reading.} The demand-side $\alpha$ moves \emph{up} at DA15 on both the day-ahead and the intraday-auction leg --- retailers willing to pay EUR\,$+14$/MWh more at the top of the day-ahead demand ladder and EUR\,$+33$/MWh more at the intraday-auction ladder in critical relative to flat hours post-reform; direct consumers move by EUR\,$+20$/MWh at the IDA. The DA15 demand-side $\alpha$ rise sits next to the headline sell-side $\alpha$ rise of EUR\,$+28$/MWh for CCGT in the same DA cell: the cleared price in the contested band must reconcile sellers asking more with buyers willing to pay more --- consistent with a Cournot-style equilibrium where both sides re-coordinate at a higher reservation price, not a one-sided supply shift. Pump-storage charging-mode buyers respond to DA15 with a flatter buy curve ($\beta>0$, $\gamma>0$ convex) consistent with the same operational logic as pump-storage on the sell side: greater willingness to absorb energy through the cheap end of the demand ladder once 15-min granularity allows finer-grain arbitrage of intra-hour price variation. ID15 IDA retailers run in the opposite direction (EUR\,$-11$/MWh on $\alpha$), corroborating the ID15 IDA equilibrium-price compression documented in \S\ref{sec:results:6-3}.
 
 % =====================================================================
 \section{Continuous-market response at the three structural reforms}\label{app:continuous}
