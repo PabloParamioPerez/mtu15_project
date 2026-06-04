@@ -722,9 +722,9 @@ For per-tech bid-shape outcomes $Y\in\{\sigma_p, N_{\text{eff}}, \text{slope}, \
 \[
 Y_{u,d,p[,s]} = \alpha_u + \beta\,\mathbf{1}\{d\ge T_r\} + \xi\,\mathbf{1}\{h\in\mathcal{C}\} + \theta\,D_{d,h} + \varepsilon, \qquad \text{SEs clustered by date.}
 \]
-where $\text{slope}_{u,d,p}$ and $\text{intercept}_{u,d,p}$ are jointly the OLS coefficients of bid price on cumulative in-band MW within the curve. Sort the in-band tranches by price; let $Q_k = \sum_{j\le k} \Delta q_j$ be the cumulative MW after the $k$th tranche; the OLS fit on the in-band step endpoints is
+where $\text{slope}_{u,d,p}$ and $\text{intercept}_{u,d,p}$ are jointly the OLS coefficients of bid price on cumulative in-band MW within the curve. Sort the in-band tranches by price (re-indexing $k=1,\dots,|\mathcal{B}_{u,d,p}|$ over the in-band set $\mathcal{B}_{u,d,p}$ defined in \S\ref{sec:data:bandwidth}); let $Q_k = \sum_{j\le k,\,j\in\mathcal{B}_{u,d,p}} \Delta q_j$ be the cumulative MW after the $k$th in-band tranche; the OLS fit on the in-band step endpoints is
 \[
-p_k \;=\; \alpha \,+\, \beta\, Q_k \,+\, e_k, \qquad k = 1,\ldots, K_{u,d,p},
+p_k \;=\; \alpha \,+\, \beta\, Q_k \,+\, e_k, \qquad k = 1,\ldots, |\mathcal{B}_{u,d,p}|,
 \]
 run unweighted (each tranche contributes one data point with equal weight; no MW-weighting). The slope $\beta$ is supply-curve steepness in the competing tier (EUR/MWh per MW) --- the most direct empirical counterpart of the model's per-product residual-demand slope $b_{mt}$. The intercept $\alpha$ is the predicted price at $Q=0$, the y-intercept of the OLS line through the in-band step endpoints; geometrically it measures the level of the in-band ladder (where the line sits on the price axis), and pairs naturally with the slope to describe how the bid curve translates and rotates across regimes.
 
