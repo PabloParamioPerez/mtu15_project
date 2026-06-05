@@ -743,6 +743,8 @@ Since each MTU15 reform is studied separately, this is a standard $2\times 2$ Di
 
 \subsection{Bid-shape widening in critical hours (Spec C)}\label{sec:results:6-1}
 
+\emph{Takeaway.} The granularity reforms reshape the in-band bid curve in critical hours. DA15 combined-cycle gas day-ahead translates up, flattens, and bends convex (Cournot scale-up); ID15 day-ahead intraday-cleared CCGT translates down, steepens, bends concave (forward-leg anticipation hedge); ID15 intraday-auction hydro and pump-storage add tranche density without changing level or slope. Demand-side buyers raise their willingness-to-pay at the top of the ladder by EUR\,+14--33/MWh, mirroring the sell-side level shift.
+
 \begin{center}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -786,11 +788,11 @@ $N_{\text{eff}}$                     & CCGT          & $-0.08$                & 
 
 \smallskip
 \noindent
-\textbf{ID15 IDA hydro/pump-storage}: $N_{\text{eff}}\!\uparrow$ with no level/slope shift $\Rightarrow$ added tranche density on the spot leg (mechanism M4 of \S\ref{sec:theory:id15}). Figure~\ref{fig:bidshape-shifts} sketches the four observed moves.
+\textbf{ID15 IDA hydro/pump-storage}: $N_{\text{eff}}\!\uparrow$ with no level/slope shift $\Rightarrow$ added tranche density on the spot leg (mechanism M4 of \S\ref{sec:theory:id15}). The three retained joint-signature stories are visualised in Figure~\ref{fig:bidshape-shifts}.
 
 \begin{figure}[h]
 \centering
-\begin{tikzpicture}[scale=0.52, every node/.style={font=\scriptsize}]
+\begin{tikzpicture}[scale=0.46, every node/.style={font=\scriptsize}]
   \def\W{7.5}\def\H{5.0}\def\PMCP{2.7}\def\DELTA{1.1}
   \tikzset{
     axis/.style={draw=gray!55, thick, ->, >=Stealth},
@@ -800,64 +802,48 @@ $N_{\text{eff}}$                     & CCGT          & $-0.08$                & 
     post/.style={red!65!black, very thick, dash pattern=on 5pt off 2.5pt, line cap=round},
     plabel/.style={font=\scriptsize\bfseries, anchor=north, align=center},
   }
-  %% Panel A: DA15 DA CCGT (slope flatter + intercept up, sigma + Neff up)
+  %% Panel A: DA15 DA CCGT (slope flatter + intercept up, gamma convex)
   \begin{scope}[xshift=0cm, yshift=0cm]
     \fill[band] (0,\PMCP-\DELTA) rectangle (\W-0.2,\PMCP+\DELTA);
     \draw[axis] (0,0) -- (\W,0); \draw[axis] (0,0) -- (0,\H+0.3);
     \draw[mcp] (0,\PMCP) -- (\W-0.2,\PMCP);
     \node[red!70!black, anchor=west, font=\tiny] at (\W-0.18,\PMCP) {MCP};
-    % pre: low-pre + sparse steep 3-tranche (low sigma)
     \draw[pre] (0,0.4) -- (0.5,0.4) -- (0.5,2.1) -- (2.4,2.1) -- (2.4,2.7) -- (4.3,2.7) -- (4.3,3.3) -- (6.2,3.3) -- (6.2,4.5) -- (7.0,4.5);
-    % post: same MW but more tranches, intercept higher, slope flatter
     \draw[post] (0,0.4) -- (0.5,0.4) -- (0.5,2.4) -- (1.5,2.4) -- (1.5,2.6) -- (2.7,2.6)
       -- (2.7,2.85) -- (3.9,2.85) -- (3.9,3.1) -- (5.1,3.1) -- (5.1,3.4) -- (6.2,3.4) -- (6.2,4.7) -- (7.0,4.7);
-    \node[plabel] at (\W/2,-0.25) {\textbf{DA15 DA CCGT} \\ $\sigma_p\uparrow$, $N_{\text{eff}}\uparrow$, $\hat\beta\downarrow$, $\hat\alpha\uparrow$};
+    \node[plabel] at (\W/2,-0.25) {\textbf{DA15 DA CCGT} \\ $\hat\alpha\uparrow$, $\hat\beta\downarrow$, $\hat\gamma\uparrow$};
     \node[blue!65!black, anchor=west, font=\tiny] at (4.5,4.45) {pre};
     \node[red!65!black, anchor=west, font=\tiny] at (4.5,4.95) {post};
   \end{scope}
-  %% Panel B: DA15 DA Pump-storage (slope steeper + intercept down)
-  \begin{scope}[xshift=10cm, yshift=0cm]
+  %% Panel B (was C): ID15 DA CCGT (anticipation: slope steeper + intercept down + gamma concave)
+  \begin{scope}[xshift=9cm, yshift=0cm]
     \fill[band] (0,\PMCP-\DELTA) rectangle (\W-0.2,\PMCP+\DELTA);
     \draw[axis] (0,0) -- (\W,0); \draw[axis] (0,0) -- (0,\H+0.3);
     \draw[mcp] (0,\PMCP) -- (\W-0.2,\PMCP);
     \node[red!70!black, anchor=west, font=\tiny] at (\W-0.18,\PMCP) {MCP};
-    % pre: dense ladder, moderate slope
-    \draw[pre] (0,0.4) -- (0.5,0.4) -- (0.5,2.30) -- (2.0,2.30) -- (2.0,2.55) -- (3.5,2.55) -- (3.5,2.85) -- (5.0,2.85) -- (5.0,3.15) -- (6.3,3.15) -- (6.3,4.4) -- (7.0,4.4);
-    % post: lower start, steeper climb
-    \draw[post] (0,0.4) -- (0.5,0.4) -- (0.5,1.90) -- (1.7,1.90) -- (1.7,2.40) -- (3.0,2.40) -- (3.0,2.90) -- (4.3,2.90) -- (4.3,3.45) -- (5.5,3.45) -- (5.5,4.05) -- (6.3,4.05) -- (6.3,4.7) -- (7.0,4.7);
-    \node[plabel] at (\W/2,-0.25) {\textbf{DA15 DA Pump-storage} \\ $\hat\beta\uparrow$, $\hat\alpha\downarrow$ (storage arbitrage)};
-  \end{scope}
-  %% Panel C: ID15 DA CCGT (anticipation: slope steeper + intercept down + sigma up)
-  \begin{scope}[xshift=0cm, yshift=-7.5cm]
-    \fill[band] (0,\PMCP-\DELTA) rectangle (\W-0.2,\PMCP+\DELTA);
-    \draw[axis] (0,0) -- (\W,0); \draw[axis] (0,0) -- (0,\H+0.3);
-    \draw[mcp] (0,\PMCP) -- (\W-0.2,\PMCP);
-    \node[red!70!black, anchor=west, font=\tiny] at (\W-0.18,\PMCP) {MCP};
-    % pre: dense moderate
     \draw[pre] (0,0.4) -- (0.5,0.4) -- (0.5,2.40) -- (2.0,2.40) -- (2.0,2.65) -- (3.5,2.65) -- (3.5,2.85) -- (5.0,2.85) -- (5.0,3.10) -- (6.3,3.10) -- (6.3,4.4) -- (7.0,4.4);
-    % post: lower start, steeper climb but same MW (pure stretch in price)
     \draw[post] (0,0.4) -- (0.5,0.4) -- (0.5,1.75) -- (2.0,1.75) -- (2.0,2.40) -- (3.5,2.40) -- (3.5,2.95) -- (5.0,2.95) -- (5.0,3.60) -- (6.3,3.60) -- (6.3,4.7) -- (7.0,4.7);
-    \node[plabel] at (\W/2,-0.25) {\textbf{ID15 DA CCGT} (anticipation) \\ $\sigma_p\uparrow$, $\hat\beta\uparrow$, $\hat\alpha\downarrow$};
+    \node[plabel] at (\W/2,-0.25) {\textbf{ID15 DA CCGT (anticipation)} \\ $\hat\alpha\downarrow$, $\hat\beta\uparrow$, $\hat\gamma\downarrow$};
   \end{scope}
-  %% Panel D: ID15 IDA hydro/pump-storage (N_eff up, sigma up, slope similar)
-  \begin{scope}[xshift=10cm, yshift=-7.5cm]
+  %% Panel C (was D): ID15 IDA hydro/pump-storage (N_eff up, slope similar)
+  \begin{scope}[xshift=18cm, yshift=0cm]
     \fill[band] (0,\PMCP-\DELTA) rectangle (\W-0.2,\PMCP+\DELTA);
     \draw[axis] (0,0) -- (\W,0); \draw[axis] (0,0) -- (0,\H+0.3);
     \draw[mcp] (0,\PMCP) -- (\W-0.2,\PMCP);
     \node[red!70!black, anchor=west, font=\tiny] at (\W-0.18,\PMCP) {MCP};
-    % pre: 3 sparse tranches
     \draw[pre] (0,0.4) -- (0.5,0.4) -- (0.5,2.0) -- (2.5,2.0) -- (2.5,2.7) -- (4.5,2.7) -- (4.5,3.4) -- (6.3,3.4) -- (6.3,4.4) -- (7.0,4.4);
-    % post: 7 small tranches (denser ladder)
     \draw[post] (0,0.4) -- (0.5,0.4) -- (0.5,2.05) -- (1.4,2.05) -- (1.4,2.30) -- (2.3,2.30) -- (2.3,2.55) -- (3.2,2.55)
       -- (3.2,2.75) -- (4.1,2.75) -- (4.1,2.95) -- (5.0,2.95) -- (5.0,3.20) -- (5.9,3.20) -- (5.9,3.45) -- (6.3,3.45) -- (6.3,4.7) -- (7.0,4.7);
-    \node[plabel] at (\W/2,-0.25) {\textbf{ID15 IDA hydro / pump-storage} \\ $N_{\text{eff}}\uparrow$ (more tranches, similar slope)};
+    \node[plabel] at (\W/2,-0.25) {\textbf{ID15 IDA hydro / pump-storage} \\ $N_{\text{eff}}\uparrow$ (denser ladder)};
   \end{scope}
 \end{tikzpicture}
-\caption{Stylized empirical bidding shifts. Blue solid: pre-reform; red dashed: post-reform.}
+\caption{Three retained stylised bidding shifts under the 154-day DA15 post-window. Blue solid: pre-reform; red dashed: post-reform. The original draft contained a fourth DA15 pump-storage panel that was a 40-day window artefact (\S\ref{sec:results:6-1}); it is dropped.}
 \label{fig:bidshape-shifts}
 \end{figure}
 
 \subsection{Production-unit arbitrageurs are empirically active in intraday auctions}\label{sec:results:6-6}
+
+\emph{Takeaway.} 4--30\% of intraday-auction unit-sessions carry both a sell and a buy offer, with the share ranging from $20\%$ for nuclear to $83\%$ for wind. The sequential-market theory's arbitrageur agent is observable on the bid stack across every production technology.
 
 Production units submit sell offers in both markets but buy offers only in IDA (the single-product-per-hour DA admits no within-auction spread). Figure~\ref{fig:sell-share-over-time} plots the daily IDA sell-share per tech; the \%-dual mini-table shows production-unit arbitrageurs are active across every tech (4--30\% of unit-sessions carry both sides).
 
@@ -873,13 +859,15 @@ The IDA \%-dual row in Figure~\ref{fig:sell-share-over-time} varies from $20\%$ 
 \subsection{IDA in-band sell-share rises at ID15 (Spec A)}\label{sec:results:6-6b}
 \phantomsection\label{tab:bsts-buy-share}
 
+\emph{Takeaway.} The intraday auction stops being a pure rebalancing venue and becomes a per-quarter pricing instrument: nuclear +39pp, wind +26pp, pump-storage +13pp on the share of in-band activity that is sell rather than buy. No 2024 placebo because the pre-IDA-reform sell-share was a constant $1.0$.
+
 ID15 lifts the daily IDA in-band sell-share sharply for nuclear ($38.8$pp), wind ($26.0$pp) and pump-storage ($13.0$pp); see Table~\ref{tab:bsts-spec-a}. Same-calendar 2024 placebo unavailable (pre-IDA-reform sell-share constant at $1.0$); falsification by descriptive break in Figure~\ref{fig:sell-share-over-time}.
 
 \paragraph{Mechanism.} Pre-ID15 the IDA was a rebalancing venue; ID15 turned it into a per-quarter pricing instrument, so units shifted activity onto the sell side to capture within-hour rent (mechanism M3 of \S\ref{sec:theory:id15}).
 
 \subsection{In-band offered energy migration (Spec B): not retained}\label{sec:results:6-2}
 
-Spec~B regresses in-band offered energy $E^{\text{band}}_{t,m,d,\mathcal{X}}$ per (tech, market, hour-class) cell on the same BSTS architecture as Spec~A. The 24 cells delivered a mixture of net-only and small-medium findings in the short-pre BSTS, with CCGT moving large MWh into the granular leg at each reform (e.g.\ +2090 morning-ramp IDA at ID15; +3462 morning-ramp DA at DA15) and hydro behaving as an outlier (the 2024 placebo is a poor benchmark since hydro inflows differ substantially across years). Under the year-varying renewable-coefficient sweep the Spec~B cells collapse to nulls or net-only constructions just like the Spec~A cleared-MWh cells; no Spec~B level survives an A-strong test. Full tables and per-cell decomposition are in \hyperref[sec:5b]{Appendix~\ref*{app:robustness}.1}. We do not retain Spec~B levels as primary findings.
+\emph{Takeaway.} Spec~B's per-hour-class in-band offered-energy cells (24 cells across tech $\times$ market $\times$ hour-class) deliver model-consistent signs but credible intervals that bracket zero under the year-by-year renewable-interaction control. The bid-shape DiD of \S\ref{sec:results:6-1} identifies the same Cournot-scale-up channel through a within-day critical/flat control; we drop Spec~B as a primary finding.
 
 \subsection{Level-shift predictions that the data cannot identify}\label{sec:results:6-3}
 \phantomsection\label{sec:results:6-4}
@@ -888,7 +876,7 @@ Spec~B regresses in-band offered energy $E^{\text{band}}_{t,m,d,\mathcal{X}}$ pe
 \phantomsection\label{fig:bsts-id15}
 \phantomsection\label{fig:bsts-da15}
 
-The model also predicts a clearing-price drop on the granular side of the spot reform (M2), a Cournot scale-up of cleared MWh at the forward reform (mechanism (iv)), in-band offered-energy migration, and renewable cleared-MW reallocation. Under Spec~A (long pre + year interactions) each delivers a point estimate consistent in sign with the model but a 95\% credible interval that brackets zero. We do not retain the level-shift point estimates as separate findings; the bid-shape DiD of \S\ref{sec:results:6-1} identifies the same Cournot-scale-up channel through a within-day critical/flat control. Full per-cell results and the short-pre $\to$ year-interaction diagnostic in Appendix~\ref{app:robustness}.1.
+\emph{Takeaway.} The model's four level-shift predictions (granular-side price drop, Cournot cleared-MWh scale-up, in-band offered-energy migration, renewable cleared-MW reallocation) deliver right-sign point estimates but 95\% credible intervals that bracket zero once the renewable coefficient is allowed to vary across calendar years. We drop them as separate findings and read the same economic content through the within-day bid-shape DiD of \S\ref{sec:results:6-1}.
 
 Spec~A applies BSTS to system-level outcomes: clearing prices, per-tech daily cleared GWh, and the within-day wedge SD $\Delta^{\text{SD}}_d$. Table~\ref{tab:bsts-spec-a} reports the Real, Placebo, and placebo-net (Net) posterior means for each outcome and each reform.
 
@@ -916,15 +904,19 @@ Spec~A applies BSTS to system-level outcomes: clearing prices, per-tech daily cl
 
 \subsection{Within-hour wedge SD jumps under ID15 and persists at DA15 (Spec A)}\label{sec:results:6-5wedge}
 
+\emph{Takeaway.} The day-ahead/intraday wedge MEAN stays flat across regimes (the Ito-Reguant scarcity wedge); the wedge SD jumps at ID15 ($+1.15$ EUR/MWh overall, $+2.12$ in critical hours) and does NOT collapse back at DA15 --- the joint signature of M3 limited-arbitrage at $(1,Q)$ and (ii) per-product limited arbitrage at $(Q,Q)$. The reform reshapes the second moment, not the mean.
+
 Wedge mean is positive and stable across regimes ($1$ to $2$ EUR/MWh) --- the Ito-Reguant scarcity wedge $p_1 > p_2 > c$ under limited arbitrage. Reform-attributable change in the level is null; the variation is in the second moment.
 
 \paragraph{Mechanism.} ID15: 15-min IDA against 60-min DA $\Rightarrow$ four IDA quarter-prices spread across each clock-hour vs one DA price, mechanically generating a within-hour DA$-$IDA gap with SD that tracks within-hour residual-demand variation. DA15: per-product arbitrage capacity binds at $K/Q$; residual wedge SD stays at $\sigma_\mu/(4 b_1)$ instead of collapsing to zero (mechanism (ii) of \S\ref{sec:theory:da15}). ISP15 alone (settlement-only) produces a same-sign jump $\Rightarrow$ bidders respond to the finer settlement reference itself.
 
 \subsection{Aggregator vs strategic-bidder footprint by reform}\label{sec:results:6-5}
 
-The two reforms hit different agents (\S\ref{sec:theory:speaks}): the aggregator-side rise in IDA sell-share at ID15 (\S\ref{sec:results:6-6b}) matches mechanism M1+M3 on the spot leg; the strategic-bidder ladder widening at DA15 (\S\ref{sec:results:6-1}, especially the joint slope-flatten + intercept-rise signature on CCGT DA) matches mechanism (iii)+(iv) on the forward leg; the wedge SD jump at ID15 and non-reversion at DA15 (\S\ref{sec:results:6-5wedge}) is the joint signature of M3 at $(1,Q)$ and (ii) limited per-product arbitrage at $(Q,Q)$.
+\emph{Takeaway.} The two reforms reshape behaviour through different agents: ID15 surfaces the aggregator-side response (IDA sell-share rise on the spot leg) and a within-hour wedge SD that does not collapse; DA15 surfaces the strategic-bidder response (CCGT day-ahead ladder widening on the forward leg). The model's two-agent typology delivers a one-to-one match with the observed reform-by-reform incidence.
 
 \subsection{System-cost decomposition: granularity shrinks ajuste; reforzada inflates Fase~I}\label{sec:results:granularity-vs-reforzada}
+
+\emph{Takeaway.} Two policies running on the same calendar window pull system cost in opposite directions: the granularity reforms shrink the up-direction adjustment channels REE calls (real-time redispatch $-1/3$, aFRR up $-1/2$) by absorbing within-hour variation into the auction; the post-blackout reforzada regime separately inflates Fase~I up-redispatch ($+5$M EUR/day, almost entirely CCGT voltage support). The net headline rise is reforzada-driven, not granularity-driven.
 
 Within the pre-blackout zone (ISP15-win $\to$ MTU15-IDA pre-blk): total per-day ajuste cost drops from $\sim$EUR\,16M to $\sim$EUR\,14M; real-time redispatch falls by $\sim$1/3, aFRR up by $\sim$1/2, down-direction channels shrink in parallel. Quarter-level cleared schedules absorb within-hour variation that previously had to be cleaned up ex post.
 
@@ -1147,16 +1139,16 @@ We anchor the bandwidth to the contested margin of the market: $\delta = p_{90} 
 \textbf{$\delta$}    & CCGT & Hydro & Pump & CCGT & Hydro & Pump \\
 \midrule
 \multicolumn{7}{l}{\emph{Slope $\beta$ (EUR/MWh per MW)}} \\
-Headline ($p_{90}$)  & $-0.881^{*}$    & $-1.498$    & $0.071$    & $-0.149^{***}$ & $-1.720^{***}$ & $0.008$ \\
-$\delta=100$          & $-0.254^{***}$  & $-0.781$    & $0.035$    & $-0.385^{***}$ & $-0.632^{***}$ & $0.012$ \\
-$\delta=140$          & $-0.234^{***}$  & $-0.613$    & $0.010$    & $-0.493^{***}$ & $0.004$        & $0.007$ \\
-$\delta=200$          & $-0.245^{***}$  & $-0.862$    & $-0.007$   & $-0.483^{***}$ & $-0.003$       & $0.002$ \\
+Headline ($p_{90}$)  & $-0.881^{*}$    & $-1.498$    & $0.071$    & $-0.150^{***}$ & $-1.785^{***}$ & $0.008$ \\
+$\delta=100$          & $-0.254^{***}$  & $-0.781$    & $0.035$    & $-0.388^{***}$ & $-0.636^{***}$ & $0.012$ \\
+$\delta=140$          & $-0.234^{***}$  & $-0.613$    & $0.010$    & $-0.493^{***}$ & $-0.015$       & $0.007$ \\
+$\delta=200$          & $-0.245^{***}$  & $-0.862$    & $-0.007$   & $-0.481^{***}$ & $-0.024$       & $0.001$ \\
 \addlinespace
 \multicolumn{7}{l}{\emph{Curvature $\gamma$ (EUR/MWh per MW$^2$)}} \\
-Headline ($p_{90}$)  & $0.0100$        & $-0.1088$   & $0.0014$   & $0.0010^{***}$ & $-7.5555^{***}$ & $0.0001$ \\
-$\delta=100$          & $0.0309^{**}$   & $0.1572$    & $0.0008$   & $0.0057^{***}$ & $-0.0510$       & $0.0001^{**}$ \\
-$\delta=140$          & $0.0761$        & $0.1459$    & $0.0006$   & $0.0058^{***}$ & $0.0006$        & $0.0002^{**}$ \\
-$\delta=200$          & $0.0761$        & $0.1541$    & $0.0007$   & $0.0050^{***}$ & $-0.0007$       & $0.0001^{**}$ \\
+Headline ($p_{90}$)  & $0.0100$        & $-0.1088$   & $0.0014$   & $0.0010^{***}$ & $-7.4938^{***}$ & $0.0001$ \\
+$\delta=100$          & $0.0309^{**}$   & $0.1572$    & $0.0008$   & $0.0057^{***}$ & $-0.0591$       & $0.0001^{***}$ \\
+$\delta=140$          & $0.0761$        & $0.1459$    & $0.0006$   & $0.0059^{***}$ & $0.0009$        & $0.0002^{**}$ \\
+$\delta=200$          & $0.0761$        & $0.1541$    & $0.0007$   & $0.0050^{***}$ & $-0.0004$       & $0.0001^{**}$ \\
 \bottomrule
 \end{tabular}
 \captionof{table}{\textbf{Bandwidth robustness for Spec~C bid-shape DiD.} Per-curve DiD coefficient $\theta$ on the slope $\beta$ and curvature $\gamma$ at progressively wider bandwidths. Window-specific $p_{90}$ headline values: $\delta=62$ for ID15 IDA, $\delta=50$ for DA15 DA. CCGT $\beta$ and $\gamma$ are the most robust: DA15 DA CCGT $\beta$ steepens monotonically with wider bandwidths ($-0.15 \to -0.49$) and $\gamma$ stays convex and significant ($+0.001 \to +0.006$). ID15 IDA CCGT $\beta$ steepens uniformly; $\gamma$ is positive throughout but only sometimes significant. Hydro effects are narrow-band artefacts: DA15 DA hydro $\gamma$ collapses from $-7.6$ at $p_{90}$ to near zero at $\delta=200$. $\alpha$ rows omitted (qualitatively similar to $\beta$ and $\gamma$ on the CCGT cells).}
@@ -1301,19 +1293,19 @@ The headline Spec~C applies to sell offers; the OMIE feed also exposes the buy s
 \textbf{Demand class} & \textbf{ID15 IDA} & \textbf{ID15 DA} & \textbf{DA15 DA} & \textbf{DA15 IDA} \\
 \midrule
 \multicolumn{5}{l}{\emph{Intercept $\alpha$ (EUR/MWh)}} \\
-Retailer            & $-10.6^{**}$        & $5.4$       & $14.4^{***}$       & $33.3^{***}$ \\
-DirectCons          & $0.2$               & ---         & $-0.6$             & $19.8^{***}$ \\
-PumpBuy             & $0.3$               & $-4.9$      & $-1.8$             & $1.1$ \\
+Retailer            & $-10.6^{**}$        & $5.4$       & $15.0^{***}$       & $33.1^{***}$ \\
+DirectCons          & $0.2$               & ---         & $-3.1$             & $19.5^{***}$ \\
+PumpBuy             & $0.3$               & $-4.9$      & $-2.1^{*}$         & $0.8$ \\
 \addlinespace
 \multicolumn{5}{l}{\emph{Slope $\beta$ (EUR/MWh per buy MW; on a descending price-ordered curve)}} \\
-Retailer            & $-1.688$            & $-1.624$    & $2.842^{***}$      & $-2.375^{**}$ \\
-DirectCons          & $-5.308^{***}$      & ---         & $-3.797^{***}$     & $1.511^{***}$ \\
-PumpBuy             & $-0.012$            & $0.133$     & $0.038^{***}$      & $0.017^{***}$ \\
+Retailer            & $-1.688$            & $-1.624$    & $2.607^{***}$      & $-2.272^{**}$ \\
+DirectCons          & $-5.308^{***}$      & ---         & $-3.746^{***}$     & $1.555^{***}$ \\
+PumpBuy             & $-0.012$            & $0.133$     & $0.039^{***}$      & $0.017^{***}$ \\
 \addlinespace
 \multicolumn{5}{l}{\emph{Curvature $\gamma$ (EUR/MWh per buy MW$^2$)}} \\
-Retailer            & $-6.1746$           & $-0.7050$   & $2.3054$           & $6.8098$ \\
-DirectCons          & $-25.4^{***}$       & ---         & $-4.2976$          & $-0.0259$ \\
-PumpBuy             & $-0.0002$           & $0.0002$    & $0.0008^{**}$      & $0.0002^{**}$ \\
+Retailer            & $-6.1746$           & $-0.7050$   & $2.7389$           & $4.9286$ \\
+DirectCons          & $-25.4^{***}$       & ---         & $-5.7976^{*}$      & $-0.0206$ \\
+PumpBuy             & $-0.0002$           & $0.0002$    & $0.0008^{**}$      & $0.0005$ \\
 \bottomrule
 \end{tabular}
 \captionof{table}{\textbf{Demand-side Spec~C DiD, critical vs.\ flat, unit FE.} Per-curve OLS on the buy side with tranches sorted descending in price; $\beta$ measures how price falls as cumulative buy MW expands down the demand ladder. Retailer = competitive supplier (BIG-4 dominated); DirectCons = large direct industrial buyer; PumpBuy = pump-storage in charging mode.}
