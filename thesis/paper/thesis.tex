@@ -676,13 +676,11 @@ Indices follow \S\ref{sec:data:outcomes}. The Spec~C treatment indicator is $\ma
 
 \emph{Takeaway.} Spec~A is the Bayesian state-space counterfactual: train on a long pre-window with year-by-year wind and solar interactions, extrapolate forward to the post-window, read the treatment effect as the gap between observed and counterfactual. The year-by-year renewable interactions are the load-bearing element --- Spanish wind+solar capacity grew $\sim$$6\times$ over 2018--2025, so a flat coefficient mis-fits the cross-year merit-order shift. A 2024 same-calendar placebo with a fake cutover guards against recurring seasonal artefacts.
 
-\emph{Idea.} A Bayesian Structural Time Series (BSTS) model \citep{brodersen_2015}, as applied to the EPEX 15-min reform by \citet{markle_huss_2017}, fits a flexible state-space decomposition of the response on the pre-reform window and extrapolates forward to construct a counterfactual: what the outcome \emph{would} have looked like in the post-window absent the reform. The treatment effect is the gap between observed and counterfactual. The strength over other methods is that BSTS handles complex seasonality and trend \emph{internally}, useful here since the pre-windows are short.
-
 \emph{Model.} The daily response decomposes additively into trend, weekly cycle, exogenous covariates, and noise:
 \[
 y_t \;=\; \underbrace{\mu_t}_{\text{trend}} \;+\; \underbrace{\gamma_t}_{\text{weekly cycle}} \;+\; \underbrace{X_t'\beta}_{\text{exogenous covariates}} \;+\; \underbrace{\varepsilon_t}_{\text{noise}}.
 \]
-$\mu_t$ is a random walk with stochastic slope (a slowly evolving local level), $\gamma_t$ a 7-day cycle, and $X_t$ a covariate vector consisting of contemporaneous wind GWh, solar GWh, gas price (EUR/MWh), \emph{and} the interactions $\text{wind}_t \times \mathbf{1}\{\text{year}(t) = y\}$ and $\text{solar}_t \times \mathbf{1}\{\text{year}(t) = y\}$ for each calendar year $y$ in the pre-window (one calendar year omitted as reference). A spike-and-slab prior on $\beta$ shrinks unused regressors. Demand is excluded to avoid simultaneity. The year-by-year renewable interactions are the load-bearing element of the spec: Spanish wind+solar installed capacity grew by a factor of $\sim\!6$ over 2018-2025, so the renewable price coefficient is not constant across the pre-window. Treating it as constant under-fits the cross-year merit-order shift and reports artificially confident treatment effects (Appendix~\ref{app:robustness}.1 sweeps the diagnostic). Demand is excluded to avoid simultaneity.
+$\mu_t$ is a random walk with stochastic slope, $\gamma_t$ a 7-day cycle, and $X_t$ a covariate vector consisting of contemporaneous wind GWh, solar GWh, gas price (EUR/MWh), and the interactions $\text{wind}_t \times \mathbf{1}\{\text{year}(t)=y\}$ and $\text{solar}_t \times \mathbf{1}\{\text{year}(t)=y\}$ for each calendar year $y$ in the pre-window. A spike-and-slab prior on $\beta$ shrinks unused regressors. Demand is excluded to avoid simultaneity. Fitted via the \texttt{CausalImpact} R package \citep{brodersen_2015}; the architecture is the EPEX 15-min reform spec of \citet{markle_huss_2017}.
 
 \emph{Outcomes $y_t$.} DA or IDA daily-average clearing prices, per-tech daily cleared GWh, within-day wedge SD $\Delta^{\text{SD}}_d$ overall and per hour-class $\Delta^{\text{SD},\mathcal{X}}_d = \mathrm{sd}_{h\in\mathcal{X}}(\Delta_{d,h})$ for $\mathcal{X}\in\{\mathcal{C}_M, \mathcal{C}_E, \mathcal{M},\mathcal{F}\}$, and per-tech IDA in-band sell-share $\text{SS}_{t,d} = \sum q^{\text{sell, in-band}}_{t,d} / \sum (q^{\text{sell, in-band}}_{t,d}+q^{\text{buy, in-band}}_{t,d})$ (\S\ref{sec:results:6-6b}).
 
@@ -716,12 +714,7 @@ p_k \;=\; \alpha \,+\, \beta\, Q_k \,+\, e_k, \qquad k = 1,\ldots, |\mathcal{B}_
 \]
 run unweighted (each tranche contributes one data point with equal weight; no MW-weighting). The slope $\beta$ is supply-curve steepness in the competing tier (EUR/MWh per MW) --- the most direct empirical counterpart of the model's per-product residual-demand slope $b_{mt}$. The intercept $\alpha$ is the predicted price at $Q=0$, the y-intercept of the OLS line through the in-band step endpoints; geometrically it measures the level of the in-band ladder (where the line sits on the price axis), and pairs naturally with the slope to describe how the bid curve translates and rotates across regimes.
 
-The four outcomes are non-redundant: $\hat\alpha$ pins the level of the ladder at zero cumulative MW, $\hat\beta$ captures the rate at which price climbs per MW, $\hat\gamma$ captures the curvature (convex or concave bend), and $N_{\text{eff}}$ summarises the discrete tranche-count density. A bid curve can be a single block (low slope, high $\hat\alpha$, $N_{\text{eff}}=1$), a sparse steep staircase (high slope, $\hat\gamma$ near zero, low $N_{\text{eff}}$), a dense narrow ladder (low slope, high $N_{\text{eff}}$, $\hat\gamma$ near zero), or a convex curve (low slope at low MW, steep at high MW, $\hat\gamma>0$); reading all four jointly disentangles level from slope from curvature from density.
-The justification is mechanism-based. \textbf{The granularity reform's bid-shape effect is structurally a critical-hours effect.} Differentiated bidding only pays off where the residual demand curve is steep enough to reward it: in critical hours that condition holds, so $4$ quarter-prices instead of $1$ unlock real price discrimination; in flat hours the curve is shallow and the extra granularity is mostly wasted optionality. The (critical $-$ flat) differential $\theta$ therefore IS the granularity-enabled discrimination, not a residual we are netting out. Flat hours act as a low-exposure within-day control --- not a zero-exposure one, since MTU15 reaches them too.
-
-For the level outcomes --- prices and cleared MW in \S\ref{sec:empirical:specA}, in-band offered energy per hour-class in \S\ref{sec:empirical:specB} --- we keep BSTS: per-hour-class BSTS already lets the data reveal any critical-hour concentration as heterogeneity across the four estimates, without imposing the critical-flat differential as the identifying restriction.
-
-Since each MTU15 reform is studied separately, this is a standard $2\times 2$ DiD without staggered-treatment negative weights \citep[ch.~3]{de_chaisemartin_2026}.
+\textbf{The granularity reform's bid-shape effect is structurally a critical-hours effect.} Differentiated bidding only pays off where the residual demand curve is steep enough to reward it: in critical hours that condition holds, so 4 quarter-prices instead of 1 unlock real price discrimination; in flat hours the curve is shallow and the extra granularity is mostly wasted optionality. The (critical $-$ flat) differential $\theta$ therefore IS the granularity-enabled discrimination, not a residual we are netting out. Flat hours act as a low-exposure within-day control. Each reform is studied separately, so the design is a standard 2$\times$2 DiD without staggered-treatment complications \citep[ch.~3]{de_chaisemartin_2026}.
 
 % =====================================================================
 \section{Results}\label{sec:results}
@@ -831,9 +824,9 @@ $N_{\text{eff}}$                     & CCGT          & $-0.08$                & 
 
 \subsection{Production-unit arbitrageurs are empirically active in intraday auctions}\label{sec:results:6-6}
 
-\emph{Takeaway.} 4--30\% of intraday-auction unit-sessions carry both a sell and a buy offer, with the share ranging from $20\%$ for nuclear to $83\%$ for wind. The sequential-market theory's arbitrageur agent is observable on the bid stack across every production technology.
+\emph{Takeaway.} The share of intraday-auction unit-sessions carrying both a sell and a buy offer ranges from $20\%$ (nuclear) to $83\%$ (wind), with renewables and pump-storage above $35\%$. The sequential-market theory's arbitrageur agent is observable on the bid stack across every production technology.
 
-Production units submit sell offers in both markets but buy offers only in IDA (the single-product-per-hour DA admits no within-auction spread). Figure~\ref{fig:sell-share-over-time} plots the daily IDA sell-share per tech; the \%-dual mini-table shows production-unit arbitrageurs are active across every tech (4--30\% of unit-sessions carry both sides).
+Production units submit sell offers in both markets but buy offers only in IDA (the single-product-per-hour DA admits no within-auction spread). Figure~\ref{fig:sell-share-over-time} plots the daily IDA sell-share per tech; the \%-dual mini-table below the figure reports the share of unit-sessions in which both sides are submitted.
 
 \begin{figure}[H]
 \centering
@@ -853,18 +846,15 @@ ID15 lifts the daily IDA in-band sell-share sharply for nuclear ($38.8$pp), wind
 
 \paragraph{Mechanism.} Pre-ID15, units holding renewable or pump-storage output used the IDA mostly to rebalance positions against forecast updates --- a one-way buy story. ID15 turns the IDA into a per-quarter pricing instrument; units now also use it to capture within-hour rent on their available output, so the sell-side share jumps. The mechanism is the spot-side ladder-widening of \S\ref{sec:theory:id15}\,(M4) read on the participation margin rather than within a single curve.
 
-\subsection{In-band offered energy migration (Spec B): not retained}\label{sec:results:6-2}
-
-\emph{Takeaway.} Spec~B's per-hour-class in-band offered-energy cells (24 cells across tech $\times$ market $\times$ hour-class) deliver model-consistent signs but credible intervals that bracket zero under the year-by-year renewable-interaction control. The bid-shape DiD of \S\ref{sec:results:6-1} identifies the same Cournot-scale-up channel through a within-day critical/flat control; we drop Spec~B as a primary finding.
-
 \subsection{Level-shift predictions that the data cannot identify}\label{sec:results:6-3}
+\phantomsection\label{sec:results:6-2}
 \phantomsection\label{sec:results:6-4}
 \phantomsection\label{tab:specB-id15}
 \phantomsection\label{tab:specB-da15}
 \phantomsection\label{fig:bsts-id15}
 \phantomsection\label{fig:bsts-da15}
 
-\emph{Takeaway.} The model's four level-shift predictions (granular-side price drop, Cournot cleared-MWh scale-up, in-band offered-energy migration, renewable cleared-MW reallocation) deliver right-sign point estimates but 95\% credible intervals that bracket zero once the renewable coefficient is allowed to vary across calendar years. We drop them as separate findings and read the same economic content through the within-day bid-shape DiD of \S\ref{sec:results:6-1}.
+\emph{Takeaway.} Four model-predicted level shifts (granular-side price drop, Cournot cleared-MWh scale-up, in-band offered-energy migration per hour-class, renewable cleared-MW reallocation) deliver right-sign point estimates but 95\% credible intervals that bracket zero once the renewable coefficient is allowed to vary across calendar years. We drop them as separate findings and read the same economic content through the within-day bid-shape DiD of \S\ref{sec:results:6-1}.
 
 Spec~A applies BSTS to system-level outcomes: clearing prices, per-tech daily cleared GWh, and the within-day wedge SD $\Delta^{\text{SD}}_d$. Table~\ref{tab:bsts-spec-a} reports the Real, Placebo, and placebo-net (Net) posterior means for each outcome and each reform.
 
