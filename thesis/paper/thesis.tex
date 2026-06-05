@@ -1344,6 +1344,27 @@ PumpBuy             & $-0.0002$           & $0.0002$    & $0.0008^{**}$      & $
 
 \emph{Reading.} The demand-side $\alpha$ moves \emph{up} at DA15 on both the day-ahead and the intraday-auction leg --- retailers willing to pay EUR\,$+14$/MWh more at the top of the day-ahead demand ladder and EUR\,$+33$/MWh more at the intraday-auction ladder in critical relative to flat hours post-reform; direct consumers move by EUR\,$+20$/MWh at the IDA. The DA15 demand-side $\alpha$ rise sits next to the headline sell-side $\alpha$ rise of EUR\,$+28$/MWh for CCGT in the same DA cell: the cleared price in the contested band must reconcile sellers asking more with buyers willing to pay more --- consistent with a Cournot-style equilibrium where both sides re-coordinate at a higher reservation price, not a one-sided supply shift. Pump-storage charging-mode buyers respond to DA15 with a flatter buy curve ($\beta>0$, $\gamma>0$ convex) consistent with the same operational logic as pump-storage on the sell side: greater willingness to absorb energy through the cheap end of the demand ladder once 15-min granularity allows finer-grain arbitrage of intra-hour price variation. ID15 IDA retailers run in the opposite direction (EUR\,$-11$/MWh on $\alpha$), corroborating the ID15 IDA equilibrium-price compression documented in \S\ref{sec:results:6-3}.
 
+\subsection{Residual-demand slope inside the bandwidth: empirical $b_{mt}$}\label{sec:5-residual-demand-slope}
+
+\emph{Takeaway.} Empirical recovery of the residual-demand slope $b_{mt}$ that the model uses as its key primitive (\S\ref{sec:theory:setup}, \S\ref{sec:theory:da15}\,(iv)). Per (date, period, market) we compute the in-band aggregate-supply slope and the in-band aggregate-demand slope by OLS, sum to a system-level residual-demand-slope proxy $\hat b = b_{\text{supply}} + |b_{\text{demand}}|$, and average within each regime window. The DA15 reform DOES satisfy the model's Cournot scale-up condition ($\sum_t b_{1t} < Q\,b_1$); the ID15 reform does not at the IDA, consistent with the ID15 mechanism running through per-product thinness asymmetry (M3) rather than mean thinness reduction.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l l c c c}
+\toprule
+\textbf{Reform} & \textbf{Market} & \textbf{Pre} ($b_m$, hourly) & \textbf{Post} ($b_{mt}$, 15-min) & \textbf{Cournot $\sum_t b_{mt} < Q\,b_m$?} \\
+\midrule
+DA15 (forward) & DA leg  & $0.0238$ & $0.0190$ & $0.0760 < 0.0952$ \quad \checkmark \\
+ID15 (spot)    & IDA leg & $0.0210$ & $0.0239$ & $0.0956 > 0.0840$ \quad $\times$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Empirical residual-demand slope $\hat b$ pre vs post each granularity reform, system-level.} Units: EUR/MWh per MW. Recovered by OLS of price on cumulative in-band MW separately for the aggregate-supply and aggregate-demand sides per (date, period); reported as $\hat b = b_{\text{supply}} + |b_{\text{demand}}|$ averaged over the reform window. DA15 windows are reforzada-constant; ID15 windows are pre-blackout. In-band region $|p_k - \text{MCP}|\le 60$ EUR/MWh.}
+\label{tab:residual-demand-slope}
+\end{center}
+
+\emph{Reading.} The DA15 result satisfies the Cournot scale-up condition: per-quarter residual demand is thinner ($b_{1t} = 0.019$) than hourly pooled ($b_1 = 0.024$) by enough that $\sum_t b_{1t}$ is strictly less than $Q\,b_1$ --- the empirical primitive the model needs for the cleared-MWh scale-up of \S\ref{sec:theory:da15}\,(iv). The ID15 result does NOT satisfy the analogous condition on the IDA leg: per-quarter $b_{2t} = 0.024$ is slightly larger than hourly $b_2 = 0.021$. This is consistent with the model's M3 mechanism: ID15 generates within-hour wedge dispersion from per-subperiod \emph{thinness asymmetry} (\S\ref{sec:theory:id15}\,(M3)) rather than from a fall in mean per-product thinness. The empirical asymmetric persistence of within-hour wedge SD documented in \S\ref{sec:results:6-5wedge} is the reduced-form trace of this within-hour heterogeneity in $b_{2t}$, even though the mean per-quarter $b_{2t}$ does not fall.
+
 \subsection{Demand-side buy share: who is two-sided in the IDA}\label{sec:5-demand-buy-share}
 The sell-side analysis of \S\ref{sec:results:6-6} reports the in-band sell-share for each production technology --- a measure of how much of each tech's in-band activity is sell rather than buy. The natural mirror is the demand-side in-band buy-share: of each demand-side agent class's in-band MW, how much is buy versus sell. Table~\ref{tab:demand-buy-share} reports the same three pre/post windows used in the bid-shape analysis. Buy-share is computed as $\text{buy MW}/(\text{buy MW}+\text{sell MW})$ pooled over the window, with the in-band region defined by the uniform bandwidth $|p_k - \text{MCP}|\le 60$ EUR/MWh.
 
