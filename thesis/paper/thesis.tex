@@ -291,18 +291,20 @@ A representative clock-hour contains $Q$ equal-length subperiods. Three sequenti
 
 \subsection{Arbitrage regimes: four benchmarks, one empirical}\label{sec:theory:arbitrage}
 
-Following \citet[\S I.A and Table 1]{ito_reguant_2016}, arbitrage profit per matched product is $\pi^A(s) = s\,(p_1 - p_2)$. Four regimes pin $s$: TO EXTEND THIS!!!
+\emph{Takeaway.} The arbitrageur's position $s$ across the four \citeauthor{ito_reguant_2016} regimes (no arbitrage, full, limited, strategic) determines whether the day-ahead/intraday wedge is closed or stays positive. Empirically, real arbitrageurs have bounded capacity and market power, so the limited regime (capacity ceiling binds) is the relevant benchmark; once granularity makes the wedge per-product at $(Q,Q)$, the per-product capacity constraint binds tightly at $K/Q$ and delivers the non-collapse of within-hour wedge dispersion documented in \S\ref{sec:results:6-5wedge}.
+
+Following \citet[\S I.A and Table 1]{ito_reguant_2016}, arbitrage profit per matched product is $\pi^A(s) = s\,(p_1 - p_2)$. Four regimes pin $s$:
 \begin{itemize}
 \item[(1)] \emph{No arbitrage}: $s = 0$, positive forward premium $p_1 > p_2 > c$.
 \item[(2)] \emph{Full / competitive arbitrage}: $s$ closes the spread, $p_1 = p_2$; the strategic bidder withholds more in response.
-\item[(3)] \emph{Limited arbitrage}: a capacity ceiling $s \le K$ binds, sustaining a positive wedge whose size depends on $K$. 
+\item[(3)] \emph{Limited arbitrage}: a capacity ceiling $s \le K$ binds, sustaining a positive wedge whose size depends on $K$.
 \item[(4)] \emph{Strategic arbitrage}: the arbitrageur internalises price impact and stops short of full, giving the closed-form benchmark
 \begin{equation}
 \boxed{\;p_1 - p_2 \;=\; \frac{p_1 - c}{4} \;>\; 0.\;}
 \label{eq:strategic-arb}
 \end{equation}
 \end{itemize}
-Comparative-statics signs are the same across (1), (3), (4) (\citeauthor{ito_reguant_2016} Table 1). AVOID TALKING ABOUT EMPIRICS HERE!
+Comparative-statics signs are the same across (1), (3), (4) (\citeauthor{ito_reguant_2016} Table 1).
 
 \subsection{Pre-reform $(1,1)$: scarcity wedge, no within-hour dispersion}\label{sec:theory:pre}
 
