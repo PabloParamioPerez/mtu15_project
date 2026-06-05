@@ -1314,6 +1314,29 @@ ID15 (spot)    & IDA leg & $0.00486$ & $0.00540$ & $0.02160 > 0.01944$ \quad $\t
 
 \emph{Stable mean slope is the cross-check for the price-level null.} Comparing the residual-demand slope on the entire system-aggregate sample, pre-reform-hourly against post-reform-per-quarter, the slope is essentially unchanged at DA15 (DA pre $0.00231$, post $0.00239$; IDA pre $0.00206$, post $0.00207$) and modestly more elastic at ID15 (IDA pre $0.00244$, post $0.00192$). The stable mean slope is the same empirical fact as the unidentified price-level shift documented in \S\ref{sec:results:6-3}: if the residual demand the system faces is roughly the same shape post-reform, then the equilibrium price level should not move, and it does not. The reform's first-order effect runs through within-hour heterogeneity in $b_{2t}$ (M3), not through a uniform shift in its mean.
 
+\emph{Per-firm Ito-Reguant construction.} The system-level slope above is a useful proxy, but the model's $b_{mt}$ is defined as the slope of residual demand faced by the strategic bidder, not the system. We replicate the exact \citet{ito_reguant_2016} per-firm construction (their Section III.A and footnote 30): for each (date, period, market) and each of the four dominant CCGT-owning firms (Iberdrola, Endesa, Naturgy, EDP-HC), we build the residual demand curve faced by that firm as aggregate demand bids minus the supply bids of all other firms, sample it on a price grid $\pm 50$~EUR/MWh around the period's MCP, fit a quadratic, and take the local slope at MCP. Table~\ref{tab:per-firm-residual-demand} reports the per-firm means. Levels are consistent with \citeauthor{ito_reguant_2016}'s 2010--2012 Iberian sample (their Table~2: DA mean $b_1=343$, IDA mean $b_2=70$; ours pre-DA15 DA mean across the four firms $\sim 245$, pre-ID15 IDA mean $\sim 169$ --- same ballpark, same DA-thicker-than-IDA ordering).
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l r r r r r r r r r r r r}
+\toprule
+        & \multicolumn{4}{c}{\textbf{ID15 IDA}} & \multicolumn{4}{c}{\textbf{DA15 DA}} & \multicolumn{4}{c}{\textbf{DA15 IDA}} \\
+\cmidrule(lr){2-5} \cmidrule(lr){6-9} \cmidrule(lr){10-13}
+\textbf{Firm}     & pre & post & $\Delta$ & ratio & pre & post & $\Delta$ & ratio & pre & post & $\Delta$ & ratio \\
+\midrule
+Iberdrola         & $156$ & $180$ & $+24$ & $1.15$ & $230$ & $285$ & $+55$ & $1.24$ & $149$ & $168$ & $+19$ & $1.13$ \\
+Endesa            & $180$ & $214$ & $+34$ & $1.19$ & $255$ & $321$ & $+66$ & $1.26$ & $171$ & $202$ & $+31$ & $1.18$ \\
+Naturgy           & $173$ & $212$ & $+39$ & $1.23$ & $266$ & $330$ & $+64$ & $1.24$ & $159$ & $187$ & $+28$ & $1.17$ \\
+EDP-HC            & $167$ & $193$ & $+26$ & $1.16$ & $231$ & $295$ & $+64$ & $1.28$ & $157$ & $181$ & $+24$ & $1.15$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Per-firm residual-demand slope $b_{mt}$ at the market clearing price, \citet{ito_reguant_2016} Section~III.A methodology.} Units: MW per EUR/MWh (larger $=$ more elastic residual demand $=$ thicker market for the focal firm). Per (date, period, market, focal firm) the residual demand curve is aggregate demand minus all-other-firms' supply, sampled on a grid $\pm 50$~EUR/MWh around the period's MCP, with the slope at MCP extracted from a quadratic fit. ID15 IDA pre $=$ 2024-06-14 to 2025-03-18 (hourly IDA); ID15 IDA post $=$ 2025-03-19 to 2025-04-27 (15-min IDA). DA15 DA pre $=$ 2024-06-14 to 2025-09-30 (hourly DA); DA15 DA post $=$ 2025-10-01 to 2026-03-06 (15-min DA).}
+\label{tab:per-firm-residual-demand}
+\end{center}
+
+\emph{Reading.} Per-firm residual demand becomes thicker (more elastic, larger $b$) post-reform across every firm and every (reform, market) combination, by $13$--$28\%$. The model's literal sufficiency condition for the Cournot scale-up of cleared MWh, $\sum_t b_{mt} < Q\, b_m$ (\S\ref{sec:theory:da15}\,(iv)), fails: per-quarter $b_{mt}$ is larger than per-hour $b_m$, so $\sum_t b_{mt} = 4\,b_{\text{post}} > Q\,b_{\text{pre}}$. But the qualitative bid-shape and price outcomes still align with the model. Each dominant firm faces a more elastic per-product residual demand, so its Cournot quantity $(a-c)/(b(n+1))$ rises and its price markup falls. The granularity reform delivers Cournot-style scale-up of cleared output not through the thinness condition the model emphasised but through MORE competitors participating per product (each firm's effective competitor count $n$ rises per quarter, which the per-firm $b$ statistic captures by aggregating their bid responses). This is fully consistent with the within-hour wedge SD jump documented in \S\ref{sec:results:6-5wedge} (heterogeneity in $b_{mt}$ across quarters), the within-hour heterogeneity test of the previous paragraph, and the ID15 IDA price drop of \S\ref{sec:results:6-3} (more elastic per-firm RD $\to$ lower markup $\to$ lower equilibrium price).
+
 \subsection{Demand-side buy share: who is two-sided in the IDA}\label{sec:5-demand-buy-share}
 The sell-side analysis of \S\ref{sec:results:6-6} reports the in-band sell-share for each production technology --- a measure of how much of each tech's in-band activity is sell rather than buy. The natural mirror is the demand-side in-band buy-share: of each demand-side agent class's in-band MW, how much is buy versus sell. Table~\ref{tab:demand-buy-share} reports the same three pre/post windows used in the bid-shape analysis. Buy-share is computed as $\text{buy MW}/(\text{buy MW}+\text{sell MW})$ pooled over the window, with the in-band region defined by the uniform bandwidth $|p_k - \text{MCP}|\le 60$ EUR/MWh.
 
