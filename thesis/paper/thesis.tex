@@ -575,11 +575,15 @@ Representative bid curves per technology in critical and flat hours are in Appen
 
 \paragraph{Four bid-shape outcomes.} Per curve, the in-band tranches deliver four non-redundant summaries.
 
-\emph{Level, slope, curvature (unweighted OLS on in-band step endpoints).} Let $Q_k = \sum_{j\le k}\Delta q_j$ be the cumulative in-band MW after the $k$th tranche. Fit a quadratic
+\emph{Level, slope, curvature (two-stage unweighted OLS on in-band step endpoints).} Let $Q_k = \sum_{j\le k}\Delta q_j$ be the cumulative in-band MW after the $k$th tranche. We fit two separate OLS regressions on the in-band tranches, each with equal weight per tranche (no MW weighting). First, a \emph{linear} fit recovers the level and the average slope:
 \[
-p_k \;=\; \hat\alpha_{u,d,p} + \hat\beta_{u,d,p}\,Q_k + \hat\gamma_{u,d,p}\,Q_k^2 + e_k
+p_k \;=\; \hat\alpha_{u,d,p} + \hat\beta_{u,d,p}\,Q_k + e_k.
 \]
-by OLS with each in-band tranche contributing one data point with equal weight (no MW weighting). $\hat\alpha$ is the geometric level of the ladder (predicted price at $Q=0$). $\hat\beta$ is the linear slope (EUR/MWh per MW) and is the direct empirical counterpart of the model's per-product residual-demand slope $b_{mt}$ (\S\ref{sec:theory:setup}). $\hat\gamma$ is the curvature: $\hat\gamma > 0$ means the curve bends \emph{convex} (slope steepens with $Q$, the bidder packs cheap MW at the bottom and asks higher prices for the marginal MW); $\hat\gamma < 0$ means \emph{concave} (steep climb early then a flatter tail). With $K=2$ in-band tranches only $\hat\alpha, \hat\beta$ are identified; $\hat\gamma$ requires $K\ge 3$.
+Second, a \emph{quadratic} fit recovers the curvature term (we keep only the quadratic coefficient from this regression; the implied linear coefficients of the quadratic regression differ from $\hat\alpha, \hat\beta$ and are not used):
+\[
+p_k \;=\; \tilde\alpha_{u,d,p} + \tilde\beta_{u,d,p}\,Q_k + \hat\gamma_{u,d,p}\,Q_k^2 + \tilde e_k.
+\]
+The two-stage construction keeps the interpretation of each coefficient clean. $\hat\alpha$ is the geometric level of the ladder (predicted price at $Q=0$ under the linear projection of the in-band steps). $\hat\beta$ is the average linear slope (EUR/MWh per MW) and is the direct empirical counterpart of the model's per-product residual-demand slope $b_{mt}$ (\S\ref{sec:theory:setup}). $\hat\gamma$ is the curvature: $\hat\gamma > 0$ means the curve bends \emph{convex} (slope steepens with $Q$, the bidder packs cheap MW at the bottom and asks higher prices for the marginal MW); $\hat\gamma < 0$ means \emph{concave} (steep climb early then a flatter tail); $\hat\gamma$ is the part of curvature orthogonal to the linear trend (by Frisch--Waugh, the quadratic-regression coefficient on $Q_k^2$ equals the slope of $p_k$-residuals on $Q_k^2$-residuals after both are linearly netted of $Q_k$). With $K=2$ in-band tranches only $\hat\alpha, \hat\beta$ are identified; $\hat\gamma$ requires $K\ge 3$.
 
 \emph{Discrete tranche density.}
 \[
@@ -708,11 +712,7 @@ For per-tech bid-shape outcomes $Y\in\{\hat\alpha, \hat\beta, \hat\gamma, N_{\te
 \[
 Y_{u,d,p[,s]} = \alpha_u + \beta\,\mathbf{1}\{d\ge T_r\} + \xi\,\mathbf{1}\{h\in\mathcal{C}\} + \theta\,D_{d,h} + \varepsilon, \qquad \text{SEs clustered by date.}
 \]
-where $\text{slope}_{u,d,p}$ and $\text{intercept}_{u,d,p}$ are jointly the OLS coefficients of bid price on cumulative in-band MW within the curve. Sort the in-band tranches by price (re-indexing $k=1,\dots,|\mathcal{B}_{u,d,p}|$ over the in-band set $\mathcal{B}_{u,d,p}$ defined in \S\ref{sec:data:bandwidth}); let $Q_k = \sum_{j\le k,\,j\in\mathcal{B}_{u,d,p}} \Delta q_j$ be the cumulative MW after the $k$th in-band tranche; the OLS fit on the in-band step endpoints is
-\[
-p_k \;=\; \alpha \,+\, \beta\, Q_k \,+\, e_k, \qquad k = 1,\ldots, |\mathcal{B}_{u,d,p}|,
-\]
-run unweighted (each tranche contributes one data point with equal weight; no MW-weighting). The slope $\beta$ is supply-curve steepness in the competing tier (EUR/MWh per MW) --- the most direct empirical counterpart of the model's per-product residual-demand slope $b_{mt}$. The intercept $\alpha$ is the predicted price at $Q=0$, the y-intercept of the OLS line through the in-band step endpoints; geometrically it measures the level of the in-band ladder (where the line sits on the price axis), and pairs naturally with the slope to describe how the bid curve translates and rotates across regimes.
+The bid-shape coordinates $(\hat\alpha_{u,d,p}, \hat\beta_{u,d,p}, \hat\gamma_{u,d,p})$ are computed per curve in the two-stage construction of \S\ref{sec:data:bandwidth}: $\hat\alpha$ and $\hat\beta$ from a linear OLS of price on cumulative in-band MW, $\hat\gamma$ from a separate quadratic OLS on the same sample. $N_{\text{eff}}$ is the inverse-Herfindahl of MW weights across in-band tranches.
 
 \textbf{The granularity reform's bid-shape effect is structurally a critical-hours effect.} Differentiated bidding only pays off where the residual demand curve is steep enough to reward it: in critical hours that condition holds, so 4 quarter-prices instead of 1 unlock real price discrimination; in flat hours the curve is shallow and the extra granularity is mostly wasted optionality. The (critical $-$ flat) differential $\theta$ therefore IS the granularity-enabled discrimination, not a residual we are netting out. Flat hours act as a low-exposure within-day control. Each reform is studied separately, so the design is a standard 2$\times$2 DiD without staggered-treatment complications \citep[ch.~3]{de_chaisemartin_2026}.
 
