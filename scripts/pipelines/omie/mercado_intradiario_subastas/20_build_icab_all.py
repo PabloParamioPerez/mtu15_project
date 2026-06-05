@@ -3,97 +3,39 @@ from __future__ import annotations
 from pathlib import Path
 import sys
 
-import duckdb
-
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-IDENTITY_KEY = ["source_file", "row_number_in_file"]
+from mtu.parsing.build_helpers import build_or_append  # noqa: E402
 
 
 def main() -> None:
     processed_dir = PROJECT_ROOT / "data/processed/omie/mercado_intradiario_subastas/ofertas/icab"
     output_path = processed_dir.parent / "icab_all.parquet"
 
-    if output_path.exists():
-        newest_input = max((f.stat().st_mtime for f in processed_dir.glob("*.parquet")), default=0)
-        if output_path.stat().st_mtime >= newest_input:
-            print("Up to date, skipping build.")
-            return
+    con = build_or_append(
+        processed_dir=processed_dir,
+        output_path=output_path,
+        family="ICAB",
+    )
 
-    glob = str(processed_dir / "*.parquet")
-
-    con = duckdb.connect()
-    con.execute("SET preserve_insertion_order=false")
-
-    n_files = con.execute(
-        f"SELECT COUNT(DISTINCT filename) FROM read_parquet('{glob}', filename=true, union_by_name=true)"
-    ).fetchone()[0]
-
-    if n_files == 0:
-        raise FileNotFoundError(f"No parquet files found in {processed_dir}")
-
-    print(f"Input files:             {n_files}")
-
-    # --- Uniqueness check ---
-    key_expr = ", ".join(IDENTITY_KEY)
-    n_dups = con.execute(f"""
-        SELECT COUNT(*) FROM (
-            SELECT {key_expr}
-            FROM read_parquet('{glob}', union_by_name=true)
-            GROUP BY ALL
-            HAVING COUNT(*) > 1
-        ) t
-    """).fetchone()[0]
-
-    if n_dups > 0:
-        sample = con.execute(f"""
-            SELECT {key_expr}, COUNT(*) as cnt
-            FROM read_parquet('{glob}', union_by_name=true)
-            GROUP BY ALL
-            HAVING COUNT(*) > 1
-            LIMIT 20
-        """).df()
-        raise ValueError(
-            f"ICAB raw table: {n_dups} duplicate key(s) on {IDENTITY_KEY}.\n"
-            f"Sample:\n{sample.to_string(index=False)}"
-        )
-
-    # --- Write sorted output ---
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    sort_cols = "source_file, row_number_in_file"
-
-    con.execute(f"""
-        COPY (
-            SELECT *
-            FROM read_parquet('{glob}', union_by_name=true)
-            ORDER BY {sort_cols}
-        )
-        TO '{output_path}' (FORMAT PARQUET)
-    """)
-
-    # --- Summary stats ---
     stats = con.execute(f"""
-        SELECT
-            COUNT(*) as total_rows,
-            MIN(date) as date_min,
-            MAX(date) as date_max
+        SELECT COUNT(*) AS total_rows, MIN(date) AS date_min, MAX(date) AS date_max
         FROM read_parquet('{output_path}')
     """).fetchone()
 
     rows_by_session = con.execute(f"""
-        SELECT session_number, COUNT(*) as n_rows
+        SELECT session_number, COUNT(*) AS n_rows
         FROM read_parquet('{output_path}')
-        GROUP BY session_number
-        ORDER BY session_number
+        GROUP BY session_number ORDER BY session_number
     """).df()
 
     rows_per_file = con.execute(f"""
-        SELECT MIN(cnt) as min_rows, MAX(cnt) as max_rows, AVG(cnt) as avg_rows
+        SELECT MIN(cnt) AS min_rows, MAX(cnt) AS max_rows, AVG(cnt) AS avg_rows
         FROM (
-            SELECT source_file, COUNT(*) as cnt
+            SELECT source_file, COUNT(*) AS cnt
             FROM read_parquet('{output_path}')
             GROUP BY source_file
         ) t
