@@ -213,8 +213,8 @@ CONFIG = [
     # (label,         market, lo,           hi,           h)
     ("ID15_real_DA",  "da",   "2024-06-14", "2025-04-27", 50),
     ("ID15_real_IDA", "ida",  "2024-06-14", "2025-04-27", 62),
-    ("DA15_real_DA",  "da",   "2025-04-28", "2026-02-26", 50),
-    ("DA15_real_IDA", "ida",  "2025-04-28", "2026-02-26", 58),
+    ("DA15_real_DA",  "da",   "2025-04-28", "2026-03-06", 50),
+    ("DA15_real_IDA", "ida",  "2025-04-28", "2026-03-06", 58),
 ]
 
 OUT_DIR = REPO / "data/derived/panels/per_curve_slope_windowed"
