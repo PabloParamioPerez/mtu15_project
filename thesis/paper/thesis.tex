@@ -639,6 +639,8 @@ Inverse-Herfindahl of MW weights ($1$ = a single block, large = many equal-size 
 
 \subsection{Aggregate outcomes}\label{sec:data:aggregate}
 
+\emph{Takeaway.} Five system-level outcomes built off the bid-stack and the cleared prices: in-band offered energy per (tech, market, day, hour-class); the day-ahead/intraday wedge $\Delta_{d,h}$ and its within-day SD $\Delta^{\text{SD}}_d$; the intraday-auction in-band sell-share by tech; system ajuste cost (per day, EUR\,M); and five post-MTU15-only within-hour dispersion outcomes $D^{\bullet}_{d,h}$ that summarise across-quarter shifts in price level, volume, system MCP, ladder spread, and tranche count. The wedge SD $\Delta^{\text{SD}}_d$ and the IDA in-band sell-share are the load-bearing system-level outcomes for Spec~A.
+
 \paragraph{In-band offered energy} (per (tech, market, day, hour-class)). Per-curve in-band MW: $m_{u,d,p} = \sum_{k\in\mathcal{B}_{u,d,p}} \Delta q_k$. Aggregated to tech $t$, market $m$, hour-class $\mathcal{X}$, and converted to energy with $\tau_p$ the period length in hours ($\tau_p = 1$ pre-MTU15, $\tau_p = 1/4$ post-MTU15):
 \[
 E^{\text{band}}_{t,m,d,\mathcal{X}} \;=\; \frac{1}{|\mathcal{X}|}\sum_{h\in\mathcal{X}}\,\sum_{p\in h}\,\sum_{u\in t} m_{u,d,p}\cdot\tau_p \qquad \text{(MWh per class-hour)}.
