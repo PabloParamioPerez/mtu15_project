@@ -1,13 +1,15 @@
 # STATUS: ALIVE
-# LAST-AUDIT: 2026-05-29
-# FEEDS: thesis/provisional/advisor_memo.tex sec 6.B (added in this session)
-#        -- BSTS counterfactual on the daily continuous-market panel for the
-#        three structural reform cutovers:
-#          ISP15 (2024-12-11): settlement period 60->15 min
-#          ID15  (2025-03-19): intraday auctions + continuous market -> MTU15
-#          DA15  (2025-10-01): day-ahead -> MTU15
+# LAST-AUDIT: 2026-06-05
+# FEEDS: thesis/paper/thesis.tex appendix B (Continuous-market response) --
+#        BSTS counterfactual on the daily continuous-market panel for the
+#        three structural reform cutovers under the HEADLINE Spec A
+#        methodology (long pre-window 2022-01-01 onwards + year-by-year
+#        wind and solar interactions). Earlier draft used short reform-
+#        respecting pre-windows with flat coefficients; this version
+#        matches the empirical strategy of sec:empirical:specA.
 #
-# Outcomes: n_trades, gwh, vw_price. Covariates: wind_gwh, solar_gwh, gas_eur.
+# Outcomes: n_trades, gwh, vw_price. Covariates: wind_gwh, solar_gwh,
+# gas_eur plus year-by-year interactions on wind and solar.
 # Real-vs-placebo (same calendar window 2024 with fake cutover).
 #
 # OUT: results/regressions/bid/mtu15_critical_flat/bsts_continuous.csv
@@ -16,55 +18,90 @@ suppressPackageStartupMessages({
   library(arrow); library(CausalImpact); library(zoo)
 })
 
-args <- commandArgs(trailingOnly = FALSE)
-sa <- args[grep("^--file=", args)]
-sp <- if (length(sa)) sub("^--file=", "", sa) else
-  "scripts/analysis/bid/bsts_continuous.R"
-repo <- normalizePath(file.path(dirname(sp), "..", "..", ".."))
+repo <- "/Users/pabloparamio/Desktop/CEMFI/2nd Year/Master Thesis/mtu15_project"
 panel_fp <- file.path(repo, "data/derived/panels/continuous_daily_panel.parquet")
-out_dir <- file.path(repo, "results/regressions/bid/mtu15_critical_flat")
+out_dir  <- file.path(repo, "results/regressions/bid/mtu15_critical_flat")
 
-COVARS <- c("wind_gwh", "solar_gwh", "gas_eur")
-OUTS   <- c("n_trades", "gwh", "vw_price")
+BASE_COVARS <- c("wind_gwh", "solar_gwh", "gas_eur")
+OUTS <- c("n_trades", "gwh", "vw_price")
 
+# Long pre-window start; post-cutovers as in the original short-pre version.
+PRE_LONG <- "2022-01-01"
 CFGS <- list(
-  # ISP15: pre = post-IDA-reform regime; post = pre-ID15 (~3 months)
-  list("ISP15", "real",    "2024-06-14", "2024-12-10", "2024-12-11", "2025-03-18"),
-  list("ISP15", "placebo", "2023-06-14", "2023-12-10", "2023-12-11", "2024-03-18"),
-  # ID15: pre = post-ISP15; post = pre-blackout (40 days)
-  list("ID15",  "real",    "2024-12-11", "2025-03-18", "2025-03-19", "2025-04-27"),
-  list("ID15",  "placebo", "2023-12-11", "2024-03-18", "2024-03-19", "2024-04-27"),
-  # DA15: pre = post-blackout / pre-DA15; post = first ~3 months
-  list("DA15",  "real",    "2025-04-28", "2025-09-30", "2025-10-01", "2025-12-31"),
-  list("DA15",  "placebo", "2024-04-28", "2024-09-30", "2024-10-01", "2024-12-31")
+  # ISP15 cutover 2024-12-11; post ends at the ID15 cutover - 1
+  list("ISP15", "real",    PRE_LONG, "2024-12-11", "2025-03-18"),
+  list("ISP15", "placebo", PRE_LONG, "2023-12-11", "2024-03-18"),
+  # ID15 cutover 2025-03-19; post ends at the blackout - 1
+  list("ID15",  "real",    PRE_LONG, "2025-03-19", "2025-04-27"),
+  list("ID15",  "placebo", PRE_LONG, "2024-03-19", "2024-04-27"),
+  # DA15 cutover 2025-10-01; post is the first ~3 months
+  list("DA15",  "real",    PRE_LONG, "2025-10-01", "2025-12-31"),
+  list("DA15",  "placebo", PRE_LONG, "2024-10-01", "2024-12-31")
 )
 
 
-run_bsts <- function(panel, response, pre_lo, pre_hi, post_lo, post_hi) {
-  ps <- as.Date(pre_lo); pe <- as.Date(post_hi)
-  cutover <- as.Date(post_lo)
+add_year_interactions <- function(sub) {
+  yrs <- sort(unique(as.integer(format(sub$d, "%Y"))))
+  if (length(yrs) <= 1) return(list(df = sub, cols = c()))
+  new_cols <- c()
+  for (y in yrs[-1]) {
+    is_y <- as.integer(format(sub$d, "%Y") == as.character(y))
+    sub[[sprintf("wind_x_%d",  y)]] <- sub$wind_gwh  * is_y
+    sub[[sprintf("solar_x_%d", y)]] <- sub$solar_gwh * is_y
+    new_cols <- c(new_cols, sprintf("wind_x_%d", y), sprintf("solar_x_%d", y))
+  }
+  list(df = sub, cols = new_cols)
+}
+
+na_result <- function() list(eff = NA_real_, lo = NA_real_, hi = NA_real_,
+                              p = NA_real_, n_pre = 0L, n_post = 0L, n_cov = 0L)
+
+run_bsts <- function(panel, response, pre_start, post_start, post_end, tag) {
+  ps <- as.Date(pre_start); pe <- as.Date(post_end); cutover <- as.Date(post_start)
   sub <- panel[panel$d >= ps & panel$d <= pe, ]
-  sub <- sub[complete.cases(sub[, c(response, COVARS)]), ]
-  if (nrow(sub) < 30 || max(sub$d) < cutover) return(NULL)
-  data_mat <- as.matrix(sub[, c(response, COVARS)])
-  data_ts  <- zoo(data_mat, order.by = sub$d)
-  pre_period  <- c(ps, cutover - 1)
-  post_period <- c(cutover, pe)
+  sub <- sub[complete.cases(sub[, c(response, BASE_COVARS)]), ]
+  if (nrow(sub) < 30 || max(sub$d) < cutover) {
+    cat(sprintf("  %-40s SKIP (n=%d)\n", tag, nrow(sub))); return(na_result())
+  }
+  pre_resp <- as.numeric(sub[[response]][sub$d < cutover])
+  pre_resp <- pre_resp[!is.na(pre_resp)]
+  if (length(pre_resp) < 30 || sd(pre_resp) < 1e-9) {
+    cat(sprintf("  %-40s SKIP (pre-window short or constant)\n", tag))
+    return(na_result())
+  }
+  yr <- add_year_interactions(sub); sub <- yr$df
+  cov_set <- c(BASE_COVARS, yr$cols)
+  data_mat <- as.matrix(sub[, c(response, cov_set)])
+  data_ts <- zoo(data_mat, order.by = sub$d)
   set.seed(42)
   imp <- tryCatch(
-    CausalImpact(data_ts, pre_period, post_period,
+    CausalImpact(data_ts, c(ps, cutover - 1), c(cutover, pe),
                   model.args = list(niter = 2000, nseasons = 7,
-                                     season.duration = 1)),
-    error = function(e) NULL)
-  if (is.null(imp)) return(NULL)
+                                     season.duration = 1,
+                                     prior.level.sd = 0.005)),
+    error   = function(e) { cat(sprintf("  %-40s ERROR %s\n", tag, conditionMessage(e))); NULL },
+    warning = function(w) {
+      tryCatch(suppressWarnings(
+        CausalImpact(data_ts, c(ps, cutover - 1), c(cutover, pe),
+                      model.args = list(niter = 2000, nseasons = 7,
+                                         season.duration = 1,
+                                         prior.level.sd = 0.005))),
+               error = function(e) NULL)
+    }
+  )
+  if (is.null(imp) || is.null(imp$summary) || nrow(imp$summary) == 0) return(na_result())
   s <- imp$summary
-  list(eff = s["Average","AbsEffect"],
-       lo  = s["Average","AbsEffect.lower"],
-       hi  = s["Average","AbsEffect.upper"],
-       eff_rel = s["Average","RelEffect"],
-       p   = s$p[1],
-       n_pre  = sum(sub$d < cutover),
-       n_post = sum(sub$d >= cutover))
+  eff <- tryCatch(as.numeric(s["Average", "AbsEffect"]), error = function(e) NA_real_)
+  lo  <- tryCatch(as.numeric(s["Average", "AbsEffect.lower"]), error = function(e) NA_real_)
+  hi  <- tryCatch(as.numeric(s["Average", "AbsEffect.upper"]), error = function(e) NA_real_)
+  pv  <- tryCatch(as.numeric(s$p[1]), error = function(e) NA_real_)
+  if (length(eff) == 0 || is.na(eff)) return(na_result())
+  cat(sprintf("  %-40s eff=%+10.3f  CI=[%+10.3f,%+10.3f]  p=%.3f  n_pre=%d  n_post=%d\n",
+              tag, eff, lo, hi, pv,
+              sum(sub$d < cutover), sum(sub$d >= cutover)))
+  list(eff = eff, lo = lo, hi = hi, p = pv,
+       n_pre = sum(sub$d < cutover), n_post = sum(sub$d >= cutover),
+       n_cov = length(cov_set))
 }
 
 
@@ -77,23 +114,23 @@ cat(sprintf("Panel: %d days, %s to %s\n", nrow(panel),
 rows <- list()
 for (cfg in CFGS) {
   reform <- cfg[[1]]; side <- cfg[[2]]
-  pre_lo <- cfg[[3]]; pre_hi <- cfg[[4]]
-  post_lo <- cfg[[5]]; post_hi <- cfg[[6]]
-  cat(sprintf("\n=== %s %s: pre %s -> %s | post %s -> %s ===\n",
-              reform, side, pre_lo, pre_hi, post_lo, post_hi))
-  for (outcome in OUTS) {
-    r <- run_bsts(panel, outcome, pre_lo, pre_hi, post_lo, post_hi)
-    if (is.null(r)) { cat(sprintf("  %-9s: NA\n", outcome)); next }
-    cat(sprintf("  %-9s eff=%+10.3f  [%+9.3f, %+9.3f]  rel=%+7.1f%%  p=%5.3f  n=%d/%d\n",
-                outcome, r$eff, r$lo, r$hi, 100*r$eff_rel, r$p, r$n_pre, r$n_post))
-    rows[[length(rows)+1]] <- data.frame(
-      reform=reform, side=side, outcome=outcome,
-      eff=r$eff, lo=r$lo, hi=r$hi, eff_rel=r$eff_rel,
-      p=r$p, n_pre=r$n_pre, n_post=r$n_post,
-      stringsAsFactors=FALSE)
+  pre_start <- cfg[[3]]; post_start <- cfg[[4]]; post_end <- cfg[[5]]
+  cat(sprintf("\n=== %s %s (pre %s -> post %s..%s) ===\n",
+              reform, side, pre_start, post_start, post_end))
+  for (outc in OUTS) {
+    tag <- sprintf("%s/%s/%s", reform, side, outc)
+    r <- run_bsts(panel, outc, pre_start, post_start, post_end, tag)
+    rows[[length(rows) + 1]] <- data.frame(
+      reform = reform, side = side, outcome = outc,
+      eff = r$eff, lo = r$lo, hi = r$hi, p = r$p,
+      n_pre = r$n_pre, n_post = r$n_post, n_cov = r$n_cov,
+      stringsAsFactors = FALSE)
   }
 }
 
-out_df <- do.call(rbind, rows)
-write.csv(out_df, file.path(out_dir, "bsts_continuous.csv"), row.names=FALSE)
-cat(sprintf("\nWrote %d rows to bsts_continuous.csv\n", nrow(out_df)))
+out <- do.call(rbind, rows)
+out_fp <- file.path(out_dir, "bsts_continuous.csv")
+dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+write.csv(out, out_fp, row.names = FALSE)
+cat(sprintf("\nWrote %s with %d rows.\n", out_fp, nrow(out)))
+print(out)

@@ -1347,7 +1347,7 @@ The sell-side analysis of \S\ref{sec:results:6-6} reports the in-band sell-share
 \section{Continuous-market response at the three structural reforms}\label{app:continuous}
 % =====================================================================
 
-\paragraph{Specification.} BSTS counterfactual on daily ES-leg continuous-market series with wind+solar+gas covariates and a weekly seasonal cycle (same setup as \S\ref{sec:empirical:specA}). Quantity outcomes are reported in \emph{energy} (MWh per trade $\times$ delivery hours, summed per day) rather than raw MW sums --- post-MTU15 each clock-hour holds four 15-min contracts where pre-MTU15 it held one 60-min contract, so a raw MW sum would be mechanically inflated. The volume-weighted price is energy-weighted. Three reform cutovers (ISP15 2024-12-11, ID15 2025-03-19, DA15 2025-10-01), each with a 2023/2024 same-calendar placebo.
+\paragraph{Specification.} BSTS counterfactual on daily ES-leg continuous-market series under the headline Spec~A methodology (\S\ref{sec:empirical:specA}): long pre-window from 2022-01-01, year-by-year wind and solar interactions, gas covariate, weekly seasonal cycle. Quantity outcomes are reported in \emph{energy} (MWh per trade $\times$ delivery hours, summed per day) rather than raw MW sums --- post-MTU15 each clock-hour holds four 15-min contracts where pre-MTU15 it held one 60-min contract, so a raw MW sum would be mechanically inflated. The volume-weighted price is energy-weighted. Three reform cutovers (ISP15 2024-12-11, ID15 2025-03-19, DA15 2025-10-01), each with a same-calendar 2024 placebo with a fake cutover.
 
 \begin{center}
 \footnotesize
@@ -1356,35 +1356,35 @@ The sell-side analysis of \S\ref{sec:results:6-6} reports the in-band sell-share
 \toprule
 \textbf{Reform} & \textbf{Outcome} & \textbf{Real} & \textbf{Placebo} & \textbf{Placebo-net} \\
 \midrule
-\multirow{3}{*}{ISP15}  & $n_{\text{trades}}$/day  & $-3{,}120^{***}$ & $-1{,}231^{***}$ & $-1{,}889$ \\
-                        & GWh/day                  & $-3.85^{*}$      & $-2.23^{**}$     & $-1.62$ \\
-                        & VW-price (EUR/MWh)       & $-15.1$          & $-27.4^{***}$    & $12.3$ \\
+\multirow{3}{*}{ISP15}  & $n_{\text{trades}}$/day  & $-4{,}310$       & $1{,}478$        & $-5{,}788$ \\
+                        & GWh/day                  & $3.7$            & $-0.2$           & $3.9$ \\
+                        & VW-price (EUR/MWh)       & $-18.1$          & $-39.6$          & $21.5$ \\
 \addlinespace
-\multirow{3}{*}{ID15}   & $n_{\text{trades}}$/day  & $\mathbf{22{,}335}^{***}$ & $1{,}381^{*}$    & $\mathbf{20{,}954}^{***}$ \\
-                        & GWh/day                  & $-7.19^{***}$    & $6.72^{***}$     & $\mathbf{-13.91}^{***}$ \\
-                        & VW-price (EUR/MWh)       & $-80.1^{***}$    & $-14.1^{***}$    & $\mathbf{-66.0}^{***}$ \\
+\multirow{3}{*}{ID15}   & $n_{\text{trades}}$/day  & $\mathbf{24{,}690}^{***}$ & $421$            & $\mathbf{24{,}269}^{***}$ \\
+                        & GWh/day                  & $\mathbf{-8.27}^{***}$    & $4.09^{***}$     & $\mathbf{-12.36}^{***}$ \\
+                        & VW-price (EUR/MWh)       & $-43.6^{*}$      & $-25.3$          & $-18.3$ \\
 \addlinespace
-\multirow{3}{*}{DA15}   & $n_{\text{trades}}$/day  & $5{,}018^{**}$   & $257$            & $4{,}761$ \\
-                        & GWh/day                  & $3.85^{***}$     & $-1.35$          & $5.20^{**}$ \\
-                        & VW-price (EUR/MWh)       & $4.7$            & $-4.7$           & $9.4$ \\
+\multirow{3}{*}{DA15}   & $n_{\text{trades}}$/day  & $8{,}122^{**}$   & $2{,}730^{***}$  & $5{,}392$ \\
+                        & GWh/day                  & $4.89^{*}$       & $3.75^{***}$     & $1.14$ \\
+                        & VW-price (EUR/MWh)       & $-0.9$           & $32.8$           & $-33.7$ \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{Continuous-market response at the three structural reforms.} BSTS posterior means with joint independent-posterior stars on Placebo-net.}
+\captionof{table}{\textbf{Continuous-market response at the three structural reforms, headline Spec~A.} BSTS posterior means with joint independent-posterior stars on Placebo-net. Long pre-window (2022-01-01 onwards) with year-by-year wind and solar interactions, matching the empirical strategy of \S\ref{sec:empirical:specA}. The earlier short-pre flat-coefficient draft reported a $-66$ EUR/MWh ID15 price drop and a $+5.2$ GWh/day DA15 turnover rise; neither survives the year-interaction control, consistent with the wider Spec~A reading on level outcomes (\S\ref{sec:results:6-3}).}
 \end{center}
 
 \subsection{ISP15 (settlement-only): a methodological null}
 ISP15 changed how REE settles imbalance positions (60$\to$15 min) but left the OMIE continuous-market contract grid unchanged --- traders still bought and sold hourly delivery contracts. A null effect is the right prediction here. Raw trade count and energy turnover both fall, but the same drift appears in the 2023 placebo (settlement bookkeeping innovations are not the source), and all three placebo-net intervals bracket zero. A settlement-only reform shows nothing on contract-structure outcomes --- the specification reads the reform where it lives.
 
 \subsection{ID15 (60$\to$15 min): the structural continuous-market reform}
-Pre-reform, each clock-hour of delivery hosted a single 60-min contract; post-reform, four 15-min contracts. The three outcomes move accordingly:
+Pre-reform, each clock-hour of delivery hosted a single 60-min contract; post-reform, four 15-min contracts. Two outcomes move sharply and survive the year-interaction control:
 \begin{itemize}\setlength{\itemsep}{1pt}
-\item \emph{Trade count.} Each hour now offers four matching opportunities instead of one, so the trade-count surge is mechanical at first order --- but informative: it confirms participants actually \emph{used} the new finer grid rather than continuing to aggregate to the hourly contract.
-\item \emph{Energy turnover.} Placebo-net is \emph{negative}: more contracts, each smaller, and total energy changing hands drops. Two reasons: some hourly counterparties drop out when they don't see a 60-min match on offer, and some dispatchable bidding migrated into the now-finer IDA auctions instead (\S\ref{sec:results:6-2}).
-\item \emph{Volume-weighted price.} The continuous market clears in equilibrium with the auctions, so the ID15 cutover price drop on auction-cleared prices (\S\ref{sec:results:6-3}) shows up here too --- the cross-market spillover documented for ID15.
+\item \emph{Trade count.} +24,269 trades/day placebo-net ($p<0.001$). Each hour now offers four matching opportunities instead of one, so the surge is mechanical at first order --- but informative: it confirms participants actually \emph{used} the new finer grid rather than continuing to aggregate to the hourly contract.
+\item \emph{Energy turnover.} $-12.36$ GWh/day placebo-net ($p<0.001$): more contracts, each smaller, and total energy changing hands drops. Two reasons: some hourly counterparties drop out when they don't see a 60-min match on offer, and some dispatchable bidding migrated into the now-finer IDA auctions instead (\S\ref{sec:results:6-3}).
+\item \emph{Volume-weighted price.} The earlier short-pre flat-coefficient draft reported a $-66$ EUR/MWh drop; under year-interactions the effect falls to $-18.3$ ns. Like the auction-cleared price effect of \S\ref{sec:results:6-3}, the continuous-market price effect is not separately identifiable once the renewable coefficient is allowed to vary across years. We do not retain it as a price-level finding; the cross-market price co-movement at the ID15 cutover is real but not statistically separable from the renewable-driven price drop.
 \end{itemize}
 
-\subsection{DA15: a smaller, indirect continuous-market effect}
-DA15 does not touch the continuous-market contract grid (already 15-min post-ID15); only the day-ahead \emph{reference price} that continuous traders watch becomes finer. With a finer DA reference, traders reposition more aggressively in continuous: daily GWh up (joint 95\% retains), trade count borderline, price effect statistical noise. DA15's continuous-market footprint is incremental and proportional to how much tighter the day-ahead reference now is --- not a structural break, as expected from a reform that touches the reference market but not the continuous-market contract architecture.
+\subsection{DA15: little continuous-market effect}
+DA15 does not touch the continuous-market contract grid (already 15-min post-ID15); only the day-ahead \emph{reference price} that continuous traders watch becomes finer. Under the year-interaction Spec~A, none of the three continuous-market outcomes survives at DA15: trade-count rise is statistically borderline (placebo-net $+5{,}392$, not significant once the same calendar window in 2024 is accounted for), the earlier $+5.2$ GWh/day energy-turnover rise collapses to $+1.14$ ns under year-interactions, and the price effect is statistical noise on both sides. The continuous market reads DA15 as a non-event at the system level, as expected from a reform that touches only the reference market and not the continuous-market contract architecture.
 
 % =====================================================================
 \section{Market-structure context}\label{app:context}
