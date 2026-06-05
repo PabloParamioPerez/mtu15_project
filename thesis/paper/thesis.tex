@@ -1128,7 +1128,7 @@ $\delta=200$          & $0.0761$        & $0.1541$    & $0.0007$   & $0.0050^{**
 The IDA bandwidth pools the three sessions; session~3 has a materially wider $p_{90}-p_{50}$ than sessions~1--2, but a session-specific $\delta$ cannot flip signs --- the per-session BSTS in \S\ref{sec:5f} shows the price-level effect is uniform across sessions.
 
 \subsection{Per-IDA-session BSTS and the solar-coefficient symmetry test}\label{sec:5f}
-The long pre-window of \S\ref{sec:empirical:specA} earns its specification two ways: real and placebo absorb the spring solar surge through the same covariate channel (Table~\ref{tab:bsts-solar-symmetry}), and the per-session decomposition reproduces the pooled estimate (Table~\ref{tab:bsts-per-session}). The two tables together pin down the ID15 price effect at $\sim$EUR\,$-40$ to $-50$/MWh and show why a winter-only pre-window would have inflated the estimate to twice that.
+The long pre-window of \S\ref{sec:empirical:specA} earns its specification two ways: real and placebo absorb the spring solar surge through the same covariate channel (Table~\ref{tab:bsts-solar-symmetry}), and the per-IDA-session decomposition reproduces the pooled estimate (Table~\ref{tab:bsts-per-session}). The two tables together flag why a winter-only pre-window would have inflated the per-session estimate to $\sim$EUR\,$-80$/MWh; the post-IDA-reform pre (constrained by session comparability) keeps it around $\sim$EUR\,$-40$ to $-50$/MWh; the headline long-pre + year-interactions pooled estimate in \S\ref{sec:results:6-3} is real EUR\,$-75$/MWh, placebo-net EUR\,$-50$/MWh.
 
 \emph{Why the symmetry test matters.} The placebo-net reading $\bar\tau_{\text{real}}-\bar\tau_{\text{placebo}}$ identifies a reform effect only if the BSTS treats the same calendar surge consistently across the two posteriors. The covariate channel for solar is the one most exposed to mis-identification, because solar output rises sharply between the late-winter pre-window and the spring post-window in every recent year. If the pre-window covers a full year of solar variation, the BSTS solar coefficient is identified across the full seasonal range and the post-window surge is absorbed through the covariate; the residual is the reform effect. If the pre-window is winter-only, the coefficient is identified off a narrow range and the surge partly bypasses the covariate, loading on the local-level component instead.
 
@@ -1139,15 +1139,15 @@ The long pre-window of \S\ref{sec:empirical:specA} earns its specification two w
 \toprule
 \textbf{Pre-window} & \textbf{Arm} & $n_{\text{pre}}$ & \textbf{Effect (EUR/MWh)} & \textbf{Solar $\hat\beta$} & \textbf{Incl. prob.} & \textbf{Solar $\Delta$ (GWh/d)} \\
 \midrule
-\multirow{3}{*}{Long (Jun 2024 onwards)}  & Real 2025       & $278$ & $\mathbf{-38.3}^{***}$ & $-0.354$ & $\mathbf{1.00}$ & $+15.4$ \\
-                                          & Placebo 2024    & $279$ & $-18.1^{*}$   & $-0.273$ & $\mathbf{1.00}$ & $+17.1$ \\
-                                          & Placebo 2026    & $278$ & $-2.4$        & $-0.400$ & $\mathbf{1.00}$ & $+35.3$ \\
+\multirow{3}{*}{Post-IDA-reform (Jun 2024 onwards)}  & Real 2025    & $278$ & $\mathbf{-38.3}^{***}$ & $-0.354$ & $\mathbf{1.00}$ & $+15.4$ \\
+                                                     & Placebo 2024 & $279$ & $-18.1^{*}$   & $-0.273$ & $\mathbf{1.00}$ & $+17.1$ \\
+                                                     & Placebo 2026 & $278$ & $-2.4$        & $-0.400$ & $\mathbf{1.00}$ & $+35.3$ \\
 \addlinespace
-\multirow{2}{*}{Short (Dec 2024 onwards)} & Real 2025       & $80$  & $\mathbf{-78.8}^{***}$ & $-0.213$ & $\mathbf{0.48}$ & $+48.7$ \\
-                                          & Placebo 2026    & $80$  & $-8.9$        & $-0.298$ & $0.73$         & $+80.9$ \\
+\multirow{2}{*}{Short (Dec 2024 onwards)}            & Real 2025    & $80$  & $\mathbf{-78.8}^{***}$ & $-0.213$ & $\mathbf{0.48}$ & $+48.7$ \\
+                                                     & Placebo 2026 & $80$  & $-8.9$        & $-0.298$ & $0.73$         & $+80.9$ \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{Solar-coefficient symmetry test for the ID15 IDA-price BSTS.} Inclusion probability is the share of MCMC draws in which the spike-and-slab prior retains the solar regressor; solar $\Delta$ is the mean solar generation in the post-window minus the pre-window mean.}
+\captionof{table}{\textbf{Solar-coefficient symmetry test for the ID15 IDA-price BSTS.} Per-IDA-session decomposition is intrinsically constrained by the $6\!\to\!3$ session reform of 2024-06-14, so the longest comparable pre-window is 9 months (`Post-IDA-reform' here) rather than the headline Spec~A long pre 2022-01-01 onwards. Under the proper long-pre + year-by-year wind+solar interactions of \S\ref{sec:empirical:specA}, the pooled ID15 IDA price effect is real EUR\,$-75.1$/MWh with a 2024 same-calendar placebo of EUR\,$-24.6$/MWh, placebo-net EUR\,$-50.6$/MWh (\S\ref{sec:results:6-3}); the post-IDA-reform-pre numbers in the table are smaller because the shorter pre-window leaves more of the renewable-coefficient drift on the local-level component. Inclusion probability is the share of MCMC draws in which the spike-and-slab prior retains the solar regressor; solar $\Delta$ is the mean solar generation in the post-window minus the pre-window mean.}
 \label{tab:bsts-solar-symmetry}
 \end{center}
 
