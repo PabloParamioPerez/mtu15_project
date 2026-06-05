@@ -1,11 +1,17 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-06-05
 # FEEDS: Per-(date, period, market) aggregate-supply and aggregate-demand
-#        slopes inside the in-band region [MCP - h, MCP + h], from which
-#        we recover a system-level residual-demand-slope proxy
-#                  b_residual ~= b_supply + b_demand
-#        with b_supply = +d(price)/d(cum sell MW) (positive, steeper = larger)
-#        and  b_demand = -d(price)/d(cum buy MW)  (positive after sign flip).
+#        inverse slopes inside the in-band region [MCP - h, MCP + h], from
+#        which we recover the system-level residual-demand slope in the
+#        model's inverse-demand form (same units as b_{mt}, EUR/MWh per MW):
+#
+#            b_residual = b_supply * |b_demand| / (b_supply + |b_demand|)
+#
+#        Derivation: residual demand D^res(p) = D(p) - S(p), so the slope
+#        in quantity-per-price form is |dD^res/dp| = |dD/dp| + |dS/dp|.
+#        The model's b is the inverse-demand slope |dp/dD^res|, which is
+#        1 / (|dD/dp| + |dS/dp|) = harmonic-mean-style combination of the
+#        two empirical inverse slopes.
 #
 #        The model predicts that at the symmetric reform state (Q,Q), per-product
 #        residual demand is thinner than per-pooled-hour residual demand
@@ -116,10 +122,14 @@ def _per_curve_slopes(df: pd.DataFrame, market: str) -> pd.DataFrame:
         buys  = group[group["buy_sell"] == "C"].sort_values("p", ascending=False, kind="mergesort")
         b_supply = _ols_slope(sells, ascending=True)
         b_demand = _ols_slope(buys, ascending=False)
-        b_residual = (b_supply if not np.isnan(b_supply) else 0) + (
-            abs(b_demand) if not np.isnan(b_demand) else 0
-        )
-        if np.isnan(b_supply) and np.isnan(b_demand):
+        # Residual demand slope in model's inverse-demand units (EUR/MWh per MW),
+        # using the harmonic-mean-style identity for D^res = D - S.
+        if (not np.isnan(b_supply)) and (not np.isnan(b_demand)) and (
+            b_supply > 0 and b_demand < 0
+        ):
+            bd = abs(b_demand)
+            b_residual = b_supply * bd / (b_supply + bd)
+        else:
             b_residual = float("nan")
         rows.append({
             "d": d, "period": period, "market": market, "mcp": mcp,
