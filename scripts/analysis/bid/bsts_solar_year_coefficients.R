@@ -29,8 +29,12 @@ BASE_COVARS <- c("wind_gwh", "solar_gwh", "gas_eur")
 
 add_year_interactions <- function(sub) {
   yrs <- sort(unique(as.integer(format(sub$d, "%Y"))))
+  if (length(yrs) <= 1) {
+    return(list(df = sub, cols = c()))
+  }
+  yrs_kept <- yrs[-1]
   new_cols <- c()
-  for (y in yrs[-1]) {
+  for (y in yrs_kept) {
     is_y <- as.integer(format(sub$d, "%Y") == as.character(y))
     sub[[sprintf("wind_x_%d", y)]]  <- sub$wind_gwh  * is_y
     sub[[sprintf("solar_x_%d", y)]] <- sub$solar_gwh * is_y

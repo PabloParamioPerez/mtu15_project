@@ -33,12 +33,10 @@ panel <- panel[order(panel$d), ]
 BASE_COVARS <- c("wind_gwh", "solar_gwh", "gas_eur")
 
 add_year_interactions <- function(sub) {
-  # one wind:year_YYYY and solar:year_YYYY column per year present in window
   yrs <- sort(unique(as.integer(format(sub$d, "%Y"))))
   if (length(yrs) <= 1) {
     return(list(df = sub, cols = c()))
   }
-  # drop one year as reference (the earliest) to avoid perfect collinearity
   yrs_kept <- yrs[-1]
   new_cols <- c()
   for (y in yrs_kept) {

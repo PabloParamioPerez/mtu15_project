@@ -23,9 +23,25 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{tikz}
+\usepackage{dsfont}
 \usetikzlibrary{arrows.meta,positioning,decorations.pathreplacing}
 \usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage[round,authoryear]{natbib}
+\bibliographystyle{plainnat}
 \graphicspath{{../../../figures/thesis/}{../../../figures/working/}}
+
+% Section divider slides
+\AtBeginSection[]{
+  \begin{frame}[plain]
+    \vfill
+    \begin{center}
+      {\large\color{gray!60!black}Part \insertsectionnumber}\\[0.6cm]
+      {\Huge\bfseries\color{blue!50!black}\insertsection}
+    \end{center}
+    \vfill
+  \end{frame}
+}
 
 \title[Granularity in Spanish electricity markets]{Rewiring the market time clock in Spanish electricity markets:\\
 strategic behaviour and market power with higher granularity}
@@ -42,238 +58,169 @@ strategic behaviour and market power with higher granularity}
 
 % ---------------------------------------------------------------------------
 \begin{frame}{Outline}
-\begin{enumerate}\setlength{\itemsep}{8pt}
-  \item Motivation, question, headline
-  \item The Spanish reform sequence
-  \item Model sketch
-  \item Outcomes and identification
-  \item Main results
+\begin{enumerate}\setlength{\itemsep}{6pt}
+  \item Question and headline
+  \item Setting and reforms
+  \item Mechanisms and identification
+  \item Empirical results
   \item Conclusion
 \end{enumerate}
 \end{frame}
 
 % ---------------------------------------------------------------------------
-\begin{frame}{Motivation, question, headline}
-\textbf{Setting.} Europe moved electricity trading from 60-min to 15-min. Spain: two reforms in 2025.
+\section{Setting and reforms}
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Question and headline}
+\textbf{Setting.} Sequential electricity wholesale markets. Spain switched the trading time resolution from $60$ minutes to $15$ minutes in two staggered reforms in $2025$, March and October.
 
 \bigskip
-\textbf{Question.} Does finer granularity reshape \emph{strategic} bidding? Who, when, which channel, market power up or down?
+\textbf{Question.} Does finer time-resolution reshape strategic bidding? Does market power go up or down? What effect do we see in prices, market differentials, and imbalance penalties?
 
 \bigskip
-\textbf{Headline.} Granularity is a \textcolor{blue!50!black}{\textbf{strategic-latitude reveal}}. Four empirically identified channels:
-\begin{itemize}\setlength{\itemsep}{3pt}
-  \item Dispatchables widen ladders in critical hours (bid-shape DiD).
-  \item Within-hour DA$-$IDA wedge SD jumps under ID15 and does not collapse at DA15 (limited per-product arbitrage).
-  \item IDA sell-share rises sharply at ID15 for nuclear, wind, pump-storage (production-unit arbitrageurs reposition).
-  \item Auction-stage granularity shrinks REE's ajuste cost; the post-blackout cost rise is a separate reforzada response.
+\textbf{Answer.} COMPLETE!!!
+
+\bigskip
+\textbf{Caveat.} An April $2025$ blackout triggered a separate regulatory regime that inflated the system-cost line. Granularity and that regime are calendar-overlapping but mechanistically distinct.
+\end{frame}
+
+% ---------------------------------------------------------------------------
+
+\begin{frame}{The institutional setting --- sequential electricity wholesale markets}
+\bigskip
+\textbf{The product.} Delivery of MW (rate) over a fixed short time slot, by different technologies.
+
+\bigskip
+\textbf{Sequence of markets.} Electricity cannot be stored cheaply, supply must equal demand in real time. For this reason, we have sequential \textbf{wholesale} markets before delivery:
+\begin{itemize}\setlength{\itemsep}{1pt}
+  \item \textbf{Forward auction (``day-ahead'', DA)} --- clears the day before. Biggest market, with the most liquidity.
+  \item \textbf{Spot auctions (``intraday auctions'', IDA)} --- clears closer to delivery. Corrections. 
+  \item \textbf{Balancing (real time)} --- corrections by the system operator (REE). Highly complex, with separate pricing mechanisms (APPENDIX).
 \end{itemize}
+Both DA and IDA are \textbf{uniform-price multi-unit auctions}; bidders submit step-function supply and demand curves and price is set at the intersection of the aggregate supply and demand curves, using a complex algorithm that maximizes social welfare.
 
 \bigskip
-$\Rightarrow$ Market power \textbf{compressed} on the identified channels; not amplified.
+\textbf{Huge complexity:} ancillary markets, bilateral contracts, cross-border trading, continuous intraday markets, etc. We focus on DA and IDA, and present basic descriptive statistics on some of the rest.
+
 \end{frame}
 
 % ---------------------------------------------------------------------------
 \begin{frame}{The Spanish reform sequence}
 \centering
-\begin{tikzpicture}[scale=0.95, every node/.style={font=\footnotesize}]
-  \def\W{14.0}
+\begin{tikzpicture}[scale=1.05, every node/.style={font=\footnotesize}]
+  \def\W{11.0}
+
+  % REGIME BANDS
+  \fill[gray!12]  (0.0,  0.6) rectangle (5.66, 1.6); \node[font=\scriptsize, gray!55!black] at (2.8, 1.1) {pre-reform};
+  \fill[gray!30]  (5.66, 0.6) rectangle (6.21, 1.6);
+  \fill[red!18]   (6.21, 0.6) rectangle (8.10, 1.6); \node[font=\scriptsize, red!60!black] at (7.15, 1.1) {post-blackout};
+  \fill[red!28]   (8.10, 0.6) rectangle (\W,   1.6); \node[font=\scriptsize, red!60!black] at (9.55, 1.1) {$+$ DA 15'};
+
+  % BLACKOUT VERTICAL LINE INSIDE BAND
+  \draw[red!80!black, very thick] (6.21, 0.6) -- (6.21, 1.6);
+
+  % BIG REFORM MARKERS (above bands)
+  \draw[blue!60!black, thick] (5.66, 1.6) -- (5.66, 2.05);
+  \node[anchor=south, align=center, font=\scriptsize, blue!60!black] at (5.66, 2.07) {\textbf{IDA $\to$ 15'}\\March 19};
+  \draw[blue!60!black, thick] (8.10, 1.6) -- (8.10, 2.05);
+  \node[anchor=south, align=center, font=\scriptsize, blue!60!black] at (8.10, 2.07) {\textbf{DA $\to$ 15'}\\October 1};
+
+  % MAIN TIMELINE
   \draw[gray!50, thick] (0,0) -- (\W,0);
-  \foreach \x/\lbl in {0.6/{2024 Q1}, 3.0/{2024 Q3}, 5.4/{2025 Q1}, 7.8/{2025 Q3}, 10.2/{2026 Q1}, 12.6/{2026 Q3}} {
+  \foreach \x/\lbl in {0.6/{2024 Q1}, 3.0/{2024 Q3}, 5.4/{2025 Q1}, 7.8/{2025 Q3}, 10.2/{2026 Q1}} {
     \draw[gray!50] (\x, 0) -- (\x, -0.10);
     \node[anchor=north, gray!50!black, font=\scriptsize] at (\x, -0.10) {\lbl};
   }
-  % regime bands (muted greys with a single red accent for reforzada)
-  \fill[gray!12]  (0.0,  0.6) rectangle (2.10, 1.6); \node[font=\scriptsize, gray!55!black] at (1.05, 1.1) {pre-IDA};
-  \fill[gray!22]  (2.10, 0.6) rectangle (4.55, 1.6); \node[font=\scriptsize] at (3.32, 1.1) {3-session IDA};
-  \fill[gray!32]  (4.55, 0.6) rectangle (5.66, 1.6); \node[font=\scriptsize] at (5.10, 1.1) {ISP15};
-  \fill[gray!45]  (5.66, 0.6) rectangle (6.21, 1.6); \node[font=\scriptsize, rotate=0] at (5.93, 1.1) {\tiny ID15};
-  \fill[red!18]   (6.21, 0.6) rectangle (8.10, 1.6); \node[font=\scriptsize, red!60!black] at (7.15, 1.1) {reforzada};
-  \fill[red!28]   (8.10, 0.6) rectangle (\W,   1.6); \node[font=\scriptsize, red!60!black] at (11.5, 1.1) {DA15 + reforzada};
-  % reform date ticks above
-  \foreach \x/\lbl in {2.10/{IDA $6\!\to\!3$\\2024-06-14}, 4.55/{ISP15\\2024-12-09}, 5.66/{ID15\\2025-03-19}, 6.21/{blackout\\2025-04-28}, 8.10/{DA15\\2025-10-01}} {
-    \draw[gray!40!black, thick] (\x, 1.6) -- (\x, 1.95);
-    \node[anchor=south, align=center, font=\tiny, gray!30!black] at (\x, 2.0) {\lbl};
+
+  % SMALL TICKS BELOW (pre-reforms, blackout, re-reforzada)
+  \foreach \x/\lbl in {0.5/{ancillary\\services 15'}, 2.1/{European IDA\\(6$\to$3 sess.)}, 4.5/{ISP15\\(settlement)}} {
+    \draw[gray!70, dashed, thin] (\x, 0) -- (\x, -0.7);
+    \node[anchor=north, align=center, font=\tiny, gray!50!black] at (\x, -0.75) {\lbl};
   }
+  \draw[red!70!black, dashed, thin] (6.21, 0) -- (6.21, -0.7);
+  \node[anchor=north, align=center, font=\tiny, red!70!black] at (6.21, -0.75) {blackout\\(Apr 28)};
+  \draw[red!60!black, dashed, thin] (9.4, 0) -- (9.4, -0.7);
+  \node[anchor=north, align=center, font=\tiny, red!60!black] at (9.4, -0.75) {re-reforzada\\(Nov 2025)};
 \end{tikzpicture}
 
-\vspace{0.1cm}
+\vspace{0.4cm}
+\begin{itemize}
+  \item \textbf{Main reforms.} Change in time granularity of \textbf{IDA} (March 2025) and \textbf{DA} (October 2025): from $60$-min products to $15$-min.
+  \item \textbf{Other pre-reforms in 2024}: ancillary services, European IDAs, imbalance quarter-hourly settlement.
+  \item \textbf{April 2025 blackout} that triggered separate regulatory regime ("operaci\'on reforzada", later "re-reforzada").
+\end{itemize}
+
+\end{frame}
+
+% ---------------------------------------------------------------------------
+
+\begin{frame}{Literature review}
 \footnotesize
-\begin{itemize}\setlength{\itemsep}{1pt}
-  \item Three granularity reforms in seven months: \textbf{ISP15} (settlement), \textbf{ID15} (intraday auctions), \textbf{DA15} (day-ahead).
-  \item April 2025 blackout $\to$ continuous \emph{reforzada} regime (red).
-  \item ID15 windows: pre-blackout (clean). DA15 windows: pre starts at blackout $\Rightarrow$ holds reforzada constant.
+
+\textbf{Sequential markets, forward contracts, Cournot.}
+\citet{allaz_vila_1993}; \citet{ito_reguant_2016}.
+
+\medskip
+\textbf{Empirical bidding in multi-unit electricity auctions.}
+\citet{hortacsu_puller_2008}; \citet{hortacsu_luco_puller_zhu_2019}.
+
+\medskip
+\textbf{Trading-granularity and settlement-period reforms.}
+\citet{markle_huss_2017}; \citet{csereklyei_khezr_2024}.
+
+\medskip
+\textbf{Renewable price impacts and ancillary services in Spain.}
+\citet{brown_reguant_2026}.
+
+\medskip
+\textbf{Iberian blackout and post-blackout regime.}
+\citet{davi_arderius_graf_2026}; \citet{entsoe_blackout_iberia_2026}; \citet{cnmc_blackout_recommendations_2026}.
+
+\end{frame}
+
+% ---------------------------------------------------------------------------
+\section{Mechanisms and identification strategy}
+
+\begin{frame}{A priori mechanisms expected from the reform sequence}
+\begin{itemize}
+  \item We expect production to shift to the granular side of the market.... MORE FOR RENEWABLES. This effect would be bigger for ID15 into the IDAs, since it is near delivery, and greater the bigger the shocks volatility between DA and IDA are.
+  \item If residual demand of the price setter firms gets more inelastic in each quarter (thinner market), we expect prices to increase. If it gets more elastic, the opposite
+  \item CHANGE IN THE BID SHAPE WITH THE REFORM: MORE VARIATION IN TRANCHES, MORE DETAIL, LESS AGGREGATION.
 \end{itemize}
 \end{frame}
 
 % ---------------------------------------------------------------------------
-\begin{frame}{Model --- setup}
-\begin{columns}[T]
-\begin{column}{0.52\textwidth}
-\centering
-\begin{tikzpicture}[
-  scale=0.78,
-  stage/.style={draw, rounded corners=3pt, fill=blue!10, thick, minimum width=1.7cm, minimum height=0.9cm, align=center, font=\scriptsize},
-  arr/.style={->, >=Stealth, thick, gray!50!black},
-  agentdot/.style={fill=blue!60!black, circle, inner sep=1.4pt},
-  pathstate/.style={draw, rounded corners=2pt, fill=red!10, font=\scriptsize\bfseries, minimum width=0.75cm, minimum height=0.45cm},
-  rowlbl/.style={font=\scriptsize, anchor=east},
-]
-\node[stage] (F) at (0,0)   {\textbf{Forward}\\$Q^F\!\in\!\{1,Q\}$};
-\node[stage] (S) at (2.6,0) {\textbf{Spot}\\$Q^S\!\in\!\{1,Q\}$};
-\node[stage] (B) at (5.2,0) {\textbf{Balancing}};
-\draw[arr] (F.east) -- node[above, font=\tiny\itshape]{$\mu$ res.} (S.west);
-\draw[arr] (S.east) -- node[above, font=\tiny\itshape]{$\varepsilon$ res.} (B.west);
-
-\node[rowlbl] at (-1.0, -1.1) {Strategic bidder};
-\node[agentdot] at (0, -1.1) {}; \node[agentdot] at (2.6, -1.1) {};
-
-\node[rowlbl] at (-1.0, -1.7) {Aggregator};
-\node[agentdot] at (0, -1.7) {}; \node[agentdot] at (2.6, -1.7) {}; \node[agentdot] at (5.2, -1.7) {};
-
-\node[rowlbl] at (-1.0, -2.3) {Arbitrageur};
-\draw[->, >=Stealth, ultra thick, orange!80!black] (0.1, -2.3) -- (2.5, -2.3);
-\node[fill=orange!80!black, circle, inner sep=1.4pt] at (0, -2.3) {};
-\node[fill=orange!80!black, circle, inner sep=1.4pt] at (2.6, -2.3) {};
-
-\node[rowlbl, gray!55!black] at (-1.0, -3.1) {Reform path};
-\node[pathstate] (s1) at (0,    -3.1) {(1,1)};
-\node[pathstate] (s2) at (2.6,  -3.1) {(1,Q)};
-\node[pathstate] (s3) at (5.2,  -3.1) {(Q,Q)};
-\draw[->, >=Stealth, thick, red!55!black] (s1.east) -- node[above, font=\tiny]{ID15} (s2.west);
-\draw[->, >=Stealth, thick, red!55!black] (s2.east) -- node[above, font=\tiny]{DA15} (s3.west);
-\end{tikzpicture}
-\end{column}
-\begin{column}{0.48\textwidth}
-\footnotesize
-Sequential Cournot, extends Ito \& Reguant (2016) with a granularity selector $Q^m \in \{1,Q\}$ at each stage. Backward induction with rational expectations.
-
+\begin{frame}{Data architecture}
+I build from scratch a \textbf{full automated data pipeline} for the public market data, using 3 sources:
 \medskip
-\textbf{Primitives.}
-\begin{itemize}\setlength{\itemsep}{1pt}
-  \item Strategic bidder: residual monopolist, marginal cost $c$, capacity $K$, no production shock.
-  \item Aggregator: price-taker, output $y_t = \bar y_t + \eta_t$ with $\eta_t$ forecast error ($\sigma_\eta^2$), bears imbalance penalty $\gamma$.
-  \item Arbitrageur: position $s$, four regimes (no / full / limited / strategic, Ito \& Reguant Table~1).
+\begin{itemize}
+  \item \textcolor{olive}{Wholesale market operator data (OMIE):} DA and IDA prices, auction quantities, bilaterals, accepted bid-curves, etc. Continuos market is included too, but not the focus.
+  \item \textcolor{cyan}{System operator data (REE) via their API:} balancing market prices, ancillary services, etc.
+  \item \textcolor{violet}{European data portal (ENTSO-E) via API:} cross-border flows, wind and solar production, etc. 
 \end{itemize}
-
-\medskip
-\textbf{Shocks.}
-\begin{itemize}\setlength{\itemsep}{1pt}
-  \item Demand: $\mu_t \sim U[-\Delta_\mu, \Delta_\mu]$; aggregator: $\eta_t$ idiosyncratic.
-  \item Residual demand: forward $A - b_1 p_1$; spot per-period $b_{2t}$, average $b_2$.
-\end{itemize}
-\end{column}
-\end{columns}
-\end{frame}
-
-% ---------------------------------------------------------------------------
-\begin{frame}{Model --- aggregator allocates between forward and spot}
-\footnotesize
-\textbf{Problem.} Per clock-hour, split $\bar Y_h$ between forward MWh and per-subperiod spot MWh. Quadratic imbalance penalty $\gamma \mathcal{I}_t^2$ per delivery product on any deviation from delivered $y_t$:
-\[
-\min_{\{Y^F, Y^S_t\}} \;\; p_1 Y^F + \sum_t p_{2t} Y^S_t + \gamma \sum_t E\big[(Y^F/Q + Y^S_t - y_t)^2\big] \quad \text{s.t.} \quad Y^F + \textstyle\sum_t Y^S_t = \bar Y_h.
-\]
-
-\textbf{Result (Appendix~\ref*{app:aggregator} of thesis).}
-\[
-\boxed{\;\dfrac{\partial \Delta^*}{\partial \sigma_\eta^2} \;>\; 0\,, \qquad \Delta^* \equiv \text{MWh shifted forward}\to\text{spot at }(1,Q).\;}
-\]
+\bigskip
+\textbf{Magnitude.} 420GB of raw data, 200GB processed in \textit{parquet} format. Around 10 billion rows. Dedicated external SSD for storage and processing.
 
 \bigskip
-\textbf{Intuition.} A per-quarter spot lets the aggregator submit a schedule that tracks its quarter-level forecast; the hourly forward locks one schedule per clock-hour. The hedging gain is increasing in forecast-error variance $\sigma_\eta^2$ --- the more uncertain you are, the more you want the finer scheduling tool.
+\textbf{Time window.} January 2018 -- today, idempotent code. Different granularities across time.
+
 \end{frame}
 
-% ---------------------------------------------------------------------------
-\begin{frame}{Model --- strategic bidder's two-tranche ladder}
-\footnotesize
-\textbf{Problem.} For each delivery product the bidder commits a ladder \emph{before} $\mu_t$ realises. Reduce-form to two tranches $(p_L, p_H)$ with $p_L < p_H$ and quantities $(q_L, q_H)$:
-\[
-\max_{p_L, p_H, q_L, q_H} \;\; E_{\mu_t}\big[(p_L - c)\, q_L\,\mathbf{1}\{p_L \le \text{MCP}_t\} + (p_H - c)\, q_H\,\mathbf{1}\{p_H \le \text{MCP}_t\}\big]
-\]
-where $\text{MCP}_t$ depends on $\mu_t$ through the per-product residual demand $A_t - b_{2t}\,p$.
 
-\medskip
-\textbf{Result.} Pre-realisation optimal spread (Appendix~\ref*{app:tranche} of thesis):
-\[
-\boxed{\;\Delta p^*_{2t} \;=\; p_H^* - p_L^* \;=\; \dfrac{\Delta_\mu}{2\, b_{2t}}.\;}
-\]
-
-\bigskip
-\textbf{Intuition.} A wider spread captures more rent in tight states (high $\mu_t$) at the cost of foregone acceptance in slack states (low $\mu_t$). The optimum scales \emph{with the shock range} $\Delta_\mu$ and inversely with how steep per-product residual demand is. Ramp hours $\Rightarrow$ larger $\Delta_\mu$ $\Rightarrow$ wider ladders.
-\end{frame}
 
 % ---------------------------------------------------------------------------
-\begin{frame}{Model --- arbitrage and the wedge SD at $(Q,Q)$}
-\footnotesize
-\textbf{Arbitrageur problem.} Choose position $s$ from forward to spot to maximise $\pi^A(s) = s\,(p_1 - p_2)$, possibly subject to capacity $|s| \le K$. Four regimes (Ito \& Reguant):
-
-\smallskip
-\begin{tabular}{l l}
-(1) No arbitrage     & $s=0$, scarcity wedge $p_1>p_2$ \\
-(2) Full arbitrage   & $p_1 = p_2$ \\
-(3) Limited arbitrage& $s = K$ binds, wedge $\propto 1/K$ \\
-(4) Strategic arb.   & $p_1 - p_2 = (p_1 - c)/4$ \\
-\end{tabular}
-
-\medskip
-At $(Q,Q)$, capacity is split across $Q$ delivery products: per-product budget $K/Q$ binds tightly. \textbf{Result:}
-
-\smallskip
-\centering
-\begin{tabular}{l c}
-\toprule
-Wedge SD, strategic (unlimited) & $\sigma_\mu / (8\, b_1)$ \\
-Wedge SD, limited per-product   & $\boxed{\;\sigma_\mu / (4\, b_1)\;}$ \\
-\bottomrule
-\end{tabular}
-
-\bigskip
-\raggedright
-\textbf{Intuition.} Naively, once both markets are per-quarter, arbitrage should equalise prices product-by-product. It doesn't, because real arbitrageurs have finite balance sheets and now have to allocate one budget across $Q$ separate products. Per-product capacity binds tightly $\Rightarrow$ residual wedge SD stays at \emph{twice} the unlimited-strategic benchmark.
-\end{frame}
-
-% ---------------------------------------------------------------------------
-\begin{frame}{Model --- comparative statics across the reform path}
-\centering
-\footnotesize
-\begin{tabular}{p{4.0cm} c c c}
-\toprule
-Outcome & $(1,1)$ & $(1,Q)$ & $(Q,Q)$ \\
-\midrule
-Aggregator forward$\to$spot shift & $0$ & $\Delta^*(\sigma_\eta^2) > 0$ & equalised \\
-Spot ladder spread $\Delta p^*_{2t}$ & --- & $\Delta_\mu / (2 b_{2t})$ & $\Delta_\mu / (2 b_{2t})$ \\
-Forward ladder spread $\Delta p^*_{1t}$ & --- & via Stage-1 option & $\Delta_\mu / (2 b_1)$ \\
-Wedge SD (limited arb.) & $0$ & per-period thinness asym. & $\sigma_\mu / (4 b_1)$ + thin.~asym. \\
-Cleared MWh / clock-hour & baseline & forward unchanged & $+ c\,(Q b_1 - \sum_t b_{1t})/2$ \\
-Balancing residual $\Delta_t$ & $\mu_t + \eta_t + \varepsilon_t$ & $\mu_t + \varepsilon_t$ & $\varepsilon_t$ \\
-Imbalance cost $E[\Delta_t^2]$ & $(\Delta_\mu^2 + \Delta_\eta^2)/3$ & $\Delta_\mu^2 / 3$ & $0$ \\
-\bottomrule
-\end{tabular}
-
-\bigskip
-\footnotesize
-\textbf{Asymmetric activation of channels across the path:}
-\begin{itemize}\setlength{\itemsep}{1pt}
-  \item ID15 $(1,1)\!\to\!(1,Q)$ activates the \emph{aggregator-side} channels (quantity shift, granular-side price drop, spot-side ladder widening).
-  \item DA15 $(1,Q)\!\to\!(Q,Q)$ activates the \emph{strategic-bidder} channels (forward-side ladder widening, Cournot scale-up, limited per-product arbitrage).
-  \item Welfare: dominant gain is the imbalance saving along the path; the bid-ladder widening is mostly distributional.
-\end{itemize}
-\end{frame}
-
-% ---------------------------------------------------------------------------
-\begin{frame}{In-band region and bid-shape outcomes}
+\begin{frame}{Bid-curve variables}
 \begin{columns}[T]
 \begin{column}{0.50\textwidth}
 \centering
-\begin{tikzpicture}[scale=0.45, every node/.style={font=\tiny}]
+\begin{tikzpicture}[scale=0.42, every node/.style={font=\tiny}]
   \def\xmax{12.5} \def\ymax{8.4} \def\mcp{4} \def\h{1.15} \def\ceiling{6.6}
   \fill[orange!18] (0, \mcp-\h) rectangle (\xmax-0.3, \mcp+\h);
-  \draw[->, thick, gray!75] (0,0) -- (\xmax,0) node[below, black]{Cumulative MW};
+  \draw[->, thick, gray!75] (0,0) -- (\xmax,0) node[below, black]{Cumulative MW offered};
   \draw[->, thick, gray!75] (0,0) -- (0,\ymax);
   \node[rotate=90, anchor=south, black] at (-0.55, \ymax/2){Bid price (EUR/MWh)};
   \draw[red!80!black, very thick, dashed] (0, \mcp) -- (\xmax-0.3, \mcp);
-  \node[red!80!black, anchor=west] at (\xmax-0.25, \mcp){MCP};
-  \draw[gray!60, dotted, thick] (0, \ceiling) -- (\xmax-0.3, \ceiling);
-  \node[gray!60!black, anchor=west] at (\xmax-0.25, \ceiling){ceiling};
+  \node[red!80!black, anchor=west] at (\xmax-0.25, \mcp){clearing price};
   \draw[blue!60!black, very thick]
        (0, 0.4) -- (1, 0.4) -- (1, 0.9) -- (1.8, 0.9) -- (1.8, 1.3) -- (2.7, 1.3)
     -- (2.7, 1.9) -- (3.4, 1.9) -- (3.4, 2.5) -- (4, 2.5) -- (4, 3.05) -- (4.7, 3.05)
@@ -286,205 +233,535 @@ Imbalance cost $E[\Delta_t^2]$ & $(\Delta_\mu^2 + \Delta_\eta^2)/3$ & $\Delta_\m
   \node[anchor=west] at (\xmax-2.05, \mcp+\h/2){$+\delta$};
   \node[anchor=west] at (\xmax-2.05, \mcp-\h/2){$-\delta$};
   \node[orange!60!black, anchor=south west, fill=white, rounded corners, inner sep=2pt, draw=orange!50]
-    at (0.2, \mcp+\h+0.10) {\textbf{in-band: competing tier}};
-  \node[gray!50!black, anchor=south west, fill=white, rounded corners, inner sep=2pt, draw=gray!40]
-    at (7.5, \ceiling+1.0) {\textbf{parked tier}};
+    at (0.2, \mcp+\h+0.10) {\textbf{competing tranches}};
 \end{tikzpicture}
-\end{column}
-\begin{column}{0.50\textwidth}
+
+\medskip
 \footnotesize
-\textbf{In-band set} (per curve $u,d,p$):
-\[
-\mathcal{B} \;=\; \{k:\,|p_k - \text{MCP}_{d,p}| \le \delta\}, \quad
-w_k \;=\; \frac{\Delta q_k}{\sum_{j\in\mathcal{B}} \Delta q_j}.
-\]
+Not all tranches of the bid curves are equally relevant for strategic bidding, we focus on \textbf{tranches around clearing price in that period}, using a bandwidth:
+\begin{equation*}
+\mathcal{B}_{u,d,p} = \{k: |p_k - \text{MCP}_{d,p}| \leq \delta \}.
+\end{equation*}
+choosing the bandwidth $\delta = p_{90} - p_{50}$ in the time-window of interest. Note that both the level and the width of $\mathcal{B}_{u,d,p}$ vary across time!
+\end{column}
 
-\textbf{In-band weighted mean:}
-\[
-\bar p \;=\; \sum_{k\in\mathcal{B}} w_k\,p_k.
-\]
+\begin{column}{0.50\textwidth}
 
-\textbf{Bid-shape outcomes (per curve):}
-\[
-\sigma_p \;=\; \sqrt{\sum_{k\in\mathcal{B}} w_k\,(p_k - \bar p)^2}, \quad
-N_{\text{eff}} \;=\; \Big(\sum_{k\in\mathcal{B}} w_k^2\Big)^{-1}.
-\]
+\textbf{Bid-curve shape measures:}
+\begin{itemize}\setlength{\itemsep}{10pt}\setlength{\parskip}{3pt}
+  \item Slope and level of the bid curve: for each curve, fit $p_k = \hat{\alpha} + \hat{\beta} Q_k$ in $k\in\mathcal{B}$ and get $(\hat{\alpha}, \hat{\beta})$.
+  Similar with the 2nd order polynomial to get the curvature $\tilde{\gamma}$.
+  \item Robust measures to few tranches inside the band:
+  \begin{itemize}\setlength{\itemsep}{8pt}\setlength{\parskip}{3pt}
+    \item Quantity-weighted Herfindahl over tranches: $\text{HHI}_p = \sum_{k\in\mathcal{B}} w_k^2$, with weights $w_k = \frac{q_k}{\sum_{j\in\mathcal{B}} q_j}$.
+    \item Quantity-weighted SD of tranche prices: $\sigma_p = \sqrt{\sum_{k\in\mathcal{B}} w_k (p_k - \bar p)^2}$, where $\bar p = \sum_{k\in\mathcal{B}} w_k p_k$.
+  \end{itemize}
 
-\textbf{IDA in-band sell-share} (per tech $t$, per day $d$):
-\[
-\text{SS}_{t,d} \;=\; \frac{\sum_q q^{\text{sell,in-band}}_{t,d,q}}{\sum_q\big(q^{\text{sell,in-band}}_{t,d,q} + q^{\text{buy,in-band}}_{t,d,q}\big)}.
-\]
+\end{itemize}
 
-\textbf{Bandwidth:} $\delta = p_{90} - p_{50}$ of MCP per (window, market).
 \end{column}
 \end{columns}
 \end{frame}
 
 % ---------------------------------------------------------------------------
-\begin{frame}{Identification --- three specifications}
-\footnotesize
-\textbf{Spec~A: BSTS counterfactual on level outcomes} (clearing prices, per-tech cleared MWh, wedge SD, IDA sell-share).
-\begin{itemize}\setlength{\itemsep}{1pt}
-  \item Long pre-window (2022-01 onwards), covariates: $\text{wind}_t$, $\text{solar}_t$, $\text{gas}_t$, plus $\text{wind}_t \times \mathbf{1}\{\text{year}=y\}$ and $\text{solar}_t \times \mathbf{1}\{\text{year}=y\}$ for each $y$ in the window.
-  \item Year-interaction is essential: Spanish wind+solar capacity grew $\sim\!6\times$ over 2018-2025; a flat renewable coefficient mis-fits the counterfactual and reports artificially confident effects.
-  \item Same-calendar 2024 placebo nets recurring calendar shifts.
-\end{itemize}
 
-\medskip
-\textbf{Spec~B: per-hour-class BSTS} on in-band offered energy per (tech, market, $\mathcal{X}$) cell, $\mathcal{X}\in\{$morning ramp, midday, evening ramp, flat$\}$. Same architecture as Spec~A.
+\begin{frame}{Residual demand and hour classification}
 
-\medskip
-\textbf{Spec~C: per-curve DiD on bid shape.}
-\[
-y_{u,d,p} \;=\; \alpha_u + \beta\cdot\mathbf{1}\{d\ge T_r\} + \xi\cdot\mathbf{1}\{h(p)\in\mathcal{C}\} + \theta\cdot\mathbf{1}\{d\ge T_r,\,h(p)\in\mathcal{C}\} + \varepsilon
-\]
-on $y \in \{\sigma_p, N_{\text{eff}}\}$, SE clustered by date. Identification: the within-day critical/flat contrast acts as a control, absorbing calendar variation that Spec~A handles through the year-interactions.
+\begin{center}
+\fcolorbox{blue!50!black}{blue!7}{%
+\begin{minipage}{0.96\linewidth}\vspace{2pt}
+\textbf{\color{blue!50!black}Key idea.} Granularity is useful when there is variation in the residual demand for each firm, and particularly for the strategic bidders. Renewable producers exploit granularity due to operational reasons (forecast updates).
+\vspace{2pt}\end{minipage}}
+\end{center}
 
 \bigskip
-\textbf{Reform windows.} ID15 post-window: 2025-03-19 $\to$ 2025-04-27 (pre-blackout, $40$d). DA15 post-window: 2025-10-01 $\to$ 2025-11-09 ($40$d). DA15 pre-window starts at the blackout $\Rightarrow$ \emph{reforzada} held constant by design.
+We calculate the residual demand as the thermal gap: final program net of realized wind and solar generation, $\text{RD}(q,h,d) = [\text{load}-\text{wind}-\text{solar}]_{q,h,d}$, observed at quarter-hour resolution since 2024. To make the comparison scale-free we use the \textbf{coefficient of variation} $\mathrm{CV}(h)=\mathbb{E}_d[\text{sd}_q(\text{RD}(q,h,d))]/\mathbb{E}_d[\overline{\text{RD}}(h,d)]$, and split the hours of the day into three classes:
+
+\medskip
+\begin{itemize}\setlength{\itemsep}{4pt}
+\item $\left.\begin{array}{@{}l@{}}
+\textbf{Morning ramp } \mathcal{C}_M\text{: } \mathrm{CV}\approx 6.0\%\ (4.0\times\text{ flat}) \\[2pt]
+\textbf{Evening ramp } \mathcal{C}_E\text{: } \mathrm{CV}\approx 3.8\%\ (2.5\times\text{ flat})
+\end{array}\right\}\ \textbf{Critical }\mathcal{C}=\mathcal{C}_M\cup\mathcal{C}_E,\ \overline{\mathrm{CV}}\approx 4.6\%\ (3.1\times\text{ flat})$
+\item \textbf{Flat} $\mathcal{F}$, deep night hours, $\mathrm{CV}\approx 1.5\%$ (baseline).
+\item \textbf{Midday} $\mathcal{M}$, $\mathrm{CV}\approx 5.7\%$ ($3.8\times$ flat).
+\end{itemize}
+
 \end{frame}
 
 % ---------------------------------------------------------------------------
-\begin{frame}{Result 1 --- Bid ladders widen in critical hours (Spec C)}
-\centering
+
+\begin{frame}{Identification strategy: bid-curve shape}
+
+\begin{center}
+\fcolorbox{blue!50!black}{blue!7}{%
+\begin{minipage}{0.96\linewidth}\vspace{4pt}
+\textbf{Identification for bid-curve shape.} Check evolution of bid-curve shape measures in critical hours vs flat hours, pre vs post reform, to measure the effect of granularity on bid shape.
+
+\medskip
+\textbf{Why use a DiD here?} It differences out across-hour changes in bidding complexity, such as more advanced software, prediction models, etc.
+\vspace{4pt}\end{minipage}}
+\end{center}
+
+\bigskip
+\textbf{\textcolor{red}{Caveat: flat hours are not a perfect controls.}} They are also affected by the reform, but economic theory tells us that the biggest effects of the reform are in critical hours $\to$ \textbf{lower bound of the effect.}
+
+\bigskip
+The identification assumption is the usual \textbf{parallel trends:} absence granularity reform, the evolution of the bid shape of critical and flat hours would have been the same. 
+
+\bigskip
+Note that our bid-curve shape measures are robust to seasonal level changes! Main threat: post-reform shocks that affect differently critical vs flat hours, not present before.
+
+\end{frame}
+
+% ---------------------------------------------------------------------------
+
+\begin{frame}{Identification strategy: level variables}
+  For level variables like prices, quantities, etc, \textbf{seasonality} is the big issue, since changes in renewable production affect differently critical and flat hours across the year.
+
+  \bigskip
+  Moreover, for quantity variable we have to be very very catious and interpret correctly the different programs and REE restrictions.
+
+  \bigskip
+  Following previous work of the EPEX reform \citep{markle_huss_2017} we use Bayesian Structural Time Series \citep{brodersen_2015} and standard OLS exploiting all the rich data and granularity.
+
+  \bigskip
+  The most important part is the choice of windows and controls:
+  \begin{itemize}
+     \item \textbf{Windows.} We use a long pre-window from 2022 to capture full seasonality across years. The other alternative is to use reforzada-constant windows, or excluding periods with different regimes but that would reduce the pre-window length and thus the ability to capture seasonality and real renewable growth.
+    \item \textbf{Controls.} We control for wind and solar production, and gas price, which are the main drivers of price variation in the Spanish market. We also include year-by-year interactions to capture the growth in renewables, which crucial to get depressing effect in prices of solar in midday hours.
+  \end{itemize}
+
+\end{frame}
+
+
+% ---------------------------------------------------------------------------
+\section{Empirical results}
+
+\begin{frame}{Summary of our results}
+  For ID15:
+  \begin{itemize}
+    \item Decrease in prices in both IDA and DA after controlling for renewable penetration and seasonality. Price wedge between DA and IDAs increase.
+    \item No change in aggregate volume, wind sells more actively in IDA. Nuclear was out of the market post-ID15 and pre-blackout. SELL SHARE HERE.
+    \item BID SHAPE HERE. RESIDUAL DEMAND HERE.
+  \end{itemize}
+
+  For DA15:
+  \begin{itemize}
+    \item Small decrease in DA prices, null in IDA, after controlling for renewable penetration and seasonality. Price wedge do not vary.
+    \item AGGREGATE QUANTITIES HERE. TECH VARIATION HERE. SELL SHARE HERE.
+    \item BID SHAPE HERE. RESIDUAL DEMAND HERE.
+  \end{itemize}
+\end{frame}
+
+
+% ---------------------------------------------------------------------------
+\subsection{Prices, wedge, and quantity}
+
+\begin{frame}{Prices --- robust drop at ID15, null at DA15}
 \footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{l l c c c c}
+\centering
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l c c c c}
 \toprule
-                       &              & \multicolumn{2}{c}{\textbf{ID15}} & \multicolumn{2}{c}{\textbf{DA15}} \\
-\cmidrule(lr){3-4} \cmidrule(lr){5-6}
-\textbf{DiD $\theta$} & \textbf{Tech} & DA & IDA & DA & IDA \\
+                                                   & \multicolumn{2}{c}{\textbf{ID15 (IDA reform)}} & \multicolumn{2}{c}{\textbf{DA15 (DA reform)}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+                                                   & IDA (own) & DA (cross) & DA (own) & IDA (cross) \\
 \midrule
-$\hat\alpha$ (EUR/MWh)        & CCGT          & $\mathbf{-40.2}^{***}$  & $11.8^{*}$            & $\mathbf{30.3}^{***}$   & $1.4$ \\
-                              & Hydro         & $0.2$                   & $87.3$                & $\mathbf{43.3}^{**}$    & $\mathbf{5.3}^{***}$ \\
-                              & Pump-storage  & $1.1$                   & $-3.0$                & $\mathbf{-6.6}^{***}$   & $80.2$ \\
-$\hat\beta$ (EUR/MWh per MW)  & CCGT          & $\mathbf{0.27}^{***}$   & $-0.88^{*}$           & $\mathbf{-0.17}^{***}$  & $0.52$ \\
-                              & Hydro         & $0.15$                  & $-1.50$               & $\mathbf{-1.27}^{***}$  & $-0.01$ \\
-                              & Pump-storage  & $-0.01$                 & $0.07$                & $\mathbf{0.02}^{**}$    & $-1.69$ \\
-$\hat\gamma$ ($\times 10^{3}$) & CCGT         & $\mathbf{-3.99}^{***}$  & $10.0$                & $\mathbf{1.29}^{***}$   & $7.5$ \\
-                              & Hydro         & $-305$                  & $-109$                & $\mathbf{-5{,}228}^{***}$ & $15$ \\
-                              & Pump-storage  & $0.07$                  & $1.45$                & $-0.02$                 & $0.20$ \\
-$N_{\text{eff}}$              & CCGT          & $-0.08$                 & $0.79$                & $\mathbf{1.89}^{***}$   & $-0.17$ \\
-                              & Hydro         & $-0.24^{***}$           & $\mathbf{0.18}^{***}$ & $\mathbf{0.51}^{***}$   & $0.00$ \\
-                              & Pump-storage  & $0.07$                  & $\mathbf{0.12}^{*}$   & $-0.06$                 & $-0.16$ \\
+OLS daily --- base (month $+$ DOW)                   & \cellcolor{green!22}$-32^{***}$ & \cellcolor{green!22}$-33^{***}$ & \cellcolor{red!18}$-8$ & \cellcolor{red!18}$-8$ \\
+OLS daily --- $+$ year-by-renewable (per year)       & \cellcolor{green!22}$-46^{***}$ & \cellcolor{green!22}$-47^{***}$ & \cellcolor{red!18}$\mathbf{-9}$ & \cellcolor{red!18}$\mathbf{-10}$ \\
+OLS daily --- $+$ year-by-renewable (2024+25 pooled) & \cellcolor{green!22}$\mathbf{-39}^{***}$ & \cellcolor{green!22}$\mathbf{-39}^{***}$ & \cellcolor{red!18}$-5$ & \cellcolor{red!18}$-6$ \\
+\addlinespace
+OLS hourly --- base (hour $+$ month $+$ DOW)         & \cellcolor{green!22}$-34^{***}$ & \cellcolor{green!22}$-34^{***}$ & \cellcolor{red!18}$-10^{*}$ & \cellcolor{red!18}$-10^{*}$ \\
+OLS hourly --- $+$ year-by-renewable (per year)      & \cellcolor{green!22}$-40^{***}$ & \cellcolor{green!22}$-39^{***}$ & \cellcolor{red!18}$-3$ & \cellcolor{red!18}$-4$ \\
+OLS hourly --- $+$ year-by-renewable (2024+25 pooled)& \cellcolor{green!22}$\mathbf{-30}^{***}$ & \cellcolor{green!22}$\mathbf{-29}^{***}$ & \cellcolor{red!18}$3$ & \cellcolor{red!18}$2$ \\
+\addlinespace
+BSTS daily                                           & \cellcolor{green!22}$-34^{*}$ & \cellcolor{green!22}$-34^{*}$ & \cellcolor{red!18}$8$ & \cellcolor{red!18}$1$ \\
 \bottomrule
 \end{tabular}
 
-\bigskip
+\smallskip
+{\scriptsize\itshape Window 2022-01-01 onward: preblackout for ID15 (40 days), 90 days for DA15. \textbf{Base controls} (all rows): wind, solar, gas, calendar-month FE, day-of-week FE. Newey-West HAC SE. We average quarter-hour prices.}
+
+\medskip
+\raggedright
+\begin{itemize}\setlength{\itemsep}{1pt}
+  \item \textcolor{green!40!black}{\textbf{ID15 own-venue price drop is robust} at $-30$ to $-46$ EUR/MWh across all specs}; cross-market response on DA is the same magnitude (anticipation through backward induction).
+  \item \textcolor{red!70!black}{\textbf{DA15 own-venue null}} ($-9$ to $+8$); cross-market also null.
+  \item \textbf{ID15 effect persists at the 90-day post-window, including blackout} (OLS pooled $-42^{***}$, BSTS real effect $-35$ EUR/MWh) --- full sensitivity at 40d / 90d / 180d / 196d in appendix.
+  \item \textbf{Effect is broadly uniform across hour classes at ID15}: evidence of hydro-pump and batteries arbitrage (CHECK BID SHAPE!!!).
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Price wedges --- per-IDA-session levels and wedge SD}
+\scriptsize
+\centering
+\textbf{(a) Wedge level per session} (EUR/MWh; $p_{\text{DA}} - p_{\text{IDA},s}$; pre 2024-06-14$+$, Newey-West HAC).
+\smallskip
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{l c c c c c c}
+\toprule
+                                                   & \multicolumn{3}{c}{\textbf{ID15 (IDA reform)}} & \multicolumn{3}{c}{\textbf{DA15 (DA reform)}} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+                                                   & S1 & S2 & S3 & S1 & S2 & S3 \\
+\midrule
+OLS daily --- base (month $+$ DOW)                   & \cellcolor{green!22}$2.8^{**}$  & $-0.1$ & \cellcolor{red!18}$-9.6^{**}$ & $0.3$  & $-2.8$ & $2.8$ \\
+OLS daily --- $+$ year-by-renewable (per year)       & \cellcolor{green!22}$2.9^{**}$  & $-0.4$ & \cellcolor{red!18}$-7.7^{*}$  & $-0.1$ & $-3.6$ & $2.3$ \\
+OLS daily --- $+$ year-by-renewable (2024+25 pooled) & \cellcolor{green!22}$3.0^{**}$  & $0.3$  & \cellcolor{red!18}$-7.0^{*}$  & $0.0$  & $-2.4$ & $3.7$ \\
+\addlinespace
+OLS hourly --- base (hour $+$ month $+$ DOW)         & \cellcolor{green!22}$2.7^{**}$  & $0.7$  & \cellcolor{red!18}$-0.9$ & $1.0$  & $-3.0$ & $0.6$ \\
+OLS hourly --- $+$ year-by-renewable (per year)      & \cellcolor{green!22}$2.8^{**}$  & $1.0$  & \cellcolor{red!18}$-0.7$ & $0.6$  & $-3.1$ & $1.4$ \\
+OLS hourly --- $+$ year-by-renewable (2024+25 pooled)& \cellcolor{green!22}$2.8^{**}$  & $1.0$  & \cellcolor{red!18}$-0.7$ & $0.6$  & $-3.1$ & $1.4$ \\
+\addlinespace
+BSTS daily                                           & \cellcolor{green!22}$1.6^{**}$  & $1.5$  & \cellcolor{red!18}$-0.6$ & $0.3$  & $0.3$  & $0.0$ \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\textbf{(b) Wedge SD effect, by hour class} (BSTS, EUR/MWh).
+\smallskip
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l c c c c c}
+\toprule
+                & Overall & Morning ramp & Midday & Evening ramp & Flat \\
+                &         & (5--8)       & (11--14) & (16--22)   & (1--3) \\
+\midrule
+ID15            & \cellcolor{green!22}$\mathbf{1.1}^{**}$ & \cellcolor{green!22}$\mathbf{2.3}^{***}$ & \cellcolor{red!18}$-1.6^{**}$ & \cellcolor{green!22}$1.2^{*}$ & $-0.0$ \\
+DA15            & $-0.1$ & $0.5$ & $-0.7$ & $-1.4$ & $-0.5$ \\
+\bottomrule
+\end{tabular}
+
+\medskip
 \footnotesize
+\textcolor{green!40!black}{\textbf{ID15:} S1 wedge widens $+2.7$ to $+3.0$ (robust); S3 daily narrowing does \emph{not} survive hourly or BSTS. Wedge SD jump concentrates in the \textbf{morning ramp} ($+2.3^{***}$) more than the evening ramp ($+1.2^{*}$); midday \emph{compresses} ($-1.6^{**}$).} \\
+\textcolor{gray!50!black}{\textbf{DA15:} no per-session restructuring and no SD effect.}
+INCLUDE PLACEBOS IN APPENDIX, THEY ARE ROBUST!!
+\end{frame}
+
+
+\begin{frame}{Changes in quantity --- programs must be read separately}
+\centering
+\includegraphics[width=0.96\linewidth]{fig_programs_by_tech_weekly.pdf}
+
+\end{frame}
+
+% ---------------------------------------------------------------------------
+
+
+\begin{frame}{Changes in quantity -- main changes}
+  WE SHOULD SAY QUANTITY CHANGES IN WORDS AND INCLUDE THE REGRESSIONS IN THE APPENDIX
+
+  MENTION SELL SHARE, DROP FIGURE, NOT NEEEDED.
+\end{frame}
+
+
+% ---------------------------------------------------------------------------
+
+\begin{frame}{Changes in bid shape -- critical vs flat}
+  HERE FOCUS ON CCGT, HYDRO PUMP AND CHP TOO (QUITE BIG)!! PUMP STORAGE AND HYBRID ARE SMALLER BUT INTERESTING, ALSO COAL.
+\end{frame}
+
+% ---------------------------------------------------------------------------
+
+\begin{frame}{Changes in bid shape}
+  MORE HERE
+\end{frame}
+
+% ---------------------------------------------------------------------------
+
+\begin{frame}{Changes in residual demand slope for dominant firms}
+\footnotesize
+\textbf{Object.} For each of the four dominant generators, the slope $b_{m,t}$ of the residual demand it faces (Cournot primitive). Steeper $\Rightarrow$ less unilateral market power.
+
+\smallskip
+\textbf{DiD spec (per firm, per reform $\times$ venue).}
+\[
+\log\, b_{f,t} \;=\; \theta_f\,\mathds{1}\{t \in \text{post}\} \;+\; \text{month FE} \;+\; \text{(wind, solar daily)} \;+\; \varepsilon_{f,t}.
+\]
+Table reports $\theta_f$ (\% change in slope).
+
+\medskip
+\centering
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{l c c c c}
+\toprule
+\textbf{Change in slope per firm} & Firm 1 & Firm 2 & Firm 3 & Firm 4 \\
+\midrule
+March reform, slope on IDA           & \cellcolor{green!22}$10\%$ & \cellcolor{green!22}$13\%$ & \cellcolor{green!22}$\mathbf{17}\%^{*}$ & \cellcolor{green!22}$13\%$ \\
+October reform, slope on IDA         & \cellcolor{green!22}$11\%$ & \cellcolor{green!22}$13\%$ & \cellcolor{green!22}$12\%$              & \cellcolor{green!22}$\mathbf{15}\%^{***}$ \\
+October reform, slope on DA          & \cellcolor{red!12}$-2\%$  & \cellcolor{red!12}$-1\%$  & \cellcolor{red!12}$-2\%$               & \cellcolor{red!12}$-3\%$ \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\raggedright
 \begin{itemize}\setlength{\itemsep}{2pt}
-  \item \textbf{DA15 DA CCGT/Hydro}: $\hat\alpha\uparrow$ + $\hat\beta\downarrow$ + $\hat\gamma\uparrow$ (convex). Curve translates up, flatter on average, convex bend $\Rightarrow$ low-MW MW packed cheap (Cournot scale-up) + steep high-MW tail (ladder widening). Mechanisms (iii)+(iv) at $(Q,Q)$.
-  \item \textbf{ID15 DA CCGT (anticipation)}: $\hat\alpha\downarrow$ + $\hat\beta\uparrow$ + $\hat\gamma\downarrow$ (concave). Aggressive climb at low MW, flatter tail. Same firm, same market: opposite curvature sign vs DA15 $\Rightarrow$ two distinct mechanisms (Stage-1 option-value, mech. v).
-  \item \textbf{DA15 DA Pump-storage}: $\hat\alpha\downarrow$ + $\hat\beta\uparrow$ $\Rightarrow$ storage arbitrage instrument.
-  \item $\hat\alpha + \hat\beta + \hat\gamma$ = unweighted OLS fit of $p_k = \hat\alpha + \hat\beta Q_k + \hat\gamma Q_k^2$ on in-band step endpoints.
+  \item \textcolor{green!40!black}{\textbf{Main finding (green):} slope thickens on the IDA side at both reforms.} Direction consistent for every firm; wind/solar daily-production controls barely move the coefficient $\Rightarrow$ not a supply-shift artefact.
+  \item \textcolor{red!70!black}{\textbf{Negative finding (red):} DA at October.} The newly-reformed DA does NOT thicken its own slope. Effect is venue-specific to the IDA side.
 \end{itemize}
 \end{frame}
 
 % ---------------------------------------------------------------------------
-\begin{frame}{Result 2 --- Production-unit arbitrageurs are active in IDA}
-\begin{center}
-\includegraphics[width=0.84\linewidth]{fig_sell_share_over_time.pdf}
-\end{center}
 
+\begin{frame}{Elephant in the room: ancillary services}
+\begin{center}
+\includegraphics[width=0.72\linewidth]{efficiency_gains_timeseries.pdf}
+\end{center}
 \vspace{-0.1cm}
 \footnotesize
 \begin{itemize}\setlength{\itemsep}{2pt}
-  \item Units submit both sell and buy IDA offers. \%-dual sessions: 20\% (nuclear) to 83\% (wind).
-  \item Empirical confirmation of P7: arbitrageur agent active across every tech.
-  \item DA omitted: sell-share is $1.00$ for every tech (no production-unit buy side).
+  \item The system operator is paying CCGT to produce more through adjustments in the wholesale markets, and also to solar to... stop producing. 
+  \item This costs have increased substantially! QUANTITY Re-reforzada just after DA15 calls CCGT even before in the program cascade (TR up).
+  \item Acknowledge by \citet{brown_reguant_2026} and \citet{davi_arderius_graf_2026}.
 \end{itemize}
 \end{frame}
 
 % ---------------------------------------------------------------------------
-\begin{frame}{Result 3 --- IDA sell-share rises at ID15 (Spec A)}
-\centering
+\begin{frame}{Wedge --- mean unchanged, SD jumps, per-session restructures (ID15)}
 \footnotesize
-\setlength{\tabcolsep}{5pt}
+\begin{columns}[T]
+\begin{column}{0.50\textwidth}
+\textbf{(a) BSTS: within-day wedge SD} (Spec~A, 2024 same-calendar placebo).
+\centering
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{l c c}
 \toprule
-\textbf{Tech} & \textbf{ID15 real (pp), CI} & \textbf{2024 placebo} \\
+\textbf{Wedge SD (EUR/MWh)} & \textbf{Real} & \textbf{2024 plb.} \\
 \midrule
-\rowcolor{green!18} Nuclear     & $\mathbf{+39}^{***}$ [$+25, +53$] & \emph{n/a (structural)} \\
-\rowcolor{green!18} Wind        & $\mathbf{+26}^{***}$ [$+14, +38$] & \emph{n/a (structural)} \\
-\rowcolor{green!18} Pump-storage& $\mathbf{+13}^{***}$ [$+7, +19$]  & \emph{n/a (structural)} \\
-Hydro       & $+6$ [$-0, +13$]  & \emph{n/a} \\
-Solar PV    & $+10$ [$-3, +24$] & \emph{n/a} \\
-CCGT        & $-1$ [$-15, +12$] & \emph{n/a} \\
+March, overall          & \cellcolor{green!22}$\mathbf{1.15}^{**}$  & \cellcolor{gray!12}$-0.96$ \\
+March, peak hours       & \cellcolor{green!22}$\mathbf{2.12}^{***}$ & \cellcolor{gray!12}$-0.68$ \\
+October                 & \cellcolor{green!22}$1.12$ (persists)     & \cellcolor{gray!12}$0.09$ \\
 \bottomrule
 \end{tabular}
 
-\bigskip
+\medskip
+\textcolor{green!40!black}{\textbf{Wedge SD jumps at March, stays elevated through October}} --- bounded per-product arbitrage: with $4\times$ more delivery products, capacity per product binds. SD lands at $\sim 2\times$ the unconstrained benchmark, not zero.
+
+\medskip
+\textcolor{red!70!black}{\textbf{Mean unchanged}} at either reform (granularity does not collapse the level wedge).
+\end{column}
+
+\begin{column}{0.50\textwidth}
+\textbf{(b) OLS: wedge level per IDA session} (Newey-West HAC, long pre 2024-06-14$+$).
+\centering
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l r r}
+\toprule
+                  & \textbf{ID15} & \textbf{DA15} \\
+\textbf{Wedge}    & $\hat\theta$ (EUR/MWh) & $\hat\theta$ \\
+\midrule
+Aggregate         & $-0.04$  & $1.31$ \\
+Session 1 (early) & \cellcolor{green!22}$\mathbf{3.0}^{**}$ & $-0.09$ \\
+Session 2 (mid)   & $0.3$   & $-3.6$ \\
+Session 3 (late)  & \cellcolor{red!12}$\mathbf{-7.7}^{*}$ & $2.3$ \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\textcolor{green!40!black}{\textbf{At ID15 the wedge restructures \emph{within} day:}} S1 (early, nearer DA gate) widens $+3$; S3 (late, nearer delivery) narrows $-7.7$. Aggregate null.
+
+\medskip
+\textcolor{red!12!black}{No per-session restructuring at DA15.}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Quantity --- IDA sell-share rises at ID15 (figure + BSTS)}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+\centering
+\includegraphics[width=\linewidth]{fig_sell_share_over_time.pdf}\\[-0.05cm]
 \footnotesize
-\begin{itemize}\setlength{\itemsep}{2pt}
-  \item Same-calendar 2024 placebo \emph{structurally unavailable}: pre-IDA-reform (before 2024-06-14) the IDA had 6 sessions with no production-unit buy offers $\Rightarrow$ sell-share constant at 1.00 $\Rightarrow$ BSTS cannot fit.
-  \item Falsification by descriptive break: Figure~5 (in-band sell-share rolling mean) shows the level shift right at ID15 and not at any earlier date.
-  \item \textbf{Nuclear / wind / pump-storage rise sharply}; \textbf{model match} with mechanism (M3) priceable within-hour rent at $(1,Q)$.
+IDA sell-share by technology, $21$-day rolling. Vertical: reform cutovers. Generators submit BOTH buy and sell orders within the same IDA session $\Rightarrow$ they actively arbitrage their own DA position. The level shifts at March~2025.
+\end{column}
+\begin{column}{0.45\textwidth}
+\footnotesize
+\textbf{BSTS sell-share change at ID15 (pp)} --- long-pre Spec~A with renewables and gas controls.
+\medskip
+\centering
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l c}
+\toprule
+\textbf{Technology} & $\hat\Delta$ (pp) \\
+\midrule
+\rowcolor{green!22} Nuclear     & $\mathbf{33.5}^{***}$ \\
+\rowcolor{green!22} Wind        & $\mathbf{23.5}^{***}$ \\
+Hydro                & $4.8^{***}$ \\
+Solar PV             & $3.6^{**}$ \\
+\rowcolor{red!12} Pumped hydro & $3.9$ \\
+\rowcolor{red!12} CCGT         & $-3.1$ \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\raggedright
+\textcolor{green!40!black}{\textbf{Nuclear and wind} swing into selling.} Pre-reform they used IDA as a one-way buy market; post-March they actively price output at 15-min resolution. CCGT (strategic-bidder benchmark) does NOT shift its DA/IDA mix.
+\end{column}
+\end{columns}
+\end{frame}
+
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Cleared quantities --- OLS per technology, both reforms}
+\footnotesize
+\textbf{OLS spec.} Daily cleared GWh per (tech, market). Same RHS as the price spec; Newey-West HAC. Two cells per tech: \emph{ID15 IDA} (granular venue at the IDA reform) and \emph{DA15 DA} (granular venue at the DA reform).
+
+\medskip
+\centering
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l r c r c}
+\toprule
+                  & \multicolumn{2}{c}{\textbf{ID15 IDA cleared (PIBCI)}} & \multicolumn{2}{c}{\textbf{DA15 DA cleared (PDBC)}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+\textbf{Tech}     & \textbf{$\hat\theta$ (GWh/day)} & \textbf{p} & \textbf{$\hat\theta$ (GWh/day)} & \textbf{p} \\
+\midrule
+CCGT              & \cellcolor{red!12}$\mathbf{-5.5}^{***}$  & 0.002 & $14$              & 0.24 \\
+Hydro             & \cellcolor{red!12}$\mathbf{-3.8}^{**}$   & 0.02  & \cellcolor{red!12}$\mathbf{-8.5}^{***}$ & 0.000 \\
+Pumped hydro      & \cellcolor{red!12}$-0.6^{*}$             & 0.05  & \cellcolor{green!22}$\mathbf{3.4}^{**}$ & 0.003 \\
+Nuclear           & $3.7$                                   & 0.62  & \cellcolor{green!22}$\mathbf{27}^{*}$  & 0.07 \\
+Solar             & \cellcolor{green!22}$\mathbf{6.3}^{***}$ & 0.000 & \cellcolor{green!22}$\mathbf{6.5}^{***}$ & 0.000 \\
+Wind              & \cellcolor{green!22}$\mathbf{3.9}^{***}$ & 0.008 & \cellcolor{green!22}$\mathbf{11}^{**}$  & 0.015 \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\raggedright
+\begin{itemize}\setlength{\itemsep}{1pt}
+  \item \textcolor{green!40!black}{\textbf{Renewables flow toward the granular venue at each reform.}} ID15: solar $+6.3$ and wind $+3.9$ GWh/day INTO IDA. DA15: solar $+6.5$, wind $+11$ GWh/day INTO DA. Direction matches the model's aggregator-on-granular-leg prediction.
+  \item \textcolor{red!70!black}{\textbf{Dispatchable techs lose share on the IDA at ID15:}} CCGT $-5.5$ and hydro $-3.8$ GWh/day. At DA15 the DA side scales up across the board (pump-storage, nuclear, wind).
+  \item BSTS cross-check: same qualitative pattern (CCGT IDA $-8$, solar IDA $+6.7$, wind IDA $+5.3$ at ID15; solar DA $+11$ at ID15; CCGT DA $+36$, wind DA $+18$ at DA15).
 \end{itemize}
 \end{frame}
 
-% ---------------------------------------------------------------------------
-\begin{frame}{Result 4 --- Within-hour wedge SD jumps at ID15 and does not collapse at DA15}
-\footnotesize
-\textbf{Wedge mean.} $\Delta_d = \overline{p^{\text{DA}}_{d,h}-p^{\text{IDA}}_{d,h}}$ is consistently \emph{positive} across regimes: $+1.83$ pre-IDA, $+0.77$ ISP15-win, $+2.57$ MTU15-IDA pre-blackout, $+0.91$ post-blackout, $+1.32$ at DA15+ID15 (EUR/MWh). Within sampling noise of a stationary positive mean $\Rightarrow$ Ito-Reguant scarcity wedge $p_1>p_2>c$ under limited arbitrage.
 
-\bigskip
-\textbf{Wedge SD (Spec~A, long pre + year-int.).}
+% ---------------------------------------------------------------------------
+\begin{frame}{Penalty --- imbalance per MWh drops; aggregate volume does not}
+\footnotesize
+\textbf{Setup.} Parties that deviate from contract pay a regulated penalty per MWh of deviation.
+
 \smallskip
+\textbf{BSTS spec.} $\hat\Delta = \tfrac{1}{T_{\text{post}}}\sum_{t\in\text{post}}\!\big(Y_t - \hat Y_t^{\text{cf}}\big)$ on daily outcomes, with (wind, solar, gas) regressors and 2022$-$present seasonality.
+
+\medskip
 \centering
+\setlength{\tabcolsep}{10pt}
 \begin{tabular}{l c c}
 \toprule
-\textbf{Wedge SD (EUR/MWh)} & \textbf{Real CI} & \textbf{2024 Placebo CI} \\
+\textbf{Outcome} & \textbf{March reform} & \textbf{October reform} \\
 \midrule
-ID15 overall          & $\mathbf{+1.15}$ [$+0.01, +2.23$]  & $-0.96$ [$-2.07, +0.12$] \\
-ID15 critical hours   & $\mathbf{+2.12}$ [$+0.97, +3.30$]  & $-0.68$ [$-1.90, +0.48$] \\
-DA15 (no further change)  & $+1.12$ [$-0.45, +2.38$]   & $+0.09$ [$-0.98, +1.15$] \\
+Penalty per MWh of deviation         & \cellcolor{green!22}$\mathbf{-33}\%^{***}$ & \cellcolor{red!12}flat \\
+Aggregate imbalance volume (MWh/day) & \cellcolor{red!12}$-0.1\%$        & \cellcolor{red!12}$-4\%$ \\
 \bottomrule
 \end{tabular}
 
-\bigskip
+\medskip
+\raggedright
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item \textcolor{green!40!black}{\textbf{Main finding (green):} penalty per MWh falls by a third at March.} The granular spot lets the operator price-discriminate the residual imbalance at a lower marginal cost.
+  \item \textcolor{red!70!black}{\textbf{Negative findings (red):}}
+    \begin{itemize}\setlength{\itemsep}{1pt}
+      \item Aggregate imbalance volume does NOT drop $\Rightarrow$ granularity reorganises the \emph{within-hour} composition of imbalance, not the size of aggregate forecast errors.
+      \item Penalty per MWh is flat at October $\Rightarrow$ the gain was captured at the IDA reform; the DA reform adds no further compression.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+% ---------------------------------------------------------------------------
+\subsection{Bid shape and residual demand slope}
+
+\begin{frame}{Bid shape --- CCGT ladders widen in critical hours (Spec C)}
+\footnotesize
+\textbf{DiD spec.} For each (reform, venue) cell, per-curve fit:
+\[
+Y_{u,d,p} \;=\; \theta\,\mathds{1}\{d \in \text{post}\}\cdot\mathds{1}\{p \in \text{crit}\} \;+\; \alpha_u \;+\; \phi_p \;+\; \delta_d \;+\; \varepsilon_{u,d,p},
+\]
+with critical hours as treated and flat hours as the within-day falsifier. Table reports $\theta$.
+
+\medskip
+\centering
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l c c c c}
+\toprule
+                       & \multicolumn{2}{c}{\textbf{March (IDA reform)}} & \multicolumn{2}{c}{\textbf{October (DA reform)}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+\textbf{DiD $\theta$} & DA & IDA & DA & IDA \\
+\midrule
+$\sigma_p$ (EUR/MWh)              & \cellcolor{orange!18}$\mathbf{4.17}^{***}$ & \cellcolor{red!12}$0.10$            & \cellcolor{green!22}$\mathbf{0.68}^{***}$  & $-0.68^{*}$ \\
+$\hat\alpha$ (EUR/MWh)            & \cellcolor{orange!18}$\mathbf{-40.2}^{***}$ & $11.8^{*}$        & \cellcolor{green!22}$\mathbf{28.3}^{***}$  & $6.0^{**}$ \\
+$\hat\beta$ (EUR/MWh per MW)      & \cellcolor{orange!18}$\mathbf{0.27}^{***}$ & $-0.88^{*}$        & \cellcolor{green!22}$\mathbf{-0.15}^{***}$  & \cellcolor{red!12}$0.20$ \\
+$\hat\gamma$ ($\times 10^{3}$)    & \cellcolor{orange!18}$\mathbf{-3.99}^{***}$ & \cellcolor{red!12}$10.0$            & \cellcolor{green!22}$\mathbf{1.03}^{***}$  & $7.6$ \\
+$\text{HHI}_p$                    & \cellcolor{orange!18}$\mathbf{-0.076}^{***}$ & $\mathbf{-0.041}^{***}$ & \cellcolor{green!22}$\mathbf{-0.059}^{***}$ & $\mathbf{0.051}^{***}$ \\
+\bottomrule
+\end{tabular}
+
+\medskip
 \raggedright
 \footnotesize
 \begin{itemize}\setlength{\itemsep}{2pt}
-  \item ID15: significant positive jump, placebo opposite sign and not significant.
-  \item DA15: same elevated level as ID15 (point estimate $+1.12$ in long-pre BSTS) --- wedge SD does not revert.
-  \item Independent 2026 placebo and ISP15 settlement-only check both confirm.
-  \item \textbf{Model match.} Mechanism (ii) of \S\ref{sec:theory:da15}: per-product arbitrage capacity binds; residual wedge SD $\sigma_\mu/(4 b_1)$, twice the unlimited-strategic $\sigma_\mu/(8 b_1)$ benchmark, not zero.
+  \item \textcolor{green!40!black}{\textbf{Main finding (green):} DA at October.} $\sigma_p$ rises, $\hat\alpha$ lifts, $\hat\beta$ flattens, $\hat\gamma$ bends convex, $\text{HHI}_p$ falls. Bid stack \emph{deconcentrates}: more MW packed cheap at low quantities (Cournot scale-up) plus a steeper tail above the clearing price.
+  \item \textcolor{orange!50!black}{\textbf{Anticipation (orange):} DA at March} --- opposite curvature sign $\Rightarrow$ different mechanism (anticipating the IDA reform).
+  \item \textcolor{red!70!black}{\textbf{Null findings (red):} $\sigma_p$ and $\hat\gamma$ at the March IDA reform; $\hat\beta$ at the October IDA.} The reformed venue does not restructure on its own reform date.
 \end{itemize}
 \end{frame}
 
+
 % ---------------------------------------------------------------------------
-\begin{frame}{Result 5 --- System cost: granularity shrinks ajuste; reforzada inflates Fase~I}
+\begin{frame}{Residual demand slope --- per-firm Cournot competitiveness rises on the reformed venue}
+\footnotesize
+\textbf{Object.} For each of the four dominant generators, the slope $b_{m,t}$ of the residual demand it faces (Cournot primitive). Steeper $\Rightarrow$ less unilateral market power.
+
+\smallskip
+\textbf{DiD spec (per firm, per reform $\times$ venue).}
+\[
+\log\, b_{f,t} \;=\; \theta_f\,\mathds{1}\{t \in \text{post}\} \;+\; \text{month FE} \;+\; \text{(wind, solar daily)} \;+\; \varepsilon_{f,t}.
+\]
+Table reports $\theta_f$ (\% change in slope).
+
+\medskip
+\centering
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{l c c c c}
+\toprule
+\textbf{Change in slope per firm} & Firm 1 & Firm 2 & Firm 3 & Firm 4 \\
+\midrule
+March reform, slope on IDA           & \cellcolor{green!22}$10\%$ & \cellcolor{green!22}$13\%$ & \cellcolor{green!22}$\mathbf{17}\%^{*}$ & \cellcolor{green!22}$13\%$ \\
+October reform, slope on IDA         & \cellcolor{green!22}$11\%$ & \cellcolor{green!22}$13\%$ & \cellcolor{green!22}$12\%$              & \cellcolor{green!22}$\mathbf{15}\%^{***}$ \\
+October reform, slope on DA          & \cellcolor{red!12}$-2\%$  & \cellcolor{red!12}$-1\%$  & \cellcolor{red!12}$-2\%$               & \cellcolor{red!12}$-3\%$ \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\raggedright
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item \textcolor{green!40!black}{\textbf{Main finding (green):} slope thickens on the IDA side at both reforms.} Direction consistent for every firm; wind/solar daily-production controls barely move the coefficient $\Rightarrow$ not a supply-shift artefact.
+  \item \textcolor{red!70!black}{\textbf{Negative finding (red):} DA at October.} The newly-reformed DA does NOT thicken its own slope. Effect is venue-specific to the IDA side.
+\end{itemize}
+\end{frame}
+
+
+% ---------------------------------------------------------------------------
+\begin{frame}{The April 2025 blackout triggered a separate regulatory regime}
 \begin{center}
-\includegraphics[width=0.78\linewidth]{efficiency_gains_timeseries.pdf}
+\includegraphics[width=0.72\linewidth]{efficiency_gains_timeseries.pdf}
 \end{center}
-\vspace{-0.15cm}
+\vspace{-0.1cm}
 \footnotesize
 \begin{itemize}\setlength{\itemsep}{2pt}
-  \item Within-policy-window (ISP15-win $\to$ MTU15-IDA pre-blackout): total ajuste $\sim$16M $\to$ 14M EUR/day. Real-time redispatch $-1/3$, aFRR up $-1/2$, down-channels also shrink. \textbf{Granularity absorbs within-hour variation upstream.}
-  \item Post-blackout reforzada (red shading): Fase~I up balloons by $\sim$5M/day (CCGT for voltage support); Fase~II dn grows. \textbf{Reforzada $\neq$ MTU15.}
-  \item Granularity channels keep shrinking inside the post-blackout zone (TR up falls further at DA15) --- overwhelmed in headline by reforzada growth.
+  \item Post-blackout, the system operator keeps combined-cycle gas plants synchronised for voltage support, paid through a separate redispatch channel ($+5$M EUR/day). Daily technical-restrictions cost: $2.4 \to 10.7$ M EUR.
+  \item \textcolor{red!70!black}{\textbf{Negative finding:}} the real-time TR/aFRR cost decrease is largely \emph{timing displacement} from real-time to Fase\,I within the post-blackout regime, \emph{not} a granularity efficiency gain.
+  \item \textbf{Nuclear and gas at March 2025.} In the 40 days between the IDA reform and the blackout, nuclear's auction-plus-bilateral output drops sharply against a same-calendar 2024 placebo --- the granular leg sharpens bidding, DA prices run very low on solar-heavy days, and inflexible nuclear baseload loses room. Post-blackout, CCGT roughly doubles its restriction dispatch to provide voltage support. Triangulated by Davi-Arderius \& Graf (2026).
+  \item \textbf{Take away.} Granularity and the post-blackout regime overlap on the calendar but operate on different mechanisms. The cost rise belongs to the post-blackout regime.
 \end{itemize}
 \end{frame}
 
-% ---------------------------------------------------------------------------
-\begin{frame}{Conclusion --- granularity is a strategic-latitude reveal}
-\footnotesize
-\textbf{What we identify (four channels):}
-\begin{itemize}\setlength{\itemsep}{2pt}
-  \item \textbf{Bid-shape widening} in critical hours --- dispatchables write richer ladders where within-hour MCP variation is priceable. (Spec~C DiD.)
-  \item \textbf{Within-hour wedge SD} jumps under ID15 and does not collapse at DA15 --- consistent with limited per-product arbitrage. (Spec~A.)
-  \item \textbf{IDA sell-share} rises sharply at ID15 for nuclear, wind, pump-storage --- production-unit arbitrageurs reposition. (Spec~A.)
-  \item \textbf{System cost} shrinks within the pre-blackout zone --- auction-stage granularity absorbs variation REE would otherwise clean up ex post. (Descriptive.)
-\end{itemize}
+\section{Conclusion}
 
-\medskip
-\textbf{What the model predicts and the data are consistent with but cannot identify:} a level price drop at the spot reform (M2), a Cournot scale-up of cleared MWh at the forward reform (mech.\ iv), in-band offered-energy migration. Point estimates have the right sign; CIs are wide once renewables vary year-by-year.
+\begin{frame}{Conclusion}
 
-\medskip
-\textbf{Reform compresses, does not amplify, market power.} Wedge mean stays at the small positive Ito-Reguant forward premium; the within-quarter strategic engagement is more competition, not more rent. Post-blackout cost rise is a separate \emph{reforzada} response, CCGT-only.
-
-\medskip
-\textbf{Microstructure $\Rightarrow$ macro.} The same finer clock that gives bidders within-hour discrimination also lowers system-level balancing cost.
 \end{frame}
 
 % ---------------------------------------------------------------------------
@@ -497,11 +774,151 @@ DA15 (no further change)  & $+1.12$ [$-0.45, +2.38$]   & $+0.09$ [$-0.98, +1.15$
 \end{center}
 \end{frame}
 
+\begin{frame}[allowframebreaks]{References}
+\scriptsize
+\bibliography{../../paper/references}
+\end{frame}
+
 % ===========================================================================
 % APPENDIX SLIDES (Q\&A)
 % ===========================================================================
 
-\begin{frame}{Appendix --- In-band offered energy migrates to the granular market (Spec B)}
+
+\section{Appendix}
+
+\begin{frame}{ID15 price effect at longer post-windows}
+\footnotesize
+\centering
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{l c c c c}
+\toprule
+                                     & \textbf{40 d}$^{\dagger}$ & \textbf{90 d} & \textbf{180 d} & \textbf{196 d}$^{\ddagger}$ \\
+\midrule
+\multicolumn{5}{l}{\emph{OLS daily, ID15 IDA price (EUR/MWh, Newey-West HAC lag=7)}} \\
+\hspace{0.5em}base (month $+$ DOW)               & $-32^{***}$ & $-37^{***}$ & $-25^{***}$ & $-25^{***}$ \\
+\hspace{0.5em}$+$ year-by-renew (per year)       & $-46^{***}$ & $-53^{***}$ & $-54^{***}$ & $-53^{***}$ \\
+\hspace{0.5em}$+$ year-by-renew (2024+25 pooled) & \cellcolor{green!22}$\mathbf{-39}^{***}$ & \cellcolor{green!22}$\mathbf{-42}^{***}$ & \cellcolor{green!22}$\mathbf{-30}^{***}$ & \cellcolor{green!22}$\mathbf{-30}^{***}$ \\
+\addlinespace
+\multicolumn{5}{l}{\emph{OLS hourly, ID15 IDA price (EUR/MWh, Newey-West HAC lag=24$\times$7)}} \\
+\hspace{0.5em}base (hour $+$ month $+$ DOW)      & $-34^{***}$ & $-38^{***}$ & $-25^{***}$ & $-25^{***}$ \\
+\hspace{0.5em}$+$ year-by-renew (per year)       & $-40^{***}$ & $-43^{***}$ & $-31^{***}$ & $-31^{***}$ \\
+\hspace{0.5em}$+$ year-by-renew (2024+25 pooled) & \cellcolor{green!22}$\mathbf{-30}^{***}$ & \cellcolor{green!22}$\mathbf{-35}^{***}$ & \cellcolor{green!22}$\mathbf{-24}^{***}$ & \cellcolor{green!22}$\mathbf{-24}^{***}$ \\
+\addlinespace
+\multicolumn{5}{l}{\emph{BSTS daily, ID15 IDA price (per-year long-pre spec)}} \\
+\hspace{0.5em}Real effect                        & \cellcolor{green!22}$-34^{*}$ & \cellcolor{green!22}$-35$ & $-12$ & $-10$ \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+{\scriptsize\itshape $^{\dagger}$Pre-blackout headline window. $^{\ddagger}$Up to DA15 cutover (max ID15 post not contaminated by DA15). All specs significant at $p<0.01$ on the OLS rows. ID15 DA cross-market estimates are within $\pm 1$ EUR/MWh of the ID15 IDA own-venue values at every cell.}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+
+\begin{frame}{Price effect by hour class}
+\footnotesize
+\centering
+OLS hourly $+$ year-by-renewable (2024$+$25 pooled) spec, pre-window 2022-01-01 onward. Newey-West HAC lag\,$=24\times 7$. Same headline post-windows (ID15 40 d, DA15 92 d).
+
+\medskip
+\setlength{\tabcolsep}{10pt}
+\begin{tabular}{l c c c c}
+\toprule
+\textbf{Hour class}              & \textbf{ID15 IDA} & \textbf{ID15 DA cross} & \textbf{DA15 DA} & \textbf{DA15 IDA cross} \\
+\midrule
+Morning ramp (5--8)              & \cellcolor{green!22}$-33^{**}$ & \cellcolor{green!22}$-32^{*}$ & \cellcolor{red!18}$3$  & \cellcolor{red!18}$1$ \\
+Evening ramp (16--22)            & \cellcolor{green!22}$-25^{*}$  & \cellcolor{green!22}$-24^{*}$  & \cellcolor{red!18}$1$  & \cellcolor{red!18}$-1$ \\
+Midday (11--14)                  & \cellcolor{green!22}$\mathbf{-39}^{***}$ & \cellcolor{green!22}$\mathbf{-37}^{***}$ & \cellcolor{red!18}$-3$ & \cellcolor{red!18}$-5$ \\
+Flat (1--3)                      & \cellcolor{green!22}$-34^{**}$ & \cellcolor{green!22}$-30^{*}$  & \cellcolor{red!18}$2$  & \cellcolor{red!18}$3$ \\
+\bottomrule
+\end{tabular}
+
+\bigskip
+\textbf{Reading.} \textcolor{green!40!black}{\textbf{ID15 price drop is broadly uniform across hour classes}} ($-25$ to $-39$ EUR/MWh) and slightly larger at midday (when solar saturation pushes prices low, the granular leg helps integrate flexibility most). \textcolor{red!70!black}{\textbf{DA15 null everywhere}} --- no hour-class heterogeneity rescues the headline DA15 null.
+\end{frame}
+
+% ---------------------------------------------------------------------------
+
+\begin{frame}{Placebo prices table}
+\footnotesize
+Same row structure as the headline prices table; cutovers shifted to \emph{2024-03-19} (ID15 placebo, 40 d post) and \emph{2024-10-01} (DA15 placebo, 92 d post). Same pre-window 2022-01-01 onward.
+
+\medskip
+\centering
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l c c c c}
+\toprule
+                                                   & \multicolumn{2}{c}{\textbf{ID15 placebo (cut.\ 2024-03-19)}} & \multicolumn{2}{c}{\textbf{DA15 placebo (cut.\ 2024-10-01)}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+                                                   & IDA & DA cross & DA & IDA cross \\
+\midrule
+OLS daily --- base (month $+$ DOW)                   & \cellcolor{red!22}$-49^{***}$ & \cellcolor{red!22}$-50^{***}$ & \cellcolor{green!22}$10$ & \cellcolor{green!22}$12$ \\
+OLS daily --- $+$ year-by-renewable (per year)       & \cellcolor{green!22}$2$ & \cellcolor{green!22}$1$ & \cellcolor{red!22}$50^{***}$ & \cellcolor{red!22}$50^{***}$ \\
+OLS daily --- $+$ year-by-renewable (2024+25 pooled) & \cellcolor{green!22}$2$ & \cellcolor{green!22}$1$ & \cellcolor{red!22}$50^{***}$ & \cellcolor{red!22}$50^{***}$ \\
+\addlinespace
+OLS hourly --- base (hour $+$ month $+$ DOW)         & \cellcolor{red!22}$-49^{***}$ & \cellcolor{red!22}$-49^{***}$ & \cellcolor{green!22}$9$ & \cellcolor{green!22}$11$ \\
+OLS hourly --- $+$ year-by-renewable (per year)      & \cellcolor{green!22}$-11$ & \cellcolor{green!22}$-12$ & \cellcolor{red!22}$47^{***}$ & \cellcolor{red!22}$48^{***}$ \\
+OLS hourly --- $+$ year-by-renewable (2024+25 pooled)& \cellcolor{green!22}$-11$ & \cellcolor{green!22}$-12$ & \cellcolor{red!22}$47^{***}$ & \cellcolor{red!22}$48^{***}$ \\
+\addlinespace
+BSTS daily                                           & \cellcolor{green!22}$-22$ & \cellcolor{green!22}$-15$ & \cellcolor{green!22}$4$ & \cellcolor{green!22}$27$ \\
+\bottomrule
+\end{tabular}
+
+\end{frame}
+
+
+% ---------------------------------------------------------------------------
+
+
+\begin{frame}{Per-IDA-session price effect breakdown}
+\footnotesize
+\centering
+Pre-window 2024-06-14 onward (European-IDA 3-session regime); year-by-renewable 2024+25 pooled spec; Newey-West HAC SE (lag\,$=7$ daily, $24\times7$ hourly).
+
+\medskip
+\setlength{\tabcolsep}{10pt}
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Session}                                  & S1 (early) & S2 (mid) & S3 (late) \\
+\midrule
+ID15 own-venue effect (EUR/MWh) --- OLS daily     & \cellcolor{green!22}$\mathbf{-37}^{***}$ & \cellcolor{green!22}$\mathbf{-35}^{***}$ & \cellcolor{green!22}$\mathbf{-29}^{***}$ \\
+ID15 own-venue effect (EUR/MWh) --- OLS hourly    & \cellcolor{green!22}$\mathbf{-39}^{***}$ & \cellcolor{green!22}$\mathbf{-37}^{***}$ & \cellcolor{green!22}$\mathbf{-34}^{***}$ \\
+\addlinespace
+DA15 cross-market effect --- OLS daily            & \cellcolor{red!18}$14$  & \cellcolor{red!18}$17^{*}$ & \cellcolor{red!18}$11$ \\
+DA15 cross-market effect --- OLS hourly           & \cellcolor{red!18}$18$  & \cellcolor{red!18}$23^{*}$ & \cellcolor{red!18}$13$ \\
+\bottomrule
+\end{tabular}
+
+\bigskip
+\textbf{Reading.} \textcolor{green!40!black}{ID15 price drop is uniform across sessions} ($-34$ to $-39$ EUR/MWh under hourly) --- the granular-leg discount is not concentrated in any one session. \textcolor{red!70!black}{DA15 cross-effect on IDA sessions is positive but mostly null}, consistent with the DA-own-venue null on the headline slide.
+\end{frame}
+
+
+% ---------------------------------------------------------------------------
+
+
+\begin{frame}{Price wedges placebos}
+  
+\end{frame}
+
+
+% ---------------------------------------------------------------------------
+\begin{frame}{Program cascade for other technologies}
+\centering
+\includegraphics[width=0.95\linewidth]{fig_programs_by_tech_other_weekly.pdf}
+\end{frame}
+
+% ---------------------------------------------------------------------------
+
+\begin{frame}
+  
+\end{frame}
+
+
+% ---------------------------------------------------------------------------
+
+
+\begin{frame}{Appendix --- In-band offered energy migrates to the granular market}
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -511,16 +928,17 @@ DA15 (no further change)  & $+1.12$ [$-0.45, +2.38$]   & $+0.09$ [$-0.98, +1.15$
 \cmidrule(lr){3-4} \cmidrule(lr){5-6}
 \textbf{Tech} & \textbf{Hour class} & DA & IDA & DA & IDA \\
 \midrule
-CCGT          & morning ramp  & $77$               & $\mathbf{+2090}^{***}$ & $\mathbf{+3462}^{**}$  & $\mathbf{-1627}^{***}$ \\
-              & midday        & $-1497^{***}$      & $\mathbf{+1426}^{***}$ & $988^{**}$             & $773^{*}$ \\
-              & evening ramp  & $191$              & $\mathbf{+1859}^{***}$ & $\mathbf{+2458}^{***}$ & $-152$ \\
-              & flat          & $-863^{**}$        & $\mathbf{+1405}^{***}$ & $\mathbf{+2966}^{**}$  & $\mathbf{-1157}^{***}$ \\
-Pump-storage  & midday        & $151$              & $\mathbf{+979}^{**}$   & $\mathbf{+433}^{**}$   & $\mathbf{+868}^{**}$ \\
-              & evening ramp  & $-1$               & $\mathbf{+775}^{*}$    & $251$                  & $-408$ \\
+CCGT          & morning ramp  & $77$               & $\mathbf{2090}^{***}$ & $\mathbf{3462}^{**}$  & $\mathbf{-1627}^{***}$ \\
+              & midday        & $-1497^{***}$      & $\mathbf{1426}^{***}$ & $988^{**}$             & $773^{*}$ \\
+              & evening ramp  & $191$              & $\mathbf{1859}^{***}$ & $\mathbf{2458}^{***}$ & $-152$ \\
+              & flat          & $-863^{**}$        & $\mathbf{1405}^{***}$ & $\mathbf{2966}^{**}$  & $\mathbf{-1157}^{***}$ \\
+Pump-storage  & midday        & $151$              & $\mathbf{979}^{**}$   & $\mathbf{433}^{**}$   & $\mathbf{868}^{**}$ \\
+              & evening ramp  & $-1$               & $\mathbf{775}^{*}$    & $251$                  & $-408$ \\
 \bottomrule
 \end{tabular}
 
 \bigskip
+CHECK HERE WHAT WE ARE DOING!!!
 \footnotesize
 \begin{itemize}\setlength{\itemsep}{2pt}
   \item Under ID15, CCGT and pump-storage push energy \emph{into} IDA (the granular leg); under DA15, they push it back into DA.
@@ -543,73 +961,21 @@ Pump-storage  & midday        & $151$              & $\mathbf{+979}^{**}$   & $\
 \end{itemize}
 \end{frame}
 
-% ---------------------------------------------------------------------------
-\begin{frame}{Appendix --- Representative buy vs sell IDA bid curves}
-\begin{center}
-\includegraphics[width=0.78\linewidth]{fig_buy_vs_sell_curves.pdf}
-\end{center}
 
-\footnotesize
-\begin{itemize}\setlength{\itemsep}{2pt}
-  \item Sell curves (blue, supply): typically richer ladders, including parked tier above MCP.
-  \item Buy curves (red, demand): smaller blocks below MCP, used for rebalancing.
-  \item Production-unit arbitrageur agent visible at the curve level.
-\end{itemize}
+
+
+% ---------------------------------------------------------------------------
+
+
+% ---------------------------------------------------------------------------
+\begin{frame}
+
 \end{frame}
 
 % ---------------------------------------------------------------------------
-\begin{frame}{Appendix --- Production-unit arbitrageur summary (full sample)}
-\centering
-\footnotesize
-\begin{tabular}{l r r r r r}
-\toprule
-Tech-group & n unit-sessions & \% dual & Mean sell MW & Mean buy MW & Buy/Sell \\
-\midrule
-Solar PV    & 2\,093\,392 & 26.9 &     54 &     55 & \textbf{101\%} \\
-Wind        & 2\,313\,441 & 16.2 &    133 &    167 & \textbf{126\%} \\
-Cogen       &   334\,852 &  3.8 &     85 &     92 & 108\% \\
-Biomass     &   112\,548 &  6.4 &     27 &     28 & 104\% \\
-\midrule
-Hydro       &   339\,500 &  5.7 & 8\,654 & 3\,711 &  43\% \\
-Hydro pump  &    53\,763 &  4.6 & 3\,462 & 1\,737 &  50\% \\
-CCGT        &   266\,085 &  4.0 & 4\,625 & 2\,001 &  43\% \\
-Nuclear     &    13\,054 &  4.1 & 1\,225 &    360 &  29\% \\
-\bottomrule
-\end{tabular}
 
-\bigskip\normalsize
-\begin{itemize}\setlength{\itemsep}{2pt}
-  \item VRE / small: buy $\approx$ sell $\Rightarrow$ forecast-driven rebalancing.
-  \item Thermal / storage: buy/sell $\in [23\%,50\%]$ $\Rightarrow$ sell-dominated rebalancing.
-  \item Arbitrageur active across every tech.
-\end{itemize}
-\end{frame}
 
 % ---------------------------------------------------------------------------
-\begin{frame}{Appendix --- Reforzada cost is CCGT-only (post-blackout)}
-\begin{center}
-\includegraphics[width=0.9\linewidth]{fig_q_components_by_tech_weekly.pdf}
-\end{center}
 
-\vspace{-0.2cm}
-\footnotesize
-\begin{itemize}\setlength{\itemsep}{2pt}
-  \item CCGT day-ahead-cleared layer (blue) collapses post-blackout; IDA + REE-RT (red) balloons.
-  \item Other technologies flat across the same window.
-  \item $\Rightarrow$ CCGT-specific intervention, not a uniform reform effect.
-\end{itemize}
-\end{frame}
-
-% ---------------------------------------------------------------------------
-\begin{frame}{Appendix --- Robustness summary}
-\begin{itemize}\setlength{\itemsep}{4pt}
-  \item \textbf{Pre-trend placebo.} ID15 IDA $\sigma_p$ clean. DA15 DA: CCGT clean; pump-storage not separable from trend.
-  \item \textbf{Cross-border + reforzada.} Hourly cross-border control leaves per-tech DiDs essentially unchanged. Reforzada acts on Fase~I level, not within-hour SD.
-  \item \textbf{Per-IDA-session BSTS.} ID15 price-drop point estimate near-identical across S1, S2, S3 under short-pre spec (level effect itself not retained --- see Result 4).
-  \item \textbf{Per-firm.} DA15 CCGT $\sigma_p$ widening driven by Naturgy and Iberdrola.
-  \item \textbf{Offer-type.} Restricting to simple offers, CCGT $\sigma_p$ DiD rises to $3.53^{***}$.
-  \item \textbf{2026 placebo (ID15).} Independent 2026 same-calendar placebo confirms wedge SD jump.
-\end{itemize}
-\end{frame}
 
 \end{document}

@@ -74,29 +74,34 @@ def main():
     # belong to a given hour-class, on each day). Critical = 11 hours,
     # midday = 4 hours, flat = 3 hours; min-hours guard requires the day
     # to have at least 75% of the class's hours present.
-    CRITICAL = {5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22}
-    MIDDAY   = {11, 12, 13, 14}
-    FLAT     = {1, 2, 3}
-    def hc(h):
-        if h in CRITICAL: return "critical"
-        if h in MIDDAY:   return "midday"
-        if h in FLAT:     return "flat"
-        return None
+    CRITICAL     = {5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22}
+    MORNING_RAMP = {5, 6, 7, 8}
+    EVENING_RAMP = {16, 17, 18, 19, 20, 21, 22}
+    MIDDAY       = {11, 12, 13, 14}
+    FLAT         = {1, 2, 3}
+    HOUR_CLASSES = {
+        "critical":     CRITICAL,
+        "morning_ramp": MORNING_RAMP,
+        "evening_ramp": EVENING_RAMP,
+        "midday":       MIDDAY,
+        "flat":         FLAT,
+    }
+    min_required = {"critical": 9, "morning_ramp": 3, "evening_ramp": 6,
+                    "midday": 3, "flat": 3}
     print("Computing within-hour-class wedge SD...")
-    df["hour_class"] = df["clock_hour"].map(hc)
-    sub = df[df["hour_class"].notna()]
-    hc_sd = (sub.groupby(["d", "hour_class"])["wedge"]
-              .agg(["std", "count"])
-              .rename(columns={"std": "sd", "count": "n"})
-              .reset_index())
-    min_required = {"critical": 9, "midday": 3, "flat": 3}
-    hc_sd.loc[hc_sd.apply(
-        lambda r: r["n"] < min_required[r["hour_class"]], axis=1), "sd"] = np.nan
-    hc_sd_wide = (hc_sd.pivot(index="d", columns="hour_class", values="sd")
-                       .rename(columns={"critical": "wedge_sd_critical",
-                                         "midday":   "wedge_sd_midday",
-                                         "flat":     "wedge_sd_flat"})
-                       .reset_index())
+    hc_frames = []
+    for cls_name, cls_hours in HOUR_CLASSES.items():
+        sub = df[df["clock_hour"].isin(cls_hours)]
+        hc_sd = (sub.groupby("d")["wedge"]
+                   .agg(["std", "count"])
+                   .rename(columns={"std": "sd", "count": "n"})
+                   .reset_index())
+        hc_sd.loc[hc_sd["n"] < min_required[cls_name], "sd"] = np.nan
+        hc_sd = hc_sd[["d", "sd"]].rename(columns={"sd": f"wedge_sd_{cls_name}"})
+        hc_frames.append(hc_sd)
+    hc_sd_wide = hc_frames[0]
+    for f in hc_frames[1:]:
+        hc_sd_wide = hc_sd_wide.merge(f, on="d", how="outer")
     hc_sd_wide["d"] = pd.to_datetime(hc_sd_wide["d"])
     daily = daily.merge(hc_sd_wide, on="d", how="left")
 

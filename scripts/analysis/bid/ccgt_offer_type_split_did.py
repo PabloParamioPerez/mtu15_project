@@ -164,6 +164,7 @@ def build_ccgt_panel_with_offer_type(market, lo, hi):
     var_p = df["sum_wp2"] / df["sum_w"] - mean_p ** 2
     df["sigma_p"] = np.sqrt(var_p.clip(lower=0))
     df["n_eff"] = df["sum_w"] ** 2 / df["sum_w2"]
+    df["hhi"] = 1.0 / df["n_eff"]
     df["hour_class"] = df["clock_hour"].map(hour_class_label)
     return df
 
@@ -182,7 +183,7 @@ def run_spec_A(panel, reform, label_extra=""):
     p["crit"] = (p["hour_class"] == "Critical").astype(int)
     p["post_crit"] = p["post"] * p["crit"]
     out = []
-    for outcome in ["sigma_p", "n_eff"]:
+    for outcome in ["sigma_p", "n_eff", "hhi"]:
         d = p.dropna(subset=[outcome]).copy()
         if len(d) < 50:
             continue

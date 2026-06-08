@@ -24,8 +24,8 @@ IND  = REPO / "data" / "processed" / "esios" / "indicators" / "indicators_all.pa
 FIG_DIR = REPO / "figures" / "working"
 FIG_DIR.mkdir(parents=True, exist_ok=True)
 
-WINDOW_START = "2024-01-01"
-WINDOW_END   = "2025-12-31"
+WINDOW_START = "2023-01-01"
+WINDOW_END   = "2026-05-18"
 
 # Stack order (bottom up): UP first, then DN
 UP_CHANNELS = [
@@ -144,7 +144,7 @@ def main():
             ha="center", va="center", fontsize=11, color="#2c5777",
             fontweight="bold", style="italic", alpha=0.55,
             bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="none", alpha=0.65))
-    ax.text(pd.Timestamp("2025-08-15"), ymax * 0.55, "POST-blackout (reforzada)",
+    ax.text(pd.Timestamp("2025-11-15"), ymax * 0.55, "POST-blackout (reforzada)",
             ha="center", va="center", fontsize=11, color="#9a2a1f",
             fontweight="bold", style="italic", alpha=0.55,
             bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="none", alpha=0.65))
@@ -154,7 +154,7 @@ def main():
                   fontsize=10)
     ax.set_title("Evolution of daily ajuste-cost composition (UP + DN, all stacked positive).",
                  fontsize=11)
-    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=3))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
     ax.set_xlim(pd.Timestamp(WINDOW_START), pd.Timestamp(WINDOW_END))
     ax.set_ylim(bottom=0)

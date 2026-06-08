@@ -1,0 +1,9 @@
+"reform","outcome","side","eff","lo","hi","p","n_pre","n_post"
+"ID15","price_dev_up_eur_mwh","real",-44.6172245923714,-53.6384585507591,-35.9199191437752,0.000500751126690035,108,40
+"ID15","price_dev_up_eur_mwh","placebo",NA,NA,NA,NA,0,0
+"ID15","price_dev_dn_eur_mwh","real",-49.5974437941508,-58.6625142480176,-40.7365630310722,5e-04,108,40
+"ID15","price_dev_dn_eur_mwh","placebo",NA,NA,NA,NA,0,0
+"DA15","price_dev_up_eur_mwh","real",10.303402261041,-19.4626219564552,41.4231332952718,0.246618933969769,154,92
+"DA15","price_dev_up_eur_mwh","placebo",NA,NA,NA,NA,0,0
+"DA15","price_dev_dn_eur_mwh","real",5.10785707950475,-24.6831105453998,36.7907394083245,0.366049382716049,154,92
+"DA15","price_dev_dn_eur_mwh","placebo",NA,NA,NA,NA,0,0

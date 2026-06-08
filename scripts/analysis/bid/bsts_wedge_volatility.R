@@ -32,7 +32,8 @@ COVAR_SPECS <- list(
 )
 COVARS <- COVAR_SPECS$base  # default for the original loop
 OUTCOMES <- c("wedge_sd", "wedge_abs", "wedge_iqr",
-              "wedge_sd_critical", "wedge_sd_midday", "wedge_sd_flat")
+              "wedge_sd_critical", "wedge_sd_morning_ramp",
+              "wedge_sd_evening_ramp", "wedge_sd_midday", "wedge_sd_flat")
 CFGS <- list(
   # ID15 (intraday MTU60 -> MTU15, 2025-03-19): asymmetric granularity break.
   # Post-window ends at the blackout 2025-04-28 (the cleanest 40-day
