@@ -31,8 +31,9 @@ CRITICAL = {5, 6, 7, 8, 16, 17, 18, 19, 20, 21, 22}
 FLAT     = {1, 2, 3}
 MIDDAY   = {11, 12, 13, 14}
 
-TECHS = ["CCGT", "Hydro", "Hydro_pump", "Wind"]
-FIRMS = ["IB", "GE", "GN", "HC"]
+TECHS = ["CCGT", "Hydro", "Hydro_pump", "Wind",
+         "Cogen", "Coal", "Hybrid", "Biomass"]
+FIRMS = None  # None => keep all firms (sets firm column via firm_bucket)
 
 
 def tech_bucket(t):
@@ -42,6 +43,10 @@ def tech_bucket(t):
     if "hidráulica generación" in t: return "Hydro"
     if "bombeo" in t: return "Hydro_pump"
     if "eólica" in t: return "Wind"
+    if "carbón" in t or "carbon" in t: return "Coal"
+    if "híbrid" in t or "hibrid" in t: return "Hybrid"
+    if "térmica renovable" in t or "termica renovable" in t: return "Biomass"
+    if "térmica no renovab" in t or "termica no renovab" in t: return "Cogen"
     return "Other"
 
 
@@ -67,7 +72,10 @@ def units_table(con):
     units = pd.read_csv(UNITS)
     units["tech"] = units["technology"].apply(tech_bucket)
     units["firm"] = units["owner_agent"].apply(firm_bucket)
-    units = units[units["tech"].isin(TECHS) & units["firm"].isin(FIRMS)][
+    mask = units["tech"].isin(TECHS)
+    if FIRMS is not None:
+        mask &= units["firm"].isin(FIRMS)
+    units = units[mask][
         ["unit_code", "firm", "tech"]
     ].drop_duplicates("unit_code")
     con.register("u", units)

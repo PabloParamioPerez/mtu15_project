@@ -1,0 +1,16 @@
+"tag","spec","eff","se","p","n"
+"ID15 wedge_agg_h (plb)","OLS hourly --- base (hour + month + DOW)",-0.366198075308576,0.963260995784865,0.703829177362833,13052
+"ID15 wedge_agg_h (plb)","OLS hourly --- + year-by-renew (per year)",0.575027893772267,1.15840228647334,0.619622443010951,13052
+"ID15 wedge_agg_h (plb)","OLS hourly --- + year-by-renew (2023+24 pooled)",-0.303455587301041,1.29692804124984,0.81500397072065,13052
+"DA15 wedge_agg_h (plb)","OLS hourly --- base (hour + month + DOW)",-2.31085023908242,0.836319460183863,0.00573070782245311,19004
+"DA15 wedge_agg_h (plb)","OLS hourly --- + year-by-renew (per year)",-0.613957605903999,0.927042490300601,0.507802673438857,19004
+"DA15 wedge_agg_h (plb)","OLS hourly --- + year-by-renew (2023+24 pooled)",-0.693641907551586,0.915928378735769,0.448873452087795,19004
+"DA15 wedge_s1_h (plb)","OLS hourly --- base (hour + month + DOW)",1.31483906977957,1.78172885730182,0.460578344863241,4632
+"DA15 wedge_s1_h (plb)","OLS hourly --- + year-by-renew (per year)",1.92126864394339,2.53803696322946,0.449094672707369,4632
+"DA15 wedge_s1_h (plb)","OLS hourly --- + year-by-renew (2023+24 pooled)",1.92126864394339,2.53803696322946,0.449094672707369,4632
+"DA15 wedge_s2_h (plb)","OLS hourly --- base (hour + month + DOW)",6.44327085870138,3.9238170602423,0.100637863119039,4728
+"DA15 wedge_s2_h (plb)","OLS hourly --- + year-by-renew (per year)",10.596083143858,5.64521284052397,0.0605796831174818,4728
+"DA15 wedge_s2_h (plb)","OLS hourly --- + year-by-renew (2023+24 pooled)",10.596083143858,5.64521284052397,0.0605796831174818,4728
+"DA15 wedge_s3_h (plb)","OLS hourly --- base (hour + month + DOW)",3.30710855386658,3.7847764674559,0.382320691455887,2375
+"DA15 wedge_s3_h (plb)","OLS hourly --- + year-by-renew (per year)",11.4964546289655,3.3262365886176,0.000557389971860708,2375
+"DA15 wedge_s3_h (plb)","OLS hourly --- + year-by-renew (2023+24 pooled)",11.4964546289655,3.3262365886176,0.000557389971860708,2375

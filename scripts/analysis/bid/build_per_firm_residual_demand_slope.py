@@ -46,6 +46,8 @@ WINDOWS = [
     # (label, market, lo, hi, granularity_min)
     ("pre_ID15_IDA",   "IDA", "2024-06-14", "2025-03-18", 60),
     ("post_ID15_IDA",  "IDA", "2025-03-19", "2025-04-27", 15),
+    ("pre_ID15_DA",    "DA",  "2024-06-14", "2025-03-18", 60),
+    ("post_ID15_DA",   "DA",  "2025-03-19", "2025-04-27", 60),
     ("pre_DA15_DA",    "DA",  "2024-06-14", "2025-09-30", 60),
     ("post_DA15_DA",   "DA",  "2025-10-01", "2026-03-06", 15),
     ("pre_DA15_IDA",   "IDA", "2025-04-28", "2025-09-30", 15),
@@ -274,6 +276,7 @@ def main():
     print("\n=== Pre vs post (Ito-Reguant convention, MW per EUR/MWh) ===")
     for firm in DOMINANT_FIRMS:
         for pair in [("ID15 IDA", "pre_ID15_IDA", "post_ID15_IDA"),
+                     ("ID15 DA",  "pre_ID15_DA",  "post_ID15_DA"),
                      ("DA15 DA",  "pre_DA15_DA",  "post_DA15_DA"),
                      ("DA15 IDA", "pre_DA15_IDA", "post_DA15_IDA")]:
             name, prelbl, postlbl = pair
