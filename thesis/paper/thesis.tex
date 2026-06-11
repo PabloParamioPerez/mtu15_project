@@ -353,18 +353,52 @@ New contractibility arrives only at the \emph{spot} reform; the \emph{forward} r
 
 \subsection{Bid offers, reform path, and notation}\label{sec:data:outcomes}
 
-\paragraph{Indices.} Throughout: $u$ unit, $d$ date, $p$ market period (a clock-hour pre-MTU15, a 15-minute quarter post-MTU15), $h\in\{1,\dots,24\}$ clock-hour, $q\in\{1,\dots,4\}$ within-hour quarter (post-MTU15 only), $s$ IDA session, $t$ technology, $m\in\{\text{DA},\text{IDA}\}$ market, $k$ tranche of a step ladder, $T_r$ reform cutover date, $\mathcal{X}\in\{\text{morning ramp}, \text{midday}, \text{evening ramp}, \text{flat}\}$ hour-class.
+\paragraph{Unit of observation and indices.} The unit of observation is one offer curve: a unit $u$, on date $d$, for delivery period $p$ --- a clock-hour before the market's MTU15 cutover, a 15-minute quarter after it. Clock-hours are indexed $h \in \{1,\dots,24\}$, with within-hour quarters $q \in \{1,\dots,4\}$ defined post-MTU15 only; $s$ indexes IDA sessions, $t$ technologies, $m \in \{\text{DA},\text{IDA}\}$ markets, and $k$ the tranches of a step ladder. $T_r$ is a reform cutover date and $\mathcal{X} \in \{\text{morning ramp, midday, evening ramp, flat}\}$ the hour class of \S\ref{sec:data:partition}.
 
-\paragraph{Bid offer.} Each $(u,d,p)$ sell offer is a step ladder $\{(p_k, \Delta q_k)\}_{k=1}^{K_{u,d,p}}$ sorted by ascending price, with $p_k$ the bid price (EUR/MWh) and $\Delta q_k$ the incremental MW added to the unit's step supply at $p_k$. Cumulative supply at any price $p$ is $S_{u,d,p}(p) = \sum_{k:\,p_k\le p}\Delta q_k$. Offers carry one of three structural types: \emph{simple} (a bare price--quantity ladder), \emph{minimum-income condition} (MIC), or \emph{block} (all-or-nothing across periods). Most technologies use simple bids; CCGT is the outlier with the bulk of its offers in MIC or block form.
+\paragraph{Bid offer.} Each $(u,d,p)$ sell offer is a step ladder $\{(p_k, \Delta q_k)\}_{k=1}^{K_{u,d,p}}$ sorted by ascending price: $\Delta q_k$ is the incremental MW the unit adds to its supply once the price reaches $p_k$, so cumulative supply at any price $p$ is $S_{u,d,p}(p) = \sum_{k:\,p_k\le p}\Delta q_k$ --- exactly the step offer of the model (\S\ref{sec:theory:ladder}). Offers carry one of three structural types: \emph{simple} (a bare price--quantity ladder), \emph{minimum-income condition} (MIC), or \emph{block} (all-or-nothing across periods). Most technologies bid simple; CCGT is the outlier, with the bulk of its offers in MIC or block form.
 
-\paragraph{Market clearing.} $\text{MCP}_{d,p}$ is the OMIE clearing price (EUR/MWh) of the auction in which the offer was submitted; $Q^\star_{d,p}$ is the system cleared quantity. Per-tech cleared MWh per clock-hour: $Q^{\text{cl}}_{t,m,d,h}$.
+\paragraph{Market clearing.} $\text{MCP}_{d,p}$ is the OMIE clearing price (EUR/MWh) of the auction in which the offer was submitted and $Q^\star_{d,p}$ the system cleared quantity; per-technology cleared MWh per clock-hour is written $Q^{\text{cl}}_{t,m,d,h}$.
 
-\paragraph{Reform path.} The Spanish wholesale market underwent three granularity reforms in seven months: \textbf{ISP15} (2024-12-11), REE's settlement period moved from 60 to 15 min while the OMIE contract grid stayed at 60 min; \textbf{ID15} (2025-03-19), intraday auctions and continuous market moved from 60 to 15 min; \textbf{DA15} (2025-10-01), day-ahead moved from 60 to 15 min. The April 2025 blackout (2025-04-28) triggered a continuous \emph{operaci\'on reforzada} regime (CCGT-led voltage support, post-DA redispatch) that overlaps DA15 calendar-wise but operates on a different mechanism; DA15 windows are constructed so this regime is held constant on both sides of the cutover. Figure~\ref{fig:bid_internal:timeline} maps the windows that partition the sample.
+\paragraph{Reform path.} The Spanish wholesale market underwent three granularity reforms in under a year: \textbf{ISP15} (2024-12-11), REE's settlement period moved from 60 to 15 min while the OMIE contract grid stayed at 60 min; \textbf{ID15} (2025-03-19), intraday auctions and continuous market moved from 60 to 15 min; \textbf{DA15} (2025-10-01), day-ahead moved from 60 to 15 min. The April 2025 blackout (2025-04-28) triggered a continuous \emph{operaci\'on reforzada} regime (CCGT-led voltage support, post-DA redispatch) that overlaps DA15 calendar-wise but operates on a different mechanism. Figure~\ref{fig:bid_internal:timeline} maps the sequence; analysis windows are built inside constant-regime spans, so the blackout regime is held fixed on both sides of each cutover.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../../figures/thesis/timeline_reform_windows.pdf}
-\caption{\textbf{Reform-window timeline.} Six named windows partition the 2022-2026 sample at the five reform dates. \emph{Pre-IDA}: baseline 6-session IDA, hourly. \emph{3-sess}: post-IDA-reform 3-session IDA, hourly. \emph{ISP15-win}: REE settlement 15-min, OMIE grid still 60-min. \emph{DA60/ID15 pre-blk}: 40-day pre-blackout window with quarter-hourly intraday. \emph{DA60/ID15 post-blk}: post-blackout reforzada, quarter-hourly intraday. \emph{DA15/ID15}: full 15-min grid post-2025-10-01.}
+\begin{tikzpicture}[scale=1.05, every node/.style={font=\footnotesize}]
+  \def\W{11.0}
+
+  % REGIME BANDS
+  \fill[gray!12]  (0.0,  0.6) rectangle (5.66, 1.6); \node[font=\scriptsize, gray!55!black] at (2.8, 1.1) {pre-reform};
+  \fill[gray!30]  (5.66, 0.6) rectangle (6.21, 1.6);
+  \fill[red!18]   (6.21, 0.6) rectangle (8.10, 1.6); \node[font=\scriptsize, red!60!black] at (7.15, 1.1) {post-blackout};
+  \fill[red!28]   (8.10, 0.6) rectangle (\W,   1.6); \node[font=\scriptsize, red!60!black] at (9.55, 1.1) {$+$ DA 15'};
+
+  % BLACKOUT VERTICAL LINE INSIDE BAND
+  \draw[red!80!black, very thick] (6.21, 0.6) -- (6.21, 1.6);
+
+  % BIG REFORM MARKERS (above bands)
+  \draw[blue!60!black, thick] (5.66, 1.6) -- (5.66, 2.05);
+  \node[anchor=south, align=center, font=\scriptsize, blue!60!black] at (5.66, 2.07) {\textbf{IDA $\to$ 15'}\\March 19};
+  \draw[blue!60!black, thick] (8.10, 1.6) -- (8.10, 2.05);
+  \node[anchor=south, align=center, font=\scriptsize, blue!60!black] at (8.10, 2.07) {\textbf{DA $\to$ 15'}\\October 1};
+
+  % MAIN TIMELINE
+  \draw[gray!50, thick] (0,0) -- (\W,0);
+  \foreach \x/\lbl in {0.6/{2024 Q1}, 3.0/{2024 Q3}, 5.4/{2025 Q1}, 7.8/{2025 Q3}, 10.2/{2026 Q1}} {
+    \draw[gray!50] (\x, 0) -- (\x, -0.10);
+    \node[anchor=north, gray!50!black, font=\scriptsize] at (\x, -0.10) {\lbl};
+  }
+
+  % SMALL TICKS BELOW (pre-reforms, blackout, re-reforzada)
+  \foreach \x/\lbl in {0.5/{ancillary\\services 15'}, 2.1/{European IDA\\(6$\to$3 sess.)}, 4.5/{ISP15\\(settlement)}} {
+    \draw[gray!70, dashed, thin] (\x, 0) -- (\x, -0.7);
+    \node[anchor=north, align=center, font=\tiny, gray!50!black] at (\x, -0.75) {\lbl};
+  }
+  \draw[red!70!black, dashed, thin] (6.21, 0) -- (6.21, -0.7);
+  \node[anchor=north, align=center, font=\tiny, red!70!black] at (6.21, -0.75) {blackout\\(Apr 28)};
+  \draw[red!60!black, dashed, thin] (9.4, 0) -- (9.4, -0.7);
+  \node[anchor=north, align=center, font=\tiny, red!60!black] at (9.4, -0.75) {re-reforzada\\(Nov 2025)};
+\end{tikzpicture}
+\caption{\textbf{The Spanish reform sequence, 2024--2026.} The two headline granularity reforms --- intraday auctions to 15-minute products (ID15, 2025-03-19) and day-ahead to 15-minute products (DA15, 2025-10-01), blue markers --- are preceded by three 2024 pre-reforms (ancillary-services products to 15 minutes, the European IDA consolidation from six to three sessions, and 15-minute imbalance settlement, ISP15) and interrupted by the April 2025 blackout, which triggered the reinforced-operation regime (red shading), tightened again in November 2025. Analysis windows are built inside constant-shading spans so the blackout regime is held fixed on both sides of each cutover.}
 \label{fig:bid_internal:timeline}
 \end{figure}
 
@@ -555,38 +589,33 @@ $\hat\gamma > 0$ means convex (cheap MW packed at the bottom, marginal MW priced
 \text{HHI}_{p,\,u,d,p} \;=\; \sum_{k\in\mathcal{B}} w_k^2, \qquad w_k = \frac{\Delta q_k}{\sum_{j\in\mathcal{B}}\Delta q_j} \in \big[1/|\mathcal{B}|,\,1\big].
 \]
 
-\textit{[To be written. Concepts to cover:]}
-\begin{itemize}\setlength{\itemsep}{1pt}
-  \item Why MW-weighting on $\sigma_p$: profit-uncertainty scales with tranche size, so big tranches drive $\sigma_p$ and decoy micro-tranches at distant prices barely move it.
-  \item Why the two-stage construction for $(\hat\alpha,\hat\beta,\hat\gamma)$: keeps coefficient interpretation clean; $\hat\gamma$ from the quadratic OLS is the curvature orthogonal to the linear trend (Frisch--Waugh).
-  \item Identification of $\hat\gamma$ requires $K\ge 3$ tranches; $K=2$ identifies only $(\hat\alpha,\hat\beta)$.
-  \item $\sigma_p$ and $\text{HHI}_p$ are robust to mechanical changes in tranche-count and price-grid density (both shifted at 2024-06-14 and 2025-03-19); $\hat\beta$ and $\hat\gamma$ are mechanically sensitive --- treat them as supporting, not headline.
-  \item None of the five outcomes depends on price-level seasonality: all are computed relative to the contemporaneous MCP through the bandwidth $\delta$. Figure~\ref{fig:bid-shape-stylized} illustrates them on stylised ladders.
-\end{itemize}
+\paragraph{Design choices.} Three choices deserve their reasons. First, $\sigma_p$ is MW-weighted because profit uncertainty scales with tranche size: a 200-MW tranche priced five euros off the curve's mean moves the bidder's revenue risk, while a 0.1-MW decoy tranche at a distant price barely registers --- unweighted dispersion would let micro-tranches dominate the statistic. Second, the level--slope pair $(\hat\alpha, \hat\beta)$ and the curvature $\hat\gamma$ come from two separate fits so each coefficient keeps a clean reading: $\hat\gamma$ is the curvature left over after the linear trend, in the Frisch--Waugh sense, and is identified only on curves with at least three tranches (two-tranche curves identify $(\hat\alpha, \hat\beta)$ alone). Third, every outcome is computed relative to the contemporaneous clearing price through the bandwidth $\delta$, so none of the five inherits the price-level seasonality that dominates raw Spanish prices. Figure~\ref{fig:bid-shape-stylized} illustrates all five on stylised ladders.
+
+\paragraph{Headline versus supporting metrics.} $\sigma_p$ and $\text{HHI}_p$ are first and second moments of the in-band price distribution, robust to the mechanical changes in tranche counts and price-grid density that the European-IDA reform (2024-06-14) and ID15 introduced. $\hat\beta$ and $\hat\gamma$ are OLS objects on the tranche grid and inherit exactly those mechanical shifts, which is why their pre-trends drift (Appendix~\ref{app:robustness}). The analysis therefore reads $\sigma_p$ and $\text{HHI}_p$ as headline evidence and treats $\hat\beta$ and $\hat\gamma$ as supporting.
 
 \subsection{Aggregate outcomes}\label{sec:data:aggregate}
 
 \emph{Takeaway.} System-level outcomes built off the bid stack and the cleared prices: in-band offered energy per (tech, market, day, hour-class); the day-ahead/intraday wedge $\Delta_{d,h}$ and its within-day SD $\Delta^{\text{SD}}_d$; the intraday-auction in-band sell-share by tech; system ajuste cost (per day, EUR\,M); and five post-MTU15-only within-hour dispersion outcomes $D^{\bullet}_{d,h}$ that summarise across-quarter shifts in price level, volume, system MCP, ladder spread, and tranche count.
 
-\paragraph{In-band offered energy} (per (tech, market, day, hour-class)). $m_{u,d,p} = \sum_{k\in\mathcal{B}_{u,d,p}} \Delta q_k$ aggregated with period length $\tau_p$ ($= 1$ pre-MTU15, $1/4$ post-MTU15) to convert MW to MWh:
+\paragraph{In-band offered energy} (per (tech, market, day, hour-class)) measures how much capacity competes near the clearing price --- the quantity-side counterpart of the bid-shape outcomes. Per-curve in-band MW $m_{u,d,p} = \sum_{k\in\mathcal{B}_{u,d,p}} \Delta q_k$ is aggregated with the period length $\tau_p$ ($= 1$ pre-MTU15, $1/4$ post-MTU15), which converts MW to MWh so that pre- and post-reform quantities are comparable --- a raw sum of per-period MW would mechanically quadruple after the cutover purely from the period count:
 \[
 E^{\text{band}}_{t,m,d,\mathcal{X}} \;=\; \frac{1}{|\mathcal{X}|}\sum_{h\in\mathcal{X}}\,\sum_{p\in h}\,\sum_{u\in t} m_{u,d,p}\cdot\tau_p \qquad \text{(MWh per class-hour)}.
 \]
 
-\paragraph{Cross-market wedge} (per clock-hour). With $\text{MCP}^m_{d,h}$ the within-market mean of OMIE clearing prices over sub-hour structure on date $d$:
+\paragraph{Cross-market wedge} (per clock-hour) is the arbitrage object of \S\ref{sec:theory:arbitrage}: its level measures the forward premium, and its within-day SD the dispersion that granularity unlocks and bounded arbitrage fails to close. With $\text{MCP}^m_{d,h}$ the within-market mean of OMIE clearing prices over sub-hour structure on date $d$:
 \[
 \Delta_{d,h} \;=\; \text{MCP}^{\text{DA}}_{d,h} - \text{MCP}^{\text{IDA}}_{d,h}, \qquad
 \Delta^{\text{SD}}_d \;=\; \mathrm{sd}_h(\Delta_{d,h}).
 \]
 
-\paragraph{IDA in-band sell-share} (per (tech, day)). Captures production-unit participation between sell-heavy (rent-capture) and buy-heavy (rebalancing):
+\paragraph{IDA in-band sell-share} (per (tech, day)) locates each technology between sell-heavy participation (rent capture on the granular leg) and buy-heavy participation (forecast-driven rebalancing) --- the empirical counterpart of the aggregator-migration mechanism (M1):
 \[
 \text{SS}_{t,d} \;=\; \frac{\sum_{q,k\in\mathcal{B}} q^{\text{sell}}_{t,d,q,k}}{\sum_{q,k\in\mathcal{B}}\bigl(q^{\text{sell}}_{t,d,q,k} + q^{\text{buy}}_{t,d,q,k}\bigr)}.
 \]
 
-\paragraph{System ajuste cost} (per day, EUR\,M). REE's adjustment-cost components from ESIOS: up-direction (TR-up, aFRR-up, mFRR-up, Fase~I) and down-direction (Fase~II, RR-dn). Stacked positive in Figure~\ref{fig:efficiency_gains}.
+\paragraph{System ajuste cost} (per day, EUR\,M) tracks what REE pays to keep the system feasible --- the outcome the imbalance and reforzada questions of \S\ref{sec:results} are about. Components from ESIOS: up-direction (TR-up, aFRR-up, mFRR-up, Fase~I) and down-direction (Fase~II, RR-dn), stacked in Figure~\ref{fig:efficiency_gains}.
 
-\paragraph{Within-hour dispersion outcomes} (post-MTU15 only). For each (unit, date, clock-hour) with four quarters $q=1,\ldots,4$:
+\paragraph{Within-hour dispersion outcomes} (post-MTU15 only) trace within-hour discrimination directly: each is an across-quarter SD inside one clock-hour, so each is mechanically zero under hourly products. For each (unit, date, clock-hour) with four quarters $q=1,\ldots,4$:
 \[
 D^{\bar p}_{d,h} = \mathrm{sd}_q(\bar p_q), \quad
 D^{m}_{d,h} = \mathrm{sd}_q(m_q)/\bar m, \quad
@@ -594,11 +623,11 @@ D^{\text{MCP}}_{d,h} = \mathrm{sd}_q(\text{MCP}_q), \quad
 D^{\sigma_p}_{d,h} = \mathrm{sd}_q(\sigma_{p,q}), \quad
 D^{\text{HHI}}_{d,h} = \mathrm{sd}_q(\text{HHI}_{p,q}).
 \]
-All mechanically zero under MTU60; any positive value post-MTU15 is a direct trace of within-hour discrimination.
+The five capture, in order: across-quarter shifts in the curve's price level, its offered volume (as a coefficient of variation), the system clearing price, the ladder spread, and the tranche concentration. Any positive value post-MTU15 is a unit actively treating the four quarters differently.
 
 \subsection{Critical / flat hour-class partition}\label{sec:data:partition}
 
-\emph{Takeaway.} Granular pricing has economic content only where within-hour residual demand actually varies. Measured by 15-minute residual-demand SD, clock-hours partition into critical (morning ramp 5--8h, evening ramp 16--22h; SD 522--1303 MW), flat (overnight 1--3h; SD 336--357 MW), and midday (11--14h; SD 468--502 MW, kept for falsification only). bid-shape DiD uses critical-vs-flat as the within-day identification contrast.
+\emph{Takeaway.} Measured by 15-minute residual-demand SD, clock-hours partition into critical (morning ramp 5--8h, evening ramp 16--22h; SD 522--1303 MW), flat (overnight 1--3h; SD 336--357 MW), and midday (11--14h; SD 468--502 MW, kept for falsification only). The bid-shape DiD uses critical-vs-flat as its within-day identification contrast.
 
 \paragraph{Intuition.} Granular pricing only has economic content where within-hour residual demand\footnote{Spanish-market convention calls this the \emph{hueco t\'ermico} (thermal gap) --- the load that thermal and other dispatchable generation must cover after subtracting wind and solar.} actually varies; if a clock-hour is internally flat, the four quarters look the same and there is nothing to discriminate on. We measure within-hour variation by $\sigma_{\text{within}}(h,d) = \mathrm{sd}_q[\text{load}-\text{wind}-\text{solar}]_{q,h,d}$ on 15-min ENTSO-E data (A65 load; A75 PSR codes B16, B18, B19 for wind+solar) and partition clock-hours by median $\sigma_{\text{within}}$ post-2024-06-14:
 \begin{itemize}\setlength{\itemsep}{1pt}
