@@ -73,9 +73,9 @@
 
 \subsection{Setup: three sequential stages, three agents, and the within-hour state}\label{sec:setup}
 
-\emph{Takeaway.} A sequential-market model in the \citet{ito_reguant_2016} tradition --- a strategic bidder, a forecast-driven renewable aggregator, and a capacity-bounded arbitrageur --- augmented on two dimensions: a granularity selector $Q^m \in \{1, Q\}$ at each stage, and an explicit within-hour state (a deterministic ramp plus redistributive news) that hourly products mechanically average away. The strategic bidder's step offer is solved exactly: the optimal $n$-tranche ladder is the uniform quantizer of its monopoly locus, with closed forms for the bid-shape statistics $(\sigma_p, \text{HHI}_p, \hat\beta)$. The reform path $(1,1)\to(1,Q)\to(Q,Q)$ delivers seven sign predictions for prices, bid shapes, wedge dispersion, cleared MWh, and imbalance costs.
+\emph{Takeaway.} A sequential-market model in the \citet{ito_reguant_2016} tradition --- a strategic bidder, a forecast-driven renewable aggregator, and a capacity-bounded arbitrageur --- augmented on two dimensions: a granularity selector $Q^m \in \{1, Q\}$ at each stage, and an explicit within-hour state (a deterministic ramp plus redistributive news) that hourly products mechanically average away. The strategic bidder's step offer is solved exactly: the optimal $n$-tranche ladder places equal-MW tranches on an even price grid along its monopoly locus, with closed forms for the bid-shape statistics $(\sigma_p, \text{HHI}_p, \hat\beta)$. The reform path $(1,1)\to(1,Q)\to(Q,Q)$ delivers seven sign predictions for prices, bid shapes, wedge dispersion, cleared MWh, and imbalance costs.
 
-We extend \citet{ito_reguant_2016}'s sequential-markets framework on two dimensions --- an explicit operational renewable aggregator and a granularity variable $Q^m \in \{1, Q\}$ at each stage --- and trace the Spanish backward reform path $(1,1) \to (1,Q) \to (Q,Q)$. The mechanism in one line: granularity determines which within-hour states are \emph{contractible}; the strategic bidder's step offer is the exact quantizer of its monopoly locus over the states its product is exposed to, so when a venue becomes per-quarter its competing tier widens and regrades precisely in the hours where the within-hour state varies; equilibrium price levels move only through residual-demand slopes and venue supply, because ladder geometry is level-neutral; and the within-hour wedge dispersion does not collapse at $(Q,Q)$ because per-product arbitrage capacity binds at $K_a/Q$.
+We extend \citet{ito_reguant_2016}'s sequential-markets framework on two dimensions --- an explicit operational renewable aggregator and a granularity variable $Q^m \in \{1, Q\}$ at each stage --- and trace the Spanish backward reform path $(1,1) \to (1,Q) \to (Q,Q)$. The mechanism in one line: granularity determines which within-hour states are \emph{contractible}; the strategic bidder's step offer tracks its monopoly locus over the states its product is exposed to, so when a venue becomes per-quarter its competing tier widens and regrades precisely in the hours where the within-hour state varies; equilibrium price levels move only through residual-demand slopes and venue supply, because ladder geometry is level-neutral; and the within-hour wedge dispersion does not collapse at $(Q,Q)$ because per-product arbitrage capacity binds at $K_a/Q$.
 
 A representative clock-hour contains $Q$ equal-length subperiods. Three sequential stages operate in order: a \textbf{forward} auction (Stage 1, $m=F$), a \textbf{spot} auction (Stage 2, $m=S$), and ex-post \textbf{balancing} settlement (Stage 3, $m=B$). Each stage has its own \emph{granularity} $Q^m \in \{1, Q\}$ --- it clears either once per hour or once per subperiod --- defining a $2^3 = 8$-state policy space. The main analysis fixes the auction-side path $(Q^{F}, Q^{S}) = (1,1) \to (1,Q) \to (Q,Q)$. The forward and spot markets map empirically to the electricity day-ahead and intraday auctions respectively.
 
@@ -146,9 +146,9 @@ A_{mt} \;=\; \bar A \;+\; \zeta_t \;+\; v_{mt}.
 
 \paragraph{Renewable fringe and our relation to \citeauthor{ito_reguant_2016}.} \citeauthor{ito_reguant_2016}'s residual-demand interpretation already absorbs a renewable (or thermal) competitive fringe into the slope $b_m$: the strategic bidder serves $A - b_m p_m$, the implicit fringe serves the complement. Their setup delivers the strategic-bidder, arbitrage, and price-wedge mechanisms but is silent on two objects our data record directly: \emph{why} the fringe's willingness to supply changes with granularity, and \emph{what shape} the strategic bidder's offer takes. We make the fringe explicit (the operational aggregator with forecast errors and an imbalance penalty $\gamma$), so the hedging gain from per-period scheduling has the closed form $G(\Delta_\eta) = \gamma Q \Delta_\eta/2$ (\S\ref{sec:aggregator-app}); and we let the strategic bidder choose the step offer the OMIE files record, so the empirical bid-shape quintuple $(\sigma_p, \alpha, \beta, \gamma, \text{HHI})$ acquires exact model counterparts (\S\ref{sec:ladder}) rather than serving as proxies.
 
-\subsection{Bid ladders within a product: exact quantization of the monopoly locus}\label{sec:ladder}
+\subsection{Bid ladders within a product: step offers along the monopoly locus}\label{sec:ladder}
 
-\emph{Takeaway.} With linear residual demand and one-dimensional clearing-state uncertainty, a continuous supply schedule replicates the full-information monopoly outcome state by state, so a finite tranche count is the only friction. The optimal $n$-tranche ladder is the uniform quantizer of the monopoly locus: $n$ equal-MW competing tranches on an even price grid spanning the conditional monopoly-price range, with closed forms $\text{HHI}_p = 1/n$, $\sigma_p$, and measured ladder slope $\hat\beta = 1/b$. Quantization is level-neutral --- the expected clearing price is the same for every $n$ --- so bid shape and price levels are separate channels of the reform. The granularity--variation interaction itself has a one-line closed form: a product's conditional monopoly-price range is exactly $\Delta/b$, and granularity multiplies the screened range $\Delta$ by $\rho_{\mathcal X}$ precisely where within-hour variation lives (Corollary~\ref{cor:did}).
+\emph{Takeaway.} With linear residual demand and one-dimensional clearing-state uncertainty, a continuous supply schedule replicates the full-information monopoly outcome state by state, so a finite tranche count is the only friction. The optimal $n$-tranche ladder splits the screened states into equal intervals: $n$ equal-MW competing tranches on an even price grid spanning the conditional monopoly-price range, with closed forms $\text{HHI}_p = 1/n$, $\sigma_p$, and measured ladder slope $\hat\beta = 1/b$. The ladder's geometry is level-neutral --- the expected clearing price is the same for every $n$ --- so bid shape and price levels are separate channels of the reform. The granularity--variation interaction itself has a one-line closed form: a product's conditional monopoly-price range is exactly $\Delta/b$, and granularity multiplies the screened range $\Delta$ by $\rho_{\mathcal X}$ precisely where within-hour variation lives (Corollary~\ref{cor:did}).
 
 Fix one delivery product with residual demand $q = A - b\,p$, $A = \bar a + v$, $v \sim U[-\Delta, \Delta]$, and constant marginal cost $c$. The bidder submits a non-decreasing step offer before $v$ realises; the auction clears at the crossing of the realised residual demand with the offer. When the crossing lands on a horizontal segment, the marginal tranche is partially filled and sets the price; when it lands on a vertical riser, the cumulative quantity is fixed and the realised demand sets the price. Both regimes occur in equilibrium.
 
@@ -171,7 +171,7 @@ Let $w = 2\Delta/(2n+1)$ and let Assumption~\ref{ass:interior} hold. The optimal
 \[
 p_k \;=\; p^m\!\Bigl(\bar a - \Delta + \bigl(2k - \tfrac{1}{2}\bigr)\,w\Bigr), \qquad k = 1, \dots, n,
 \]
-evenly spaced with grid step $p_{k+1} - p_k = w/b$ and spanning $(n-1)\,w/b$. The induced partition of the state space is the uniform quantizer of the monopoly locus into $2n+1$ equal cells, and expected profit is
+evenly spaced with grid step $p_{k+1} - p_k = w/b$ and spanning $(n-1)\,w/b$. The ladder splits the state range into $2n+1$ equal intervals, each served at its midpoint monopoly point, and expected profit is
 \[
 \mathbb{E}[\pi_n] \;=\; \frac{\mathbb{E}[(A - bc)^2]}{4b} \;-\; \frac{\Delta^2}{12\, b\, (2n+1)^2}.
 \]
@@ -206,7 +206,7 @@ evenly spaced with grid step $p_{k+1} - p_k = w/b$ and spanning $(n-1)\,w/b$. Th
     (-0.12,1.64) -- (-0.12,4.52);
   \node[rotate=90, anchor=south, gray!40!black, font=\scriptsize] at (-0.45,3.08) {competing-tier span $(n{-}1)w/b$};
 \end{tikzpicture}
-\caption{The optimal ladder as a quantizer of the monopoly locus ($n = 4$ competing tranches). The blue step offer weaves across the dashed monopoly locus: every horizontal segment crosses it at its midpoint (states where the tranche price is exactly the monopoly price) and every vertical riser crosses it at its midpoint (states where the cumulative quantity is exactly the monopoly quantity); red dots mark the implemented points. Competing tranches carry equal MW $w = 2\Delta/(2n+1)$ on an even price grid of step $w/b$; the inframarginal base sits below the contested range.}
+\caption{The optimal ladder and the monopoly locus ($n = 4$ competing tranches). The blue step offer weaves across the dashed monopoly locus: every horizontal segment crosses it at its midpoint (states where the tranche price is exactly the monopoly price) and every vertical riser crosses it at its midpoint (states where the cumulative quantity is exactly the monopoly quantity); red dots mark the implemented points. Competing tranches carry equal MW $w = 2\Delta/(2n+1)$ on an even price grid of step $w/b$; the inframarginal base sits below the contested range.}
 \label{fig:ladder-quantizer}
 \end{figure}
 
@@ -222,7 +222,7 @@ with $\sigma_v = \Delta/\sqrt{3}$ the SD of the screened state. The OLS slope of
 \end{corollary}
 
 \begin{remark}[Level neutrality]\label{rem:level}
-$\mathbb{E}[\text{clearing price}] = p^m(\bar a)$ for every $n$: within each quantizer cell the realised price averages to the monopoly price at the cell midpoint, so ladder geometry reshapes dispersion and surplus but never the mean price. Bid-shape changes and price-level changes are therefore \emph{separate channels}: a reform can regrade ladders strongly while leaving price levels untouched. \emph{Proof: \S\ref{sec:tranche-app:level}.}
+$\mathbb{E}[\text{clearing price}] = p^m(\bar a)$ for every $n$: within each interval of states the realised price averages to the monopoly price at the interval's midpoint, so ladder geometry reshapes dispersion and surplus but never the mean price. Bid-shape changes and price-level changes are therefore \emph{separate channels}: a reform can regrade ladders strongly while leaving price levels untouched. \emph{Proof: \S\ref{sec:tranche-app:level}.}
 \end{remark}
 
 \begin{proposition}[Tranche budget]\label{prop:budget}
@@ -436,12 +436,12 @@ Imbalance cost $C^I/(\gamma Q)$, quadratic
 
 \subsection{Welfare across the reform path}\label{sec:welfare}
 
-\emph{Takeaway.} Three positive welfare channels --- imbalance saving (delivered at ID15 only, by contractibility); markup compression via per-firm $b_f$ thickening at every reform (Cournot identity); and the quantization second-moment loss that bid-shape regrading reduces. One distributional channel --- bid-ladder rent --- is mostly CS$\to\pi^{SB}$ transfer.
+\emph{Takeaway.} Three positive welfare channels --- imbalance saving (delivered at ID15 only, by contractibility); markup compression via per-firm $b_f$ thickening at every reform (Cournot identity); and the discreteness loss that bid-shape regrading reduces. One distributional channel --- bid-ladder rent --- is mostly CS$\to\pi^{SB}$ transfer.
 
 \begin{itemize}\setlength{\itemsep}{1pt}
   \item \textbf{Imbalance saving, ID15 only (dominant gain).} The per-quarter spot absorbs both the ramp $\zeta_t$ and the redistributive news $\mu_t$, and the aggregator hedges $\eta_t$. Imbalance cost falls from $\gamma Q(\sigma_\zeta^2+\sigma_\mu^2+\sigma_\eta^2)$ at $(1,1)$ to $0$ at $(1,Q)$ and stays at $0$ at $(Q,Q)$ (quadratic penalty, \S\ref{sec:welfare-app}). Net of the small allocative cost of per-quarter monopoly pass-through (the discrimination term of \S\ref{sec:welfare-app}), the saving is positive whenever $\gamma > 1/(8 b_2)$ --- comfortably satisfied at observed balancing premia.
   \item \textbf{Markup compression at every reform.} Per-firm $b_f$ thickens at every reform on every Big-4 firm; equation~\eqref{eq:cournot-markup} delivers markup compression linearly. Operates through venue re-clearing and per-firm slope thickening, \emph{not} through ladder geometry (Remark~\ref{rem:level}).
-  \item \textbf{Quantization second-moment loss.} The optimal-ladder expected profit loss relative to the continuous benchmark is $\Delta^2/(12 b (2 n^* + 1)^2)$ (Proposition~\ref{prop:ladder}); a deeper $n^*$ at the granular-leg critical hours (Proposition~\ref{prop:budget}) reduces it. Mostly CS$\to\pi^{SB}$ transfer within a product.
+  \item \textbf{Discreteness loss.} The optimal-ladder expected profit loss relative to the continuous benchmark is $\Delta^2/(12 b (2 n^* + 1)^2)$ (Proposition~\ref{prop:ladder}); a deeper $n^*$ at the granular-leg critical hours (Proposition~\ref{prop:budget}) reduces it. Mostly CS$\to\pi^{SB}$ transfer within a product.
   \item \textbf{Less strategic withholding under limited per-product arbitrage.} The spot markup falls from $3(p_1-c)/4$ (strategic) to $(p_1-c)/2$ (limited per product), per \citeauthor{ito_reguant_2016} Result~2.
 \end{itemize}
 
@@ -515,9 +515,9 @@ The aggregator's expected profit under either regime is
 \]
 where the expected imbalance cost $\mathbb{E}[\mathcal{C}]$ is independent of $S_1^{op}$ once we impose the no-average-bias condition $S_1^{op} + S_2^{op} = \bar Y_h$. The FOC reduces to $p_1 - p_2 = 0$, a corner solution. The migration onto the granular leg is an \emph{equilibrium} statement: across aggregators, $G(\Delta_\eta) > 0$ generates a positive premium for participation on the granular spot; equilibrium prices adjust so that the wedge $p_1 - p_2$ partially incorporates this premium.
 
-\subsection{Strategic bidder: optimal $n$-tranche ladder as quantizer of the monopoly locus}\label{sec:tranche-app}
+\subsection{Strategic bidder: the optimal $n$-tranche ladder along the monopoly locus}\label{sec:tranche-app}
 
-We prove the bid-ladder propositions of \S\ref{sec:ladder} in turn: the continuous benchmark (Lemma~\ref{lem:locus}), the optimal $n$-tranche quantizer (Proposition~\ref{prop:ladder}), the closed-form bid-shape statistics (Corollary~\ref{cor:stats}), level neutrality (Remark~\ref{rem:level}), the optimal tranche depth under a complexity cost (Proposition~\ref{prop:budget}), the granularity--variation interaction (Corollary~\ref{cor:did}), and the stage-1 forward locus slope (Corollary~\ref{cor:continuation}).
+We prove the bid-ladder propositions of \S\ref{sec:ladder} in turn: the continuous benchmark (Lemma~\ref{lem:locus}), the optimal $n$-tranche ladder (Proposition~\ref{prop:ladder}), the closed-form bid-shape statistics (Corollary~\ref{cor:stats}), level neutrality (Remark~\ref{rem:level}), the optimal tranche depth under a complexity cost (Proposition~\ref{prop:budget}), the granularity--variation interaction (Corollary~\ref{cor:did}), and the stage-1 forward locus slope (Corollary~\ref{cor:continuation}).
 
 Fix one delivery product. Residual demand is $q = A - b\,p$ with $A = \bar a + v$ and $v \sim U[-\Delta, \Delta]$; the bidder has constant marginal cost $c$. The auction is uniform-price; the bidder submits a non-decreasing step function $S(p) = \sum_k \Delta q_k \cdot \mathbf{1}\{p \ge p_k\}$ and the clearing pair $(p^\star, q^\star)$ solves $S(p^\star) = A - b\,p^\star$ on the relevant segment.
 
@@ -529,7 +529,7 @@ S^\star(p^m(A)) \;=\; b\Bigl(\frac{A + b\,c}{2 b} - c\Bigr) \;=\; \frac{A - b\,c
 \]
 so $(p^m(A), q^m(A))$ is on $S^\star$ in every state. \emph{Uniqueness on the contested range}: a non-decreasing schedule that clears at the monopoly point in every state must contain the locus, which is strictly increasing; a monotone schedule containing a strictly increasing curve coincides with it on its range. Expected profit at $S^\star$ is $\mathbb{E}[(p^m(A) - c) q^m(A)] = \mathbb{E}[(A - b c)^2]/(4 b)$, the unconditional monopoly value. $\square$
 
-\subsubsection{Optimal $n$-tranche quantizer (proof of Proposition~\ref{prop:ladder})}\label{sec:tranche-app:quantizer}
+\subsubsection{Optimal $n$-tranche ladder (proof of Proposition~\ref{prop:ladder})}\label{sec:tranche-app:quantizer}
 
 \paragraph{Clearing geometry under a step offer.} Index the $n$ competing tranches $1, \dots, n$ by ascending price $p_1 < \dots < p_n$, let $q_0$ be the inframarginal base priced at the floor, and let $Q_k = q_0 + \sum_{j\le k}\Delta q_j$ be cumulative quantity ($Q_0 = q_0$). Three clearing regimes are possible per state $A$, alternating riser--horizontal--riser:
 \begin{itemize}\setlength{\itemsep}{1pt}
@@ -537,28 +537,35 @@ so $(p^m(A), q^m(A))$ is on $S^\star$ in every state. \emph{Uniqueness on the co
 \item[$(H_k)$] \emph{Horizontal segment at $p_k$.} For $A \in [Q_{k-1} + b\,p_k,\; Q_k + b\,p_k]$: clearing is $(p_k,\, A - b\,p_k)$ --- the marginal tranche is partially filled.
 \item[$(V_k)$] \emph{Riser at $Q_k$.} For $A \in [Q_k + b\,p_k,\; Q_k + b\,p_{k+1}]$ (the top riser $V_n$ closing at $\bar a + \Delta$): clearing is $\bigl((A - Q_k)/b,\, Q_k\bigr)$ --- the realised demand sets the price.
 \end{itemize}
-This partitions the state space into $2n+1$ full cells: one base riser, $n$ horizontals of length $\Delta q_k$ (in $A$-units), and $n$ risers of length $b(p_{k+1} - p_k)$. Profit is continuous at every switch --- both adjacent regimes deliver the same price--quantity pair at the boundary state --- so expected profit is differentiable in the instruments and boundary terms cancel in the first-order conditions.
+This partitions the state space into $2n+1$ full cells: one base riser, $n$ horizontals of length $\Delta q_k$ (in $A$-units), and $n$ risers of length $b(p_{k+1} - p_k)$. Profit is continuous at every switch: both adjacent regimes deliver the same price--quantity pair at the boundary state.
 
-\paragraph{Per-cell loss and the quantizer interpretation.} In an $H$-cell at price $p$, completing the square around $p^m(A)$ gives $\pi(p; A) = \pi^m(A) - b\,(p - p^m(A))^2$; in a $V$-cell at quantity $q$ (the base included), $\pi(q; A) = \pi^m(A) - (q - q^m(A))^2/b$. Map each cell's instrument to its \emph{implemented state}: $\hat A^H = 2 b p - bc$ (the state where $p$ is exactly the monopoly price) and $\hat A^V = 2 q + bc$ (the state where $q$ is exactly the monopoly quantity). Because $p^m$ and $q^m$ are affine with slopes $1/(2b)$ and $1/2$, both losses take the common form $(A - \hat A)^2/(4b)$: choosing the ladder is a scalar quantization problem with squared error and kernel weight $1/(4b)$. With the instrument placed at the within-cell optimum --- the centroid, which under the uniform density is the cell midpoint --- a cell of length $L$ contributes an expected loss of
+\paragraph{Each instrument serves an interval of states and loses a squared distance.} Profit in state $A$ is a quadratic hill around the monopoly point. On a horizontal segment at price $p$, completing the square gives $\pi(p;\, A) = \pi^m(A) - b\,(p - p^m(A))^2$; on a riser at quantity $q$ (the base included), $\pi(q;\, A) = \pi^m(A) - (q - q^m(A))^2/b$. Each instrument is therefore exactly right in one state --- the step at $p$ in the state whose monopoly price is $p$, the riser at $q$ in the state whose monopoly quantity is $q$; call that state the instrument's \emph{target} $\hat A$. Because $p^m$ and $q^m$ are linear in $A$ with slopes $1/(2b)$ and $1/2$, both losses reduce to the same expression,
 \[
-\int_{\text{cell}} \frac{(A - m_{\text{cell}})^2}{4 b}\,\frac{dA}{2\Delta} \;=\; \frac{L^3}{96\, b\, \Delta}.
+\pi^m(A) - \pi \;=\; \frac{(A - \hat A)^2}{4\,b},
 \]
+so the bidder's problem is to place $2n+1$ targets so that whichever state realises, it lands close to a target.
 
-\paragraph{Optimal cell widths and implementability.} Minimising $\sum_{\text{cells}} L_j^3/(96 b \Delta)$ over the $2n+1$ cell lengths subject to $\sum_j L_j = 2\Delta$ gives equal widths $L_j = w \equiv 2\Delta/(2n+1)$ by strict convexity of $x \mapsto x^3$ on $x > 0$ (Jensen). This is the unconstrained quantization lower bound; it is attained by an implementable ladder because, at midpoint centroids, the clearing boundaries land exactly on the equal grid: the $H_k/V_k$ switch sits at
+\paragraph{Equal intervals are optimal.} An instrument serving an interval of length $L$ does best with its target at the interval's midpoint, since the loss is symmetric in the distance; the mean squared distance of a uniform draw from the midpoint is $L^2/12$ (the variance of a uniform), and the interval is reached with probability $L/(2\Delta)$. Its contribution to the expected loss is therefore at least
 \[
-A^\star \;=\; Q_k + b\,p_k \;=\; q^m(m_{V_k}) + b\,p^m(m_{H_k}) \;=\; \frac{m_{V_k} - bc}{2} + \frac{m_{H_k} + bc}{2} \;=\; \frac{m_{H_k} + m_{V_k}}{2},
+\frac{L^2}{12} \cdot \frac{1}{4 b} \cdot \frac{L}{2\Delta} \;=\; \frac{L^3}{96\, b\, \Delta},
 \]
-the midpoint of the two adjacent implemented states (and likewise for the $V_{k-1}/H_k$ and $V_0/H_1$ switches). The uniform-price clearing rule therefore hard-codes the nearest-neighbour (Lloyd) boundary condition of the optimal quantizer, and the equal-cell, midpoint-centroid configuration is feasible and optimal.
+and the total expected loss is at least $\sum_j L_j^3/(96\, b\, \Delta)$ over the $2n+1$ intervals with $\sum_j L_j = 2\Delta$. Since $x^3$ is convex, moving length from a longer interval to a shorter one always lowers the sum, so the minimum splits the state range into \emph{equal} intervals of width $w \equiv 2\Delta/(2n+1)$.
 
-\paragraph{Closed forms and feasibility.} Number the cells $j = 1, \dots, 2n+1$ with midpoints $m_j = \bar a - \Delta + (j - \tfrac12)\,w$; the alternation assigns $V_0 = $ cell 1, $H_k = $ cell $2k$, $V_k = $ cell $2k{+}1$. The centroid conditions give
+\paragraph{The clearing rule places the boundaries halfway by itself.} The bidder chooses only the targets; the interval boundaries then follow from the clearing geometry, and they land exactly halfway between adjacent targets. The switch from the step at $p_k$ to the riser at $Q_k$ occurs at the state $A^\star = Q_k + b\,p_k$; substituting $p_k = p^m(\hat A_{H_k})$ and $Q_k = q^m(\hat A_{V_k})$,
+\[
+A^\star \;=\; \frac{\hat A_{H_k} + bc}{2} + \frac{\hat A_{V_k} - bc}{2} \;=\; \frac{\hat A_{H_k} + \hat A_{V_k}}{2},
+\]
+and likewise at every other switch. Placing the targets at the equal-grid midpoints $m_j = \bar a - \Delta + (j - \tfrac12)\,w$, $j = 1, \dots, 2n+1$, therefore reproduces exactly the equal-interval partition with every target at its interval's midpoint: the lower bound is attained.
+
+\paragraph{Closed forms and feasibility.} The alternation assigns $V_0$ to interval 1, $H_k$ to interval $2k$, $V_k$ to interval $2k{+}1$, so
 \[
 q_0 = q^m\!\bigl(\bar a - \Delta + \tfrac{w}{2}\bigr), \qquad
 p_k = p^m(m_{2k}) = p^m\!\bigl(\bar a - \Delta + (2k - \tfrac12)\,w\bigr), \qquad
-Q_k = q^m(m_{2k+1}),
+Q_k = q^m(m_{2k+1}):
 \]
-so every competing tranche carries $\Delta q_k = Q_k - Q_{k-1} = (m_{2k+1} - m_{2k-1})/2 = w$ MW (the first measured from the base) and the price grid is even with step $p_{k+1} - p_k = (m_{2k+2} - m_{2k})/(2b) = w/b$. Feasibility under Assumption~\ref{ass:interior}: the base $q_0 = q^m(\bar a - \Delta) + w/4 \ge w/4 > 0$, and the lowest realised price (in $V_0$ at $A = \bar a - \Delta$) is $p^m(\bar a - \Delta - w/2) \ge c$ iff $q^m(\bar a - \Delta) \ge w/4$ --- the stated condition.
+every competing tranche carries $\Delta q_k = Q_k - Q_{k-1} = (m_{2k+1} - m_{2k-1})/2 = w$ MW (the first measured from the base) and the price grid is even with step $p_{k+1} - p_k = (m_{2k+2} - m_{2k})/(2b) = w/b$. Feasibility under Assumption~\ref{ass:interior}: the base $q_0 = q^m(\bar a - \Delta) + w/4 \ge w/4 > 0$, and the lowest realised price (in $V_0$ at $A = \bar a - \Delta$) is $p^m(\bar a - \Delta - w/2) \ge c$ iff $q^m(\bar a - \Delta) \ge w/4$ --- the stated condition.
 
-\paragraph{Expected profit.} With $2n+1$ equal cells, $\mathbb{E}[(A - \hat A)^2] = w^2/12$, so the total loss is $w^2/(48 b) = \Delta^2/(12\,b\,(2n+1)^2)$ --- equivalently, $(2n+1)$ cells each contributing $w^3/(96 b \Delta)$. Therefore
+\paragraph{Expected profit.} With equal intervals the mean squared distance to the target is $w^2/12$ everywhere, so the total expected loss is $w^2/(48\, b) = \Delta^2/(12\,b\,(2n+1)^2)$ and
 \[
 \mathbb{E}[\pi_n] \;=\; \frac{\mathbb{E}[(A - b\,c)^2]}{4\,b} \;-\; \frac{\Delta^2}{12\,b\,(2n+1)^2}. \qquad \square
 \]
@@ -589,7 +596,7 @@ For $\hat\gamma$: $p_k$ is an exact affine function of $Q_k$, so the least-squar
 
 Take expectation of the clearing price over states. Each cell contributes its midpoint-monopoly price weighted by cell length: horizontal cells contribute $p_k = p^m(m_{2k})$ over length $w$; riser cells contribute the average realised price over the riser, $\mathbb{E}[(A - Q_k)/b \mid V_k] = (m_{2k+1} - q^m(m_{2k+1}))/b = p^m(m_{2k+1})$, using $A - b\,p^m(A) - q^m(A) \equiv 0$; the base riser contributes $p^m(m_1)$ by the same demand-sets-price computation. The resulting weighted average over all $2n+1$ cells (each of length $w$) is the simple average of the $2n+1$ midpoint-monopoly prices, which --- because $p^m$ is affine and the midpoints $m_j$ are symmetric around $\bar a$ --- equals $p^m(\bar a)$. So $\mathbb{E}[\text{clearing price}] = p^m(\bar a)$, independent of $n$. $\square$
 
-\paragraph{Distributional consequence.} Quantization reshapes the variance and the per-state surplus split, but never the mean clearing price. Bid-shape changes (regrading the ladder) are therefore \emph{level-neutral} on price; mean price changes come only from changes in residual demand (the slope $b$ or the venue supply $S^{op}$), which is the channel underpinning the markup identity \eqref{eq:cournot-markup}.
+\paragraph{Distributional consequence.} The step structure reshapes the variance and the per-state surplus split, but never the mean clearing price. Bid-shape changes (regrading the ladder) are therefore \emph{level-neutral} on price; mean price changes come only from changes in residual demand (the slope $b$ or the venue supply $S^{op}$), which is the channel underpinning the markup identity \eqref{eq:cournot-markup}.
 
 \subsubsection{Tranche budget (proof of Proposition~\ref{prop:budget})}\label{sec:tranche-app:budget}
 
@@ -659,7 +666,7 @@ q_1^*(v) \;=\; \frac{(b_1 - B_2/2)(\bar A + v - b_1 c)}{2 b_1 - B_2/2},
 \quad
 \frac{dq_1^*}{dv} \;=\; \frac{b_1 - B_2/2}{2 b_1 - B_2/2}.
 \]
-Assumption~\ref{ass:soc} also makes $dq_1^*/dv > 0$: the locus is increasing in \emph{both} coordinates, hence implementable by a non-decreasing ladder. Quantizing this locus, the boundary conditions of \S\ref{sec:tranche-app:quantizer} applied to the tilted locus force a constant width ratio between adjacent price and quantity cells, hence a \emph{periodic} partition: consecutive tranche prices and consecutive cumulative quantities advance by one period of the partition, mapped through the two locus slopes. The OLS slope of $p_k$ on $Q_k$ is their ratio, free of the period length:
+Assumption~\ref{ass:soc} also makes $dq_1^*/dv > 0$: the locus is increasing in \emph{both} coordinates, hence implementable by a non-decreasing ladder. Building the step offer along this locus as in \S\ref{sec:tranche-app:quantizer}, tranche prices and cumulative quantities both advance linearly with the state --- at the rates $dp_1^*/dv$ and $dq_1^*/dv$ --- so both are evenly spaced sequences and the OLS slope of $p_k$ on $Q_k$ is the ratio of the two rates, independent of the grid width:
 \[
 \hat\beta_1 \;=\; \frac{dp_1^*/dv}{dq_1^*/dv} \;=\; \frac{1/(2 b_1 - B_2/2)}{(b_1 - B_2/2)/(2 b_1 - B_2/2)} \;=\; \frac{1}{b_1 - B_2/2}.
 \]
@@ -821,13 +828,9 @@ The hourly counterpart is $Q\cdot q_1^*|_{(1,1)} = Q\cdot(\bar A - b_1 c - S^{op
 \end{equation}
 Positive whenever $\sum_{t=1}^{Q} b_{1t} < Q\,b_1$, as expected (each 15-min product is thinner than the hourly aggregate). This is the Cournot scale-up of \S\ref{sec:da15}(iv).
 
-\subsubsection{Stage-1 value of the granular continuation (exact second-moment term)}
+\subsubsection{Stage-1 value of the granular continuation}
 
-Per-period spot Cournot delivers a Stage-2 profit $\pi_2(p_1, \mu_t)$ that is exactly quadratic in the update $\mu_t$. Stage-1 expected profit then equals
-\[
-\mathbb{E}_{\mu_t}[\Pi(p_1)] \;=\; \pi_1(p_1) \;+\; \pi_2(p_1, 0) \;+\; \tfrac{1}{2}\,\mathbb{E}[\mu_t^2]\,\frac{\partial^2 \pi_2}{\partial \mu_t^2}\bigg|_{\mu_t = 0}
-\]
-\emph{exactly} --- the spot profit is a quadratic polynomial in the update, so the second-order expansion is the function itself, with no remainder and no approximation. Under uniform $\mu_t \sim U[-\Delta_\mu, \Delta_\mu]$, $\mathbb{E}[\mu_t^2] = \Delta_\mu^2/3$ and $\partial^2 \pi_2/\partial \mu_t^2|_0 = 1/(2 b_{2t})$, so the variance term equals $\Delta_\mu^2/(12\, b_{2t})$, strictly positive. Two readings, one caution: the term raises the stage-1 \emph{value} of holding a granular continuation (part of why the granular state is privately valuable to the strategic bidder), but it is independent of $p_1$, so it leaves the stage-1 first-order condition unchanged --- the forward-\emph{ladder} response to the spot reform operates entirely through the continuation slope of Corollary~\ref{cor:continuation}, not through an option-value tilt.
+Maximised monopoly profit is convex in the demand intercept ($\pi^m(A) = (A - bc)^2/(4b)$), so a bidder that can re-optimise per quarter values the update as a mean-preserving spread: expected spot profit exceeds spot profit at the mean update by exactly $\mathbb{E}[\mu_t^2]/(4\, b_{2t}) = \Delta_\mu^2/(12\, b_{2t})$ per product under the uniform update --- an exact equality, because the profit is quadratic. The term raises the stage-1 \emph{value} of holding a granular continuation (part of why the granular state is privately valuable to the strategic bidder), but it does not involve $p_1$, so it leaves the stage-1 first-order condition unchanged: the forward-\emph{ladder} response to the spot reform operates entirely through the continuation slope of Corollary~\ref{cor:continuation}, not through an option-value tilt.
 
 \subsection{Balancing discrepancy}\label{sec:balancing-app}
 
@@ -920,9 +923,9 @@ a threshold independent of the distribution of $\omega$. At the spot reform the 
 
 From the Cournot identity \eqref{eq:cournot-markup}, $\text{markup}_m = q_m/b_{mt}$: at given cleared quantity, $\partial\,\text{markup}/\partial b_{mt} = -\,q_m/b_{mt}^2$, so per-firm residual-demand thickening compresses the markup --- and, by level neutrality (Remark~\ref{rem:level}), this is the \emph{only} channel through which the reform moves mean prices; ladder geometry contributes nothing to the mean.
 
-\subsubsection{Quantization channel}
+\subsubsection{Discreteness channel}
 
-The optimal-ladder expected profit shortfall relative to the continuous benchmark is $\Delta^2/(12\, b\,(2 n^* + 1)^2)$ (Proposition~\ref{prop:ladder}); the deeper endogenous depth at amplified screens (Corollary~\ref{cor:did}(iii)) reduces it. By Remark~\ref{rem:level} the mean clearing price is unchanged by the ladder, so within a product this channel is mostly a CS$\leftrightarrow\pi^{SB}$ transfer, net of tranche costs $\kappa\, n^*$; the efficiency content is the second-moment term itself.
+The optimal-ladder expected profit shortfall relative to the continuous benchmark is $\Delta^2/(12\, b\,(2 n^* + 1)^2)$ (Proposition~\ref{prop:ladder}); the deeper endogenous depth at amplified screens (Corollary~\ref{cor:did}(iii)) reduces it. By Remark~\ref{rem:level} the mean clearing price is unchanged by the ladder, so within a product this channel is mostly a CS$\leftrightarrow\pi^{SB}$ transfer, net of tranche costs $\kappa\, n^*$; the efficiency content is the discreteness loss itself.
 
 \subsubsection{Less strategic withholding under limited per-product arbitrage}
 
@@ -939,7 +942,7 @@ Combining the contractibility channels (writing $a_1 \equiv \bar A - b_1 c$, agg
 \Delta W^{\text{spot}} \;&=\; \gamma\, Q\, \sigma_\eta^2 \;+\; Q\,\bigl(\sigma_\zeta^2 + \sigma_\mu^2\bigr)\Bigl(\gamma - \frac{1}{8\, b_2}\Bigr), \label{eq:DeltaW-spot-app}\\[2pt]
 \Delta W^{\text{forward}} \;&=\; \frac{Q\, \sigma_\zeta^2}{8}\Bigl(\frac{1}{b_2} - \frac{1}{b_1}\Bigr) \;+\; \frac{c\, a_1}{4\, b_1}\,\Big(Q b_1 - \!\sum_t b_{1t}\Big). \label{eq:DeltaW-fwd-app}
 \end{align}
-The spot-reform delta is the aggregator's hedging saving plus the net value of pricing the update at the spot margin: positive whenever $\gamma > 1/(8 b_2)$, and dominated by the imbalance saving at observed balancing premia. The forward-reform delta is a \emph{relocation}: the ramp's discrimination cost moves from the spot margin $b_2$ to the (thicker) forward margin $b_1$ --- the first term, positive when $b_1 > b_2$ and zero when the margins coincide --- plus the thinness scale-up of \eqref{eq:scale-up} valued at the pre-existing forward markup, carrying the sign of $Q b_1 - \sum_t b_{1t}$. Both forward-reform terms are second-order relative to \eqref{eq:DeltaW-spot-app}: no imbalance term appears at the forward reform (the $(Q,Q)$ column of \eqref{eq:imb-table} equals the $(1,Q)$ column), which is the model's account of the small DA15 aggregate footprint. The markup-compression and withholding channels add on top wherever $b_f$ thickens or the arbitrage regime tightens, with the signs derived above; the quantization-rent channel is mostly distributional.
+The spot-reform delta is the aggregator's hedging saving plus the net value of pricing the update at the spot margin: positive whenever $\gamma > 1/(8 b_2)$, and dominated by the imbalance saving at observed balancing premia. The forward-reform delta is a \emph{relocation}: the ramp's discrimination cost moves from the spot margin $b_2$ to the (thicker) forward margin $b_1$ --- the first term, positive when $b_1 > b_2$ and zero when the margins coincide --- plus the thinness scale-up of \eqref{eq:scale-up} valued at the pre-existing forward markup, carrying the sign of $Q b_1 - \sum_t b_{1t}$. Both forward-reform terms are second-order relative to \eqref{eq:DeltaW-spot-app}: no imbalance term appears at the forward reform (the $(Q,Q)$ column of \eqref{eq:imb-table} equals the $(1,Q)$ column), which is the model's account of the small DA15 aggregate footprint. The markup-compression and withholding channels add on top wherever $b_f$ thickens or the arbitrage regime tightens, with the signs derived above; the bid-ladder rent channel is mostly distributional.
 
 \clearpage
 \renewcommand{\refname}{References}
