@@ -179,71 +179,10 @@ MCP       & market clearing price                         & MW / MWh / GWh & meg
 
 \subsection{Setup: three sequential stages, three agents, and the within-hour state}\label{sec:theory:setup}
 
-\emph{Takeaway.} A sequential-market model in the \citet{ito_reguant_2016} tradition --- a strategic bidder, a forecast-driven renewable aggregator, and a capacity-bounded arbitrageur --- augmented on two dimensions: a granularity selector $Q^m \in \{1, Q\}$ at each stage, and an explicit within-hour state (a deterministic ramp plus redistributive news) that hourly products mechanically average away. The strategic bidder's step offer is solved exactly: the optimal $n$-tranche ladder places equal-MW tranches on an even price grid along its monopoly locus, with closed forms for the bid-shape statistics $(\sigma_p, \text{HHI}_p, \hat\beta)$ measured in \S\ref{sec:data:bandwidth}. The reform path $(1,1)\to(1,Q)\to(Q,Q)$ delivers seven sign predictions for prices, bid shapes, wedge dispersion, cleared MWh, and imbalance costs.
+\emph{Takeaway.} A sequential-market model in the \citet{ito_reguant_2016} tradition --- a strategic bidder, a forecast-driven renewable aggregator, and a capacity-bounded arbitrageur --- augmented with a granularity selector $Q^m \in \{1, Q\}$ at each stage and an explicit within-hour state (a deterministic ramp plus redistributive news) that hourly products mechanically average away. The mechanism in one line: granularity determines which within-hour states are \emph{contractible}; the strategic bidder's step offer tracks its monopoly locus over the states its product is exposed to, so when a venue becomes per-quarter its competing tier widens and regrades precisely in the hours where the within-hour state varies; equilibrium price levels move only through residual-demand slopes and venue supply, because ladder geometry is level-neutral; and the within-hour wedge dispersion does not collapse at $(Q,Q)$ because per-product arbitrage capacity binds at $K_a/Q$. Full derivations live in Appendix~\ref{app:derivations}; the main body collects the closed forms and the comparative statics that \S\ref{sec:results} takes to the data.
 
-We extend \citet{ito_reguant_2016}'s sequential-markets framework on two dimensions --- an explicit operational renewable aggregator and a granularity variable $Q^m \in \{1, Q\}$ at each stage --- and trace the Spanish backward reform path $(1,1) \to (1,Q) \to (Q,Q)$. The mechanism in one line: granularity determines which within-hour states are \emph{contractible}; the strategic bidder's step offer tracks its monopoly locus over the states its product is exposed to, so when a venue becomes per-quarter its competing tier widens and regrades precisely in the hours where the within-hour state varies; equilibrium price levels move only through residual-demand slopes and venue supply, because ladder geometry is level-neutral; and the within-hour wedge dispersion does not collapse at $(Q,Q)$ because per-product arbitrage capacity binds at $K_a/Q$. Full derivations live in Appendix~\ref{app:derivations}; the main body collects the closed forms and the comparative statics that \S\ref{sec:results} takes to the data.
+A representative clock-hour contains $Q$ equal-length subperiods. Three sequential stages operate in order: a \textbf{forward} auction (Stage 1, $m=F$), a \textbf{spot} auction (Stage 2, $m=S$), and ex-post \textbf{balancing} settlement (Stage 3, $m=B$). Each stage has its own \emph{granularity} $Q^m \in \{1, Q\}$ --- it clears either once per hour or once per subperiod --- defining a $2^3 = 8$-state policy space. The main analysis fixes the auction-side path $(Q^{F}, Q^{S}) = (1,1) \to (1,Q) \to (Q,Q)$. The forward and spot markets map empirically to the electricity day-ahead and intraday auctions respectively. The agents, stages, and reform path are diagrammed in Figure~\ref{fig:model-structure} (Appendix~\ref{app:setup}).
 
-A representative clock-hour contains $Q$ equal-length subperiods. Three sequential stages operate in order: a \textbf{forward} auction (Stage 1, $m=F$), a \textbf{spot} auction (Stage 2, $m=S$), and ex-post \textbf{balancing} settlement (Stage 3, $m=B$). Each stage has its own \emph{granularity} $Q^m \in \{1, Q\}$ --- it clears either once per hour or once per subperiod --- defining a $2^3 = 8$-state policy space. The main analysis fixes the auction-side path $(Q^{F}, Q^{S}) = (1,1) \to (1,Q) \to (Q,Q)$. The forward and spot markets map empirically to the electricity day-ahead and intraday auctions respectively; we use the more general terminology throughout. Figure~\ref{fig:model-structure} summarises.
-
-\begin{figure}[h]
-\centering
-\hspace*{-2.6cm}%
-\begin{tikzpicture}[
-  node distance=0pt,
-  stage/.style={draw, rounded corners=4pt, fill=blue!8, thick, minimum width=3.0cm, minimum height=1.6cm, align=center, font=\small},
-  pathstate/.style={draw, rounded corners=3pt, fill=red!10, minimum width=1.2cm, minimum height=0.6cm, font=\small\bfseries, align=center},
-  rowhead/.style={font=\small\bfseries, anchor=east, align=right},
-  rolelbl/.style={font=\scriptsize, anchor=north east, align=right, gray!45!black, inner sep=1pt},
-  collbl/.style={font=\scriptsize\itshape, anchor=south, align=center, gray!45!black},
-  act/.style={font=\small\bfseries, anchor=center, align=center},
-  arrtime/.style={->, >=Stealth, thick, gray!50!black},
-  arrarb/.style={->, >=Stealth, ultra thick, orange!80!black},
-  arrpath/.style={->, >=Stealth, thick, red!55!black},
-  infolabel/.style={font=\footnotesize\itshape, gray!55!black, fill=white, inner sep=2pt},
-]
-
-\node[stage] (F) at (0, 0)   {\textbf{Forward}\\[2pt] {\footnotesize Stage 1}\\[1pt] {\footnotesize $Q^{F}\!\in\!\{1,Q\}$}};
-\node[stage] (S) at (4.5, 0) {\textbf{Spot}\\[2pt]     {\footnotesize Stage 2}\\[1pt] {\footnotesize $Q^{S}\!\in\!\{1,Q\}$}};
-\node[stage] (B) at (9, 0)   {\textbf{Balancing}\\[2pt] {\footnotesize Stage 3}\\[1pt] {\footnotesize $Q^{B}\!\in\!\{1,Q\}$}};
-
-\draw[arrtime] (F.east) -- node[above=1pt, infolabel]{$\mu_t$ realises} (S.west);
-\draw[arrtime] (S.east) -- node[above=1pt, infolabel]{$\varepsilon_t$ realises} (B.west);
-
-\draw[gray!30, thick] (-5.6, -1.5) -- (10.6, -1.5);
-\node[collbl] at (0,   -1.7) {Forward};
-\node[collbl] at (4.5, -1.7) {Spot};
-\node[collbl] at (9,   -1.7) {Balancing};
-
-\node[rowhead] at (-2.0, -2.3) {Strategic bidder};
-\node[rolelbl] at (-2.0, -2.55) {residual monopolist; \\ produces \emph{without} shock};
-\node[act, blue!60!black] at (0,   -2.3) {\large $\bullet$};
-\node[act, blue!60!black] at (4.5, -2.3) {\large $\bullet$};
-
-\node[rowhead] at (-2.0, -3.8) {Operational aggregator};
-\node[rolelbl] at (-2.0, -4.05) {price-taker, $y_t=\bar y_t+\eta_t$; \\ bears imbalance $\gamma$};
-\node[act, blue!60!black] at (0,   -3.8) {\large $\bullet$};
-\node[act, blue!60!black] at (4.5, -3.8) {\large $\bullet$};
-\node[act, blue!60!black] at (9,   -3.8) {\large $\bullet$};
-
-\node[rowhead] at (-2.0, -5.3) {Arbitrageur};
-\node[rolelbl] at (-2.0, -5.55) {position $s$ (or $\{s_t\}$); \\ regimes 1--4 of \citeauthor{ito_reguant_2016}};
-\draw[arrarb] (-0.05, -5.3) -- (4.45, -5.3);
-\node[act, orange!80!black] at (0,   -5.3) {\large $\bullet$};
-\node[act, orange!80!black] at (4.5, -5.3) {\large $\bullet$};
-
-\draw[gray!30, thick] (-5.6, -6.4) -- (10.6, -6.4);
-
-\node[rowhead, gray!55!black] at (-2.0, -7.0) {Reform path};
-\node[pathstate] (s1) at (0,   -7.0) {$(1,1)$};
-\node[pathstate] (s2) at (4.5, -7.0) {$(1,Q)$};
-\node[pathstate] (s3) at (9,   -7.0) {$(Q,Q)$};
-\draw[arrpath] (s1.east) -- node[above, font=\footnotesize, gray!45!black]{spot reform} (s2.west);
-\draw[arrpath] (s2.east) -- node[above, font=\footnotesize, gray!45!black]{forward reform} (s3.west);
-
-\end{tikzpicture}
-\caption{\textbf{Sequential markets, granularity, and agents.} \textit{Top:} a forward market, a spot market, and a balancing settlement on a timeline; each has its own granularity selector $Q^m \in \{1, Q\}$ and information resolves between them. The forward market maps empirically to the electricity day-ahead auction, the spot market to the intraday auction. \textit{Middle:} which agents act at which stages (blue dots), and the arbitrageur position $s$ linking forward to spot (orange arrow). The strategic bidder produces without uncertainty and does not internalise the imbalance penalty; only the operational aggregator does, since it bears $\eta_t$. \textit{Bottom:} the auction-side reform path $(Q^F, Q^S) = (1,1) \to (1,Q) \to (Q,Q)$ traversed in the main analysis.}
-\label{fig:model-structure}
-\end{figure}
 
 \paragraph{Bidders and primitives.} The \textbf{strategic bidder} is a residual monopolist with constant marginal cost $c$; it delivers \emph{exactly} (no production shock) and therefore does not internalise the imbalance penalty $\gamma$. Its offer per delivery product is a non-decreasing step function --- a ladder of tranches $\{(p_k, \Delta q_k)\}$ --- submitted before the product's clearing state is known and cleared at uniform price (\S\ref{sec:theory:ladder}). The \textbf{operational aggregator} is a price-taker with stochastic production $y_t = \bar y_t + \eta_t$ (forecast-error range $\Delta_\eta$); it allocates total hourly MWh $\bar Y_h$ across forward and spot and \emph{does} internalise the imbalance penalty, at the rate $\gamma(Q^B)$ set by the balancing granularity. The \textbf{arbitrageur} carries a net position $s$ from forward to spot, in one of the four regimes of \citeauthor{ito_reguant_2016} (\S\ref{sec:theory:arbitrage}); arbitrage transmits price impact but not imbalance risk.
 
@@ -251,79 +190,32 @@ A representative clock-hour contains $Q$ equal-length subperiods. Three sequenti
 \[
 A_{mt} \;=\; \bar A \;+\; \zeta_t \;+\; v_{mt}.
 \]
-(i) $\zeta_t$ is the \emph{deterministic within-hour profile} (the ramp): $\sum_t \zeta_t = 0$, dispersion $\sigma_\zeta^2 = Q^{-1}\sum_t \zeta_t^2$, large in critical hours and $\approx 0$ in flat hours (\S\ref{sec:data:partition}), known to everyone at all times. (ii) $v_{mt}$ is the \emph{clearing state} the bidder screens at stage $m$: unknown at submission, embedded in the residual demand it faces at clearing. (iii) Between the forward and spot gates the within-hour \emph{update} $\omega_t$ realises and becomes the spot's traded object: $\omega_t = \zeta_t + \mu_t$ while the forward is hourly (the profile is not yet contractible upstream), and $\omega_t = \mu_t$ once the forward is per-quarter, where $\mu_t$ is mean-zero redistributive news ($\sum_t \mu_t = 0$: ramp-timing shifts that move MW between adjacent quarters --- a sunset fifteen minutes earlier moves the solar drop from one quarter to its neighbour with no hour-level trace). We write $\sigma_\omega^2 = \sigma_\zeta^2 + \sigma_\mu^2$ and $\sigma_\omega^2 = \sigma_\mu^2$ for the two cases.
+(i) $\zeta_t$ is the \emph{deterministic within-hour profile} (the ramp): $\sum_t \zeta_t = 0$, dispersion $\sigma_\zeta^2 = Q^{-1}\sum_t \zeta_t^2$, large in critical hours and $\approx 0$ in flat hours (\S\ref{sec:data:partition}), known to everyone at all times. (ii) $v_{mt}$ is the \emph{clearing state} the bidder screens at stage $m$: unknown at submission, embedded in the residual demand it faces at clearing. (iii) Between the forward and spot gates the within-hour \emph{update} $\omega_t$ realises and becomes the spot's traded object: $\omega_t = \zeta_t + \mu_t$ while the forward is hourly (the profile is not yet contractible upstream), and $\omega_t = \mu_t$ once the forward is per-quarter, where $\mu_t$ is mean-zero redistributive news ($\sum_t \mu_t = 0$: ramp-timing shifts that move MW between adjacent quarters with no hour-level trace). We write $\sigma_\omega^2 = \sigma_\zeta^2 + \sigma_\mu^2$ and $\sigma_\omega^2 = \sigma_\mu^2$ for the two cases.
 
-\paragraph{Granularity as exposure to states.} Decompose the stage-$m$ clearing state as $v_{mt} = \theta_m + \mu_{mt}$: an hour-level component and a redistributive component with $\sum_t \mu_{mt} = 0$. An hourly product clears against the within-hour average, $Q^{-1}\sum_t v_{mt} = \theta_m$ --- redistributive components cancel mechanically --- while a per-quarter product clears against its own $v_{mt}$. We assume the screened state is uniform at each granularity: $\theta_m \sim U[-\Delta_m, \Delta_m]$ for an hourly product, and $v_{mt} \sim U[-\rho_{\mathcal X}\Delta_m, +\rho_{\mathcal X}\Delta_m]$ for a quarter product, with an amplification $\rho_{\mathcal X} \ge 1$ specific to the hour class: $\rho \approx 1$ in flat hours and $\rho > 1$ in ramp hours, where ramp-timing uncertainty concentrates.\footnote{The uniform family is exactly closed under this aggregation in a tiling construction: if $\theta_m \sim U[-\Delta_m, \Delta_m]$ and $\mu_{mt} \in \{-\Delta_m, +\Delta_m\}$ with equally many quarters up and down, then $v_{mt} = \theta_m + \mu_{mt} \sim U[-2\Delta_m, 2\Delta_m]$ exactly, i.e.\ $\rho = 2$ exactly; redistributive news supported on odd multiples of $\Delta_m$ delivers any even integer $\rho$. We carry a general $\rho_{\mathcal X}$.} Granularity thus changes \emph{which} states a product is exposed to: hourly products are blind to the within-hour redistributive component at every stage; per-quarter products price it.
+\paragraph{Granularity as exposure to states.} Decompose the stage-$m$ clearing state as $v_{mt} = \theta_m + \mu_{mt}$: an hour-level component and a redistributive component with $\sum_t \mu_{mt} = 0$. An hourly product clears against the within-hour average, $Q^{-1}\sum_t v_{mt} = \theta_m$ --- redistributive components cancel mechanically --- while a per-quarter product clears against its own $v_{mt}$. We assume the screened state is uniform at each granularity: $\theta_m \sim U[-\Delta_m, \Delta_m]$ for an hourly product, and $v_{mt} \sim U[-\rho_{\mathcal X}\Delta_m, +\rho_{\mathcal X}\Delta_m]$ for a quarter product, with an amplification $\rho_{\mathcal X} \ge 1$ specific to the hour class: $\rho \approx 1$ in flat hours and $\rho > 1$ in ramp hours, where ramp-timing uncertainty concentrates.\footnote{Exactly closed under the tiling construction of Lemma~\ref{lem:tiling} (Appendix~\ref{app:setup}): redistributive news on $J$ symmetric pairs of atoms delivers $\rho_{\mathcal X} = 2J$ exactly. We carry a general $\rho_{\mathcal X}$.} Granularity thus changes \emph{which} states a product is exposed to.
 
-\paragraph{Solution concept.} We solve the game by \textbf{backward induction}: at Stage~2 the strategic bidder best-responds per spot product taking the forward outcome as given; the arbitrageur takes the implied price spread and chooses $s$ within its regime; at Stage~1 the strategic bidder commits its forward ladder internalising the spot continuation value (the forward price anchors spot demand), which matters both for the forward price level and --- through the slope of the stage-1 locus --- for the forward ladder (\S\ref{sec:theory:id15}). Full step-by-step backward induction in Appendices~\ref{app:state-60-60}--\ref{app:state-15-15}.
+\paragraph{Solution concept.} We solve the game by \textbf{backward induction}: at Stage~2 the strategic bidder best-responds per spot product taking the forward outcome as given; the arbitrageur takes the implied price spread and chooses $s$ within its regime; at Stage~1 the strategic bidder commits its forward ladder internalising the spot continuation value (the forward price anchors spot demand), which matters both for the forward price level and, through the slope of the stage-1 locus, for the forward ladder (\S\ref{sec:theory:id15}; full backward induction in Appendices~\ref{app:state-60-60}--\ref{app:state-15-15}).
 
-\paragraph{Model abstractions: residual monopolist, supply functions, and the passive balancing stage.} Three simplifications deserve flagging. First, the strategic bidder is a single residual monopolist per product, even though Spanish wholesale concentration is moderate (HHI $\sim$1\,100) and several firms compete on the bid stack. The residual-monopolist is a stylised device that delivers qualitative comparative statics on within-band conduct; its empirical counterpart is the per-firm residual demand of \citet{ito_reguant_2016} recovered in \hyperref[sec:5-residual-demand-slope]{Appendix~\ref*{app:robustness}.10}. Second, within a product the bid \emph{is} a supply function, and with a single strategic bidder facing one-dimensional residual-demand uncertainty the optimal schedule is exact (\S\ref{sec:theory:ladder}); what we do not model is strategic interaction in supply functions across several large firms --- the \citet{klemperer_meyer_1989} equilibrium concept for uniform-price multi-unit auctions --- which gets intractable in a sequential-market setting. Third, the balancing stage in the model is a passive settlement of the residual imbalance, \emph{not} an active auction with bidding. The aggregator internalises its own deviation through the penalty $\gamma$; the strategic bidder produces with certainty and so carries no individual imbalance; the unpriced within-hour residual collects in $C^I_{\text{sys}}$ for the welfare account (Appendix~\ref{app:balancing}, \ref{app:welfare}). In reality REE runs aFRR/mFRR auctions where firms bid actively; we abstract from that to keep the focus on how forward/spot granularity reshapes the auction stages. The model's prediction that finer auctions absorb the within-hour state upstream and shrink the balancing residual is what \S\ref{sec:results:granularity-vs-reforzada} reads against the empirical ajuste-cost decomposition.
+Three deliberate abstractions --- a single residual monopolist per product, no strategic supply-function interaction across large firms in the sense of \citet{klemperer_meyer_1989}, and a passive balancing stage --- and the model's relation to \citeauthor{ito_reguant_2016}'s implicit competitive fringe are discussed in Appendix~\ref{app:setup}.
 
-\paragraph{Renewable fringe and our relation to \citeauthor{ito_reguant_2016}.} \citeauthor{ito_reguant_2016}'s residual-demand interpretation already absorbs a renewable (or thermal) competitive fringe into the slope $b_m$: the strategic bidder serves $A - b_m p_m$, the implicit fringe serves the complement. Their setup delivers the strategic-bidder, arbitrage, and price-wedge mechanisms but is silent on two objects our data record directly: \emph{why} the fringe's willingness to supply changes with granularity, and \emph{what shape} the strategic bidder's offer takes. We make the fringe explicit (the operational aggregator with forecast errors and an imbalance penalty $\gamma$), so the hedging gain from per-period scheduling has the closed form $G(\Delta_\eta) = \gamma Q \Delta_\eta/2$ (Appendix~\ref{app:aggregator}); and we let the strategic bidder choose the step offer the OMIE files record, so the empirical bid-shape quintuple of \S\ref{sec:data:bandwidth} acquires exact model counterparts (\S\ref{sec:theory:ladder}) rather than serving as proxies.
+
 
 \subsection{Bid ladders within a product: step offers along the monopoly locus}\label{sec:theory:ladder}
 
-\emph{Takeaway.} With linear residual demand and one-dimensional clearing-state uncertainty, a continuous supply schedule replicates the full-information monopoly outcome state by state, so a finite tranche count is the only friction. The optimal $n$-tranche ladder splits the screened states into equal intervals: $n$ equal-MW competing tranches on an even price grid spanning the conditional monopoly-price range, with closed forms $\text{HHI}_p = 1/n$, $\sigma_p$, and measured ladder slope $\hat\beta = 1/b$. The ladder's geometry is level-neutral --- the expected clearing price is the same for every $n$ --- so bid shape and price levels are separate channels of the reform. The granularity--variation interaction itself has a one-line closed form: a product's conditional monopoly-price range is exactly $\Delta/b$, and granularity multiplies the screened range $\Delta$ by $\rho_{\mathcal X}$ precisely where within-hour variation lives (Corollary~\ref{cor:did}).
+\emph{Takeaway.} With linear residual demand and one-dimensional clearing-state uncertainty, a continuous supply schedule replicates the full-information monopoly outcome state by state, so a finite tranche count is the only friction. The optimal $n$-tranche ladder has closed forms for every measured bid-shape statistic, is level-neutral on the mean price, and interacts with granularity in one line (Corollary~\ref{cor:did}).
 
-Fix one delivery product with residual demand $q = A - b\,p$, $A = \bar a + v$, $v \sim U[-\Delta, \Delta]$, and constant marginal cost $c$. The bidder submits a non-decreasing step offer before $v$ realises; the auction clears at the crossing of the realised residual demand with the offer. When the crossing lands on a horizontal segment, the marginal tranche is partially filled and sets the price; when it lands on a vertical riser, the cumulative quantity is fixed and the realised demand sets the price. Both regimes occur in equilibrium and both are visible in the OMIE clearing data.
+Fix one delivery product with residual demand $q = A - b\,p$, $A = \bar a + v$, $v \sim U[-\Delta, \Delta]$, and constant marginal cost $c$. The bidder submits a non-decreasing step offer before $v$ realises; the auction clears at the crossing of the realised residual demand with the offer. When the crossing lands on a horizontal segment the marginal tranche sets the price; on a vertical riser the realised demand does. Both occur in equilibrium and both are visible in the OMIE clearing data.
 
-\begin{lemma}[Continuous benchmark]\label{lem:locus}
-The supply schedule $S^*(p) = b\,(p - c)$ clears at the full-information monopoly point
-\[
-p^m(A) = \frac{A + bc}{2b}, \qquad q^m(A) = \frac{A - bc}{2}
-\]
-in every state $A$, and is the unique non-decreasing schedule that does so on the contested range. Expected profit equals $\mathbb{E}[(A - bc)^2]/(4b)$, the unconditional monopoly value.
-\end{lemma}
-
-Under one-dimensional uncertainty the bidder loses nothing to not knowing the state: the supply function traces the monopoly locus --- the single-firm benchmark of \citet{klemperer_meyer_1989}. Real offers are step functions with few tranches (OMIE caps tranche counts, and bid management is costly), so the relevant problem is the best $n$-step approximation of the locus. It has an exact solution.
-
-\begin{assumption}\label{ass:interior}
-$q^m(\bar a - \Delta) \ge \Delta/(2(2n+1))$: the monopoly quantity is interior in every state, by a margin of a quarter cell.
-\end{assumption}
+The continuous benchmark is frictionless: $S^*(p) = b\,(p - c)$ clears at the full-information monopoly point $p^m(A) = (A + bc)/(2b)$, $q^m(A) = (A - bc)/2$ in \emph{every} state and earns the unconditional monopoly value $\mathbb{E}[(A - bc)^2]/(4b)$ (Lemma~\ref{lem:locus}, Appendix~\ref{app:tranche}) --- the single-firm benchmark of \citet{klemperer_meyer_1989}. Real offers, however, are step functions with few tranches (OMIE caps tranche counts, and bid management is costly), so the relevant problem is the best $n$-step approximation of the monopoly locus. It has an exact solution.
 
 \begin{proposition}[Optimal $n$-tranche ladder]\label{prop:ladder}
-Let $w = 2\Delta/(2n+1)$ and let Assumption~\ref{ass:interior} hold. The optimal offer with $n$ competing price levels consists of an inframarginal base of $q^m(\bar a - \Delta + w/2)$ MW priced at the floor, plus $n$ competing tranches of exactly $w$ MW each at prices
-\[
-p_k \;=\; p^m\!\Bigl(\bar a - \Delta + \bigl(2k - \tfrac{1}{2}\bigr)\,w\Bigr), \qquad k = 1, \dots, n,
-\]
-evenly spaced with grid step $p_{k+1} - p_k = w/b$ and spanning $(n-1)\,w/b$. The ladder splits the state range into $2n+1$ equal intervals, each served at its midpoint monopoly point --- the clearing rule itself places the regime switches exactly midway between adjacent tranches --- and expected profit is
+Let $w = 2\Delta/(2n+1)$ and let the monopoly quantity be interior in every state by a quarter-cell margin ($q^m(\bar a - \Delta) \ge \Delta/(2(2n+1))$, Assumption~\ref{ass:interior} in Appendix~\ref{app:tranche}). The optimal offer with $n$ competing price levels consists of an inframarginal base of $q^m(\bar a - \Delta + w/2)$ MW priced at the floor, plus $n$ competing tranches of exactly $w$ MW each at prices $p_k = p^m\bigl(\bar a - \Delta + (2k - \tfrac{1}{2})\,w\bigr)$, evenly spaced with grid step $p_{k+1} - p_k = w/b$ and spanning $(n-1)\,w/b$: the ladder splits the state range into $2n+1$ equal intervals, each served at its midpoint monopoly point, and expected profit is
 \[
 \mathbb{E}[\pi_n] \;=\; \frac{\mathbb{E}[(A - bc)^2]}{4b} \;-\; \frac{\Delta^2}{12\, b\, (2n+1)^2}.
 \]
-(Proof: Appendix~\ref{app:tranche}.)
+(Proof: Appendix~\ref{app:tranche}; Figure~\ref{fig:ladder-quantizer} there draws the ladder weaving across the locus.)
 \end{proposition}
 
-\begin{figure}[h]
-\centering
-\begin{tikzpicture}[scale=0.92, every node/.style={font=\footnotesize}]
-  \draw[-{Latex[length=2.4mm]}, thick, gray!70] (0,0) -- (10.6,0)
-    node[below left=2pt and -8pt, black]{Cumulative offered quantity (MW)};
-  \draw[-{Latex[length=2.4mm]}, thick, gray!70] (0,0) -- (0,6.3);
-  \node[rotate=90, anchor=south, black] at (-0.5, 3.0) {Bid price (EUR/MWh)};
-  \draw[red!70!black, dashed, very thick] (1.6,1.04) -- (9.4,5.72);
-  \node[red!70!black, anchor=west, align=left] at (6.3,6.0) {monopoly locus $q^m\!=\!b(p^m\!-\!c)$};
-  \draw[gray!60, ultra thick, line cap=round] (0,0.5) -- (1.8,0.5);
-  \node[gray!40!black, anchor=south west, font=\scriptsize, align=left] at (0.0,0.62) {inframarginal base\\ (out of band)};
-  \draw[blue!65!black, ultra thick, line cap=round, line join=round]
-    (1.8,0.5) -- (1.8,1.64) -- (3.4,1.64) -- (3.4,2.60) -- (5.0,2.60)
-    -- (5.0,3.56) -- (6.6,3.56) -- (6.6,4.52) -- (8.2,4.52) -- (8.2,5.3);
-  \foreach \x/\y in {2.6/1.64, 3.4/2.12, 4.2/2.60, 5.0/3.08, 5.8/3.56, 6.6/4.04, 7.4/4.52, 8.2/5.00}
-    \fill[red!70!black] (\x,\y) circle (1.6pt);
-  \draw[decorate, decoration={brace, amplitude=4pt, mirror}, thick]
-    (3.45,2.38) -- (4.95,2.38);
-  \node[anchor=north] at (4.2,2.26) {$\Delta q_k = w$ (equal tranches)};
-  \draw[decorate, decoration={brace, amplitude=4pt}, thick]
-    (8.45,4.52) -- (8.45,5.48);
-  \node[anchor=west, align=left] at (8.6,5.0) {grid step $w/b$\\ (even price grid)};
-  \draw[gray!55, dotted, thick] (0,1.64) -- (1.8,1.64);
-  \draw[gray!55, dotted, thick] (0,4.52) -- (6.6,4.52);
-  \draw[decorate, decoration={brace, amplitude=4pt}, thick, gray!55]
-    (-0.12,1.64) -- (-0.12,4.52);
-  \node[rotate=90, anchor=south, gray!40!black, font=\scriptsize] at (-0.45,3.08) {competing-tier span $(n{-}1)w/b$};
-\end{tikzpicture}
-\caption{\textbf{The optimal ladder and the monopoly locus} ($n = 4$ competing tranches). The blue step offer weaves across the dashed monopoly locus: every horizontal segment crosses it at its midpoint (states where the tranche price is exactly the monopoly price) and every vertical riser crosses it at its midpoint (states where the cumulative quantity is exactly the monopoly quantity); red dots mark the implemented points. Competing tranches carry equal MW $w = 2\Delta/(2n+1)$ on an even price grid of step $w/b$; the inframarginal base sits below the contested range and outside the empirical band of \S\ref{sec:data:bandwidth}.}
-\label{fig:ladder-quantizer}
-\end{figure}
 
 \begin{corollary}[Bid-shape statistics]\label{cor:stats}
 Computed over the competing tranches --- the in-band construction of \S\ref{sec:data:bandwidth}, which nets out the inframarginal base and parked tiers --- the optimal ladder delivers in closed form
@@ -333,235 +225,115 @@ Computed over the competing tranches --- the in-band construction of \S\ref{sec:
 \;\xrightarrow[n \to \infty]{}\; \frac{\sigma_v}{2b}, \qquad
 \hat\beta = \frac{1}{b}, \qquad \hat\gamma = 0,
 \]
-with $\sigma_v = \Delta/\sqrt{3}$ the SD of the screened state. The OLS slope of price on cumulative in-band quantity identifies the \emph{inverse} per-product residual-demand slope exactly; curvature is zero under linear residual demand, so a non-zero $\hat\gamma$ in the data picks up curvature in residual demand or marginal cost that the model omits --- one more reason \S\ref{sec:data:bandwidth} treats $\hat\beta, \hat\gamma$ as supporting rather than headline objects.
+with $\sigma_v = \Delta/\sqrt{3}$ the SD of the screened state; $\hat\beta$ identifies the \emph{inverse} per-product residual-demand slope exactly.
 \end{corollary}
 
-\begin{remark}[Level neutrality]\label{rem:level}
-$\mathbb{E}[\text{clearing price}] = p^m(\bar a)$ for every $n$: within each interval of states the realised price averages to the monopoly price at the interval's midpoint, so ladder geometry reshapes dispersion and surplus but never the mean price (Appendix~\ref{app:tranche}). Bid-shape changes and price-level changes are therefore \emph{separate channels}: a reform can regrade ladders strongly while leaving price levels untouched. \S\ref{sec:results} finds exactly this pattern at DA15.
-\end{remark}
+Ladder geometry is also \emph{level-neutral}: $\mathbb{E}[\text{clearing price}] = p^m(\bar a)$ for every $n$, because within each interval of states the realised price averages to the monopoly price at the interval's midpoint (Remark~\ref{rem:level}, Appendix~\ref{app:tranche}). Bid-shape changes and price-level changes are therefore separate channels --- a reform can regrade ladders strongly while leaving price levels untouched, exactly the DA15 pattern in \S\ref{sec:results}.
 
-\begin{proposition}[Tranche budget]\label{prop:budget}
-With a linear cost $\kappa > 0$ per competing tranche (treating $n$ as continuous; the integer optimum is one of the two adjacent integers), the optimal depth satisfies
-\[
-2 n^* + 1 \;=\; \Bigl(\frac{\Delta^2}{3\, b\, \kappa}\Bigr)^{1/3}:
-\]
-ladders deepen with the screened range, $n^* + \tfrac12 = \tfrac12\,\Delta^{2/3}\,(3\,b\,\kappa)^{-1/3}$, and flatten with market thickness $b$ and complexity cost $\kappa$. Jointly with Corollary~\ref{cor:stats}, a wider screened range raises $\sigma_p$ and lowers $\text{HHI}_p$ \emph{together} --- the joint signature the bid-shape DiD of \S\ref{sec:empirical:bidshape} tests.
-\end{proposition}
+With a linear cost $\kappa > 0$ per competing tranche, the optimal depth satisfies $2 n^* + 1 = \bigl(\Delta^2/(3 b \kappa)\bigr)^{1/3}$ (Proposition~\ref{prop:budget}, Appendix~\ref{app:tranche}): ladders deepen with the screened range and flatten with market thickness and complexity cost, so a wider screened range raises $\sigma_p$ and lowers $\text{HHI}_p$ \emph{together} --- the joint signature the bid-shape DiD of \S\ref{sec:empirical:bidshape} tests.
 
 \begin{corollary}[Granularity $\times$ within-hour variation, in closed form]\label{cor:did}
-Let a venue switch from hourly to per-quarter products, so that in hour class $\mathcal X$ the screened range moves from $\Delta$ to $\rho_{\mathcal X}\Delta$ while the per-product thinness moves from $b$ to $b'$. Write $\sigma_p(\Delta;\, b)$ for the fixed-$n$ value in Corollary~\ref{cor:stats}. Then, exactly:
-\begin{itemize}\setlength{\itemsep}{2pt}
-\item[(i)] the conditional monopoly-price range of the product --- the range of clearing prices under the continuous benchmark of Lemma~\ref{lem:locus} --- moves from $\dfrac{\Delta}{b}$ to $\dfrac{\rho_{\mathcal X}\Delta}{b'}$;
-\item[(ii)] at fixed depth $n$, the tranche-price span moves from $\dfrac{2(n-1)\Delta}{(2n+1)\,b}$ to $\rho_{\mathcal X}\,\dfrac{2(n-1)\Delta}{(2n+1)\,b'}$ and the dispersion from $\sigma_p(\Delta; b)$ to $\rho_{\mathcal X}\,\sigma_p(\Delta; b')$, while $\text{HHI}_p = 1/n$ is unchanged;
-\item[(iii)] with the depth endogenous (Proposition~\ref{prop:budget}), $2n^*+1$ moves from $\bigl(\Delta^2/(3 b \kappa)\bigr)^{1/3}$ to $\rho_{\mathcal X}^{2/3}\,\bigl(\Delta^2/(3 b' \kappa)\bigr)^{1/3}$, so $\text{HHI}_p = 1/n^*$ falls in critical hours exactly when $\sigma_p$ rises;
-\item[(iv)] the critical-minus-flat, post-minus-pre double difference nets out the thinness change, which is common to both hour classes: with $\rho_{\text{flat}} = 1$ and at fixed depth $n$,
+Let a venue switch from hourly to per-quarter products, so that in hour class $\mathcal X$ the screened range moves from $\Delta$ to $\rho_{\mathcal X}\Delta$ and the per-product thinness from $b$ to $b'$; write $\sigma_p(\Delta;\, b)$ for the fixed-$n$ value in Corollary~\ref{cor:stats}. Then, exactly: (i) the conditional monopoly-price range moves from $\Delta/b$ to $\rho_{\mathcal X}\Delta/b'$, and with it the dispersion ($\sigma_p$ multiplies by $\rho_{\mathcal X}\, b/b'$ at fixed depth) and the tranche-price span; (ii) with the depth endogenous, $2n^*+1$ multiplies by $\rho_{\mathcal X}^{2/3}\,(b/b')^{1/3}$, so $\text{HHI}_p = 1/n^*$ falls in critical hours exactly when $\sigma_p$ rises; and (iii) the critical-minus-flat, post-minus-pre double difference nets out the thinness change, which is common to both hour classes: with $\rho_{\text{flat}} = 1$ and at fixed depth,
 \[
 \underbrace{\bigl[\sigma_p(\rho_{\mathcal X}\Delta;\, b') - \sigma_p(\Delta;\, b)\bigr]}_{\text{critical hours}}
 \;-\;
 \underbrace{\bigl[\sigma_p(\Delta;\, b') - \sigma_p(\Delta;\, b)\bigr]}_{\text{flat hours}}
 \;=\;
-(\rho_{\mathcal X} - 1)\;\frac{2\Delta}{(2n+1)\,b'}\,\sqrt{\frac{n^2-1}{12}},
+(\rho_{\mathcal X} - 1)\,\sigma_p(\Delta;\, b'),
 \]
-strictly increasing in the within-hour variation that $\rho_{\mathcal X}$ encodes (Lemma~\ref{lem:tiling}) and exactly zero when the hour is internally flat.
-\end{itemize}
-(Proof: Appendix~\ref{app:tranche}.)
+zero when the hour is internally flat and strictly increasing in the within-hour variation that $\rho_{\mathcal X}$ encodes (Lemma~\ref{lem:tiling}). (Proof: Appendix~\ref{app:tranche}.)
 \end{corollary}
 
-This is the mechanism in one display: the reform changes bid shape exactly where, and exactly as much as, within-hour variation amplifies the state a product screens. Anything common to both hour classes --- thinness changes, complexity costs, price-level seasonality --- drops out of (iv) by construction.
-
-\begin{assumption}[Stage-1 second-order condition]\label{ass:soc}
-$B_2 \equiv \sum_t b_{2t} < 2 b_1$: the total continuation slope of the spot products hanging off the forward product is strictly less than twice the forward slope. The condition delivers an interior stage-1 monopoly locus and the closed form for the continuation slope in Corollary~\ref{cor:continuation}.
-\end{assumption}
+This is the mechanism in one display: the reform changes bid shape exactly where, and exactly as much as, within-hour variation amplifies the state a product screens; anything common to both hour classes --- thinness changes, complexity costs, price-level seasonality --- drops out of (iii) by construction.
 
 \begin{corollary}[Continuation slope and forward locus]\label{cor:continuation}
-Under Assumption~\ref{ass:soc}, the slope of the stage-1 monopoly locus is
-\[
-\frac{d p_1^*}{d v} \;=\; \frac{1}{2 b_1 - B_2/2},
-\]
-the measured forward ladder slope is $\hat\beta_1 = 1/(b_1 - B_2/2)$, and the stage-1 clearing-price range over the screened states is exactly $2\Delta_1/(2 b_1 - B_2/2)$. As the spot venue becomes per-quarter, $B_2$ jumps from a single hourly slope to the sum of $Q$ per-quarter slopes; the forward locus, the measured slope, and the price range all steepen and widen correspondingly --- the cross-market anticipation channel of \S\ref{sec:theory:id15}(M4).
+Under the stage-1 second-order condition $B_2 \equiv \sum_t b_{2t} < 2 b_1$ (Assumption~\ref{ass:soc}, Appendix~\ref{app:tranche}), the slope of the stage-1 monopoly locus is $dp_1^*/dv = 1/(2 b_1 - B_2/2)$, the measured forward ladder slope is $\hat\beta_1 = 1/(b_1 - B_2/2)$, and the stage-1 clearing-price range over the screened states is exactly $2\Delta_1/(2 b_1 - B_2/2)$. As the spot venue becomes per-quarter, $B_2$ jumps from a single hourly slope to the sum of $Q$ per-quarter slopes; the forward locus, the measured slope, and the price range all steepen and widen correspondingly --- the cross-market anticipation channel of \S\ref{sec:theory:id15}(M4).
 \end{corollary}
 
-\begin{remark}[Price-takers post blocks]\label{rem:pricetaker}
-A price-taking unit optimally offers its marginal-cost schedule; for a zero-marginal-cost renewable that is a single block at the floor --- $\sigma_p = 0$, $\text{HHI}_p = 1$, out of band, for any granularity (panel (a) of Figure~\ref{fig:bid-shape-stylized}). The bid-shape margin is therefore dispatchable-specific; the renewable margin of the reform is the quantity re-scheduling of \S\ref{sec:theory:id15} (M1).
-\end{remark}
+A price-taking unit, by contrast, posts its marginal-cost schedule --- for a zero-marginal-cost renewable a single block at the floor, $\sigma_p = 0$, $\text{HHI}_p = 1$, out of band at any granularity (Remark~\ref{rem:pricetaker}, Appendix~\ref{app:tranche}) --- so the bid-shape margin is dispatchable-specific, and the renewable margin of the reform is the quantity re-scheduling of \S\ref{sec:theory:id15}(M1).
 
-\emph{Numerical example.} With $\Delta = 200$~MW, $b = 50$~MW per EUR/MWh, and $n = 5$: tranches of $36$~MW, a grid step of $0.73$~EUR/MWh, a competing-tier span of $2.9$~EUR/MWh, $\sigma_p = 1.03$~EUR/MWh, and $\text{HHI}_p = 0.2$ --- the order of magnitude of the CCGT critical-hour cells in Table~\ref{tab:spec-c}. In a ramp hour with $\rho_{\mathcal X} = 2$ the same product as a quarter contract spans $5.8$~EUR/MWh with $\sigma_p = 2.06$~EUR/MWh at the same depth, and the endogenous depth rises to $2n^*+1 = 2^{2/3}\cdot 11 \approx 17.5$ (so $n^* \approx 8$, $\text{HHI}_p \approx 0.12$); in a flat hour ($\rho = 1$) nothing moves.
 
-\subsection{Arbitrage regimes: four benchmarks, one empirical}\label{sec:theory:arbitrage}
+\subsection{Arbitrage regimes and the pre-reform baseline}\label{sec:theory:arbitrage}
 
-\emph{Takeaway.} The arbitrageur's position $s$ across the four \citeauthor{ito_reguant_2016} regimes (no arbitrage, full, limited, strategic) determines whether the day-ahead/intraday wedge is closed or stays positive. Empirically, real arbitrageurs have bounded capacity and market power, so the limited regime (capacity ceiling binds) is the relevant benchmark; once granularity makes the wedge per-product at $(Q,Q)$, the per-product capacity constraint binds tightly at $K_a/Q$ and delivers the non-collapse of within-hour wedge dispersion documented in \S\ref{sec:results:6-5wedge}.
-
-Following \citet[\S I.A and Table 1]{ito_reguant_2016}, arbitrage profit per matched product is $\pi^A(s) = s\,(p_1 - p_2)$. Four regimes pin $s$:
-\begin{itemize}
-\item[(1)] \emph{No arbitrage}: $s = 0$, positive forward premium $p_1 > p_2 > c$.
-\item[(2)] \emph{Full / competitive arbitrage}: $s$ closes the spread, $p_1 = p_2$; the strategic bidder withholds more in response.
-\item[(3)] \emph{Limited arbitrage}: a capacity ceiling $s \le K_a$ binds, sustaining a positive wedge whose size depends on $K_a$.
-\item[(4)] \emph{Strategic arbitrage}: the arbitrageur internalises price impact and stops short of full, giving the closed-form benchmark
+Following \citet[\S I.A and Table 1]{ito_reguant_2016}, arbitrage profit per matched product is $\pi^A(s) = s\,(p_1 - p_2)$, and four regimes pin the position: (1) \emph{no arbitrage}, $s = 0$, with a positive forward premium $p_1 > p_2 > c$; (2) \emph{full arbitrage}, where $s$ closes the spread and the strategic bidder withholds more in response; (3) \emph{limited arbitrage}, where a capacity ceiling $s \le K_a$ binds and sustains a wedge that depends on $K_a$; and (4) \emph{strategic arbitrage}, where the arbitrageur internalises its own price impact and stops short of parity at the closed-form benchmark
 \begin{equation}
 \boxed{\;p_1 - p_2 \;=\; \frac{p_1 - c}{4} \;>\; 0.\;}
 \label{eq:strategic-arb}
 \end{equation}
-\end{itemize}
-Comparative-statics signs are the same across (1), (3), (4) (\citeauthor{ito_reguant_2016} Table 1).
+Comparative-statics signs agree across (1), (3), and (4). Real arbitrageurs have bounded balance sheets and market power --- the persistent forward premium observed across electricity markets rules out full arbitrage --- so the limited regime is the empirical benchmark; once granularity makes the wedge per-product at $(Q,Q)$, the per-product capacity constraint binds at $K_a/Q$ and delivers the non-collapse of within-hour wedge dispersion documented in \S\ref{sec:results:6-5wedge}.
 
-\subsection{Pre-reform $(1,1)$: scarcity wedge, no within-hour objects}\label{sec:theory:pre}
-
-Both auctions hourly. The \citeauthor{ito_reguant_2016} scarcity wedge $p_1 > p_2 > c$ obtains under any non-full-arbitrage regime (Appendix~\ref{app:state-60-60}); the hourly spot trades the hour-level update $\bar\omega$, but neither venue can carry the within-hour profile or the redistributive news, so the balancing discrepancy is $\Delta_t = \zeta_t + \mu_t + \eta_t + \varepsilon_t$. All within-hour dispersion objects (the $D^{\bullet}$ outcomes of \S\ref{sec:data:aggregate}, the within-hour wedge SD) are mechanically zero, and the competing tiers of both ladders screen the hour-level ranges $\Delta_1$ and $\Delta_2$ --- the pre-reform baseline of the bid-shape statistics. Two features carry through every subsequent reform: the scarcity wedge survives under any non-full-arbitrage regime, and whatever the contracting grid cannot carry loads onto the balancing residual.
+\phantomsection\label{sec:theory:pre}
+\paragraph{Pre-reform $(1,1)$: scarcity wedge, no within-hour objects.} Both auctions hourly. The \citeauthor{ito_reguant_2016} scarcity wedge $p_1 > p_2 > c$ obtains under any non-full-arbitrage regime (Appendix~\ref{app:state-60-60}); neither venue can carry the within-hour profile or the redistributive news, so the balancing discrepancy is $\Delta_t = \zeta_t + \mu_t + \eta_t + \varepsilon_t$, all within-hour dispersion objects (the $D^{\bullet}$ outcomes of \S\ref{sec:data:aggregate}, the within-hour wedge SD) are mechanically zero, and the competing tiers screen the hour-level ranges $\Delta_1$ and $\Delta_2$ --- the pre-reform baseline of the bid-shape statistics. Whatever the contracting grid cannot carry loads onto the balancing residual.
 
 \subsection{Spot reform $(1,Q)$: contractibility arrives}\label{sec:theory:id15}
 
-\emph{Takeaway.} The first granular venue makes the within-hour state contractible. Four mechanisms activate: (M1) the aggregator's hedging gain pulls supply to the granular leg; (M2) the spot price level re-clears against the migrated supply and per-product slopes, and transmits to the forward through arbitrage; (M3) within-hour spot dispersion and the wedge SD turn on at $\sigma_\omega/(2b_2)$, concentrated in ramp hours; (M4) the spot competing tier is exposed to $\rho$-amplified states (widening and regrading in critical hours), and the \emph{forward} ladder steepens through the continuation slope --- the cross-market anticipation channel. The balancing residual collapses to $\varepsilon_t$ already at this state.
+The spot becomes per-period while the forward stays hourly; the first granular venue makes the within-hour state contractible, and four mechanisms activate.
 
-The spot market becomes per-period; the forward market stays hourly.
 
-\paragraph{(M1) The aggregator gains from granular spot scheduling.} The aggregator commits a forward schedule at Stage~1, observes the forecast update $\eta_t$, and then sets a spot schedule at Stage~2. The reform changes WHAT it can choose at Stage~2:
-\begin{center}
-\footnotesize
-\begin{tabular}{l l l}
-\toprule
-                                  & \textbf{Hourly spot} $(Q^S = 1)$           & \textbf{Granular spot} $(Q^S = Q)$ \\
-\midrule
-At Stage~2 the aggregator chooses & ONE number $S_2$ for the whole hour        & $Q$ numbers $\{S_{2,t}\}$ per period \\
-Per-period schedule               & uniform $(S_1 + S_2)/Q$                    & $S_1/Q + S_{2,t}^*$ \\
-Can respond to $\eta_t$ per period? & no                                      & yes, exactly \\
-Per-period imbalance              & $\eta_t$                                   & $0$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-Granular spot lets the aggregator wait until $\eta_t$ resolves and submit a per-period schedule that absorbs the forecast update. Hourly spot forces a single schedule before $\eta_t$ is known, so the forecast update mechanically loads onto the imbalance bill.
-
-\smallskip
-\emph{The closed-form hedging gain under uniform shocks.} Take $\eta_t \sim \mathrm{Uniform}[-\Delta_\eta, \Delta_\eta]$, i.i.d.\ across $t$ (PDF $1/(2\Delta_\eta)$), and linear penalty $\gamma |\mathcal{I}_t|$ per period. Then
-\[
-\mathbb{E}|\eta_t| \;=\; \int_{-\Delta_\eta}^{\Delta_\eta}\!\dfrac{|x|}{2\Delta_\eta}\,dx \;=\; \dfrac{\Delta_\eta}{2}.
-\]
-Expected hourly imbalance cost: $\mathbb{E}[\mathcal{C}_{\text{hour}}] = \gamma Q (\Delta_\eta/2)$. Granular expected cost: $\mathbb{E}[\mathcal{C}_{\text{gran}}] = 0$. The aggregator's expected hourly hedging gain is the avoided cost:
+\paragraph{(M1) The aggregator gains from granular spot scheduling.} A granular spot lets the aggregator wait until its forecast update $\eta_t$ resolves and re-schedule per period, driving its per-period imbalance to zero; an hourly spot forces one schedule before $\eta_t$ is known, so the update loads onto the imbalance bill. Under uniform shocks the expected hourly hedging gain is the avoided cost
 \begin{equation}
-\boxed{\;G(\Delta_\eta) \;=\; \mathbb{E}[\mathcal{C}_{\text{hour}}] - \mathbb{E}[\mathcal{C}_{\text{gran}}] \;=\; \dfrac{\gamma Q \, \Delta_\eta}{2}, \qquad \dfrac{\partial G}{\partial \Delta_\eta} \;=\; \dfrac{\gamma Q}{2} \;>\; 0.\;}
+\boxed{\;G(\Delta_\eta) \;=\; \dfrac{\gamma Q \, \Delta_\eta}{2}, \qquad \dfrac{\partial G}{\partial \Delta_\eta} \;=\; \dfrac{\gamma Q}{2} \;>\; 0,\;}
 \label{eq:shift}
 \end{equation}
-The gain is strictly positive and strictly increasing in the forecast-error range. \emph{Numerical example.} With $Q = 4$ (quarter-hours), $\gamma = 1$~EUR/MWh, and $\Delta_\eta = 10$~MW, $G = 20$~EUR per clock-hour; a wind unit with twice the forecast range gets $G = 40$~EUR per clock-hour. Derivation in Appendix~\ref{app:aggregator}.
+strictly increasing in the forecast-error range --- largest for wind and solar. The individual split is a corner solution, so the migration is an aggregate equilibrium statement: $G > 0$ is a participation premium producing the sell-share migration of Result~\ref{sec:results:6-6b} (Appendix~\ref{app:aggregator}).
 
-\smallskip
-\emph{Note on $\Delta^*$.} The price-taker setup gives a corner solution for the individual aggregator's forward-vs-spot split (the imbalance cost is independent of the split once we impose no-average-bias, so the FOC reduces to $p_1 = p_2$). The migration onto the granular leg is an aggregate equilibrium statement: $G > 0$ generates a participation premium on the granular leg that equilibrium prices internalise, producing the sell-share migration of Result~\ref{sec:results:6-6b}.
-
-\paragraph{(M2) Price levels: venue re-clearing and cross-market transmission.} The spot best response per quarter is $p_{2t}^* = (p_1 + c)/2 + (\omega_t + s_t - S^{op}_{2t})/(2 b_{2t})$ (Appendix~\ref{app:state-60-15}). Averaging over the hour, the spot level falls with migrated aggregator supply ($\partial \bar p_2 / \partial S^{op}_2 = -1/(2 b_2) < 0$) and with any per-product thickening of the slope through the markup identity \eqref{eq:cournot-markup} below. On the forward leg two channels cut in opposite directions: arbitrage transmits the spot discount upstream (under full or strategic arbitrage the forward tracks the spot down one-for-one up to the regime wedge of \S\ref{sec:theory:arbitrage}), while the strengthened continuation value pushes toward more stage-1 withholding (Appendix~\ref{app:state-60-15}). The empirical DA-side drop of the same magnitude as the IDA drop (\S\ref{sec:results:6-3}) is consistent with the arbitrage channel dominating; the model signs each channel and lets the data adjudicate the net.
+\paragraph{(M2) Price levels: venue re-clearing and cross-market transmission.} The spot best response per quarter is $p_{2t}^* = (p_1 + c)/2 + (\omega_t + s_t - S^{op}_{2t})/(2 b_{2t})$ (Appendix~\ref{app:state-60-15}): the spot level falls with migrated aggregator supply and with any per-product thickening of the slope through the markup identity \eqref{eq:cournot-markup} below. On the forward leg, arbitrage transmits the spot discount upstream; the same-magnitude DA-side drop (\S\ref{sec:results:6-3}) says this channel dominates the withholding push from the strengthened continuation value.
 
 \paragraph{(M3) Block parity reveals within-hour spot dispersion.} The hourly forward can be arbitraged only against the \emph{average} of the $Q$ spot prices --- block parity --- so arbitrage disciplines the mean wedge but not the within-hour dispersion of the granular leg. The spot prices spread across quarters with the update:
 \begin{equation}
 \boxed{\;\mathrm{sd}_t(p_{2t}) \;=\; \frac{\sigma_\omega}{2\, b_2}, \qquad \sigma_\omega^2 = \sigma_\zeta^2 + \sigma_\mu^2,\;}
 \label{eq:wedge-sd-1Q}
 \end{equation}
-plus a thinness-asymmetry component when $b_{2t}$ varies across quarters (Appendix~\ref{app:state-60-15}). Since $p_1$ is one number per clock-hour, \eqref{eq:wedge-sd-1Q} is also the within-hour wedge SD --- mechanically zero before the reform, and largest in ramp hours where $\sigma_\zeta$ is large.
+Since $p_1$ is one number per clock-hour, \eqref{eq:wedge-sd-1Q} is also the within-hour wedge SD --- mechanically zero before the reform, largest in ramp hours where $\sigma_\zeta$ is large (thinness-asymmetry corrections in Appendix~\ref{app:state-60-15}).
 
-\paragraph{(M4) Bid ladders: own-venue exposure and cross-market anticipation.} Two exact ladder results. \emph{(a) Spot tier, own venue.} Each quarter product screens the $\rho_{\mathcal X}$-amplified state (\S\ref{sec:theory:setup}): by Corollary~\ref{cor:did}, at fixed depth the critical-hour spot dispersion multiplies by exactly $\rho_{\mathcal X}$ and the conditional monopoly-price range moves from $\Delta_2/b_2$ to $\rho_{\mathcal X}\Delta_2/b_{2t}$, while the endogenous depth multiplies $2n^*+1$ by exactly $\rho_{\mathcal X}^{2/3}$, so $\text{HHI}_p = 1/n^*$ falls --- all relative to flat hours, where $\rho_{\mathcal X} = 1$ leaves the tier unchanged and only the class-common thinness shift remains, which the critical-vs-flat contrast nets out (Corollary~\ref{cor:did}(iv)) --- exactly the contrast the bid-shape DiD of \S\ref{sec:empirical:bidshape} is built on. \emph{(b) Forward tier, cross-market.} The stage-1 problem internalises the spot continuation value, and the slope of the stage-1 monopoly locus is
+\paragraph{(M4) Bid ladders: own-venue exposure and cross-market anticipation.} Two exact ladder results. \emph{(a) Spot tier, own venue.} Each quarter product screens the $\rho_{\mathcal X}$-amplified state, so by Corollary~\ref{cor:did} the critical-hour spot tier widens and deepens while flat hours are unchanged and class-common thinness shifts net out --- exactly the contrast the bid-shape DiD of \S\ref{sec:empirical:bidshape} is built on. \emph{(b) Forward tier, cross-market.} The stage-1 problem internalises the spot continuation value, and the slope of the stage-1 monopoly locus is
 \begin{equation}
 \boxed{\;\frac{d p_1^*}{d v} \;=\; \frac{1}{2 b_1 - B_2/2}, \qquad B_2 \equiv \sum_{t} b_{2t},\;}
 \label{eq:locus-slope}
 \end{equation}
-with $B_2$ the total slope of the spot products hanging off the forward product (Appendix~\ref{app:tranche}; we maintain $B_2 < 2 b_1$, Assumption~\ref{ass:soc}). At the spot reform the continuation coefficient jumps from the single hourly slope $b_2$ to the sum of $Q$ per-quarter slopes --- empirically the per-quarter spot slopes are of the same order as the hourly one (Table~\ref{tab:per-session-bmt}), so the jump is large --- steepening the forward locus and hence the forward competing tier: the stage-1 clearing-price range is exactly $2\Delta_1/(2 b_1 - B_2/2)$ and the measured ladder slope becomes $\hat\beta_1 = 1/(b_1 - B_2/2)$ (Corollary~\ref{cor:continuation}, Appendix~\ref{app:tranche}). This is the model's account of the day-ahead bid-shape response at ID15 --- anticipation through backward induction --- and it matches the sign pattern of the ID15 DA cells in \S\ref{sec:results:6-1}: $\sigma_p$ and $\hat\beta$ up. The tranche-count response on the cross-market cell is \emph{not} signed by this channel alone (the value of extra tranches falls as the locus flattens in quantity space, while any accompanying rise in the forward screen pushes the other way); we do not claim it.
+with $B_2$ the total slope of the spot products hanging off the forward product (we maintain $B_2 < 2 b_1$, Assumption~\ref{ass:soc}). At the spot reform $B_2$ jumps from the single hourly slope $b_2$ to the sum of $Q$ per-quarter slopes --- empirically of the same order as the hourly one (Table~\ref{tab:per-session-bmt}), so the jump is large --- steepening the forward locus: the stage-1 clearing-price range is exactly $2\Delta_1/(2 b_1 - B_2/2)$ and the measured ladder slope becomes $\hat\beta_1 = 1/(b_1 - B_2/2)$ (Corollary~\ref{cor:continuation}). This anticipation channel is the model's account of the day-ahead bid-shape response at ID15 ($\sigma_p$ and $\hat\beta$ up in \S\ref{sec:results:6-1}); the tranche-count response on the cross-market cell is not signed by this channel alone, and we do not claim it.
 
 Balancing: the quarterly spot absorbs $\zeta_t + \mu_t$ and the aggregator hedges $\eta_t$, so the balancing discrepancy is $\Delta_t = \varepsilon_t$ already at this state (Appendix~\ref{app:balancing}). Contractibility arrives with the \emph{first} granular venue.
 
 \subsection{Forward reform $(Q,Q)$: relocation and limited per-product arbitrage}\label{sec:theory:da15}
 
-\emph{Takeaway.} The forward reform \emph{relocates} the already-contractible within-hour objects from the spot to the forward rather than creating new contractibility: forward quarter prices separate by the ramp, forward ladders carry the amplified screen, the spot's update demand shrinks to $\mu$-news, and the within-hour wedge SD does NOT collapse because per-product arbitrage capacity binds at $K_a/Q$. Balancing is unchanged at $\varepsilon_t$, so the model predicts no further imbalance gain at DA15 --- the empirical null is the prediction.
+The forward reform \emph{relocates} the already-contractible within-hour objects from spot to forward.
 
-\paragraph{(i) The ramp becomes forward-contractible.} Per-quarter forward products price $\zeta_t$ at the day-ahead margin: $\mathbb{E}[p_{1t}] = p_1^*(\bar A + \zeta_t)$ with pass-through $\lambda_1 \equiv (2 b_1 - B_2/2)^{-1}$ per unit of ramp, so the across-quarter dispersion of forward prices and curve levels turns on at
-\[
-\mathrm{sd}_t\bigl(\mathbb{E}\,p_{1t}\bigr) \;=\; \lambda_1\, \sigma_\zeta
-\]
---- the model counterpart of the jump in the within-hour dispersion outcomes $D^{\bar p}$ and $D^{\text{MCP}}$ on the DA at DA15 (\S\ref{sec:data:partition}). The spot's update demand correspondingly shrinks from $\zeta_t + \mu_t$ to $\mu_t$.
+\paragraph{(i) The ramp becomes forward-contractible.} Per-quarter forward products price $\zeta_t$ at the day-ahead margin: $\mathbb{E}[p_{1t}] = p_1^*(\bar A + \zeta_t)$ with pass-through $\lambda_1 \equiv (2 b_1 - B_2/2)^{-1}$ per unit of ramp, so the across-quarter dispersion of forward prices turns on at $\mathrm{sd}_t(\mathbb{E}\,p_{1t}) = \lambda_1 \sigma_\zeta$ --- the model counterpart of the jump in the within-hour dispersion outcomes $D^{\bar p}$ and $D^{\text{MCP}}$ on the DA at DA15 (\S\ref{sec:data:partition}). The spot's update demand correspondingly shrinks from $\zeta_t + \mu_t$ to $\mu_t$.
 
-\paragraph{(ii) Per-product limited arbitrage --- and arbitrageur market power.} The arbitrageur takes a position $s_t$ from forward to spot per matched quarter, earns $s_t\,(p_{1t} - p_{2t})$, and faces a capacity cap on its bounded balance sheet. Two objects matter: the wedge MEAN (does forward sit above spot on average?) and the wedge within-day SD (does the gap fluctuate within the day?). The full-arbitrage benchmark gives $p_{1t} = p_{2t}$ per product (wedge SD zero); the strategic-arbitrage benchmark gives the \citeauthor{ito_reguant_2016} wedge \eqref{eq:strategic-arb} per product, with wedge SD $\lambda_1 \sigma_\zeta / 4$. \emph{Both benchmarks rely on the arbitrageur being able to build any per-product position, and both fail empirically.} Arbitrage capacity $K_a$ is bounded; with $Q$ matched products per clock-hour, per-product capacity is $K_a/Q$, which binds tightly. The symmetric state is therefore in the \textbf{limited-arbitrage regime} (\citeauthor{ito_reguant_2016} Result 3) applied per product: the per-product wedge becomes $(p_{1t}-c)/2$ rather than $(p_{1t}-c)/4$, doubling the wedge SD to
+\paragraph{(ii) Per-product limited arbitrage --- and arbitrageur market power.} The arbitrageur earns $s_t\,(p_{1t} - p_{2t})$ per matched quarter. Full arbitrage gives $p_{1t} = p_{2t}$ (wedge SD zero); unlimited strategic arbitrage gives the per-product wedge \eqref{eq:strategic-arb} with wedge SD $\lambda_1 \sigma_\zeta / 4$. Both fail empirically: the per-product capacity $K_a/Q$ binds tightly. The symmetric state is therefore in the \textbf{limited-arbitrage regime} (\citeauthor{ito_reguant_2016} Result 3) applied per product: the per-product wedge becomes $(p_{1t}-c)/2$ rather than $(p_{1t}-c)/4$, doubling the wedge SD to
 \begin{equation}
 \boxed{\;\mathrm{sd}_h(p_{1t} - p_{2t}) \;=\; \frac{\lambda_1\, \sigma_\zeta}{2}\;}
 \label{eq:wedge-sd-limited}
 \end{equation}
-(Appendix~\ref{app:15-15:limited}), plus thinness-asymmetry corrections when $b_{2t}$ varies across quarters. The wedge SD therefore does \emph{not} collapse to zero at the symmetric state: arbitrageur market power generates the non-collapse documented empirically at DA15 (\S\ref{sec:results:6-5wedge}).
+(Appendix~\ref{app:15-15:limited}). The wedge SD does \emph{not} collapse at the symmetric state: arbitrageur market power generates the non-collapse documented empirically at DA15 (\S\ref{sec:results:6-5wedge}).
 
-\paragraph{(iii) Bid ladders relocate, not duplicate.} On the forward side the screen widens from the hour-level $\Delta_1$ to the $\rho_{\mathcal X}$-amplified per-quarter range --- the redistributive component becomes contractible at the forward --- so by Corollary~\ref{cor:did} the forward competing tier widens and deepens in critical hours exactly as the spot tier did at the spot reform (a critical-vs-flat contrast now on the DA): $\sigma_p$ multiplies by $\rho_{\mathcal X}$ at fixed depth, $2n^*+1$ by $\rho_{\mathcal X}^{2/3}$ at the endogenous depth. Symmetrically, the spot's per-quarter object loses its ramp-timing component once the ramp is priced upstream. Writing $\rho^{\,\mu}_{\mathcal X} \le \rho_{\mathcal X}$ for the amplification generated by the news-only redistributive support --- Lemma~\ref{lem:tiling} applied to the smaller support that remains when ramp-timing shifts no longer reach the spot; $\rho^{\,\mu}_{\mathcal X} = \rho_{\mathcal X} = 1$ in flat hours --- the spot screen falls from $\rho_{\mathcal X}\Delta_2$ to $\rho^{\,\mu}_{\mathcal X}\Delta_2$, and the spot competing tier \emph{tightens} by the same closed forms run in reverse: $\sigma_p$ multiplies by $\rho^{\,\mu}_{\mathcal X}/\rho_{\mathcal X} \le 1$ at fixed depth and $2n^*+1$ by $(\rho^{\,\mu}_{\mathcal X}/\rho_{\mathcal X})^{2/3}$. The venue of expression changes; the ladder mathematics is the same Corollary applied with each venue's own screen.
+\paragraph{(iii) Bid ladders relocate, not duplicate.} The forward screen widens from $\Delta_1$ to $\rho_{\mathcal X}\Delta_1$ --- the redistributive component becomes contractible at the forward --- so by Corollary~\ref{cor:did} the forward tier widens and deepens in critical hours exactly as the spot tier did at the spot reform (a critical-vs-flat contrast now on the DA). Symmetrically, the spot screen loses its ramp-timing component: writing $\rho^{\,\mu}_{\mathcal X} \le \rho_{\mathcal X}$ for the news-only amplification (Lemma~\ref{lem:tiling} on the smaller support; $= 1$ in flat hours), the spot screen falls from $\rho_{\mathcal X}\Delta_2$ to $\rho^{\,\mu}_{\mathcal X}\Delta_2$ and the spot tier \emph{tightens} by the same closed forms run in reverse.
 
 \paragraph{(iv) Markup channel and the Cournot identity.} The Cournot first-order condition for the strategic bidder against an inverse residual demand of slope $b_{mt}$ is
 \begin{equation}
 p_t - c \;=\; \frac{q_m}{b_{mt}}, \qquad \text{markup}_m \;=\; \frac{q_m}{b_{mt}},
 \label{eq:cournot-markup}
 \end{equation}
-empirically tested via the strategic markup proxy $q_f^{\text{strat}}/b_f$ of \S\ref{sec:results:synthesis} (\hyperref[sec:5-residual-demand-slope]{Appendix~\ref*{app:robustness}.10}). The per-firm residual-demand slope $b_f$ thickens at every reform on every Big-4 dominant firm; equation~\eqref{eq:cournot-markup} then delivers markup compression --- the headline market-power result. Note that the price-level prediction operates through the markup identity, \emph{not} through ladder geometry, by Remark~\ref{rem:level} (level neutrality).
+empirically tested via the strategic markup proxy $q_f^{\text{strat}}/b_f$ of \S\ref{sec:results:synthesis}. The per-firm slope $b_f$ thickens at every reform on every Big-4 dominant firm, so \eqref{eq:cournot-markup} delivers markup compression --- the headline market-power result, operating through the markup identity and \emph{not} through ladder geometry (Remark~\ref{rem:level}).
 
-\paragraph{(v) Balancing unchanged.} The spot already absorbs the residual update at $(1,Q)$, and the per-quarter forward absorbs the ramp at $(Q,Q)$; nothing new loads onto the balancing residual. $\Delta_t = \varepsilon_t$ at both $(1,Q)$ and $(Q,Q)$. The model's no-further-imbalance-gain prediction at DA15 is the empirical null on aggregate imbalance volume at DA15 (\S\ref{sec:results:Q2}).
+\paragraph{(v) Balancing unchanged.} Nothing new loads onto the balancing residual: $\Delta_t = \varepsilon_t$ at both $(1,Q)$ and $(Q,Q)$, so the model predicts no further imbalance gain at DA15 --- the empirical null (\S\ref{sec:results:Q2}).
 
-\subsection{Comparative statics across the reform path}\label{sec:theory:speaks}
+\subsection{Comparative statics and welfare across the reform path}\label{sec:theory:speaks}
 
-\emph{Takeaway.} Seven sign predictions (P1--P7), pinned by the contractibility logic: the spot reform creates new contractible objects (imbalance gain, wedge SD, spot bid-shape regrading, cross-market forward-locus steepening); the forward reform \emph{relocates} the already-contractible objects (forward bid-shape regrading, spot tier tightening, ramp-induced within-hour DA dispersion) without producing further imbalance gain. Markup compression via the Cournot identity operates wherever per-firm residual demand thickens.
-
-The model delivers seven comparative-statics predictions across the three states, summarised in Table~\ref{tab:comparative}.
-
-\begin{table}[h]
-\centering
-\footnotesize
-\caption{Comparative statics across the reform path under limited per-product arbitrage (empirical regime). Notation: $\lambda_1(B) \equiv (2 b_1 - B/2)^{-1}$ is the stage-1 locus slope at continuation coefficient $B$ (Corollary~\ref{cor:continuation}; with the venue's own forward slope, $b_{1t}$ per product at $(Q,Q)$); $\rho^{\,\mu}_{\mathcal X} \le \rho_{\mathcal X}$ is the news-only amplification of \S\ref{sec:theory:da15}(iii), and $\rho^{\,\mu}_{\mathcal X} = \rho_{\mathcal X} = 1$ in flat hours. In the two ladder rows, twice the product of the entries is the product's conditional monopoly-price range (Corollary~\ref{cor:did}(i)); $\sigma_p$, the tranche-price span, and $\text{HHI}_p$ follow in closed form from Corollary~\ref{cor:stats} and Proposition~\ref{prop:budget} evaluated at the screen and slope shown. Imbalance row: quadratic penalty $\gamma\,\mathbb{E}[\Delta_t^2]$, omitting the unpriceable $\sigma_\varepsilon^2$ common to all states; for uniform shocks $\sigma_\mu^2 = \Delta_\mu^2/3$ and $\sigma_\eta^2 = \Delta_\eta^2/3$ (\S\ref{sec:theory:setup}, \S\ref{sec:theory:welfare}).}
-\label{tab:comparative}
-\begin{tabular}{p{4.6cm} c c c}
-\toprule
-Outcome & $(1,1)$ & $(1,Q)$ & $(Q,Q)$ \\
-\midrule
-Aggregator hedging gain $G(\Delta_\eta)$
- & $0$
- & $\dfrac{\gamma Q \Delta_\eta}{2}$
- & $\dfrac{\gamma Q \Delta_\eta}{2}$ \\
-Spot tier: screen $\times$ locus slope
- & $\Delta_2 \times \dfrac{1}{2 b_2}$
- & $\rho_{\mathcal X}\Delta_2 \times \dfrac{1}{2 b_{2t}}$
- & $\rho^{\,\mu}_{\mathcal X}\Delta_2 \times \dfrac{1}{2 b_{2t}}$ \\
-Forward tier: screen $\times$ locus slope
- & $\Delta_1 \times \lambda_1(b_2)$
- & $\Delta_1 \times \lambda_1\bigl(\textstyle\sum_t b_{2t}\bigr)$
- & $\rho_{\mathcal X}\Delta_1 \times \lambda_1(b_{2t})$ \\
-Within-hour wedge SD
- & $0$
- & $\dfrac{\sigma_\omega}{2 b_2}$, $\ \sigma_\omega^2 = \sigma_\zeta^2+\sigma_\mu^2$
- & $\dfrac{\lambda_1\, \sigma_\zeta}{2}$ + thin.\ asym. \\
-Within-hour DA dispersion $D^{\bar p}$
- & $0$
- & $0$
- & $\lambda_1\, \sigma_\zeta$ \\
-Balancing $\Delta_t$
- & $\zeta_t+\mu_t+\eta_t+\varepsilon_t$
- & $\varepsilon_t$
- & $\varepsilon_t$ \\
-Imbalance cost $C^I/(\gamma Q)$, quadratic
- & $\sigma_\zeta^2+\sigma_\mu^2+\sigma_\eta^2$
- & $0$
- & $0$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Arbitrage regime is empirical.} Real arbitrageurs have market power and bounded balance sheets: the persistent forward premium observed across electricity markets rules out full arbitrage, and the per-product capacity constraint binds at $(Q,Q)$. The relevant \citeauthor{ito_reguant_2016} column is Result~3 (limited), not Result~4 (strategic, unlimited); per-product limited arbitrage at $(Q,Q)$ delivers the model's account of the empirical asymmetric-persistence of wedge dispersion (\S\ref{sec:theory:da15}(ii)).
-
-\paragraph{Predictions to test empirically.} The model delivers seven sign predictions across the reform path; \S\ref{sec:results} verifies them in turn:
+\paragraph{Predictions to test empirically.} The model delivers seven sign predictions across the reform path, pinned by the contractibility logic; the state-by-state closed forms are tabulated in Table~\ref{tab:comparative} (Appendix~\ref{app:comparative}), and \S\ref{sec:results} verifies the predictions in turn:
 (P1) aggregator quantity shifts from forward to spot at the spot reform, larger in clock-hours with bigger forecast uncertainty;
-(P2) the granular-side equilibrium price drops at the spot reform via venue re-clearing of migrated aggregator supply and Cournot markup compression as per-firm $b_f$ thickens --- \emph{not} through ladder geometry, by Remark~\ref{rem:level};
+(P2) the granular-side equilibrium price drops at the spot reform via venue re-clearing and Cournot markup compression as per-firm $b_f$ thickens (not through ladder geometry, Remark~\ref{rem:level});
 (P3) within-hour wedge dispersion turns on at the spot reform at $\sigma_\omega/(2 b_2)$, largest in ramp hours;
-(P4) the spot competing tier widens and deepens in critical hours at the spot reform (Corollary~\ref{cor:did}: $\sigma_p$ multiplies by $\rho_{\mathcal X}$ at fixed depth, $2n^*+1$ by $\rho_{\mathcal X}^{2/3}$), and the forward competing tier steepens at the spot reform through the continuation-slope channel (Corollary~\ref{cor:continuation});
-(P5) the forward competing tier widens and deepens at the forward reform (the ramp is now forward-contractible: screen $\Delta_1 \to \rho_{\mathcal X}\Delta_1$), and the spot competing tier correspondingly tightens (screen $\rho_{\mathcal X}\Delta_2 \to \rho^{\,\mu}_{\mathcal X}\Delta_2$) --- the relocation pattern;
+(P4) the spot competing tier widens and deepens in critical hours at the spot reform (Corollary~\ref{cor:did}), and the forward competing tier steepens through the continuation-slope channel (Corollary~\ref{cor:continuation});
+(P5) the forward competing tier widens and deepens at the forward reform (the ramp is now forward-contractible), and the spot competing tier correspondingly tightens --- the relocation pattern;
 (P6) within-hour wedge SD does not collapse at $(Q,Q)$ --- the empirical asymmetric-persistence finding under per-product limited arbitrage;
-(P7) production-unit arbitrageurs exist and are capacity-constrained (we test this directly by checking whether production plants submit both buy and sell offers in OMIE data).
+(P7) production-unit arbitrageurs exist and are capacity-constrained (production plants submitting both buy and sell offers).
 
-\paragraph{Asymmetry of activation across the two reform steps.} The contractibility framing pins which reform delivers which channel. New contractibility arrives at the \emph{spot} reform: imbalance gain (the residual collapses to $\varepsilon_t$ once the per-quarter spot absorbs $\zeta + \mu$), within-hour wedge SD (mechanically zero before, $\sigma_\omega/(2b_2)$ after), spot bid-shape regrading (the spot tier screens the $\rho_{\mathcal X}$-amplified state), and cross-market forward-ladder steepening through the continuation-slope channel. The \emph{forward} reform \emph{relocates} the bid-shape regrading from spot to forward and turns on within-hour DA price dispersion, but it does \emph{not} produce a further imbalance gain --- the spot already absorbed everything. This is the model basis for the empirical pattern of \S\ref{sec:results:Q2}: $-33\%$ penalty per MWh at ID15, flat at DA15.
+New contractibility arrives only at the \emph{spot} reform; the \emph{forward} reform relocates it. This asymmetry of activation is the model basis for the empirical pattern of \S\ref{sec:results:Q2}: $-33\%$ imbalance penalty per MWh at ID15, flat at DA15.
 
-\subsection{Welfare across the reform path}\label{sec:theory:welfare}
-
-\emph{Takeaway.} Three positive welfare channels --- imbalance saving (delivered at ID15 only, by contractibility); markup compression via per-firm $b_f$ thickening at every reform (Cournot identity); and the discreteness loss that bid-shape regrading reduces (\S\ref{sec:theory:ladder}, Proposition~\ref{prop:ladder}). One distributional channel --- bid-ladder rent --- is mostly CS$\to\pi^{SB}$ transfer.
-
-\begin{itemize}\setlength{\itemsep}{1pt}
-  \item \textbf{Imbalance saving, ID15 only (dominant gain).} The per-quarter spot absorbs both the ramp $\zeta_t$ and the redistributive news $\mu_t$, and the aggregator hedges $\eta_t$. Imbalance cost falls from $\gamma Q(\sigma_\zeta^2+\sigma_\mu^2+\sigma_\eta^2)$ at $(1,1)$ to $0$ at $(1,Q)$ and stays at $0$ at $(Q,Q)$ (quadratic penalty, Appendix~\ref{app:welfare}). Net of the small allocative cost of per-quarter monopoly pass-through (the discrimination term of Appendix~\ref{app:welfare}), the saving is positive whenever $\gamma > 1/(8 b_2)$ --- comfortably satisfied at observed balancing premia. The model predicts \emph{no further imbalance gain at DA15} --- consistent with the flat-DA15 imbalance penalty of \S\ref{sec:results:Q2}.
-  \item \textbf{Markup compression at every reform.} Per-firm $b_f$ thickens at every reform on every Big-4 firm (Table~\ref{tab:cournot-match}); equation~\eqref{eq:cournot-markup} delivers markup compression linearly. Operates through venue re-clearing and per-firm slope thickening, \emph{not} through ladder geometry (Remark~\ref{rem:level}).
-  \item \textbf{Discreteness loss.} The optimal-ladder expected profit loss relative to the continuous benchmark is $\Delta^2/(12 b (2 n^* + 1)^2)$ (Proposition~\ref{prop:ladder}); a deeper $n^*$ at the granular-leg critical hours (Proposition~\ref{prop:budget}) reduces it. Mostly CS$\to\pi^{SB}$ transfer within a product.
-  \item \textbf{Less strategic withholding under limited per-product arbitrage.} The spot markup falls from $3(p_1-c)/4$ (strategic) to $(p_1-c)/2$ (limited per product), per Ito-Reguant Result~2.
-\end{itemize}
-Per-component derivations under quadratic imbalance penalty $\gamma \mathcal{I}^2$ in Appendix~\ref{app:welfare}.
+\phantomsection\label{sec:theory:welfare}
+\paragraph{Welfare.} Three channels raise welfare, one is distributional: the imbalance saving $\gamma Q(\sigma_\zeta^2+\sigma_\mu^2+\sigma_\eta^2)$, arriving entirely at the spot reform and net-positive whenever $\gamma > 1/(8 b_2)$ after the small allocative cost of per-quarter monopoly pass-through; markup compression wherever per-firm $b_f$ thickens, through \eqref{eq:cournot-markup} --- by Remark~\ref{rem:level} the only channel that moves mean prices; the discreteness loss $\Delta^2/(12 b (2n^*+1)^2)$, shrinking where ladders deepen; and bid-ladder rent, mostly a CS$\to\pi^{SB}$ transfer. Per-channel derivations in Appendix~\ref{app:welfare}.
 
 % =====================================================================
 \section{Data: OMIE bid-level offers, weather, redispatch}\label{sec:data}
@@ -1788,12 +1560,91 @@ For the $J = 1$ case: $\theta_m + \Delta_m \sim U[0, 2\Delta_m]$ when $\mu_{mt} 
 
 The body carries a general $\rho_{\mathcal X}$ rather than the even-integer values delivered by the tiling; we treat $\rho_{\mathcal X}$ as a primitive of the hour class, pinned by the support of the redistributive component the venue's per-quarter object carries. The same construction with a smaller support delivers the news-only value $\rho^{\,\mu}_{\mathcal X} \le \rho_{\mathcal X}$ used in \S\ref{sec:theory:da15}(iii).
 
+\begin{figure}[h]
+\centering
+\hspace*{-2.6cm}%
+\begin{tikzpicture}[
+  node distance=0pt,
+  stage/.style={draw, rounded corners=4pt, fill=blue!8, thick, minimum width=3.0cm, minimum height=1.6cm, align=center, font=\small},
+  pathstate/.style={draw, rounded corners=3pt, fill=red!10, minimum width=1.2cm, minimum height=0.6cm, font=\small\bfseries, align=center},
+  rowhead/.style={font=\small\bfseries, anchor=east, align=right},
+  rolelbl/.style={font=\scriptsize, anchor=north east, align=right, gray!45!black, inner sep=1pt},
+  collbl/.style={font=\scriptsize\itshape, anchor=south, align=center, gray!45!black},
+  act/.style={font=\small\bfseries, anchor=center, align=center},
+  arrtime/.style={->, >=Stealth, thick, gray!50!black},
+  arrarb/.style={->, >=Stealth, ultra thick, orange!80!black},
+  arrpath/.style={->, >=Stealth, thick, red!55!black},
+  infolabel/.style={font=\footnotesize\itshape, gray!55!black, fill=white, inner sep=2pt},
+]
+
+\node[stage] (F) at (0, 0)   {\textbf{Forward}\\[2pt] {\footnotesize Stage 1}\\[1pt] {\footnotesize $Q^{F}\!\in\!\{1,Q\}$}};
+\node[stage] (S) at (4.5, 0) {\textbf{Spot}\\[2pt]     {\footnotesize Stage 2}\\[1pt] {\footnotesize $Q^{S}\!\in\!\{1,Q\}$}};
+\node[stage] (B) at (9, 0)   {\textbf{Balancing}\\[2pt] {\footnotesize Stage 3}\\[1pt] {\footnotesize $Q^{B}\!\in\!\{1,Q\}$}};
+
+\draw[arrtime] (F.east) -- node[above=1pt, infolabel]{$\mu_t$ realises} (S.west);
+\draw[arrtime] (S.east) -- node[above=1pt, infolabel]{$\varepsilon_t$ realises} (B.west);
+
+\draw[gray!30, thick] (-5.6, -1.5) -- (10.6, -1.5);
+\node[collbl] at (0,   -1.7) {Forward};
+\node[collbl] at (4.5, -1.7) {Spot};
+\node[collbl] at (9,   -1.7) {Balancing};
+
+\node[rowhead] at (-2.0, -2.3) {Strategic bidder};
+\node[rolelbl] at (-2.0, -2.55) {residual monopolist; \\ produces \emph{without} shock};
+\node[act, blue!60!black] at (0,   -2.3) {\large $\bullet$};
+\node[act, blue!60!black] at (4.5, -2.3) {\large $\bullet$};
+
+\node[rowhead] at (-2.0, -3.8) {Operational aggregator};
+\node[rolelbl] at (-2.0, -4.05) {price-taker, $y_t=\bar y_t+\eta_t$; \\ bears imbalance $\gamma$};
+\node[act, blue!60!black] at (0,   -3.8) {\large $\bullet$};
+\node[act, blue!60!black] at (4.5, -3.8) {\large $\bullet$};
+\node[act, blue!60!black] at (9,   -3.8) {\large $\bullet$};
+
+\node[rowhead] at (-2.0, -5.3) {Arbitrageur};
+\node[rolelbl] at (-2.0, -5.55) {position $s$ (or $\{s_t\}$); \\ regimes 1--4 of \citeauthor{ito_reguant_2016}};
+\draw[arrarb] (-0.05, -5.3) -- (4.45, -5.3);
+\node[act, orange!80!black] at (0,   -5.3) {\large $\bullet$};
+\node[act, orange!80!black] at (4.5, -5.3) {\large $\bullet$};
+
+\draw[gray!30, thick] (-5.6, -6.4) -- (10.6, -6.4);
+
+\node[rowhead, gray!55!black] at (-2.0, -7.0) {Reform path};
+\node[pathstate] (s1) at (0,   -7.0) {$(1,1)$};
+\node[pathstate] (s2) at (4.5, -7.0) {$(1,Q)$};
+\node[pathstate] (s3) at (9,   -7.0) {$(Q,Q)$};
+\draw[arrpath] (s1.east) -- node[above, font=\footnotesize, gray!45!black]{spot reform} (s2.west);
+\draw[arrpath] (s2.east) -- node[above, font=\footnotesize, gray!45!black]{forward reform} (s3.west);
+
+\end{tikzpicture}
+\caption{\textbf{Sequential markets, granularity, and agents.} \textit{Top:} a forward market, a spot market, and a balancing settlement on a timeline; each has its own granularity selector $Q^m \in \{1, Q\}$ and information resolves between them. The forward market maps empirically to the electricity day-ahead auction, the spot market to the intraday auction. \textit{Middle:} which agents act at which stages (blue dots), and the arbitrageur position $s$ linking forward to spot (orange arrow). The strategic bidder produces without uncertainty and does not internalise the imbalance penalty; only the operational aggregator does, since it bears $\eta_t$. \textit{Bottom:} the auction-side reform path $(Q^F, Q^S) = (1,1) \to (1,Q) \to (Q,Q)$ traversed in the main analysis.}
+\label{fig:model-structure}
+\end{figure}
+
+\paragraph{Model abstractions: residual monopolist, supply functions, and the passive balancing stage.} Three simplifications deserve flagging. First, the strategic bidder is a single residual monopolist per product, even though Spanish wholesale concentration is moderate (HHI $\sim$1\,100) and several firms compete on the bid stack. The residual-monopolist is a stylised device that delivers qualitative comparative statics on within-band conduct; its empirical counterpart is the per-firm residual demand of \citet{ito_reguant_2016} recovered in \hyperref[sec:5-residual-demand-slope]{Appendix~\ref*{app:robustness}.10}. Second, within a product the bid \emph{is} a supply function, and with a single strategic bidder facing one-dimensional residual-demand uncertainty the optimal schedule is exact (\S\ref{sec:theory:ladder}); what we do not model is strategic interaction in supply functions across several large firms --- the \citet{klemperer_meyer_1989} equilibrium concept for uniform-price multi-unit auctions --- which gets intractable in a sequential-market setting. Third, the balancing stage in the model is a passive settlement of the residual imbalance, \emph{not} an active auction with bidding. The aggregator internalises its own deviation through the penalty $\gamma$; the strategic bidder produces with certainty and so carries no individual imbalance; the unpriced within-hour residual collects in $C^I_{\text{sys}}$ for the welfare account (Appendix~\ref{app:balancing}, \ref{app:welfare}). In reality REE runs aFRR/mFRR auctions where firms bid actively; we abstract from that to keep the focus on how forward/spot granularity reshapes the auction stages. The model's prediction that finer auctions absorb the within-hour state upstream and shrink the balancing residual is what \S\ref{sec:results:granularity-vs-reforzada} reads against the empirical ajuste-cost decomposition.
+
+\paragraph{Renewable fringe and our relation to \citeauthor{ito_reguant_2016}.} \citeauthor{ito_reguant_2016}'s residual-demand interpretation already absorbs a renewable (or thermal) competitive fringe into the slope $b_m$: the strategic bidder serves $A - b_m p_m$, the implicit fringe serves the complement. Their setup delivers the strategic-bidder, arbitrage, and price-wedge mechanisms but is silent on two objects our data record directly: \emph{why} the fringe's willingness to supply changes with granularity, and \emph{what shape} the strategic bidder's offer takes. We make the fringe explicit (the operational aggregator with forecast errors and an imbalance penalty $\gamma$), so the hedging gain from per-period scheduling has the closed form $G(\Delta_\eta) = \gamma Q \Delta_\eta/2$ (Appendix~\ref{app:aggregator}); and we let the strategic bidder choose the step offer the OMIE files record, so the empirical bid-shape quintuple of \S\ref{sec:data:bandwidth} acquires exact model counterparts (\S\ref{sec:theory:ladder}) rather than serving as proxies.
+
 \subsection{Operational aggregator: closed-form gain from per-period scheduling}\label{app:aggregator}
 
 We derive the aggregator's expected hedging gain $G(\Delta_\eta)$ from per-period (rather than hourly) spot scheduling in closed form under uniform shocks. We then explain why the aggregator's \emph{individual} forward-vs-spot allocation is not pinned down by an interior first-order condition under standard penalty specifications, and why the empirical migration onto the granular leg (Result 3) is therefore an equilibrium statement about $G$ being positive, not an aggregator-level $\Delta^*$ identification.
 
 \subsubsection{Problem statement and primitives}\label{app:aggregator:problem}
 The aggregator allocates total hourly expected production $\bar Y_h$ between forward and spot. Forecast-error shock $\eta_t \sim \mathrm{Uniform}[-\Delta_\eta, \Delta_\eta]$, i.i.d.\ across $t$, with variance $\sigma_\eta^2 = \Delta_\eta^2/3$. We set the structural per-subperiod expected production constant ($\bar y_t = \bar Y_h/Q$) for the closed-form derivation; the structural variation $\sigma_a^2 = \mathrm{Var}(\bar y_t - \bar Y_h/Q)$ adds linearly to $G$ and is handled in the closing remark of \S\ref{app:aggregator:gain}. Imbalance penalty is $\gamma|\mathcal{I}_t|$ per period (linear in the magnitude of the gap).
+
+\paragraph{What the reform changes in the aggregator's choice set.} The reform changes what the aggregator can choose at Stage~2:
+\begin{center}
+\footnotesize
+\begin{tabular}{l l l}
+\toprule
+                                  & \textbf{Hourly spot} $(Q^S = 1)$           & \textbf{Granular spot} $(Q^S = Q)$ \\
+\midrule
+At Stage~2 the aggregator chooses & ONE number $S_2$ for the whole hour        & $Q$ numbers $\{S_{2,t}\}$ per period \\
+Per-period schedule               & uniform $(S_1 + S_2)/Q$                    & $S_1/Q + S_{2,t}^*$ \\
+Can respond to $\eta_t$ per period? & no                                      & yes, exactly \\
+Per-period imbalance              & $\eta_t$                                   & $0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \subsubsection{Expected penalty under each regime}\label{app:aggregator:gain}
 \paragraph{Granular spot $(Q^S = Q)$.} At Stage~2 the aggregator observes $\eta_t$ and sets the per-subperiod allocation $S_{2t}^{op}{}^* = \bar y_t + \eta_t - S_1^{op}/Q$. The realised per-period imbalance is $0$ (modulo post-Stage-$2$ noise $\varepsilon_t$, which is regime-invariant and we drop for clarity):
@@ -1832,6 +1683,46 @@ The migration onto the granular leg is therefore an \emph{equilibrium} statement
 We prove the bid-ladder propositions of \S\ref{sec:theory:ladder} in turn: the continuous benchmark (Lemma~\ref{lem:locus}), the optimal $n$-tranche ladder (Proposition~\ref{prop:ladder}), the closed-form bid-shape statistics (Corollary~\ref{cor:stats}), level neutrality (Remark~\ref{rem:level}), the optimal tranche depth under a complexity cost (Proposition~\ref{prop:budget}), the granularity--variation interaction (Corollary~\ref{cor:did}), and the stage-1 forward locus slope (Corollary~\ref{cor:continuation}).
 
 Fix one delivery product. Residual demand is $q = A - b\,p$ with $A = \bar a + v$ and $v \sim U[-\Delta, \Delta]$; the bidder has constant marginal cost $c$. The auction is uniform-price; the bidder submits a non-decreasing step function $S(p) = \sum_k \Delta q_k \cdot \mathbf{1}\{p \ge p_k\}$ and the clearing pair $(p^\star, q^\star)$ solves $S(p^\star) = A - b\,p^\star$ on the relevant segment.
+
+\begin{assumption}\label{ass:interior}
+$q^m(\bar a - \Delta) \ge \Delta/(2(2n+1))$: the monopoly quantity is interior in every state, by a margin of a quarter cell.
+\end{assumption}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[scale=0.92, every node/.style={font=\footnotesize}]
+  \draw[-{Latex[length=2.4mm]}, thick, gray!70] (0,0) -- (10.6,0)
+    node[below left=2pt and -8pt, black]{Cumulative offered quantity (MW)};
+  \draw[-{Latex[length=2.4mm]}, thick, gray!70] (0,0) -- (0,6.3);
+  \node[rotate=90, anchor=south, black] at (-0.5, 3.0) {Bid price (EUR/MWh)};
+  \draw[red!70!black, dashed, very thick] (1.6,1.04) -- (9.4,5.72);
+  \node[red!70!black, anchor=west, align=left] at (6.3,6.0) {monopoly locus $q^m\!=\!b(p^m\!-\!c)$};
+  \draw[gray!60, ultra thick, line cap=round] (0,0.5) -- (1.8,0.5);
+  \node[gray!40!black, anchor=south west, font=\scriptsize, align=left] at (0.0,0.62) {inframarginal base\\ (out of band)};
+  \draw[blue!65!black, ultra thick, line cap=round, line join=round]
+    (1.8,0.5) -- (1.8,1.64) -- (3.4,1.64) -- (3.4,2.60) -- (5.0,2.60)
+    -- (5.0,3.56) -- (6.6,3.56) -- (6.6,4.52) -- (8.2,4.52) -- (8.2,5.3);
+  \foreach \x/\y in {2.6/1.64, 3.4/2.12, 4.2/2.60, 5.0/3.08, 5.8/3.56, 6.6/4.04, 7.4/4.52, 8.2/5.00}
+    \fill[red!70!black] (\x,\y) circle (1.6pt);
+  \draw[decorate, decoration={brace, amplitude=4pt, mirror}, thick]
+    (3.45,2.38) -- (4.95,2.38);
+  \node[anchor=north] at (4.2,2.26) {$\Delta q_k = w$ (equal tranches)};
+  \draw[decorate, decoration={brace, amplitude=4pt}, thick]
+    (8.45,4.52) -- (8.45,5.48);
+  \node[anchor=west, align=left] at (8.6,5.0) {grid step $w/b$\\ (even price grid)};
+  \draw[gray!55, dotted, thick] (0,1.64) -- (1.8,1.64);
+  \draw[gray!55, dotted, thick] (0,4.52) -- (6.6,4.52);
+  \draw[decorate, decoration={brace, amplitude=4pt}, thick, gray!55]
+    (-0.12,1.64) -- (-0.12,4.52);
+  \node[rotate=90, anchor=south, gray!40!black, font=\scriptsize] at (-0.45,3.08) {competing-tier span $(n{-}1)w/b$};
+\end{tikzpicture}
+\caption{\textbf{The optimal ladder and the monopoly locus} ($n = 4$ competing tranches). The blue step offer weaves across the dashed monopoly locus: every horizontal segment crosses it at its midpoint (states where the tranche price is exactly the monopoly price) and every vertical riser crosses it at its midpoint (states where the cumulative quantity is exactly the monopoly quantity); red dots mark the implemented points. Competing tranches carry equal MW $w = 2\Delta/(2n+1)$ on an even price grid of step $w/b$; the inframarginal base sits below the contested range and outside the empirical band of \S\ref{sec:data:bandwidth}.}
+\label{fig:ladder-quantizer}
+\end{figure}
+
+\begin{lemma}[Continuous benchmark]\label{lem:locus}
+The supply schedule $S^*(p) = b\,(p - c)$ clears at the full-information monopoly point $p^m(A) = (A + bc)/(2b)$, $q^m(A) = (A - bc)/2$ in every state $A$, and is the unique non-decreasing schedule that does so on the contested range. Expected profit equals $\mathbb{E}[(A - bc)^2]/(4b)$, the unconditional monopoly value.
+\end{lemma}
 
 \subsubsection{Continuous benchmark (proof of Lemma~\ref{lem:locus})}\label{app:tranche:locus}
 
@@ -1904,11 +1795,23 @@ For $\hat\beta$, the cumulative quantity at tranche $k$ is $Q_k = q_0 + k\,w$ an
 \]
 For $\hat\gamma$: $p_k$ is an exact affine function of $Q_k$, so the least-squares quadratic fit reproduces the affine relation with zero residual and zero curvature coefficient. Hence $\hat\gamma = 0$. $\square$
 
+\begin{remark}[Level neutrality]\label{rem:level}
+$\mathbb{E}[\text{clearing price}] = p^m(\bar a)$ for every $n$: ladder geometry reshapes dispersion and surplus, but never the mean price.
+\end{remark}
+
 \subsubsection{Level neutrality (proof of Remark~\ref{rem:level})}\label{app:tranche:level}
 
 Take expectation of the clearing price over states. Each cell contributes its midpoint-monopoly price weighted by cell length: horizontal cells contribute $p_k = p^m(m_{2k})$ over length $w$; riser cells contribute the average realised price over the riser, $\mathbb{E}[(A - Q_k)/b \mid V_k] = (m_{2k+1} - q^m(m_{2k+1}))/b = p^m(m_{2k+1})$, using $A - b\,p^m(A) - q^m(A) \equiv 0$; the base riser contributes $p^m(m_1)$ by the same demand-sets-price computation. The resulting weighted average over all $2n+1$ cells (each of length $w$) is the simple average of the $2n+1$ midpoint-monopoly prices, which --- because $p^m$ is affine and the midpoints $m_j$ are symmetric around $\bar a$ --- equals $p^m(\bar a)$. So $\mathbb{E}[\text{clearing price}] = p^m(\bar a)$, independent of $n$. $\square$
 
 \paragraph{Distributional consequence.} The step structure reshapes the variance and the per-state surplus split, but never the mean clearing price. Bid-shape changes (regrading the ladder) are therefore \emph{level-neutral} on price; mean price changes come only from changes in residual demand (the slope $b$ or the venue supply $S^{op}$), which is the channel underpinning the markup identity \eqref{eq:cournot-markup} in the body.
+
+\begin{proposition}[Tranche budget]\label{prop:budget}
+With a linear cost $\kappa > 0$ per competing tranche (treating $n$ as continuous; the integer optimum is one of the two adjacent integers), the optimal depth satisfies
+\[
+2 n^* + 1 \;=\; \Bigl(\frac{\Delta^2}{3\, b\, \kappa}\Bigr)^{1/3}:
+\]
+ladders deepen with the screened range, $n^* + \tfrac12 = \tfrac12\,\Delta^{2/3}\,(3\,b\,\kappa)^{-1/3}$, and flatten with market thickness $b$ and complexity cost $\kappa$.
+\end{proposition}
 
 \subsubsection{Tranche budget (proof of Proposition~\ref{prop:budget})}\label{app:tranche:budget}
 
@@ -1928,17 +1831,19 @@ The integer optimum is one of the two adjacent integers; either way $n^* + \tfra
 
 \subsubsection{Granularity $\times$ within-hour variation (proof of Corollary~\ref{cor:did})}\label{app:tranche:did}
 
-(i) Under the continuous benchmark the clearing price is $p^m(A) = (A + bc)/(2b)$, affine in $A$ with slope $1/(2b)$; over $A \in [\bar a - \Delta, \bar a + \Delta]$ its range is $2\Delta/(2b) = \Delta/b$. Substituting $(\rho_{\mathcal X}\Delta, b')$ gives $\rho_{\mathcal X}\Delta/b'$.
+(i) Under the continuous benchmark the clearing price is $p^m(A) = (A + bc)/(2b)$, affine in $A$ with slope $1/(2b)$; over $A \in [\bar a - \Delta, \bar a + \Delta]$ its range is $2\Delta/(2b) = \Delta/b$, and substituting $(\rho_{\mathcal X}\Delta, b')$ gives $\rho_{\mathcal X}\Delta/b'$. The span $\tfrac{2(n-1)\Delta}{(2n+1) b}$ and the dispersion $\sigma_p = \tfrac{2\Delta}{(2n+1) b}\sqrt{(n^2-1)/12}$ of \S\ref{app:tranche:stats} are linear in $\Delta$ at fixed $n$, so the same substitution multiplies both by $\rho_{\mathcal X}\,b/b'$; $\text{HHI}_p = 1/n$ involves neither $\Delta$ nor $b$.
 
-(ii) The span $\tfrac{2(n-1)\Delta}{(2n+1) b}$ and the dispersion $\sigma_p = \tfrac{2\Delta}{(2n+1) b}\sqrt{(n^2-1)/12}$ of \S\ref{app:tranche:stats} are linear in $\Delta$ at fixed $n$, so replacing $(\Delta, b)$ by $(\rho_{\mathcal X}\Delta, b')$ multiplies both by $\rho_{\mathcal X}\,b/b'$; $\text{HHI}_p = 1/n$ involves neither $\Delta$ nor $b$.
+(ii) Substituting $(\rho_{\mathcal X}\Delta, b')$ into Proposition~\ref{prop:budget}: $2n^*+1 = \bigl((\rho_{\mathcal X}\Delta)^2/(3 b' \kappa)\bigr)^{1/3} = \rho_{\mathcal X}^{2/3}\,\bigl(\Delta^2/(3 b' \kappa)\bigr)^{1/3}$.
 
-(iii) Substituting $(\rho_{\mathcal X}\Delta, b')$ into Proposition~\ref{prop:budget}: $2n^*+1 = \bigl((\rho_{\mathcal X}\Delta)^2/(3 b' \kappa)\bigr)^{1/3} = \rho_{\mathcal X}^{2/3}\,\bigl(\Delta^2/(3 b' \kappa)\bigr)^{1/3}$.
-
-(iv) The flat-hour change is $\sigma_p(\Delta; b') - \sigma_p(\Delta; b)$ --- the pure thinness shift, since $\rho_{\text{flat}} = 1$ leaves the screen at $\Delta$. Subtracting it from the critical-hour change $\rho_{\mathcal X}\,\sigma_p(\Delta; b') - \sigma_p(\Delta; b)$ leaves
+(iii) The flat-hour change is $\sigma_p(\Delta; b') - \sigma_p(\Delta; b)$ --- the pure thinness shift, since $\rho_{\text{flat}} = 1$ leaves the screen at $\Delta$. Subtracting it from the critical-hour change $\rho_{\mathcal X}\,\sigma_p(\Delta; b') - \sigma_p(\Delta; b)$ leaves
 \[
 (\rho_{\mathcal X} - 1)\,\sigma_p(\Delta; b') \;=\; (\rho_{\mathcal X} - 1)\,\frac{2\Delta}{(2n+1)\,b'}\,\sqrt{\frac{n^2-1}{12}},
 \]
 zero iff $\rho_{\mathcal X} = 1$ and strictly increasing in $\rho_{\mathcal X}$. $\square$
+
+\begin{assumption}[Stage-1 second-order condition]\label{ass:soc}
+$B_2 \equiv \sum_t b_{2t} < 2 b_1$: the total continuation slope of the spot products hanging off the forward product is strictly less than twice the forward slope.
+\end{assumption}
 
 \subsubsection{Continuation slope and forward locus (proof of Corollary~\ref{cor:continuation})}\label{app:tranche:continuation}
 
@@ -1984,6 +1889,12 @@ Assumption~\ref{ass:soc} also makes $dq_1^*/dv > 0$: the locus is increasing in 
 \]
 
 \paragraph{Spot-reform jump.} At the asymmetric state $(1, Q)$, the spot venue becomes per-quarter, so $B_2$ jumps from a single hourly slope $b_2$ to the sum $\sum_t b_{2t}$ of $Q$ per-quarter slopes. Empirically the per-quarter spot slopes are of the same order as the hourly one (Table~\ref{tab:per-session-bmt}), so the continuation coefficient $B_2$ jumps from $b_2$ to roughly $Q \cdot b_2$ --- a large factor. The denominators $2 b_1 - B_2/2$ and $b_1 - B_2/2$ shrink correspondingly (within the SOC): the stage-1 price range $2\Delta_1/(2 b_1 - B_2/2)$ widens and the measured forward ladder slope $\hat\beta_1 = 1/(b_1 - B_2/2)$ steepens, both in exact closed form. This is the model's cross-market anticipation channel of \S\ref{sec:theory:id15}(M4); the proof is complete. $\square$
+
+\begin{remark}[Price-takers post blocks]\label{rem:pricetaker}
+A price-taking unit optimally offers its marginal-cost schedule; for a zero-marginal-cost renewable that is a single block at the floor --- $\sigma_p = 0$, $\text{HHI}_p = 1$, out of band, for any granularity (panel (a) of Figure~\ref{fig:bid-shape-stylized}). The bid-shape margin is therefore dispatchable-specific; the renewable margin of the reform is the quantity re-scheduling of \S\ref{sec:theory:id15}(M1).
+\end{remark}
+
+\paragraph{Numerical example.} With $\Delta = 200$~MW, $b = 50$~MW per EUR/MWh, and $n = 5$: tranches of $36$~MW, a grid step of $0.73$~EUR/MWh, a competing-tier span of $2.9$~EUR/MWh, $\sigma_p = 1.03$~EUR/MWh, and $\text{HHI}_p = 0.2$ --- the order of magnitude of the CCGT critical-hour cells in Table~\ref{tab:spec-c}. In a ramp hour with $\rho_{\mathcal X} = 2$ the same product as a quarter contract spans $5.8$~EUR/MWh with $\sigma_p = 2.06$~EUR/MWh at the same depth, and the endogenous depth rises to $2n^*+1 = 2^{2/3}\cdot 11 \approx 17.5$ (so $n^* \approx 8$, $\text{HHI}_p \approx 0.12$); in a flat hour ($\rho = 1$) nothing moves.
 
 \subsection{$(1,1)$ equilibrium}\label{app:state-60-60}
 
@@ -2171,6 +2082,51 @@ Positive whenever $\sum_{t=1}^{Q} b_{1t} < Q\,b_1$, as expected (each 15-min pro
 
 Maximised monopoly profit is convex in the demand intercept ($\pi^m(A) = (A - bc)^2/(4b)$), so a bidder that can re-optimise per quarter values the update as a mean-preserving spread: expected spot profit exceeds spot profit at the mean update by exactly $\mathbb{E}[\mu_t^2]/(4\, b_{2t}) = \Delta_\mu^2/(12\, b_{2t})$ per product under the uniform update --- an exact equality, because the profit is quadratic. The term raises the stage-1 \emph{value} of holding a granular continuation (part of why the granular state is privately valuable to the strategic bidder), but it does not involve $p_1$, so it leaves the stage-1 first-order condition unchanged: the forward-\emph{ladder} response to the spot reform operates entirely through the continuation slope of Corollary~\ref{cor:continuation}, not through an option-value tilt.
 
+\subsection{Comparative statics across the three states}\label{app:comparative}
+
+Table~\ref{tab:comparative} collects the state-by-state closed forms behind the predictions of \S\ref{sec:theory:speaks}.
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Comparative statics across the reform path under limited per-product arbitrage (empirical regime). Notation: $\lambda_1(B) \equiv (2 b_1 - B/2)^{-1}$ is the stage-1 locus slope at continuation coefficient $B$ (Corollary~\ref{cor:continuation}; with the venue's own forward slope, $b_{1t}$ per product at $(Q,Q)$); $\rho^{\,\mu}_{\mathcal X} \le \rho_{\mathcal X}$ is the news-only amplification of \S\ref{sec:theory:da15}(iii), and $\rho^{\,\mu}_{\mathcal X} = \rho_{\mathcal X} = 1$ in flat hours. In the two ladder rows, twice the product of the entries is the product's conditional monopoly-price range (Corollary~\ref{cor:did}(i)); $\sigma_p$, the tranche-price span, and $\text{HHI}_p$ follow in closed form from Corollary~\ref{cor:stats} and Proposition~\ref{prop:budget} evaluated at the screen and slope shown. Imbalance row: quadratic penalty $\gamma\,\mathbb{E}[\Delta_t^2]$, omitting the unpriceable $\sigma_\varepsilon^2$ common to all states; for uniform shocks $\sigma_\mu^2 = \Delta_\mu^2/3$ and $\sigma_\eta^2 = \Delta_\eta^2/3$ (\S\ref{sec:theory:setup}, \S\ref{sec:theory:welfare}).}
+\label{tab:comparative}
+\begin{tabular}{p{4.6cm} c c c}
+\toprule
+Outcome & $(1,1)$ & $(1,Q)$ & $(Q,Q)$ \\
+\midrule
+Aggregator hedging gain $G(\Delta_\eta)$
+ & $0$
+ & $\dfrac{\gamma Q \Delta_\eta}{2}$
+ & $\dfrac{\gamma Q \Delta_\eta}{2}$ \\
+Spot tier: screen $\times$ locus slope
+ & $\Delta_2 \times \dfrac{1}{2 b_2}$
+ & $\rho_{\mathcal X}\Delta_2 \times \dfrac{1}{2 b_{2t}}$
+ & $\rho^{\,\mu}_{\mathcal X}\Delta_2 \times \dfrac{1}{2 b_{2t}}$ \\
+Forward tier: screen $\times$ locus slope
+ & $\Delta_1 \times \lambda_1(b_2)$
+ & $\Delta_1 \times \lambda_1\bigl(\textstyle\sum_t b_{2t}\bigr)$
+ & $\rho_{\mathcal X}\Delta_1 \times \lambda_1(b_{2t})$ \\
+Within-hour wedge SD
+ & $0$
+ & $\dfrac{\sigma_\omega}{2 b_2}$, $\ \sigma_\omega^2 = \sigma_\zeta^2+\sigma_\mu^2$
+ & $\dfrac{\lambda_1\, \sigma_\zeta}{2}$ + thin.\ asym. \\
+Within-hour DA dispersion $D^{\bar p}$
+ & $0$
+ & $0$
+ & $\lambda_1\, \sigma_\zeta$ \\
+Balancing $\Delta_t$
+ & $\zeta_t+\mu_t+\eta_t+\varepsilon_t$
+ & $\varepsilon_t$
+ & $\varepsilon_t$ \\
+Imbalance cost $C^I/(\gamma Q)$, quadratic
+ & $\sigma_\zeta^2+\sigma_\mu^2+\sigma_\eta^2$
+ & $0$
+ & $0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Balancing discrepancy}\label{app:balancing}
 
 Per quarter, the balancing residual collects whatever no auction carried and no agent could re-schedule:
@@ -2264,7 +2220,7 @@ From the Cournot identity \eqref{eq:cournot-markup}, $\text{markup}_m = q_m/b_{m
 
 \subsubsection{Discreteness channel}\label{app:welfare:quantization}
 
-The optimal-ladder expected profit shortfall relative to the continuous benchmark is $\Delta^2/(12\, b\,(2 n^* + 1)^2)$ (Proposition~\ref{prop:ladder}); the deeper endogenous depth at amplified screens (Corollary~\ref{cor:did}(iii)) reduces it. By Remark~\ref{rem:level} the mean clearing price is unchanged by the ladder, so within a product this channel is mostly a CS$\leftrightarrow\pi^{SB}$ transfer, net of tranche costs $\kappa\, n^*$; the efficiency content is the discreteness loss itself.
+The optimal-ladder expected profit shortfall relative to the continuous benchmark is $\Delta^2/(12\, b\,(2 n^* + 1)^2)$ (Proposition~\ref{prop:ladder}); the deeper endogenous depth at amplified screens (Corollary~\ref{cor:did}(ii)) reduces it. By Remark~\ref{rem:level} the mean clearing price is unchanged by the ladder, so within a product this channel is mostly a CS$\leftrightarrow\pi^{SB}$ transfer, net of tranche costs $\kappa\, n^*$; the efficiency content is the discreteness loss itself.
 
 \subsubsection{Less strategic withholding under limited per-product arbitrage}\label{app:welfare:withholding}
 
