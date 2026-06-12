@@ -85,7 +85,7 @@ def classify(panel: pd.DataFrame, did_t: float) -> str:
 
 
 def make_fig(panel: pd.DataFrame, did: pd.DataFrame, reform: str, market: str,
-             outcomes=None, suffix: str = ""):
+             outcomes=None, suffix: str = "", shade: bool = True):
     outcomes = outcomes or OUTCOMES
     sub = panel[(panel["reform"] == reform) & (panel["market"] == market)].copy()
     if sub.empty:
@@ -110,8 +110,8 @@ def make_fig(panel: pd.DataFrame, did: pd.DataFrame, reform: str, market: str,
                            & (did.tech == tech) & (did.outcome == outcome)
                            & (did.comparison == "crit_vs_flat")]
             did_t = float(did_row["t"].iloc[0]) if len(did_row) else 0.0
-            bg = classify(merged, did_t)
-            ax.set_facecolor(bg)
+            if shade:
+                ax.set_facecolor(classify(merged, did_t))
             # plot lines
             for col, color, label in [("crit", "#c0392b", "Critical (5-8, 16-22)"),
                                         ("flat", "#2980b9", "Flat (1-3)")]:
@@ -132,15 +132,16 @@ def make_fig(panel: pd.DataFrame, did: pd.DataFrame, reform: str, market: str,
     handles, labels = axes[0, 0].get_legend_handles_labels()
     legend_handles = handles[:]
     legend_labels = labels[:]
-    # add color-key entries
-    legend_handles += [
-        plt.Rectangle((0, 0), 1, 1, fc=GREEN,  ec="black", lw=0.4),
-        plt.Rectangle((0, 0), 1, 1, fc=RED,    ec="black", lw=0.4),
-        plt.Rectangle((0, 0), 1, 1, fc=YELLOW, ec="black", lw=0.4),
-    ]
-    legend_labels += ["clean parallel trend + DiD",
-                      "pre-trend violation",
-                      "incomplete series"]
+    if shade:
+        # add color-key entries
+        legend_handles += [
+            plt.Rectangle((0, 0), 1, 1, fc=GREEN,  ec="black", lw=0.4),
+            plt.Rectangle((0, 0), 1, 1, fc=RED,    ec="black", lw=0.4),
+            plt.Rectangle((0, 0), 1, 1, fc=YELLOW, ec="black", lw=0.4),
+        ]
+        legend_labels += ["clean parallel trend + DiD",
+                          "pre-trend violation",
+                          "incomplete series"]
     fig.legend(legend_handles, legend_labels, loc="lower center", ncol=5,
                 bbox_to_anchor=(0.5, -0.005), frameon=False, fontsize=9)
     fig.suptitle(f"Parallel trends --- {reform} {market.upper()} "
@@ -163,9 +164,9 @@ def main():
         for market in ["da", "ida"]:
             make_fig(panel, did, reform, market)
             make_fig(panel, did, reform, market,
-                     outcomes=["sigma_p", "hhi"], suffix="_sigma_hhi")
+                     outcomes=["sigma_p", "hhi"], suffix="_sigma_hhi", shade=False)
             make_fig(panel, did, reform, market,
-                     outcomes=["beta", "gamma"], suffix="_beta_gamma")
+                     outcomes=["beta", "gamma"], suffix="_beta_gamma", shade=False)
 
 
 if __name__ == "__main__":

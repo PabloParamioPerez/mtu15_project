@@ -1068,7 +1068,7 @@ Pump-storage & $0.0014$          & $0.0005$         & $0.0001$            & $0.0
 \label{tab:pretrend-placebo}
 \end{center}
 
-\paragraph{Parallel-trends diagnostics, metric by metric.} Figures~\ref{fig:parallel-trends-sigma-p} and \ref{fig:parallel-trends-abgN} plot critical against flat hours around each cutover for every dispatchable technology, with a data-driven verdict shaded into each panel. The split follows the headline-vs-supporting logic of \S\ref{sec:data:bandwidth}: $\sigma_p$ and $\text{HHI}_p$ --- first and second moments of the in-band price distribution --- show flat pre-differentials on the headline cells, while $\hat\beta$ and $\hat\gamma$ --- within-curve OLS objects, mechanically sensitive to tranche counts and price-grid density --- drift in most cells. ($\sigma_p$ also needs only price-side variation and is well-defined on single-tranche curves, where $\hat\beta$ requires joint $p$--$q$ variation; for near-linear curves $\sigma_p \approx |\hat\beta|\,\sigma_Q$, so the two track each other up to estimator noise.)
+\paragraph{Parallel-trends diagnostics, metric by metric.} Figures~\ref{fig:parallel-trends-sigma-p} and \ref{fig:parallel-trends-abgN} plot critical against flat hours around each cutover for every dispatchable technology. The split follows the headline-vs-supporting logic of \S\ref{sec:data:bandwidth}: $\sigma_p$ and $\text{HHI}_p$ --- first and second moments of the in-band price distribution --- show flat pre-differentials on the headline cells, while $\hat\beta$ and $\hat\gamma$ --- within-curve OLS objects, mechanically sensitive to tranche counts and price-grid density --- drift in most cells. ($\sigma_p$ also needs only price-side variation and is well-defined on single-tranche curves, where $\hat\beta$ requires joint $p$--$q$ variation; for near-linear curves $\sigma_p \approx |\hat\beta|\,\sigma_Q$, so the two track each other up to estimator noise.)
 
 \begin{figure}[H]
 \centering
@@ -1076,7 +1076,7 @@ Pump-storage & $0.0014$          & $0.0005$         & $0.0001$            & $0.0
 \includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_ID15_ida_sigma_hhi.pdf}\\[2pt]
 \includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_da_sigma_hhi.pdf}\\[2pt]
 \includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_ida_sigma_hhi.pdf}
-\caption{\textbf{Parallel trends for the headline metrics $\sigma_p$ and $\text{HHI}_p$: clean.} Critical (red, hours 5--8 and 16--22) versus flat (blue, hours 1--3), 14-day rolling means by technology; the dashed line marks the cutover. Panels from top: ID15 day-ahead, ID15 intraday auctions, DA15 day-ahead, DA15 intraday auctions. Panel shading is data-driven: green $=$ flat pre-differential together with a significant critical-vs-flat DiD; pink $=$ pre-trend violation; yellow $=$ incomplete series. Pre-trends are clean on the headline cells (CCGT and hydro-pump $\sigma_p$ on the day-ahead; CCGT $\text{HHI}_p$ on the day-ahead). The DA15 pre-window starts at the blackout (2025-04-28), so its panels are shorter and sit inside the reinforced-operation regime.}
+\caption{\textbf{Parallel trends for the headline metrics $\sigma_p$ and $\text{HHI}_p$: clean.} Critical (red, hours 5--8 and 16--22) versus flat (blue, hours 1--3), 14-day rolling means by technology; the dashed line marks the cutover. Panels from top: ID15 day-ahead, ID15 intraday auctions, DA15 day-ahead, DA15 intraday auctions. Pre-trends are clean on the headline cells (CCGT and hydro-pump $\sigma_p$ on the day-ahead; CCGT $\text{HHI}_p$ on the day-ahead). The DA15 pre-window starts at the blackout (2025-04-28), so its panels are shorter and sit inside the reinforced-operation regime.}
 \label{fig:parallel-trends-sigma-p}
 \end{figure}
 
@@ -1086,7 +1086,7 @@ Pump-storage & $0.0014$          & $0.0005$         & $0.0001$            & $0.0
 \includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_ID15_ida_beta_gamma.pdf}\\[2pt]
 \includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_da_beta_gamma.pdf}\\[2pt]
 \includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_ida_beta_gamma.pdf}
-\caption{\textbf{Parallel trends for the supporting metrics $\hat\beta$ and $\hat\gamma$: not clean.} Same construction and shading as Figure~\ref{fig:parallel-trends-sigma-p}. Pre-trends drift in most cells: $\hat\beta$ and $\hat\gamma$ are within-curve OLS objects, mechanically sensitive to tranche counts and price-grid density, both of which shifted at the European-IDA reform (2024-06-14) and at ID15. This drift is why the analysis treats them as supporting rather than headline evidence (\S\ref{sec:data:bandwidth}).}
+\caption{\textbf{Parallel trends for the supporting metrics $\hat\beta$ and $\hat\gamma$: not clean.} Same construction as Figure~\ref{fig:parallel-trends-sigma-p}. Pre-trends drift in most cells: $\hat\beta$ and $\hat\gamma$ are within-curve OLS objects, mechanically sensitive to tranche counts and price-grid density, both of which shifted at the European-IDA reform (2024-06-14) and at ID15. This drift is why the analysis treats them as supporting rather than headline evidence (\S\ref{sec:data:bandwidth}).}
 \label{fig:parallel-trends-abgN}
 \end{figure}
 
