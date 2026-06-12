@@ -17,6 +17,11 @@
 #   (no fill) -- ambiguous; reader judges.
 #
 # One figure per (reform, market). OUT: figures/working/fig_bid_shape_pt_<reform>_<market>.{pdf,png}
+#
+# Additionally emits metric-split variants for the thesis appendix (clean-PT
+# metrics vs drifting-PT metrics):
+#   fig_bid_shape_pt_<reform>_<market>_sigma_hhi.{pdf,png}   (sigma_p, hhi)
+#   fig_bid_shape_pt_<reform>_<market>_beta_gamma.{pdf,png}  (beta, gamma)
 
 from pathlib import Path
 import matplotlib.pyplot as plt
@@ -79,14 +84,17 @@ def classify(panel: pd.DataFrame, did_t: float) -> str:
     return "#ffffff"
 
 
-def make_fig(panel: pd.DataFrame, did: pd.DataFrame, reform: str, market: str):
+def make_fig(panel: pd.DataFrame, did: pd.DataFrame, reform: str, market: str,
+             outcomes=None, suffix: str = ""):
+    outcomes = outcomes or OUTCOMES
     sub = panel[(panel["reform"] == reform) & (panel["market"] == market)].copy()
     if sub.empty:
         return
     cut = REFORM_DATE[reform]
-    fig, axes = plt.subplots(len(OUTCOMES), len(TECHS_PLOT),
-                              figsize=(13, 9), sharex=True)
-    for r, outcome in enumerate(OUTCOMES):
+    fig, axes = plt.subplots(len(outcomes), len(TECHS_PLOT),
+                              figsize=(13, 2.25 * len(outcomes) + 0.6),
+                              sharex=True, squeeze=False)
+    for r, outcome in enumerate(outcomes):
         for c, tech in enumerate(TECHS_PLOT):
             ax = axes[r, c]
             df_t = sub[sub["tech"] == tech].copy()
@@ -138,8 +146,8 @@ def make_fig(panel: pd.DataFrame, did: pd.DataFrame, reform: str, market: str):
     fig.suptitle(f"Parallel trends --- {reform} {market.upper()} "
                   "(14-day rolling mean; dashed line $=$ reform cutover)",
                   fontsize=11)
-    fig.tight_layout(rect=[0, 0.04, 1, 0.96])
-    base = OUTDIR / f"fig_bid_shape_pt_{reform}_{market}"
+    fig.tight_layout(rect=[0, 0.04 * 4 / len(outcomes), 1, 1 - 0.04 * 4 / len(outcomes)])
+    base = OUTDIR / f"fig_bid_shape_pt_{reform}_{market}{suffix}"
     OUTDIR.mkdir(parents=True, exist_ok=True)
     fig.savefig(base.with_suffix(".pdf"))
     fig.savefig(base.with_suffix(".png"), dpi=150)
@@ -154,6 +162,10 @@ def main():
     for reform in ["ID15", "DA15"]:
         for market in ["da", "ida"]:
             make_fig(panel, did, reform, market)
+            make_fig(panel, did, reform, market,
+                     outcomes=["sigma_p", "hhi"], suffix="_sigma_hhi")
+            make_fig(panel, did, reform, market,
+                     outcomes=["beta", "gamma"], suffix="_beta_gamma")
 
 
 if __name__ == "__main__":
