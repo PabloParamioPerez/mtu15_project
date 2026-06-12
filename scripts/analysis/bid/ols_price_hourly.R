@@ -69,6 +69,17 @@ run_pooled <- function(response, pre_start, post_start, post_end, tag) {
                        wind_gwh:y2024p + solar_gwh:y2024p +
                        t + hour_f + month + dow, data=sub),
                     "Spec 4h: + year-by-renew (2024+ pooled)")
+  rows[[5]] <- fmt(lm(get(response) ~ post + wind_gwh + solar_gwh + gas_eur +
+                       wind_gwh:y2023 + solar_gwh:y2023 +
+                       wind_gwh:y2024 + solar_gwh:y2024 +
+                       wind_gwh:y2025 + solar_gwh:y2025 +
+                       hour_f + month + dow, data=sub),
+                    "Spec 5h: year-by-renew (per year), NO trend")
+  rows[[6]] <- fmt(lm(get(response) ~ post + wind_gwh + solar_gwh + gas_eur +
+                       wind_gwh:y2023 + solar_gwh:y2023 +
+                       wind_gwh:y2024p + solar_gwh:y2024p +
+                       hour_f + month + dow, data=sub),
+                    "Spec 6h: year-by-renew (2024+ pooled), NO trend")
   do.call(rbind, rows)
 }
 

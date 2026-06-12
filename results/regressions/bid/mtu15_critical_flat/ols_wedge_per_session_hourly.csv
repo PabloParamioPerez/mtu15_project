@@ -2,18 +2,30 @@
 "ID15 wedge_s1_h","OLS hourly --- base (hour + month + DOW)",2.66447713264142,1.11101049022274,0.0164985582945151,7390
 "ID15 wedge_s1_h","OLS hourly --- + year-by-renew (per year)",2.81233637649623,1.13447355193717,0.0131981788237671,7390
 "ID15 wedge_s1_h","OLS hourly --- + year-by-renew (2024+25 pooled)",2.81233637649623,1.13447355193717,0.0131981788237671,7390
+"ID15 wedge_s1_h","OLS hourly --- year-by-renew (per year), NO trend",2.67876993460306,1.10160503148194,0.0150520076061343,7390
+"ID15 wedge_s1_h","OLS hourly --- year-by-renew (2024+25 pooled), NO trend",2.67876993460306,1.10160503148194,0.0150520076061343,7390
 "ID15 wedge_s2_h","OLS hourly --- base (hour + month + DOW)",0.652807010559216,1.65423218287773,0.693128416858601,7510
 "ID15 wedge_s2_h","OLS hourly --- + year-by-renew (per year)",0.987325678819643,1.74593612362704,0.571751189146106,7510
 "ID15 wedge_s2_h","OLS hourly --- + year-by-renew (2024+25 pooled)",0.987325678819643,1.74593612362704,0.571751189146106,7510
+"ID15 wedge_s2_h","OLS hourly --- year-by-renew (per year), NO trend",0.666718049305928,1.66507669528234,0.688863944080984,7510
+"ID15 wedge_s2_h","OLS hourly --- year-by-renew (2024+25 pooled), NO trend",0.666718049305928,1.66507669528234,0.688863944080984,7510
 "ID15 wedge_s3_h","OLS hourly --- base (hour + month + DOW)",-0.932080351677758,1.31056117680008,0.477000493883779,3755
 "ID15 wedge_s3_h","OLS hourly --- + year-by-renew (per year)",-0.696466510487827,1.42353255547139,0.624691965002458,3755
 "ID15 wedge_s3_h","OLS hourly --- + year-by-renew (2024+25 pooled)",-0.696466510487827,1.42353255547139,0.624691965002458,3755
+"ID15 wedge_s3_h","OLS hourly --- year-by-renew (per year), NO trend",-1.19264426577926,1.35707828310535,0.379548941533003,3755
+"ID15 wedge_s3_h","OLS hourly --- year-by-renew (2024+25 pooled), NO trend",-1.19264426577926,1.35707828310535,0.379548941533003,3755
 "DA15 wedge_s1_h","OLS hourly --- base (hour + month + DOW)",1.00101150515678,1.3832647489909,0.469288456083656,12934
 "DA15 wedge_s1_h","OLS hourly --- + year-by-renew (per year)",0.549847471397387,1.54227424429421,0.721459025091642,12934
 "DA15 wedge_s1_h","OLS hourly --- + year-by-renew (2024+25 pooled)",0.549847471397387,1.54227424429421,0.721459025091642,12934
+"DA15 wedge_s1_h","OLS hourly --- year-by-renew (per year), NO trend",0.872423074538122,1.47605958623483,0.55449816823862,12934
+"DA15 wedge_s1_h","OLS hourly --- year-by-renew (2024+25 pooled), NO trend",0.872423074538122,1.47605958623483,0.55449816823862,12934
 "DA15 wedge_s2_h","OLS hourly --- base (hour + month + DOW)",-2.98111112160298,2.00798615202038,0.137666232952049,13366
 "DA15 wedge_s2_h","OLS hourly --- + year-by-renew (per year)",-3.04505585703501,2.39300052974479,0.203223276385912,13366
 "DA15 wedge_s2_h","OLS hourly --- + year-by-renew (2024+25 pooled)",-3.04505585703501,2.39300052974479,0.203223276385912,13366
+"DA15 wedge_s2_h","OLS hourly --- year-by-renew (per year), NO trend",-3.65010901496134,2.48272992079495,0.141531272383379,13366
+"DA15 wedge_s2_h","OLS hourly --- year-by-renew (2024+25 pooled), NO trend",-3.65010901496134,2.48272992079495,0.141531272383379,13366
 "DA15 wedge_s3_h","OLS hourly --- base (hour + month + DOW)",0.618376106427073,2.28670884556181,0.786844057937423,6718
 "DA15 wedge_s3_h","OLS hourly --- + year-by-renew (per year)",1.44286038993918,2.44432066233051,0.555015563797501,6718
 "DA15 wedge_s3_h","OLS hourly --- + year-by-renew (2024+25 pooled)",1.44286038993918,2.44432066233051,0.555015563797501,6718
+"DA15 wedge_s3_h","OLS hourly --- year-by-renew (per year), NO trend",1.56301208509545,2.38531965176832,0.512320894789995,6718
+"DA15 wedge_s3_h","OLS hourly --- year-by-renew (2024+25 pooled), NO trend",1.56301208509545,2.38531965176832,0.512320894789995,6718

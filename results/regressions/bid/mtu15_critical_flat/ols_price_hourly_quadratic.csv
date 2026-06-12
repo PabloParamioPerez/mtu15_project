@@ -1,0 +1,9 @@
+"tag","spec","eff","se","p","n"
+"ID15 IDA hourly","D  quadratic + year-x-renew on linear & quadratic, NO trend",-24.2737813367956,7.000246950797,0.000526219688034652,21810
+"ID15 IDA hourly","E  cubic + year-x-renew on linear, quadratic & cubic, NO trend",-23.5359219964122,6.85271407712766,0.00059466673339465,21810
+"ID15 DA  hourly","D  quadratic + year-x-renew on linear & quadratic, NO trend",-23.6277226694502,7.10301323958916,0.000881096644236101,21810
+"ID15 DA  hourly","E  cubic + year-x-renew on linear, quadratic & cubic, NO trend",-22.8779263389561,6.95277076180763,0.00100177043082947,21810
+"DA15 DA  hourly","D  quadratic + year-x-renew on linear & quadratic, NO trend",-2.29170113714521,5.3610026082919,0.669035822650206,27762
+"DA15 DA  hourly","E  cubic + year-x-renew on linear, quadratic & cubic, NO trend",-1.95610784754581,5.36855140030067,0.715588857903902,27762
+"DA15 IDA hourly","D  quadratic + year-x-renew on linear & quadratic, NO trend",-2.54036047173339,5.31051985772742,0.632395071230705,27726
+"DA15 IDA hourly","E  cubic + year-x-renew on linear, quadratic & cubic, NO trend",-2.2055591182231,5.3226680530008,0.678605658621307,27726

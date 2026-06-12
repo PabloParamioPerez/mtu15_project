@@ -51,6 +51,14 @@ run_ols <- function(response, pre_start, post_start, post_end, tag) {
                        wind_gwh:y2025p + solar_gwh:y2025p +
                        t + hour_f + month + dow, data=sub),
                     "OLS hourly --- + year-by-renew (2024+25 pooled)")
+  rows[[4]] <- fmt(lm(get(response) ~ post + wind_gwh + solar_gwh + gas_eur +
+                       wind_gwh:y2025 + solar_gwh:y2025 +
+                       hour_f + month + dow, data=sub),
+                    "OLS hourly --- year-by-renew (per year), NO trend")
+  rows[[5]] <- fmt(lm(get(response) ~ post + wind_gwh + solar_gwh + gas_eur +
+                       wind_gwh:y2025p + solar_gwh:y2025p +
+                       hour_f + month + dow, data=sub),
+                    "OLS hourly --- year-by-renew (2024+25 pooled), NO trend")
   do.call(rbind, rows)
 }
 

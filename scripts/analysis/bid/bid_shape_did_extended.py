@@ -11,6 +11,7 @@
 #   beta     (linear slope of price on cum-MW)
 #   gamma    (quadratic curvature)
 #   hhi      (1 / N_eff = Herfindahl of MW shares)
+#   level    (MW-weighted mean in-band price minus MCP; level-neutrality check)
 # Unit FE + day-clustered SE. DiD coefficient = theta on (post x crit).
 #
 # Per-curve metrics are computed inside DuckDB via window cumQ + groupby
@@ -125,14 +126,14 @@ def per_curve_query_da(lo, hi, h):
       SELECT mp.d, mp.period, c.unit_code, u.firm, u.tech,
              CASE WHEN COALESCE(mp.mtu_p, dv.mtu) = 60 THEN mp.period - 1
                   ELSE CAST(FLOOR((mp.period - 1) / 4.0) AS INT) END AS clock_hour,
-             dv.q, dv.p
+             dv.q, dv.p, mp.p_clear
       FROM det dv JOIN cab_l c ON dv.d=c.d AND dv.offer_code=c.offer_code
         JOIN mp ON mp.d=dv.d AND mp.period=dv.period
         JOIN u ON c.unit_code = u.unit_code
       WHERE dv.p BETWEEN mp.p_clear - {h} AND mp.p_clear + {h}
     ),
     ordered AS (
-      SELECT d, period, clock_hour, unit_code, firm, tech, q, p,
+      SELECT d, period, clock_hour, unit_code, firm, tech, q, p, p_clear,
              SUM(q) OVER (PARTITION BY d, period, unit_code
                           ORDER BY p ROWS UNBOUNDED PRECEDING) AS cumQ
       FROM inband
@@ -149,7 +150,8 @@ def per_curve_query_da(lo, hi, h):
            SUM(cumQ*cumQ*cumQ*cumQ)       AS s_x4,
            SUM(p)                         AS s_y,
            SUM(cumQ*p)                    AS s_xy,
-           SUM(cumQ*cumQ*p)               AS s_x2y
+           SUM(cumQ*cumQ*p)               AS s_x2y,
+           MAX(p_clear)                   AS p_clear
     FROM ordered
     GROUP BY 1, 2, 3, 4, 5, 6
     HAVING s_w > 0
@@ -183,7 +185,7 @@ def per_curve_query_ida(lo, hi, h):
       SELECT mp.d, mp.session_number, mp.period, c.unit_code, u.firm, u.tech,
              CASE WHEN COALESCE(mp.mtu_p, dv.mtu) = 60 THEN mp.period - 1
                   ELSE CAST(FLOOR((mp.period - 1) / 4.0) AS INT) END AS clock_hour,
-             dv.q, dv.p
+             dv.q, dv.p, mp.p_clear
       FROM idet dv
         JOIN icab_l c ON dv.d=c.d AND dv.session_number=c.session_number
                       AND dv.offer_code=c.offer_code AND dv.version=c.version
@@ -194,7 +196,7 @@ def per_curve_query_ida(lo, hi, h):
       WHERE dv.p BETWEEN mp.p_clear - {h} AND mp.p_clear + {h}
     ),
     ordered AS (
-      SELECT d, session_number, period, clock_hour, unit_code, firm, tech, q, p,
+      SELECT d, session_number, period, clock_hour, unit_code, firm, tech, q, p, p_clear,
              SUM(q) OVER (PARTITION BY d, session_number, period, unit_code
                           ORDER BY p ROWS UNBOUNDED PRECEDING) AS cumQ
       FROM inband
@@ -211,7 +213,8 @@ def per_curve_query_ida(lo, hi, h):
            SUM(cumQ*cumQ*cumQ*cumQ)       AS s_x4,
            SUM(p)                         AS s_y,
            SUM(cumQ*p)                    AS s_xy,
-           SUM(cumQ*cumQ*p)               AS s_x2y
+           SUM(cumQ*cumQ*p)               AS s_x2y,
+           MAX(p_clear)                   AS p_clear
     FROM ordered
     GROUP BY 1, 2, 3, 4, 5, 6, 7
     HAVING s_w > 0
@@ -229,6 +232,8 @@ def add_metrics(df):
     mean_p = s_wp / s_w
     var_p = np.clip(s_wp2 / s_w - mean_p ** 2, 0, None)
     df["sigma_p"] = np.sqrt(var_p)
+    # bid-curve level relative to the clearing price (level-neutrality check)
+    df["level"] = mean_p - df["p_clear"].to_numpy(dtype=float)
     # Herfindahl on MW shares
     n_eff = (s_w ** 2) / s_w2
     df["n_eff"] = n_eff
@@ -311,7 +316,7 @@ def main():
     con.execute("SET memory_limit='12GB'"); con.execute("SET threads=4")
     units_table(con)
 
-    OUTCOMES = ["sigma_p", "beta", "gamma", "hhi"]
+    OUTCOMES = ["sigma_p", "beta", "gamma", "hhi", "level"]
     rows = []
     daily_panel = []
 
