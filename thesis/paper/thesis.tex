@@ -535,7 +535,7 @@ The bandwidth $\delta = p_{90}-p_{50}$ of the contemporary MCP distribution isol
   \item $\sigma_p$ is the robust price-side anchor: defined on every curve, including few-tranche curves where the OLS objects are noisy.
 \end{itemize}
 
-\paragraph{Bandwidth.} Let $\delta$ be a bandwidth that isolates the tranches in contention --- close enough to the clearing price to compete in the \emph{competing tier} of the offer (CCGT's two-tier structure makes this distinction explicit, Appendix~\ref{app:context}). We anchor $\delta$ to the contemporary contested margin: $\delta = p_{90} - p_{50}$ of the MCP distribution in the analysis window, market by market. The eight bandwidths (one per reform $\times$ \{real, placebo\} $\times$ \{DA, IDA\}) are reported below; wider-$\delta$ robustness in Appendix~\ref{app:robustness}.5.
+\paragraph{Bandwidth.} Let $\delta$ be a bandwidth that isolates the tranches in contention --- close enough to the clearing price to compete in the \emph{competing tier} of the offer (CCGT's two-tier structure makes this distinction explicit, Appendix~\ref{app:context}). We anchor $\delta$ to the contemporary contested margin: $\delta = p_{90} - p_{50}$ of the MCP distribution in the analysis window, market by market. The eight bandwidths (one per reform $\times$ \{real, placebo\} $\times$ \{DA, IDA\}) are reported below; wider-$\delta$ robustness in Appendix~\ref{sec:5e}.
 \begin{center}
 \footnotesize
 \setlength{\tabcolsep}{8pt}
@@ -549,7 +549,7 @@ DA15 real             & 50 & 58 \\
 DA15 placebo (2024)   & 45 & 49 \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{Bandwidths $\delta$ used to define the in-band region.} $\delta$ is set to $p_{90}-p_{50}$ of the MCP distribution in each (window, market). Window-and-market-specific by construction. Bandwidth robustness in \hyperref[sec:5e]{Appendix~\ref*{app:robustness}.5}.}
+\captionof{table}{\textbf{Bandwidths $\delta$ used to define the in-band region.} $\delta$ is set to $p_{90}-p_{50}$ of the MCP distribution in each (window, market). Window-and-market-specific by construction. Bandwidth robustness in Appendix~\ref{sec:5e}.}
 \end{center}
 
 \begin{figure}[htbp]
@@ -692,7 +692,7 @@ DA15 placebo (2024)   & 45 & 49 \\
 w_k = \frac{\Delta q_k}{\sum_{j\in\mathcal{B}_{u,d,p}} \Delta q_j}, \qquad
 \bar p_{u,d,p} = \sum_{k\in\mathcal{B}} w_k\, p_k.
 \]
-Representative bid curves per technology in critical and flat hours are in Appendix~\ref{app:context}.4 (Figure~\ref{fig:bid-curves-by-tech-merged}); they illustrate the dispatchable-ladder vs renewable-block contrast.
+Representative bid curves per technology in critical and flat hours are in Appendix~\ref{app:context-bid-curves} (Figure~\ref{fig:bid-curves-by-tech-merged}); they illustrate the dispatchable-ladder vs renewable-block contrast.
 
 \paragraph{Five bid-shape outcomes.} Per in-band curve we summarise the ladder with a quintuple $(\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_p)$. Let $Q_k = \sum_{j\in\mathcal{B},\, j\le k}\Delta q_j$ be the cumulative in-band MW after the $k$th tranche.
 
@@ -766,7 +766,7 @@ Granular pricing only has economic content where within-hour residual demand\foo
 \begin{itemize}\setlength{\itemsep}{1pt}
 \item \textbf{Critical} $\mathcal{C}=\mathcal{C}_M\cup\mathcal{C}_E$ with $\mathcal{C}_M=\{5,\dots,8\}$ (morning ramp) and $\mathcal{C}_E=\{16,\dots,22\}$ (evening ramp); $\sigma_{\text{within}}\in[522,1303]$ MW.
 \item \textbf{Flat} $\mathcal{F}=\{1,2,3\}$: overnight; $\sigma_{\text{within}}\in[336,357]$ MW.
-\item \textbf{Midday} $\mathcal{M}=\{11,\dots,14\}$ (solar-marginal, $\sigma_{\text{within}}\in[468,502]$ MW): excluded from main specs; kept for falsification (Appendix~\ref{app:robustness}.2).
+\item \textbf{Midday} $\mathcal{M}=\{11,\dots,14\}$ (solar-marginal, $\sigma_{\text{within}}\in[468,502]$ MW): excluded from main specs; kept for falsification (Appendix~\ref{sec:5a}).
 \end{itemize}
 In the language of the model, critical hours are the large-$\rho$ hours and flat hours the $\rho \approx 1$ benchmark, so the critical-minus-flat, post-minus-pre double difference is the empirical counterpart of Corollary~\ref{cor:did}(iii). The bid-shape DiD of \S\ref{sec:empirical:bidshape} uses this contrast as its within-day identification device.
 
@@ -1062,7 +1062,7 @@ REE's adjustment-cost lines balloon post-blackout, almost entirely on Fase~I up-
 \textit{[To be written. Concepts to cover:]}
 \begin{itemize}\setlength{\itemsep}{1pt}
   \item \textbf{Aggregate effects of DA15 are small; ID15 delivered the headline gains.} Significant changes in bidding behaviour at both reforms, but bid-shape signals are mixed across techs. Evidence of rising solar cannibalisation --- already a serious profitability issue.
-  \item \textbf{Open question:} did market microstructure affect grid stability? Three facts in the open: (i) REE's post-blackout response is technology-specific (CCGT doubles in restriction dispatch); (ii) realised renewable supply was similar in spring 2024 vs 2025, yet only 2025 blacked out; (iii) nuclear's auction-plus-bilateral output dropped sharply in the 40 days between ID15 and the blackout (Appendix~\ref{app:robustness}.8). The ENTSO-E Expert Panel does not list ID15 as a root cause, but CNMC flags quarter-hourly trading as contributing to abrupt voltage variations.
+  \item \textbf{Open question:} did market microstructure affect grid stability? Three facts in the open: (i) REE's post-blackout response is technology-specific (CCGT doubles in restriction dispatch); (ii) realised renewable supply was similar in spring 2024 vs 2025, yet only 2025 blacked out; (iii) nuclear's auction-plus-bilateral output dropped sharply in the 40 days between ID15 and the blackout (Appendix~\ref{sec:5-nuclear-pdbf}). The ENTSO-E Expert Panel does not list ID15 as a root cause, but CNMC flags quarter-hourly trading as contributing to abrupt voltage variations.
   \item \textbf{The biggest welfare losses live in the ancillary markets}, not in the wholesale auctions \citep{brown_reguant_2026, davi_arderius_graf_2026}.
   \item \textbf{Urgent need to strengthen network security} to bring down retail prices --- not finer time resolution.
 \end{itemize}
@@ -1084,614 +1084,6 @@ REE's adjustment-cost lines balloon post-blackout, almost entirely on Fase~I up-
 \addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
 
 \appendix
-
-% =====================================================================
-\section{Robustness}\label{app:robustness}
-% =====================================================================
-
-\subsection{Year-by-year solar coefficient: the renewable response is non-stationary}\label{app:solar-year-coefs}
-
-The BSTS uses long pre-windows (2022 onwards) with $\text{wind}_t\times\mathbf{1}\{\text{year}=y\}$ and $\text{solar}_t\times\mathbf{1}\{\text{year}=y\}$ interactions. The economic reason is that Spanish wind+solar installed capacity grew by a factor of $\sim 6$ over 2018-2025, and the marginal effect of an additional GWh of renewable output on price is not constant across that period. A flat-coefficient spec mis-fits the cross-year merit-order shift and reports artificially confident treatment effects (\S\ref{sec:empirical:specA}).
-
-Table~\ref{tab:solar-year-coefs} reports the cumulative solar coefficient (base + year-dummy) by calendar year, extracted from the BSTS posterior of the price spec under both windows (ID15 pre ends 2025-03-18, DA15 pre ends 2025-09-30). \textbf{Conditional posterior means} (the coefficient when the spike-and-slab includes the regressor). The wind base coefficient is stable around $-0.50$ EUR/MWh per GWh; the wind$\times$year interactions all have inclusion probability below $1.5\%$. The solar coefficient is the one that varies.
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{7pt}
-\begin{tabular}{l c c c}
-\toprule
-\textbf{Year} & \textbf{ID15 IDA spec} & \textbf{DA15 IDA spec} & \textbf{DA15 DA spec} \\
-\midrule
-2022 (base)   & $-0.22$ & $-0.23$ & $-0.22$ \\
-2023          & $-0.02$ & $-0.23$ & $-0.17$ \\
-2024          & $\mathbf{-0.46}$ & $\mathbf{-0.47}$ & $\mathbf{-0.40}$ \\
-2025\, $^{\dagger}$ & $\mathbf{-0.29}$ \emph{(Jan-Mar only on ID15)} & $\mathbf{-0.50}$ & $\mathbf{-0.49}$ \\
-\midrule
-\multicolumn{4}{l}{\emph{Implied weighted average for the post-window prediction}} \\
-2024+2025 weighted avg $^{\ddagger}$ & $-0.43$ & $-0.45$ & $-0.44$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Cumulative solar coefficient (EUR/MWh per GWh of solar) by year}, extracted from the BSTS posterior of the corresponding price spec. Cumulative coefficient = base $+$ year-dummy interaction, conditional posterior mean among MCMC draws that include the regressor. $^{\dagger}$The ID15 spec pre-window ends 2025-03-18, so its 2025-by-solar coefficient is fitted on Jan-Mar 2025 only, when Spanish solar production is at its lowest seasonal level; the DA15 spec pre-window extends through 2025-09-30 and includes summer, giving the more representative estimate. $^{\ddagger}$Months-weighted average of the 2024 and 2025 cumulative coefficients (12 months of 2024 + available months of 2025): this is the coefficient one would extrapolate forward if 2024 and 2025 were pooled into a single dummy for the post-window prediction; the per-year BSTS instead extrapolates using the 2025-row coefficient alone.}
-\label{tab:solar-year-coefs}
-\end{center}
-
-Reading the table: the DA15 spec (which sees Jan-Sep 2025) tells the cleaner story. Solar's marginal price-suppressing effect is roughly constant from 2022 to 2023, then nearly doubles from 2023 to 2024 (Spain added $\sim\!5$ GW of solar capacity in 2024 alone), and continues to deepen in 2025 as solar saturates more clock-hours and negative-price events become routine. The ID15 spec's 2025 coefficient looks deceptively small (Jan-Mar winter sun is weak) but the underlying renewable response in 2025 is the most negative on record. The non-stationarity is exactly what the year interaction is designed to absorb: a flat-coefficient spec would average $-0.22$ (2022) and $-0.50$ (2025) into a single value around $-0.35$, mis-fitting both ends of the window.
-
-\paragraph{Calibrated-solar robustness: how much of the price drop is solar vs the reform?} A natural concern about the headline BSTS counterfactual is that Spanish solar capacity grew rapidly through 2024 and 2025, so the marginal price-suppressing effect of solar is itself non-stationary. The BSTS per-year spike-and-slab attempts to capture this via year-by-solar interactions; the conditional posterior means (Table~\ref{tab:solar-year-coefs}) are $-0.46$ for 2024 and $-0.29$ for the Jan-Mar-2025 sample on the ID15 spec, suggesting a strong solar effect that may not be fully credited in the post-window prediction. If the post-window counterfactual under-credits solar, the residual ``price drop'' that we attribute to the reform is partly mechanical (it is the solar effect we failed to attribute correctly). We therefore implement a \textbf{calibrated-solar counterfactual}: pre-subtract a known solar contribution $\beta^{\text{cal}}_{\text{solar}} \cdot \text{solar}_t \cdot \mathds{1}\{t \ge 2024\}$ from observed prices, fit the BSTS state-space model on the residual (with the usual base regressors but no year interactions), and add the calibrated solar contribution back to the post-window prediction before computing the treatment effect.
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l r r r r r r}
-\toprule
-& \multicolumn{3}{c}{\textbf{ID15 IDA}} & \multicolumn{3}{c}{\textbf{DA15 DA}} \\
-\cmidrule(lr){2-4} \cmidrule(lr){5-7}
-\textbf{Calibrated solar coefficient $\beta^{\text{cal}}_{\text{solar}}$ (EUR/MWh per GWh)} & \textbf{Real} & \textbf{Placebo} & \textbf{Net} & \textbf{Real} & \textbf{Placebo} & \textbf{Net} \\
-\midrule
-$-0.21$ (BSTS unconditional default)                   & $-41$ & $+32$ & $\mathbf{-73}$ & $+30$ & $+43$ & $-13$ \\
-$-0.29$ (per-year cond.\ 2025, ID15 spec)              & $-38$ & $+36$ & $\mathbf{-74}$ & $+21$ & $+32$ & $-12$ \\
-$-0.40$ (per-year cond.\ 2024, DA15 DA spec)           & $-30$ & $+36$ & $\mathbf{-66}$ & $+18$ & $+27$ & $-10$ \\
-$\mathbf{-0.46}$ (per-year cond.\ 2024, ID15 spec)     & $-26$ & $+37$ & $\mathbf{-63}$ & $+9$  & $+23$ & $-13$ \\
-$-0.50$ (per-year cond.\ 2025, DA15 spec)              & $-23$ & $+37$ & $\mathbf{-60}$ & $+9$  & $+19$ & $-10$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Calibrated-solar BSTS treatment effects on clearing price.} EUR/MWh; $-0.46$ row uses the user's preferred ``trust the 2024 conditional'' substitution. The calibrated approach explicitly subtracts $\beta^{\text{cal}}_{\text{solar}} \cdot \text{solar} \cdot \mathbf{1}\{t \ge 2024\}$ from prices, fits BSTS on the residual (no year interactions), and adds the calibrated contribution back to the post-window prediction. Placebo column uses the same calibration but with the cutover shifted one year earlier (real reform absent in the placebo window). Real, placebo, and net all measured on the price level in EUR/MWh.}
-\label{tab:calibrated-solar}
-\end{center}
-
-\textbf{The price drop at ID15 IDA survives every solar calibration we tried.} Under the most aggressive solar coefficient ($-0.50$, the DA15-spec conditional 2025 mean) the real-effect point estimate is $-23$ EUR/MWh; under the user's preferred ``trust the 2024 conditional'' value of $-0.46$ it is $-26$ EUR/MWh; under the BSTS unconditional default it is $-41$ EUR/MWh. After 2024-same-calendar placebo-netting (which absorbs whatever cross-season variation exists in the spring window) the net effects are uniformly larger in magnitude ($-60$ to $-74$ EUR/MWh) because the placebo windows themselves have positive ``effects'' under the calibrated specification, reflecting whatever upward residual variation Spring 2024 carried. The DA15 DA real effect is essentially null across all solar calibrations ($+9$ to $+30$ EUR/MWh, $\approx 0$); the net effect is mildly negative ($-10$ to $-13$ EUR/MWh) under every solar calibration but the magnitude is much smaller than at ID15 and the credible intervals always bracket zero.
-
-\textbf{Bottom line.} The ID15 IDA price drop is robustly negative in sign and substantial in magnitude under every solar coefficient we could justify. Solar's strong 2024 marginal effect ($-0.46$) does not explain the ID15 price drop --- the reform did something to the granular leg's clearing price on top of what solar alone would predict. The DA15 DA effect is small to null under every calibration. We treat the ID15 drop as a real reform effect and the DA15 drop as not separately identified. The per-firm slope increase (Appendix~\ref{app:robustness}.10) remains the cleanly-identified pricing-chain INPUT and is unaffected by this discussion.
-
-\paragraph{OLS cross-check.} The wide credible intervals in the calibrated-solar BSTS reflect the state-space level component's flexibility, which absorbs persistent low-frequency variation that the regression then has no way to pin down. We complement the BSTS with a standard OLS regression on the same daily price panel, including calendar-month and day-of-week fixed effects (the seasonal structure that BSTS encoded via local-level + 7-day seasonal), a time trend (linear or quadratic), gas price, and per-year wind and solar interactions. Standard errors are Newey-West HAC with $7$-day bandwidth to account for daily price autocorrelation. The model:
-\[
-p_t \;=\; \alpha + \theta\,\text{POST}_t + \beta_{\text{wind}}\text{wind}_t + \beta_{\text{solar}}\text{solar}_t + \beta_{\text{gas}}\text{gas}_t + \sum_y \gamma_y\,\text{renew}_t \cdot \mathds{1}\{\text{year}=y\} + \phi_m + \delta_{\text{dow}} + g(t) + \varepsilon_t.
-\]
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l r r r r}
-\toprule
-& \multicolumn{2}{c}{\textbf{ID15 IDA price}} & \multicolumn{2}{c}{\textbf{DA15 DA price}} \\
-\cmidrule(lr){2-3} \cmidrule(lr){4-5}
-\textbf{Specification (POST coef $\theta$)} & $\hat\theta$ & HAC SE & $\hat\theta$ & HAC SE \\
-\midrule
-Spec 1: base $+$ month FE $+$ DOW FE                 & $\mathbf{-31.7}^{***}$ & $8.2$ & $-8.3$           & $5.3$ \\
-Spec 2: $+$ linear time trend                         & $\mathbf{-23.7}^{***}$ & $8.6$ & $+8.3$           & $7.3$ \\
-Spec 3: $+$ year-by-renewable (per year)              & $\mathbf{-45.8}^{***}$ & $9.6$ & $-8.6$           & $8.1$ \\
-Spec 4: $+$ year-by-renewable (2024+ pooled)          & $\mathbf{-38.7}^{***}$ & $7.3$ & $-4.6$           & $7.7$ \\
-Spec 5: $+$ quadratic time trend                      & $\mathbf{-53.1}^{***}$ & $6.8$ & $\mathbf{-18.9}^{**}$ & $9.2$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{OLS price-effect estimates with full controls.} Daily clearing-price regressions with calendar-month and day-of-week fixed effects, gas price, time trend (linear or quadratic), and year-by-renewable interactions. Newey-West HAC standard errors with $7$-day bandwidth. POST = 1 on/after the reform cutover. Spec 4 (year-by-renewable with 2024+2025 pooled) implements the user-suggested fix for the Jan-Mar-2025-only-fit problem. $^{**}\,p<0.05$, $^{***}\,p<0.01$. ID15 IDA pre-window 2022-01-01 to 2025-03-18, post 2025-03-19 to 2025-04-27. DA15 DA pre 2022-01-01 to 2025-09-30, post 2025-10-01 to 2025-12-31.}
-\label{tab:ols-price-full-controls}
-\end{center}
-
-\textbf{OLS verdict matches the calibrated-solar BSTS verdict.} The ID15 IDA price drop is significant at every standard significance level across all five specifications ($-24$ to $-53$ EUR/MWh, $p<0.01$ throughout). The DA15 DA effect ranges from $-4.6$ (null, $p=0.55$) to $-18.9$ (significant under quadratic trend, $p=0.04$); the bulk of specifications return small null or marginally-significant negative coefficients. OLS with full controls is more precise than the BSTS (smaller standard errors, narrower confidence intervals) but qualitatively delivers the same conclusion: \textbf{ID15 has a robust own-market price drop; DA15 does not}.
-
-This diagnostic also clarifies why several level findings (\S\ref{sec:results:6-3}) lose significance under the year-interaction spec: forecast uncertainty about what solar's marginal price impact will be in the post-cutover window is large precisely because the coefficient has been shifting fast in the years immediately preceding the cutover.
-
-
-
-\paragraph{Note on bid-shape outcomes in this appendix.} The bid-shape DiD robustness tables below report on the headline quintuple $(\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_p)$ used in \S\ref{sec:data:bandwidth}. The cross-border and offer-type checks lead with $\sigma_p$ (the robust price-side anchor); for a near-linear curve $\sigma_p \approx |\hat\beta|\cdot\sigma_Q$, so the signs on those checks track $\hat\beta$ up to estimator noise (and via curvature track $\hat\gamma$).
-
-\subsection{Pre-trend placebo}\label{sec:5b}
-Split the pre-window at its midpoint and run the same DiD on the two halves; genuine reform effects should leave that placebo near zero. ID15 own-market cells pass cleanly (sign flips between real and placebo). The DA15 own-market CCGT placebo runs same-sign as the real, so the DA15 CCGT widening is continuation-plus-augmentation rather than a clean jump. Figure~\ref{fig:parallel-trends-sigma-p} is the visual analogue.
-
-\begin{center}
-\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{l c c c c c c c c}
-\toprule
-        & \multicolumn{2}{c}{\textbf{ID15 IDA (own)}} & \multicolumn{2}{c}{\textbf{ID15 DA (cross)}} & \multicolumn{2}{c}{\textbf{DA15 DA (own)}} & \multicolumn{2}{c}{\textbf{DA15 IDA (cross)}} \\
-\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
-\textbf{Tech} & Hdln & Plac & Hdln & Plac & Hdln & Plac & Hdln & Plac \\
-\midrule
-\multicolumn{9}{l}{\emph{Intercept $\alpha$ (EUR/MWh; positive = higher curve)}} \\
-CCGT      & $11.8^{*}$           & $4.9$            & $-40.2^{***}$       & $1.8$            & $28.3^{***}$       & $40.2^{***}$ & $6.0^{**}$       & $3.8^{**}$ \\
-Hydro     & $87.3$               & $10.2^{***}$     & $0.2$               & $-0.4$           & $19.7$             & $53.3^{*}$   & $9.3^{***}$      & $6.3^{***}$ \\
-Pump-storage & $-3.0$            & $-12.7^{***}$    & $1.1$               & $1.3$            & $-1.8$             & $-4.3$       & $16.1$           & $-4.9$ \\
-\addlinespace
-\multicolumn{9}{l}{\emph{Slope $\beta$ (EUR/MWh per MW; more negative = steeper)}} \\
-CCGT      & $-0.881^{*}$         & $0.146$          & $0.269^{***}$       & $0.004$          & $-0.150^{***}$     & $-0.206^{***}$ & $0.200$        & $-0.101$ \\
-Hydro     & $-1.498$             & $-0.156^{**}$    & $0.154$             & $-1.703^{***}$   & $-1.785^{***}$     & $1.176^{***}$  & $-0.012$       & $-0.022$ \\
-Pump-storage & $0.071$           & $0.248$          & $-0.010$            & $0.015^{*}$      & $0.008$            & $0.046^{***}$  & $-0.254$       & $0.007$ \\
-\addlinespace
-\multicolumn{9}{l}{\emph{Curvature $\gamma$ (EUR/MWh per MW$^2$; positive = convex)}} \\
-CCGT      & $0.0100$             & $0.0334^{*}$     & $-0.0040^{***}$     & $0.0015^{***}$   & $0.0010^{***}$     & $0.0022^{***}$ & $0.0076$       & $0.0002$ \\
-Hydro     & $-0.1088$            & $0.2455$         & $-0.3055$           & $-1.3947$        & $-7.4938^{***}$    & $1.6198$       & $0.0016$       & $-0.0105$ \\
-Pump-storage & $0.0014$          & $0.0005$         & $0.0001$            & $0.0002$         & $0.0001$           & $0.0000$       & $-0.0002$      & $-0.0002$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Pre-only midpoint placebo for bid-shape DiD, all four (reform, market) cells.} Windows: ID15 pre 2024-12-19 to 2025-03-18 (midpoint placebo splits this at $\sim$2025-02-01); DA15 pre 2025-07-01 to 2025-09-30 (midpoint $\sim$2025-08-15). ``Hdln'' reproduces the headline DiD from \S\ref{sec:results:6-1} using the full pre/post split; ``Plac'' fits the same critical/flat DiD on the pre-window split at its midpoint (no reform crosses the midpoint, so ``Plac'' should be null under parallel trends). Stars: $^{*}p<0.1$, $^{**}p<0.05$, $^{***}p<0.01$.}
-\label{tab:pretrend-placebo}
-\end{center}
-
-\paragraph{Parallel-trends diagnostics, metric by metric.} Figures~\ref{fig:parallel-trends-sigma-p} and \ref{fig:parallel-trends-abgN} plot critical against flat hours around each cutover for every dispatchable technology. The split follows the headline-vs-supporting logic of \S\ref{sec:data:bandwidth}: $\sigma_p$ and $\text{HHI}_p$ --- first and second moments of the in-band price distribution --- show flat pre-differentials on the headline cells, while $\hat\beta$ and $\hat\gamma$ --- within-curve OLS objects, mechanically sensitive to tranche counts and price-grid density --- drift in most cells. ($\sigma_p$ also needs only price-side variation and is well-defined on single-tranche curves, where $\hat\beta$ requires joint $p$--$q$ variation; for near-linear curves $\sigma_p \approx |\hat\beta|\,\sigma_Q$, so the two track each other up to estimator noise.)
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_ID15_da_sigma_hhi.pdf}\\[2pt]
-\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_ID15_ida_sigma_hhi.pdf}\\[2pt]
-\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_da_sigma_hhi.pdf}\\[2pt]
-\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_ida_sigma_hhi.pdf}
-\caption{\textbf{Parallel trends for the headline metrics $\sigma_p$ and $\text{HHI}_p$: clean.} Critical (red, hours 5--8 and 16--22) versus flat (blue, hours 1--3), 14-day rolling means by technology; the dashed line marks the cutover. Panels from top: ID15 day-ahead, ID15 intraday auctions, DA15 day-ahead, DA15 intraday auctions. Pre-trends are clean on the headline cells (CCGT and hydro-pump $\sigma_p$ on the day-ahead; CCGT $\text{HHI}_p$ on the day-ahead). The DA15 pre-window starts at the blackout (2025-04-28), so its panels are shorter and sit inside the reinforced-operation regime.}
-\label{fig:parallel-trends-sigma-p}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_ID15_da_beta_gamma.pdf}\\[2pt]
-\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_ID15_ida_beta_gamma.pdf}\\[2pt]
-\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_da_beta_gamma.pdf}\\[2pt]
-\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_ida_beta_gamma.pdf}
-\caption{\textbf{Parallel trends for the supporting metrics $\hat\beta$ and $\hat\gamma$: not clean.} Same construction as Figure~\ref{fig:parallel-trends-sigma-p}. Pre-trends drift in most cells: $\hat\beta$ and $\hat\gamma$ are within-curve OLS objects, mechanically sensitive to tranche counts and price-grid density, both of which shifted at the European-IDA reform (2024-06-14) and at ID15. This drift is why the analysis treats them as supporting rather than headline evidence (\S\ref{sec:data:bandwidth}).}
-\label{fig:parallel-trends-abgN}
-\end{figure}
-
-\subsection{Long-pre window with year/season/renewable controls and conditional parallel trends (RA-DiD)}\label{sec:5-long-pre-ra}
-
-I extend the pre-window to 2022-01-01, add year FE, calendar-month FE, and crit$\times$wind/crit$\times$solar interactions; and as a separate spec run the regression-adjustment DiD of \citet{heckman1997} under conditional parallel trends. ID15 DA CCGT (anticipation) survives both checks on $\sigma_p$ and HHI; DA15 DA CCGT survives on $\sigma_p$, the HHI sign flips under RA-DiD so the $\sigma_p$ side is the rugged headline. Side technologies omitted: only cells that survive at least the long-pre spec are reported (Table~\ref{tab:spec-c-longpre-ra}).
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l l c c c}
-\toprule
-\textbf{Cell}                       & \textbf{Outcome} & \textbf{Tight (1)} & \textbf{Long-pre + controls (2)} & \textbf{RA-DiD (3)} \\
-\midrule
-ID15 DA CCGT (anticipation)         & $\sigma_p$       & $+19.42^{***}$ & $+10.78^{***}$ & $+12.71^{**}$ \\
-                                    & $\text{HHI}_p$   & $-0.076^{***}$ & $-0.098^{***}$ & $-0.000$ \\
-\addlinespace
-DA15 DA CCGT                        & $\sigma_p$       & $+1.25^{**}$   & $+5.47^{***}$  & $+1.72$ \\
-                                    & $\text{HHI}_p$   & $-0.059^{***}$ & $-0.028^{***}$ & $+0.099^{**}$ \\
-\addlinespace
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{bid-shape DiD robustness: tight (1), long-pre with year+month+renewable controls (2), and regression-adjustment DiD per \citet{heckman1997} under conditional PT (3).} Windows match Table~\ref{tab:spec-c}. \emph{Bandwidth note:} this robustness uses the wider strategic bandwidth $H=140$ EUR/MWh of the underlying per-curve panel, not the window-specific $p_{90}$ of Table~\ref{tab:spec-c}; $\sigma_p$ scales with band width, so the magnitudes here are larger than in the headline table but the signs and significances on the headline cells are the comparable object. Spec (2) extends pre to 2022-01-01 and adds year FE, month FE, crit$\times$wind / crit$\times$solar interactions. Spec (3) regresses per-unit pre$\to$post change on average wind and solar on FLAT hours, predicts the counterfactual at critical units' covariates, ATT = realized $-$ predicted; bootstrap SEs 500 reps. Cells reported are those surviving at least spec (2).}
-\label{tab:spec-c-longpre-ra}
-\end{center}
-
-\paragraph{Per-firm $b_{mt}$ under the same long-pre control.} I run the same long-pre + year + month FE on the per-firm $b_{mt}$ increase: magnitude shrinks from the tight-window range $+13$\%--$+28$\% to $+8$\%--$+15$\% across the four dominant CCGT-owning firms, all firm cells still significant. Direction robust, magnitude roughly halved.
-
-\subsection{Hour-class falsification (midday vs.\ flat)}\label{sec:5a}\phantomsection\label{tab:midday-falsification}
-I substitute midday hours for critical in the same DiD. ID15 IDA CCGT $\alpha$ flips sign at midday (CCGT does not engage the granularity instrument in solar-saturated hours). DA15 DA CCGT carries the same sign in midday as in critical --- the day-ahead reform engaged the whole non-flat zone, not critical alone. Falsification passes.
-
-\phantomsection\label{sec:5d}\phantomsection\label{tab:xb-control}
-I add hourly Spain-France cross-border net flow as a control on the ID15 IDA DiD. Per-tech coefficients essentially unchanged. Rules out the contemporaneous XBID/SIDC sibling reform as the source.
-
-\subsection{Per-CCGT-firm decomposition}\label{sec:5-perfirm}
-I run the DiD firm by firm on each firm's own CCGT fleet (unit FE within-firm). Naturgy is the dominant scale-up at DA15 DA (Table~\ref{tab:perfirm-ccgt}); Iberdrola flat on level; EDP-HC small same-sign. ID15 IDA spreads more evenly across firms. Sign and firm-ranking are interpretable; magnitudes are not (firm intercepts not netted out).
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l r r r r}
-\toprule
-\textbf{Firm} & $\alpha$ & $\beta$ & $\gamma$ & Units \\
-\midrule
-\multicolumn{5}{l}{\emph{DA15 DA (own-market)}} \\
-Naturgy      & $69.9^{***}$ & $-0.402^{***}$ & $0.0022^{**}$   & $17$ \\
-Iberdrola    & $0.0$        & $0.001$        & $0.0000$        & $10$ \\
-EDP-HC       & $5.2^{*}$    & $-0.021^{*}$   & $-0.0002$       & $7$  \\
-\addlinespace
-\multicolumn{5}{l}{\emph{ID15 IDA (own-market)}} \\
-Naturgy      & $10.3$       & $-1.197^{*}$   & $0.0109$        & $17$ \\
-Iberdrola    & $32.2$       & $-0.253$       & ---             & $9$  \\
-Endesa       & $-2.9$       & $0.109$        & $0.0044^{*}$    & $7$  \\
-EDP-HC       & $1.7$        & $-0.211^{**}$  & $-0.0029$       & $6$  \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Per-firm CCGT bid-shape DiD, own-market cells of both reforms.} Windows match Table~\ref{tab:spec-c}: ID15 IDA pre 2024-12-19 to 2025-03-18, post 2025-03-19 to 2025-04-27 (40 days, pre-blackout); DA15 DA pre 2025-07-01 to 2025-09-30, post 2025-10-01 to 2025-12-31 (both post-blackout). One regression per firm on the firm's own CCGT fleet (unit FE within-firm). Endesa DA15 DA omitted: with only six units and uneven within-fleet activation the coefficients are numerically unstable. Magnitudes are not directly comparable to the pooled headlines; sign and ranking are interpretable.}
-\label{tab:perfirm-ccgt}
-\end{center}
-
-\subsection{Bandwidth $\delta$}\label{sec:5e}
-
-I rerun the DiD at $\delta = 100, 140, 200$ EUR/MWh on the headline metrics $\sigma_p$ and $1/\text{HHI}_p$ (Table~\ref{tab:bandwidth-robustness}). The CCGT deconcentration at DA15 is the most bandwidth-robust cell: the $1/\text{HHI}_p$ DiD is positive and significant at every bandwidth. On the ID15 IDA leg both CCGT metrics strengthen as the band widens beyond the contested $p_{90}$ margin ($\sigma_p$ insignificant at $\delta = 100$, significant at $140$ and $200$), consistent with the re-spaced tranches extending past the tight headline band. Hydro's $\sigma_p$ widening is significant throughout, while its DA15 $1/\text{HHI}_p$ changes sign at wide bands; pump-storage moves are concentrated at ID15 on $1/\text{HHI}_p$.
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{l c c c c c c}
-\toprule
-            & \multicolumn{3}{c}{\textbf{ID15 IDA}} & \multicolumn{3}{c}{\textbf{DA15 DA}} \\
-\cmidrule(lr){2-4} \cmidrule(lr){5-7}
-\textbf{$\delta$}    & CCGT & Hydro & Pump & CCGT & Hydro & Pump \\
-\midrule
-\multicolumn{7}{l}{\emph{Dispersion $\sigma_p$ (EUR/MWh)}} \\
-$\delta=100$          & $0.65$          & $1.10^{***}$  & $0.03$  & $-0.68$        & $1.31^{***}$ & $-0.31$ \\
-$\delta=140$          & $2.45^{***}$    & $1.17^{***}$  & $0.25$  & $1.30^{*}$     & $1.69^{***}$ & $-0.63^{*}$ \\
-$\delta=200$          & $2.09^{***}$    & $1.06^{**}$   & $0.24$  & $0.50$         & $1.82^{***}$ & $-0.68^{**}$ \\
-\addlinespace
-\multicolumn{7}{l}{\emph{Effective tranche count $1/\text{HHI}_p$}} \\
-$\delta=100$          & $0.66$          & $0.20^{***}$  & $0.16^{**}$ & $1.11^{***}$ & $0.22^{***}$  & $-0.01$ \\
-$\delta=140$          & $0.79^{***}$    & $0.21^{***}$  & $0.18^{**}$ & $0.44^{***}$ & $-0.04$       & $-0.05$ \\
-$\delta=200$          & $0.84^{***}$    & $0.24^{***}$  & $0.19^{**}$ & $0.42^{***}$ & $-0.13^{***}$ & $-0.04$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Bandwidth robustness for the headline bid-shape metrics.} Per-curve DiD coefficient $\theta$ on $\sigma_p$ and on the effective tranche count $1/\text{HHI}_p$ at progressively wider bandwidths; windows match Table~\ref{tab:spec-c} (ID15 IDA pre 2024-12-19 to 2025-03-18, post 2025-03-19 to 2025-04-27; DA15 DA pre 2025-07-01 to 2025-09-30, post 2025-10-01 to 2025-12-31). A positive $1/\text{HHI}_p$ DiD means the critical-hour bid stack \emph{deconcentrates} relative to flat --- the counterpart of a negative $\text{HHI}_p$ DiD; the headline window-specific $p_{90}$ estimates, on $\text{HHI}_p$ itself, are in Table~\ref{tab:spec-c}. SEs clustered by date.}
-\label{tab:bandwidth-robustness}
-\end{center}
-
-\phantomsection\label{sec:5f}\phantomsection\label{tab:bsts-solar-symmetry}\phantomsection\label{tab:bsts-per-session}
-Per-IDA-session BSTS estimates with the long pre-window cluster around EUR\,$-45$/MWh across IDA1, IDA2, IDA3, confirming session symmetry. A winter-only pre-window inflates estimates to $\sim$$-80$/MWh because the renewable coefficient is identified off too narrow a range. This motivates the long pre with year-by-year renewable interactions in BSTS.
-
-\subsection{CCGT offer-type composition check}\label{sec:5-offertype}
-I split CCGT bids by structural type (simple / MIC / block) and re-run the DA15 DiD within each type. The composition shifts toward more block offers post-reform (block offers are mechanically single-tranche, pushing pooled HHI UP), but the within-type DiD is still negative in MIC ($-0.046^{***}$) and block ($-0.043^{***}$), and pooled stays $-0.059^{***}$. The bid-stack deconcentration is real within-tranche behaviour, not a composition artefact.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{../../figures/working/fig_ccgt_offer_type.pdf}
-\caption{\textbf{CCGT offer-type composition shift and within-type bid-shape DiD.} DA15 windows: pre 2025-07-01 to 2025-09-30; post 2025-10-01 to 2025-12-31. \emph{Left}: composition of CCGT in-band sell curves, pre vs post DA15, critical vs flat. \emph{Right}: bid-shape DiD by offer type with 95\% CI; the panel is plotted on the $\sigma_p$ outcome, and the $\text{HHI}_p$ DiD by offer type carries the same sign pattern with negative coefficients in every type (simple $-0.007$~n.s., MIC $\mathbf{-0.046}^{***}$, block $\mathbf{-0.043}^{***}$, pooled $\mathbf{-0.059}^{***}$).}
-\label{fig:ccgt-offer-type}
-\end{figure}
-
-\subsection{Nuclear PDBF shortfall before the blackout}\label{sec:5-nuclear-pdbf}
-I run the headline BSTS on nuclear auction-plus-bilateral dispatch (PDBF on DA, PHF on IDA) at both reforms. PHF is the post-IDA programme before real-time, the right object for IDA conduct around the cutover.
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l l r r r}
-\toprule
-\textbf{Reform window} & \textbf{Outcome} & \textbf{Real} & \textbf{Placebo 2024} & \textbf{Placebo-net} \\
-\midrule
-ID15 (Mar 19 -- Apr 27, 2025, pre-blackout)     & PDBF (DA + bilateral)  & $\mathbf{-72.8}^{***}$ & $-18.9$       & $-53.9$ \\
-                                                & PHF (post-IDA total)   & $\mathbf{-54.1}^{***}$ & $+17.3$       & $-71.4$ \\
-\addlinespace
-DA15 (Oct 1 -- Dec 31, 2025, reforzada-constant) & PDBF                  & $-6.1$         & $-29.4$       & $+23.3$ \\
-                                                 & PHF                   & $-7.8$         & $-31.2$       & $+23.4$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Nuclear PDBF and PHF BSTS, ID15 and DA15.} GWh/day. Headline BSTS methodology (long pre-window 2022-01-01 onwards, year-by-year wind and solar interactions); placebos are the same-calendar 2024 windows.}
-\label{tab:bsts-nuclear-pdbf}
-\end{center}
-
-\subsection{Demand-side bid shape}\label{sec:5-demand-side}
-I re-run bid-shape DiD symmetrically on buy offers (tranches sorted descending in price) per demand class. At DA15 the buy-side $\alpha$ rises in step with sell-side $\alpha$ in critical: equilibrium re-coordination at a higher reservation level, not a one-sided supply shift.
-
-\begin{center}
-\scriptsize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{l c c c c}
-\toprule
-\textbf{Demand class} & \textbf{ID15 IDA} & \textbf{ID15 DA} & \textbf{DA15 DA} & \textbf{DA15 IDA} \\
-\midrule
-\multicolumn{5}{l}{\emph{Intercept $\alpha$ (EUR/MWh)}} \\
-Retailer            & $-10.6^{**}$        & $5.4$       & $15.0^{***}$       & $33.1^{***}$ \\
-DirectCons          & $0.2$               & ---         & $-3.1$             & $19.5^{***}$ \\
-PumpBuy             & $0.3$               & $-4.9$      & $-2.1^{*}$         & $0.8$ \\
-\addlinespace
-\multicolumn{5}{l}{\emph{Slope $\beta$ (EUR/MWh per buy MW; on a descending price-ordered curve)}} \\
-Retailer            & $-1.688$            & $-1.624$    & $2.607^{***}$      & $-2.272^{**}$ \\
-DirectCons          & $-5.308^{***}$      & ---         & $-3.746^{***}$     & $1.555^{***}$ \\
-PumpBuy             & $-0.012$            & $0.133$     & $0.039^{***}$      & $0.017^{***}$ \\
-\addlinespace
-\multicolumn{5}{l}{\emph{Curvature $\gamma$ (EUR/MWh per buy MW$^2$)}} \\
-Retailer            & $-6.1746$           & $-0.7050$   & $2.7389$           & $4.9286$ \\
-DirectCons          & $-25.4^{***}$       & ---         & $-5.7976^{*}$      & $-0.0206$ \\
-PumpBuy             & $-0.0002$           & $0.0002$    & $0.0008^{**}$      & $0.0005$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Demand-side bid-shape DiD, critical vs.\ flat, unit FE.} Per-curve OLS on the buy side with tranches sorted descending in price; $\beta$ measures how price falls as cumulative buy MW expands down the demand ladder. Retailer = competitive supplier (BIG-4 dominated); DirectCons = large direct industrial buyer; PumpBuy = pump-storage in charging mode.}
-\label{tab:demand-did}
-\end{center}
-
-Retailer DA15 IDA $\alpha$ at $+33^{***}$ tracks the sell-side widening; ID15 IDA retailer runs the opposite direction, corroborating the ID15 IDA price compression in \S\ref{sec:results:6-3}.
-
-\subsection{Residual-demand slope inside the bandwidth: empirical $b_{mt}$}\label{sec:5-residual-demand-slope}\phantomsection\label{tab:residual-demand-slope}
-
-I replicate \citet{ito_reguant_2016} Section~III.A Method~1 per firm. For each (date, period, market, focal firm) I build the residual demand the firm faces as aggregate demand minus all-other-firms' supply, sample it on a price grid $\pm 50$~EUR/MWh around MCP, fit a quadratic, and take the slope at MCP. Per-firm means in Table~\ref{tab:per-firm-residual-demand}.
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{l r r r r r r r r r r r r}
-\toprule
-        & \multicolumn{4}{c}{\textbf{ID15 IDA}} & \multicolumn{4}{c}{\textbf{DA15 DA}} & \multicolumn{4}{c}{\textbf{DA15 IDA}} \\
-\cmidrule(lr){2-5} \cmidrule(lr){6-9} \cmidrule(lr){10-13}
-\textbf{Firm}     & pre & post & $\Delta$ & ratio & pre & post & $\Delta$ & ratio & pre & post & $\Delta$ & ratio \\
-\midrule
-Iberdrola         & $156$ & $180$ & $+24$ & $1.15$ & $230$ & $285$ & $+55$ & $1.24$ & $149$ & $168$ & $+19$ & $1.13$ \\
-Endesa            & $180$ & $214$ & $+34$ & $1.19$ & $255$ & $321$ & $+66$ & $1.26$ & $171$ & $202$ & $+31$ & $1.18$ \\
-Naturgy           & $173$ & $212$ & $+39$ & $1.23$ & $266$ & $330$ & $+64$ & $1.24$ & $159$ & $187$ & $+28$ & $1.17$ \\
-EDP-HC            & $167$ & $193$ & $+26$ & $1.16$ & $231$ & $295$ & $+64$ & $1.28$ & $157$ & $181$ & $+24$ & $1.15$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Per-firm residual-demand slope $b_{mt}$ at the market clearing price, \citet{ito_reguant_2016} Section~III.A methodology.} Units: MW per EUR/MWh (larger $=$ more elastic residual demand $=$ thicker market for the focal firm). Per (date, period, market, focal firm) the residual demand curve is aggregate demand minus all-other-firms' supply, sampled on a grid $\pm 50$~EUR/MWh around the period's MCP, with the slope at MCP extracted from a quadratic fit. ID15 IDA pre $=$ 2024-06-14 to 2025-03-18 (hourly IDA); ID15 IDA post $=$ 2025-03-19 to 2025-04-27 (15-min IDA). DA15 DA pre $=$ 2024-06-14 to 2025-09-30 (hourly DA); DA15 DA post $=$ 2025-10-01 to 2026-03-06 (15-min DA).}
-\label{tab:per-firm-residual-demand}
-\end{center}
-
-The residual-demand slope $b_f$ rises for every firm in every (reform, market) cell, by $13$--$28\%$ (tight) and $8$--$15\%$ (long-pre + year + month FE). The Cournot first-order condition then implies markup compression. Per-firm $b$ is the model's pricing primitive and it moves as predicted.
-
-\paragraph{Per-IDA-session decomposition.} I rebuild $b_{mt}$ per IDA session (S1, S2, S3) by joining each session's MCP to its own bids. Pre-reform the model predicts $b$ thins toward delivery (S1 > S2 > S3); the data confirm it. Post-MTU15-IDA the S2/S3 gap collapses (Table~\ref{tab:per-session-bmt}).
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l r r r r r r}
-\toprule
-                  & \multicolumn{3}{c}{\textbf{Pre-MTU15-IDA}} & \multicolumn{3}{c}{\textbf{Post-MTU15-IDA}} \\
-\cmidrule(lr){2-4} \cmidrule(lr){5-7}
-\textbf{Grid bandwidth} & \textbf{S1} & \textbf{S2} & \textbf{S3 (closest to delivery)} & \textbf{S1} & \textbf{S2} & \textbf{S3} \\
-\midrule
-$\pm 50$ EUR/MWh (baseline) & $80.2$ & $68.3$ & $59.4$ & $\mathbf{99.9}$ & $73.0$ & $72.3$ \\
-$\pm 70$ EUR/MWh            & $71.7$ & $62.6$ & $55.0$ & $\mathbf{84.0}$ & $61.8$ & $60.5$ \\
-$\pm 90$ EUR/MWh            & $64.2$ & $57.1$ & $50.8$ & $\mathbf{73.4}$ & $54.5$ & $53.0$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Mean per-firm $b_{mt}$ by IDA session and grid bandwidth.} Units MW per EUR/MWh (larger $=$ more elastic residual demand). Mean across the four dominant firms (Iberdrola, Endesa, Naturgy, EDP-HC). Pre-window: 2024-06-14 to 2025-03-18 (hourly IDA). Post-window: 2025-03-19 to 2025-04-27 (15-min IDA, pre-blackout). At every bandwidth, three patterns hold: (i) pre-reform residual demand thins monotonically toward delivery (S1 $>$ S2 $>$ S3), confirming the sequential-markets prediction that liquidity falls as the gate closes; (ii) post-reform S1 stays the most elastic session (its slope rises by $14$--$24\%$); (iii) the S2-vs-S3 gap collapses post-reform --- the granularity reform makes the two later sessions look like the same product.}
-\label{tab:per-session-bmt}
-\end{center}
-
-Three patterns hold at every bandwidth: (i) pre-reform, residual demand becomes less elastic toward delivery ($b_{S1} > b_{S2} > b_{S3}$); (ii) post-reform the session-1 slope rises by $14$--$24\%$; (iii) the S2-vs-S3 gradient collapses to essentially zero. The granularity reform makes the two later IDA sessions look like the same product. Industry reporting confirms the underlying liquidity ordering (IDA1 and IDA2 each carry ${\sim}37\%$ of intraday liquidity; IDA3 only $12\%$).
-
-\subsection{Per-channel BSTS on REE ajuste-cost decisions}\label{sec:5-ajuste-bsts}
-
-I run BSTS separately on each of the eight daily ajuste-cost channels REE publishes via ESIOS (TR up/dn, aFRR up/dn, Fase~I up/dn, Fase~II up/dn). MTU15-IDA shrinks TR up and aFRR up cleanly; MTU15-DA is dominated by reforzada (Fase~I up rises). Total daily-cost change is roughly $-$EUR\,3.9M/day at MTU15-IDA and $+$EUR\,5.1M/day at MTU15-DA on the raw BSTS posterior mean. Unlike the price specs we do not report a same-calendar placebo: these are regulatory cost lines reflecting REE's procurement-and-dispatch decisions, not market outcomes, so a year-ago window is not a valid counterfactual for what REE \emph{would have done} absent the reform. BSTS controls for renewable trend and seasonality but cannot isolate market-mechanism effects from operator-discretion changes.
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{5pt}
-\begin{tabular}{l r r}
-\toprule
-\textbf{Channel}    & \textbf{MTU15-IDA (pre-blackout post)} & \textbf{MTU15-DA (post-window straddles reforzada)} \\
-\midrule
-Fase~I up           & $+1{,}988$              & $+4{,}554$ \\
-Fase~I dn           & $-197^{**}$             & $-123$ \\
-Fase~II up          & $-24$                   & $-143^{***}$ \\
-Fase~II dn          & $-963^{*}$              & $+1{,}959^{**}$ \\
-TR up               & $\mathbf{-4{,}182}^{**}$ & $-709$ \\
-TR dn               & $+390^{***}$            & $-29$ \\
-aFRR up             & $\mathbf{-842}^{***}$    & $-325$ \\
-aFRR dn             & $-44$                   & $-132$ \\
-\midrule
-\textbf{Sum}        & $\mathbf{\approx-3{,}874}$ & $\mathbf{\approx+5{,}102}$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{BSTS on daily REE ajuste-cost channels} (kEUR/day, raw posterior mean only). Long pre-window 2022-01-01 onwards, year-by-year wind and solar interactions, gas covariate, 7-day seasonal cycle. MTU15-IDA real post: 2025-03-19 to 2025-04-27 (pre-blackout). MTU15-DA real post: 2025-10-01 to 2025-12-31. Stars indicate the $95\%$ credible interval excludes zero. We do \emph{not} report a same-calendar placebo here because these channels are regulatory cost lines reflecting REE's procurement-and-dispatch decisions, not market clearing outcomes; the year-ago window is not a counterfactual for what REE \emph{would have done} absent the reform (its procurement strategy itself evolved across the post-blackout regime). Granularity-attributable interpretation of these movements is bounded above by the small pre-blackout gap visible in Figure~\ref{fig:efficiency_gains}; the cleaner reform identification sits on the auction side (bid-shape DiD, wedge SD, per-firm $b_{mt}$).}
-\label{tab:bsts-ajuste-costs}
-\end{center}
-
-Reading: at MTU15-IDA the granularity-correlated channels (TR up, aFRR up) shrink robustly without substitution into Fase~I up. At MTU15-DA the reforzada-driven Fase~I rise dominates the total. \citet{davi_arderius_graf_2026}'s event-study estimate of $\sim$EUR\,$1.24$B/year for the reforzada cost rise is on the same order of magnitude as the raw MTU15-DA Fase~I up posterior here ($+$EUR\,$4.6$M/day $\approx$ $+$EUR\,$1.7$B/year); the agreement is reassuring directionally but \emph{not} a placebo-net identification claim (\S\ref{sec:results:granularity-vs-reforzada}).
-
-% =====================================================================
-\subsection{Battery bid behavior in the IDA --- descriptive}\label{sec:5-batteries}
-The bid-shape DiD bid-shape framework does not transfer to batteries directly because every battery curve we observe in OMIE post-2024 is single-tranche by construction ($\text{HHI}_p = 1$, $\sigma_p = 0$, $\hat\beta$ and $\hat\gamma$ undefined). What does change at the reforms is participation intensity and bid placement relative to the clearing price. I list all OMIE units with technology \emph{Almacenamiento Compra/Venta} (eleven buy-side and three sell-side units), pull their IDA bids across the same window as the headline analysis, and compare across three regimes (pre-MTU15-IDA / post-MTU15-IDA pre-blackout / post-DA15 onwards).
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l c c c c c}
-\toprule
-\textbf{Regime} & \textbf{Side} & \textbf{Curves} & \textbf{Median $p_{\text{bid}}-\text{MCP}$} & \textbf{In-band share ($\pm 50$)} & \textbf{Avg MW/bid} \\
-\midrule
-Pre-MTU15-IDA          & Charge  & $8$    & $+38.0$  & $63\%$ & $4.4$ \\
-                       & Sell    & $4$    & $-47.6$  & $50\%$ & $4.2$ \\
-\addlinespace
-Post-MTU15-IDA         & Charge  & $1{,}115$ & $+0.2$  & $96\%$ & $3.3$ \\
-                       & Sell    & $1{,}017$ & $+0.2$  & $98\%$ & $3.9$ \\
-\addlinespace
-Post-DA15              & Charge  & $2{,}184$ & $+27.4$  & $74\%$ & $3.3$ \\
-                       & Sell    & $1{,}598$ & $-10.0$  & $72\%$ & $3.1$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Battery IDA bidding by regime (descriptive).} Eleven \emph{Almacenamiento Compra} units and three \emph{Almacenamiento Venta} units in the OMIE master list. Single-tranche curves throughout. ``Median $p_{\text{bid}}-\text{MCP}$'' positive on the charge side means the unit bids ABOVE the clearing price to guarantee charging clears; symmetric below MCP on the sell side. Pre-MTU15-IDA sample is small (only twelve curves total). Post-MTU15-IDA is a near-at-MCP strategy (price-taker). Post-DA15 the bidder pulls the charge bid up and the sell bid down (revealed willingness-to-pay / willingness-to-accept), and overall battery participation more than doubles.}
-\label{tab:batteries-ida}
-\end{center}
-
-Three observations. \emph{Participation}: battery curves rise from a dozen pre-MTU15-IDA to thousands post-DA15 --- the granularity reforms run alongside a build-out of the asset class, and the IDA is the market where batteries place their volumes. \emph{Strategy at MTU15-IDA cutover}: bids cluster essentially AT the clearing price ($96$--$98\%$ within $\pm 50$~EUR/MWh, median $p_{\text{bid}}-\text{MCP}\approx 0$) --- price-taking with both buy and sell curves straddling the realised MCP, consistent with an asset that wants to clear as much volume as available capacity allows. \emph{Strategy at DA15 cutover}: bids spread out, charge bids well above MCP and sell bids well below it (revealed reservation prices). The shift from at-MCP price-taking to spread-around-MCP volumetric bidding is what an actively-arbitraging storage operator looks like.
-
-\paragraph{Battery arbitrage: charge/sell mix and dual-bidding across reforms.} I pair the three batteries with both compra and venta unit codes (Iberdrola \emph{AFIBG}, EDP Soto \emph{ASRIHC}, Batalha \emph{SMB}) and ask two questions: how does the charge-versus-sell mix shift across reforms, and how often does the same battery bid BOTH sides in the same period (a bracketing-arbitrage signal). Pre-ID15: only Iberdrola is active, and only on nine periods total. Post-ID15: Iberdrola cycles nearly evenly ($53\%$ charge / $47\%$ sell of its unit-periods), Batalha is overwhelmingly charging ($88\%$ charge). Post-DA15: Iberdrola shifts toward charging-heavy ($69\%$ charge), EDP Soto enters with a charge-leaning mix ($62\%$ charge), and \emph{Batalha} starts placing bids on both sides in $18\%$ of its periods (32 out of 175) --- a bracket where the charge bid lands well above MCP and the sell bid well below, so that the position clears in either direction as the realised MCP settles in between. The bracketing strategy is consistent with active two-sided arbitrage. Sample is tiny (three battery pairs) and we cannot identify a treatment effect; we report the descriptive evolution.
-
-\subsection{Per-session IDA bid-shape decomposition: CCGT bidding intensity is IDA2-concentrated pre-reform and homogenizes post-reform}\label{sec:5-per-session-ida}
-% =====================================================================
-
-I split the pooled IDA bid-shape DiD per IDA session. Pre-reform CCGT bidding intensity concentrates in IDA2 ($\sigma_p$ and $\hat\beta$ roughly $2.5\times$ IDA1). Post-reform the three sessions converge in level. Tight descriptive, not the same identification as the pooled DiD; see Table caveat.
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l c c c c c c c c c}
-\toprule
-            & \multicolumn{3}{c}{\textbf{Pre-MTU15-IDA}} & \multicolumn{3}{c}{\textbf{Post-MTU15-IDA (pre-blackout)}} & \multicolumn{3}{c}{\textbf{Post-DA15 (incl.\ re-reinforced)}} \\
-\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-10}
-\textbf{Outcome} & IDA1 & IDA2 & IDA3 & IDA1 & IDA2 & IDA3 & IDA1 & IDA2 & IDA3 \\
-\midrule
-$\sigma_p$ (EUR/MWh)   & $1.74$ & $4.08$ & $0.34$ & $4.03$ & $5.77$ & $2.47$ & $3.64$ & $4.79$ & $2.07$ \\
-$\hat\beta$ (EUR/MWh per MW) & $0.125$ & $0.335$ & $0.161$ & $0.122$ & $0.135$ & $0.123$ & $0.099$ & $0.125$ & $0.098$ \\
-$\text{HHI}_p$          & $0.25$ & $0.50$ & $0.60$ & $0.21$ & $0.33$ & $0.33$ & $0.22$ & $0.25$ & $0.33$ \\
-\addlinespace
-$n_{\text{curves}}$     & 7{,}647 & 11{,}398 & 10{,}515 & 8{,}962 & 10{,}254 & 7{,}208 & 56{,}484 & 60{,}147 & 43{,}998 \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Per-session IDA CCGT bid-shape, critical evening hours 16--22.} Three windows: pre-MTU15-IDA 2024-06-14 to 2025-03-18 (post-IDA-reform 3-session at MTU60); post-MTU15-IDA 2025-03-19 to 2025-04-27 (40 days, pre-blackout); post-DA15 2025-10-01 to 2026-04-27 (post-blackout, post-DA15, includes re-reinforced from Nov 2025). Medians across in-band per-curve fits at bandwidth $\delta=150$~EUR/MWh. IDA3 covers hours 13--24, so it has no flat-hour reference; critical evening hours intersect all three sessions for cross-session comparison. The collapse of pre-reform IDA2 dominance ($\text{HHI}_p = 0.50$, $\hat\beta = 0.335$) into post-reform session-homogeneity is the per-session companion to the pooled critical/flat DiD reported in Table~\ref{tab:spec-c}. \emph{Caveat}: this is a descriptive comparison across three calendar windows with different seasonal mixes; we report it as suggestive of a session-order collapse, not as an identified treatment effect. The same long-pre robustness applied to the pooled DiD in \S\ref{sec:5-long-pre-ra} has not been applied per-session due to small per-session samples.}
-\label{tab:per-session-ida-bidshape}
-\end{center}
-
-The figure version separates the four windows visually.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{../../figures/thesis/fig_parallel_trends_sigma_p_per_session.pdf}
-\caption{\textbf{Per-session parallel-trends diagnostic: weekly CCGT $\sigma_p$ by hour-class, 2024-06 to 2026-05.} Stacked panels: day-ahead, then each of the three IDA sessions. Red: critical hours (5--8, 16--22). Blue: flat hours (1--3). IDA3 covers only hours 13--24, so its panel reports critical only. Bandwidth $|p_k - \text{MCP}| \le 50$~EUR/MWh. Vertical dashes mark ID15 (2025-03-19), blackout (2025-04-28), and DA15 (2025-10-01). The IDA2 panel carries the most-active CCGT bid-shape pre-MTU15-IDA, and the three IDA panels visibly converge in level post-reform --- the per-session story behind the pooled bid-shape DiD.}
-\label{fig:parallel-trends-sigma-p-per-session}
-\end{figure}
-
-% =====================================================================
-\subsection{Post-DA15 IDA activity rise and the Fase~I displacement channel}\label{sec:5-ida-activity-fase1}
-% =====================================================================
-
-I compute pre-DA15 vs post-DA15 IDA bidding activity per session (block orders excluded). CCGT supply MW/day in IDA3 falls $15\%$; demand-side MW/day rises $+15$/$+10$/$+29\%$ across IDA1/IDA2/IDA3. The reading is a Fase~I displacement channel: re-reinforced (\S\ref{sec:institutional}) shifts CCGT dispatch from real-time into pre-IDA Fase~I, leaving residual imbalance for the demand side to absorb in late IDAs.
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{5pt}
-\begin{tabular}{l c c c c c c c c}
-\toprule
-            & \multicolumn{2}{c}{\textbf{IDA1}} & \multicolumn{2}{c}{\textbf{IDA2}} & \multicolumn{2}{c}{\textbf{IDA3}} \\
-\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
-\textbf{Side / outcome}        & MW/day & tranches/curve & MW/day & tranches/curve & MW/day & tranches/curve \\
-\midrule
-CCGT supply        & $+11.6\%$ & $-3.8\%$ & $+0.5\%$ & $-1.9\%$ & $\mathbf{-15.0\%}$ & $-18.3\%$ \\
-All supply         & $-5.7\%$  & $+16.7\%$ & $-10.2\%$ & $+6.9\%$ & $-17.9\%$ & $+3.8\%$ \\
-Demand             & $\mathbf{+14.7\%}$ & $+14.9\%$ & $\mathbf{+10.0\%}$ & $+12.0\%$ & $\mathbf{+29.4\%}$ & $+9.7\%$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{IDA bidding activity, post-DA15 vs.\ pre-DA15 (reforzada-constant window).} Pre-DA15: 2025-04-28 to 2025-09-30 (post-blackout, post-ID15, pre-DA15); post-DA15: 2025-10-01 to 2025-12-31. ``MW/day'' is the sum of in-band offered quantities per session-day; ``tranches/curve'' is the mean over (date, unit, period) curves. Block orders excluded. CCGT IDA3 supply MW/day falls $15\%$ while demand-side IDA3 MW/day rises $29\%$ --- consistent with re-reinforced Fase~I displacement: CCGT is dispatched ahead of IDA close via Fase~I, leaving residual imbalance for the demand side to absorb in late IDAs.}
-\label{tab:ida-activity-fase1}
-\end{center}
-
-Composes with the BSTS reading of Table~\ref{tab:bsts-ajuste-costs}: the TR-up shrink across the MTU15-DA cutover is procurement-timing substitution into pre-IDA Fase~I, not a market-mechanism cleanup. Industry source verbatim confirms (\S\ref{sec:results:granularity-vs-reforzada}).
-
-
-\subsection{Strategic markup proxy: $q_f^{\text{strat}}/b_f$ per firm}\label{app:strategic-markup}
-
-Cournot first-order condition: $(p-MC)/p = q_f^{\text{strat}}/(b_f\cdot p)$, where $q_f^{\text{strat}}$ is the focal firm's strategic cleared MW (total cleared minus own renewable cleared MW: wind, solar PV, run-of-river, CSP, biomass-renewable, RE Tarifa CUR). Renewables clear at marginal cost $\approx 0$ regardless of bidding choices, so they are infra-marginal and do not enter the markup calculation. Reported as the period mean of $q_f^{\text{strat}}/b_f$ per (firm, window). Bigger $=$ more pricing power per strategic MW.
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{l c c c c c c c c}
-\toprule
- & \multicolumn{4}{c}{\textbf{$\%\Delta\, b_f$ (residual demand)}} & \multicolumn{4}{c}{\textbf{$\%\Delta\, \text{markup}_f$}} \\
-\cmidrule(lr){2-5}\cmidrule(lr){6-9}
-                & \textbf{IB} & \textbf{GE} & \textbf{GN} & \textbf{HC} & \textbf{IB} & \textbf{GE} & \textbf{GN} & \textbf{HC} \\
-\midrule
-ID15 IDA        & $+15$ & $+19$ & $+23$ & $+16$ & $-12$ & $+152^{\ddagger}$ & $-13$ & $+62^{\ddagger}$ \\
-ID15 DA         & $\mathbf{+116}$ & $\mathbf{+93}$ & $\mathbf{+100}$ & $\mathbf{+100}$ & $-19$ & $+29^{\ddagger}$ & $\mathbf{-38}$ & $+23^{\ddagger}$ \\
-\textbf{DA15 DA}& $\mathbf{+24}$ & $\mathbf{+26}$ & $\mathbf{+24}$ & $\mathbf{+28}$ & $\mathbf{-27}$ & $\mathbf{-26}$ & $-12$ & $-18$ \\
-DA15 IDA        & $+13$ & $+18$ & $+17$ & $+15$ & $+7$ & $+10$ & $-15$ & $+40$ \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Per-firm residual-demand slope and strategic markup proxy, pre vs post.} $b_f$ recovered as in \citet{ito_reguant_2016} (rebuild rivals' supply from OMIE offer book, quadratic fit at MCP$\pm 50$~EUR/MWh, period mean). Markup proxy $= q_f^{\text{strat}}/b_f$ with $q_f^{\text{strat}}$ from focal-firm cumulative sells at MCP minus renewable-unit subset. $^{\ddagger}$: ID15 markup signs are compositional, not behavioural --- the 40-day post window saw nuclear out and CCGT heavily called, so GE and HC's strategic dispatch jumped $+80$ to $+170\%$ from a small base, inflating the markup numerator. \textbf{DA15 DA is the cleanest market-power result}: all four dominant firms see $b_f$ rise ($24$ to $28\%$) AND the markup proxy fall ($-12$ to $-27\%$).}
-\label{tab:strategic-markup}
-\end{center}
-
-
-\subsection{Convex-renewable robustness on the price OLS}\label{app:convex-renew}
-
-Hourly OLS on the ID15 IDA price, no linear trend, Newey-West HAC lag $24\times 7$. Pre window 2022-01-01 onwards; post = 40 days for ID15 (pre-blackout), 92 days for DA15. \textbf{D}: quadratic spec adds wind$^2$, solar$^2$ with year-by-renewable interactions on both linear and quadratic terms. \textbf{E}: cubic spec adds wind$^3$, solar$^3$ with year-by-renewable interactions on all three orders. The quadratic spec absorbs merit-order curvature in renewable price-suppression; the cubic adds essentially nothing (diminishing returns).
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{8pt}
-\begin{tabular}{l c c c c}
-\toprule
-                                                     & \multicolumn{2}{c}{\textbf{ID15 (IDA reform)}} & \multicolumn{2}{c}{\textbf{DA15 (DA reform)}} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-                                                     & IDA (own) & DA (cross) & DA (own) & IDA (cross) \\
-\midrule
-OLS hourly --- $+$ year-by-renewable (2024+25 pooled) & $-30^{***}$ & $-29^{***}$ & $+3$ & $+2$ \\
-\textbf{D}  $+$ quadratic renew $\times$ year         & $\mathbf{-24}^{***}$ & $\mathbf{-24}^{***}$ & $-2$ & $-3$ \\
-\textbf{E}  $+$ cubic renew $\times$ year             & $-24^{***}$ & $-23^{***}$ & $-2$ & $-2$ \\
-\addlinespace
-Newey-West HAC SE (D)                                & 7.00 & 7.10 & 5.36 & 5.31 \\
-Newey-West HAC SE (E)                                & 6.85 & 6.95 & 5.37 & 5.32 \\
-\bottomrule
-\end{tabular}
-\captionof{table}{\textbf{Convex-renewable robustness: quadratic and cubic specs.} The quadratic D spec absorbs the merit-order curvature in renewable price-suppression. The ID15 own-market coefficient shrinks from $-30$ (linear year-by-renew) to $-24$ (D), p$=$0.001. The cubic E spec adds essentially nothing (additional shrinkage $<1$ EUR/MWh, SE unchanged). The ID15 floor under convex-renewable controls is $\approx -23$ EUR/MWh. DA15 stays null under both convex specs.}
-\label{tab:convex-renew}
-\end{center}
-
-
-\subsection{Renewable capacity vs realised production, 2024 vs 2025}\label{app:renewables-check}
-
-\textbf{(a) Installed capacity at year-start} (ENTSO-E, MW). Solar PV expanded $+43\%$; wind essentially flat.
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l c c c c}
-\toprule
-                       & \textbf{Jan 2024} & \textbf{Jan 2025} & \textbf{$\Delta$ MW} & \textbf{$\Delta$ \%} \\
-\midrule
-Solar PV (B16)         & 29{,}047 & $\mathbf{41{,}433}$ & $+12{,}386$ & $+42.6\%$ \\
-Wind (B18$+$B19)       & 30{,}932 & 32{,}451            & $+1{,}519$  & $+4.9\%$  \\
-Solar $+$ Wind         & 59{,}979 & 73{,}885            & $+13{,}906$ & $+23.2\%$ \\
-Coal (B05)             &  1{,}820 &  1{,}258            & $-562$      & $-30.9\%$ \\
-Nuclear (B14), Gas (B04) & no change & no change & --- & --- \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\noindent\textbf{(b) Realised production in the matched ID15 window} (Mar 19 -- Apr 27).
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l c c c c}
-\toprule
-                              & \textbf{Spring 2024} & \textbf{Spring 2025} & \textbf{$\Delta$} & \textbf{$\Delta$ \%} \\
-\midrule
-Wind (GWh/d)                  & 167.5 & 161.4 & $-6.1$  & $-4\%$  \\
-Solar (GWh/d)                 & 122.2 & 138.4 & $+16.2$ & $+13\%$ \\
-Gas (EUR/MWh)                 & 431   & 746   & $+315$  & $\mathbf{+73\%}$ \\
-IDA price (EUR/MWh, raw mean) & 10.9  & 25.1  & $+14.2$ & --- \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-
-% =====================================================================
-\section{Continuous-market response at the three structural reforms}\label{app:continuous}
-\phantomsection\label{sec:5-demand-buy-share}\phantomsection\label{tab:demand-buy-share}
-% =====================================================================
-
-BSTS on ES-leg continuous-market series under headline BSTS. ID15 is the only structural cutover of the three: trade count jumps $+24{,}269$/day placebo-net ($p<0.001$) as participants take up the four 15-min contracts per clock-hour, and energy turnover drops $-12.36$ GWh/day placebo-net ($p<0.001$) as smaller contracts and partial migration toward the now-finer IDA auctions thin total volume. The continuous-market volume-weighted price is not separately identifiable from the renewable-driven price drop once year-interactions control the wind/solar coefficient (real $-43.6^{*}$, placebo-net $-18.3$ ns). ISP15 is a methodological null (settlement-only reform, contract grid unchanged); DA15 leaves the continuous-market contract grid alone (already 15-min post-ID15) and no outcome survives the year-interaction control. The continuous-market reading is consistent with the auction-side reading: granularity reforms shift the contract grid and the participation pattern, but the price-level component cannot be separated from the renewable-coefficient drift.
-
-% =====================================================================
-\section{Market-structure context}\label{app:context}
-% =====================================================================
-
-
-\subsection{The reforzada cost increase concentrates on CCGT}
-The post-blackout REE intervention is technology-specific. \emph{Fase~I} (\emph{Resoluci\'on de restricciones t\'ecnicas por garant\'\i a de suministro}) is the pre-IDA technical-restrictions process REE runs on the PDBF programme: REE buys up-redispatch and sells down-redispatch to clear transmission-security constraints, settled pay-as-bid of a \emph{separate restriction offer} the unit submits to REE (Procedimiento de Operaci\'on PO~3.2; settlement PO~14.4 ap.~20.1). The Fase~I restriction offer is a distinct instrument from the unit's day-ahead market offer. \emph{Fase~II} (\emph{Resoluci\'on de restricciones por balance}) is the post-Fase-I rebalance that absorbs the up-redispatch back into the schedule through symmetric down-redispatch elsewhere (PO~3.2 §6); it has been operationally near-zero since 2024. Decomposing each technology's weekly dispatch chronologically --- day-ahead cleared (PDBC), then bilateral executions, then each intraday auction, then the continuous market, then REE's post-IDA redispatch --- the gas panel of Figure~\ref{fig:ree_intervention_by_tech} shows the day-ahead-cleared base collapsing post-blackout while the REE-routed layer balloons. Other technologies are largely flat across the same window (Figure~\ref{fig:ree_intervention_other_tech}).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{fig_programs_by_tech_weekly.pdf}
-\caption{\textbf{Weekly program cascade by technology.} Chronological program stack per technology and week: day-ahead cleared (PDBC) $+$ bilateral executions $+$ each intraday auction (IDA1--IDA3) $+$ continuous market $+$ REE post-IDA real-time redispatch; supply plots above zero, consumption and down-redispatch below zero; the black line is the final post-IDA programme (PHF) net. The REE layer collects what is routed outside the OMIE auctions --- Fase~I and Fase~II redispatch and real-time technical restrictions under PO~3.2, paid pay-as-bid through the restriction-offer channel of PO~14.4 ap.~20.1, distinct from the day-ahead market offer; Fase~I dominates its post-blackout growth (Figure~\ref{fig:efficiency_gains}, \S\ref{sec:results:granularity-vs-reforzada}). Vertical guides: ID15, the April 2025 blackout, DA15.}
-\label{fig:ree_intervention_by_tech}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{fig_programs_by_tech_other_weekly.pdf}
-\caption{\textbf{Weekly program cascade, other technologies.} Same convention as Figure~\ref{fig:ree_intervention_by_tech}: supply above zero, consumption and down-redispatch below zero, black line $=$ PHF net. Pump-storage load is purely consumption and plots entirely below zero.}
-\label{fig:ree_intervention_other_tech}
-\end{figure}
-
-This per-technology pattern is the cleanest evidence that the reforzada cost increase is a separate policy effect from the granularity reforms: a granularity reform that touched all bid-side firms equally would not produce a CCGT-only intervention pattern. The day-ahead CCGT cleared scale-up of \S\ref{sec:results:6-4} (DA15 only, critical hours) sits alongside this REE-intervention story: both are CCGT-side responses to the operational environment, but the granularity-driven response is competitive-clearing (and consumer-favourable) while the reforzada-driven response is REE-paid redispatch.
-
-\subsection{Representative bid curves by technology}\label{app:context-bid-curves}
-
-\begin{figure}[H]
-\centering
-\begin{subfigure}{0.92\textwidth}
-\centering
-\includegraphics[width=\linewidth]{fig_bid_curves_by_tech.pdf}
-\caption{Evening-ramp critical quarter: 2025-12-17, hour 17, quarter 4.}
-\label{fig:bid-curves-by-tech}
-\end{subfigure}\\[4pt]
-\begin{subfigure}{0.92\textwidth}
-\centering
-\includegraphics[width=\linewidth]{fig_bid_curves_by_tech_flat.pdf}
-\caption{Flat overnight quarter on a windy night: 2025-12-04, hour 01, quarter 4.}
-\label{fig:bid-curves-by-tech-flat}
-\end{subfigure}
-\caption{\textbf{Representative day-ahead supply curves by technology} (post-MTU15-DA). One representative unit per technology; red dashed: MCP; orange band: in-band region $[\text{MCP} \pm \delta]$ with $\delta=50$ (\S\ref{sec:data:bandwidth}); panels with bid ranges far below the band use a broken y-axis. Dispatchables structure their competing tier inside the band; renewables submit single or near-single blocks far below it, so within-band $\sigma_p$ and $\text{HHI}_p$ are mechanically zero or one --- the basis for excluding solar from the bid-shape DiD. In panel (b), the wind unit (WMVD088) posts a 15-tranche aggregator micro-ladder concentrated in $[-20, +1.5]$~EUR/MWh, well below the band.}
-\label{fig:bid-curves-by-tech-merged}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{fig_buy_vs_sell_curves.pdf}
-\caption{\textbf{Representative IDA sell vs buy bid curves by technology, pre-ID15.} One representative (unit, date, session, period) per tech. Blue: sell curve (supply, ascending in price). Red: buy curve (demand, descending in price). Dashed: MCP. Pre-ID15 window 2024-06-14 to 2025-03-18.}
-\label{fig:buy-vs-sell-curves}
-\end{figure}
 
 % =====================================================================
 \section{Theoretical derivations}\label{app:derivations}
@@ -2314,5 +1706,613 @@ Combining the contractibility channels (writing $a_1 \equiv \bar A - b_1 c$, agg
 \Delta W^{\text{forward}} \;&=\; \frac{Q\, \sigma_\zeta^2}{8}\Bigl(\frac{1}{b_2} - \frac{1}{b_1}\Bigr) \;+\; \frac{c\, a_1}{4\, b_1}\,\Big(Q b_1 - \!\sum_t b_{1t}\Big). \label{eq:DeltaW-fwd-app}
 \end{align}
 The spot-reform delta is the aggregator's hedging saving plus the net value of pricing the update at the spot margin: positive whenever $\gamma > 1/(8 b_2)$, and dominated by the imbalance saving at observed balancing premia. The forward-reform delta is a \emph{relocation}: the ramp's discrimination cost moves from the spot margin $b_2$ to the (thicker) forward margin $b_1$ --- the first term, positive when $b_1 > b_2$ and zero when the margins coincide --- plus the cleared-quantity scale-up of \eqref{eq:scale-up} valued at the pre-existing forward markup, carrying the sign of $Q b_1 - \sum_t b_{1t}$. Both forward-reform terms are second-order relative to \eqref{eq:DeltaW-spot-app}: no imbalance term appears at the forward reform (the $(Q,Q)$ column of \eqref{eq:imb-table} equals the $(1,Q)$ column), so the model predicts a small aggregate footprint for the forward reform. The markup-compression and withholding channels add on top wherever $b_f$ rises or the arbitrage constraint binds harder, with the signs derived above; the bid-ladder rent channel is mostly distributional.
+
+% =====================================================================
+\section{Robustness}\label{app:robustness}
+% =====================================================================
+
+Each subsection stress-tests one ingredient of the design: parallel trends, the bandwidth, the hour-class partition, the renewable controls, the estimation window, and bid composition.
+
+\subsection{Pre-trend placebo}\label{sec:5b}
+Split the pre-window at its midpoint and run the same DiD on the two halves; genuine reform effects should leave that placebo near zero. ID15 own-market cells pass cleanly (sign flips between real and placebo). The DA15 own-market CCGT placebo runs same-sign as the real, so the DA15 CCGT widening is continuation-plus-augmentation rather than a clean jump. Figure~\ref{fig:parallel-trends-sigma-p} is the visual analogue.
+
+\begin{center}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{l c c c c c c c c}
+\toprule
+        & \multicolumn{2}{c}{\textbf{ID15 IDA (own)}} & \multicolumn{2}{c}{\textbf{ID15 DA (cross)}} & \multicolumn{2}{c}{\textbf{DA15 DA (own)}} & \multicolumn{2}{c}{\textbf{DA15 IDA (cross)}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+\textbf{Tech} & Hdln & Plac & Hdln & Plac & Hdln & Plac & Hdln & Plac \\
+\midrule
+\multicolumn{9}{l}{\emph{Intercept $\alpha$ (EUR/MWh; positive = higher curve)}} \\
+CCGT      & $11.8^{*}$           & $4.9$            & $-40.2^{***}$       & $1.8$            & $28.3^{***}$       & $40.2^{***}$ & $6.0^{**}$       & $3.8^{**}$ \\
+Hydro     & $87.3$               & $10.2^{***}$     & $0.2$               & $-0.4$           & $19.7$             & $53.3^{*}$   & $9.3^{***}$      & $6.3^{***}$ \\
+Pump-storage & $-3.0$            & $-12.7^{***}$    & $1.1$               & $1.3$            & $-1.8$             & $-4.3$       & $16.1$           & $-4.9$ \\
+\addlinespace
+\multicolumn{9}{l}{\emph{Slope $\beta$ (EUR/MWh per MW; more negative = steeper)}} \\
+CCGT      & $-0.881^{*}$         & $0.146$          & $0.269^{***}$       & $0.004$          & $-0.150^{***}$     & $-0.206^{***}$ & $0.200$        & $-0.101$ \\
+Hydro     & $-1.498$             & $-0.156^{**}$    & $0.154$             & $-1.703^{***}$   & $-1.785^{***}$     & $1.176^{***}$  & $-0.012$       & $-0.022$ \\
+Pump-storage & $0.071$           & $0.248$          & $-0.010$            & $0.015^{*}$      & $0.008$            & $0.046^{***}$  & $-0.254$       & $0.007$ \\
+\addlinespace
+\multicolumn{9}{l}{\emph{Curvature $\gamma$ (EUR/MWh per MW$^2$; positive = convex)}} \\
+CCGT      & $0.0100$             & $0.0334^{*}$     & $-0.0040^{***}$     & $0.0015^{***}$   & $0.0010^{***}$     & $0.0022^{***}$ & $0.0076$       & $0.0002$ \\
+Hydro     & $-0.1088$            & $0.2455$         & $-0.3055$           & $-1.3947$        & $-7.4938^{***}$    & $1.6198$       & $0.0016$       & $-0.0105$ \\
+Pump-storage & $0.0014$          & $0.0005$         & $0.0001$            & $0.0002$         & $0.0001$           & $0.0000$       & $-0.0002$      & $-0.0002$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Pre-only midpoint placebo for the bid-shape DiD.} ``Hdln'' $=$ headline DiD (\S\ref{sec:results:6-1}); ``Plac'' $=$ same DiD on the pre-window split at its midpoint, which should be null under parallel trends.}
+\label{tab:pretrend-placebo}
+\end{center}
+
+\paragraph{Parallel-trends diagnostics, metric by metric.} Figures~\ref{fig:parallel-trends-sigma-p} and \ref{fig:parallel-trends-abgN} plot critical against flat hours around each cutover for every dispatchable technology. The split follows the headline-vs-supporting logic of \S\ref{sec:data:bandwidth}: $\sigma_p$ and $\text{HHI}_p$ --- first and second moments of the in-band price distribution --- show flat pre-differentials on the headline cells, while $\hat\beta$ and $\hat\gamma$ --- within-curve OLS objects, mechanically sensitive to tranche counts and price-grid density --- drift in most cells. ($\sigma_p$ also needs only price-side variation and is well-defined on single-tranche curves, where $\hat\beta$ requires joint $p$--$q$ variation; for near-linear curves $\sigma_p \approx |\hat\beta|\,\sigma_Q$, so the two track each other up to estimator noise.)
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_ID15_da_sigma_hhi.pdf}\\[2pt]
+\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_ID15_ida_sigma_hhi.pdf}\\[2pt]
+\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_da_sigma_hhi.pdf}\\[2pt]
+\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_ida_sigma_hhi.pdf}
+\caption{\textbf{Parallel trends for $\sigma_p$ and $\text{HHI}_p$: clean on the headline cells.} Critical (red) vs flat (blue), 14-day rolling means; dashed line $=$ cutover. Panels top to bottom: ID15 DA, ID15 IDA, DA15 DA, DA15 IDA.}
+\label{fig:parallel-trends-sigma-p}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_ID15_da_beta_gamma.pdf}\\[2pt]
+\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_ID15_ida_beta_gamma.pdf}\\[2pt]
+\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_da_beta_gamma.pdf}\\[2pt]
+\includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_ida_beta_gamma.pdf}
+\caption{\textbf{Parallel trends for $\hat\beta$ and $\hat\gamma$: drift.} Same construction as Figure~\ref{fig:parallel-trends-sigma-p}. These are within-curve OLS objects, mechanically sensitive to tranche counts and grid density --- hence supporting, not headline.}
+\label{fig:parallel-trends-abgN}
+\end{figure}
+
+\subsection{Bandwidth $\delta$}\label{sec:5e}
+
+I rerun the DiD at $\delta = 100, 140, 200$ EUR/MWh on the headline metrics $\sigma_p$ and $1/\text{HHI}_p$ (Table~\ref{tab:bandwidth-robustness}). The CCGT deconcentration at DA15 is the most bandwidth-robust cell: the $1/\text{HHI}_p$ DiD is positive and significant at every bandwidth. On the ID15 IDA leg both CCGT metrics strengthen as the band widens beyond the contested $p_{90}$ margin ($\sigma_p$ insignificant at $\delta = 100$, significant at $140$ and $200$), consistent with the re-spaced tranches extending past the tight headline band. Hydro's $\sigma_p$ widening is significant throughout, while its DA15 $1/\text{HHI}_p$ changes sign at wide bands; pump-storage moves are concentrated at ID15 on $1/\text{HHI}_p$.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l c c c c c c}
+\toprule
+            & \multicolumn{3}{c}{\textbf{ID15 IDA}} & \multicolumn{3}{c}{\textbf{DA15 DA}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+\textbf{$\delta$}    & CCGT & Hydro & Pump & CCGT & Hydro & Pump \\
+\midrule
+\multicolumn{7}{l}{\emph{Dispersion $\sigma_p$ (EUR/MWh)}} \\
+$\delta=100$          & $0.65$          & $1.10^{***}$  & $0.03$  & $-0.68$        & $1.31^{***}$ & $-0.31$ \\
+$\delta=140$          & $2.45^{***}$    & $1.17^{***}$  & $0.25$  & $1.30^{*}$     & $1.69^{***}$ & $-0.63^{*}$ \\
+$\delta=200$          & $2.09^{***}$    & $1.06^{**}$   & $0.24$  & $0.50$         & $1.82^{***}$ & $-0.68^{**}$ \\
+\addlinespace
+\multicolumn{7}{l}{\emph{Effective tranche count $1/\text{HHI}_p$}} \\
+$\delta=100$          & $0.66$          & $0.20^{***}$  & $0.16^{**}$ & $1.11^{***}$ & $0.22^{***}$  & $-0.01$ \\
+$\delta=140$          & $0.79^{***}$    & $0.21^{***}$  & $0.18^{**}$ & $0.44^{***}$ & $-0.04$       & $-0.05$ \\
+$\delta=200$          & $0.84^{***}$    & $0.24^{***}$  & $0.19^{**}$ & $0.42^{***}$ & $-0.13^{***}$ & $-0.04$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Bandwidth robustness, $\sigma_p$ and $1/\text{HHI}_p$.} DiD $\theta$ at $\delta=100,140,200$ EUR/MWh; the headline $p_{90}$ estimates are in Table~\ref{tab:spec-c}. Positive $1/\text{HHI}_p$ $=$ deconcentration. SEs clustered by date.}
+\label{tab:bandwidth-robustness}
+\end{center}
+
+\phantomsection\label{sec:5f}\phantomsection\label{tab:bsts-solar-symmetry}\phantomsection\label{tab:bsts-per-session}
+Per-IDA-session BSTS estimates with the long pre-window cluster around EUR\,$-45$/MWh across IDA1, IDA2, IDA3, confirming session symmetry. A winter-only pre-window inflates estimates to $\sim$$-80$/MWh because the renewable coefficient is identified off too narrow a range. This motivates the long pre with year-by-year renewable interactions in BSTS.
+
+\subsection{Critical/flat definition: midday falsification and cross-border control}\label{sec:5a}\phantomsection\label{tab:midday-falsification}
+\emph{Midday falsification:} substituting midday for critical hours, the ID15 IDA CCGT effect flips sign (no engagement in solar-saturated hours) while DA15 DA carries through (the day-ahead reform engaged the whole non-flat zone). \emph{Cross-border control:} adding hourly Spain-France net flow to the ID15 IDA DiD leaves the coefficients essentially unchanged, ruling out the contemporaneous XBID/SIDC reform.\phantomsection\label{sec:5d}\phantomsection\label{tab:xb-control}
+
+\subsection{Convexity and non-stationarity of the renewable response: year-by-year solar coefficient}\label{app:solar-year-coefs}
+
+The BSTS uses long pre-windows with year-by-renewable interactions because Spanish wind$+$solar capacity grew ${\sim}6\times$ over 2018--2025, so the marginal price-suppression of an additional GWh is non-stationary; a flat-coefficient spec mis-fits the cross-year merit-order shift.
+
+Table~\ref{tab:solar-year-coefs} reports the cumulative solar coefficient (base + year-dummy) by calendar year, extracted from the BSTS posterior of the price spec under both windows (ID15 pre ends 2025-03-18, DA15 pre ends 2025-09-30). \textbf{Conditional posterior means} (the coefficient when the spike-and-slab includes the regressor). The wind base coefficient is stable around $-0.50$ EUR/MWh per GWh; the wind$\times$year interactions all have inclusion probability below $1.5\%$. The solar coefficient is the one that varies.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{7pt}
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Year} & \textbf{ID15 IDA spec} & \textbf{DA15 IDA spec} & \textbf{DA15 DA spec} \\
+\midrule
+2022 (base)   & $-0.22$ & $-0.23$ & $-0.22$ \\
+2023          & $-0.02$ & $-0.23$ & $-0.17$ \\
+2024          & $\mathbf{-0.46}$ & $\mathbf{-0.47}$ & $\mathbf{-0.40}$ \\
+2025\, $^{\dagger}$ & $\mathbf{-0.29}$ \emph{(Jan-Mar only on ID15)} & $\mathbf{-0.50}$ & $\mathbf{-0.49}$ \\
+\midrule
+\multicolumn{4}{l}{\emph{Implied weighted average for the post-window prediction}} \\
+2024+2025 weighted avg $^{\ddagger}$ & $-0.43$ & $-0.45$ & $-0.44$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Cumulative solar coefficient (EUR/MWh per GWh of solar) by year}, extracted from the BSTS posterior of the corresponding price spec. Cumulative coefficient = base $+$ year-dummy interaction, conditional posterior mean among MCMC draws that include the regressor. $^{\dagger}$The ID15 spec pre-window ends 2025-03-18, so its 2025-by-solar coefficient is fitted on Jan-Mar 2025 only, when Spanish solar production is at its lowest seasonal level; the DA15 spec pre-window extends through 2025-09-30 and includes summer, giving the more representative estimate. $^{\ddagger}$Months-weighted average of the 2024 and 2025 cumulative coefficients (12 months of 2024 + available months of 2025): this is the coefficient one would extrapolate forward if 2024 and 2025 were pooled into a single dummy for the post-window prediction; the per-year BSTS instead extrapolates using the 2025-row coefficient alone.}
+\label{tab:solar-year-coefs}
+\end{center}
+
+Reading the table: the DA15 spec (which sees Jan-Sep 2025) tells the cleaner story. Solar's marginal price-suppressing effect is roughly constant from 2022 to 2023, then nearly doubles from 2023 to 2024 (Spain added $\sim\!5$ GW of solar capacity in 2024 alone), and continues to deepen in 2025 as solar saturates more clock-hours and negative-price events become routine. The ID15 spec's 2025 coefficient looks deceptively small (Jan-Mar winter sun is weak) but the underlying renewable response in 2025 is the most negative on record. The non-stationarity is exactly what the year interaction is designed to absorb: a flat-coefficient spec would average $-0.22$ (2022) and $-0.50$ (2025) into a single value around $-0.35$, mis-fitting both ends of the window.
+
+\paragraph{Calibrated-solar robustness: how much of the price drop is solar vs the reform?} A natural concern about the headline BSTS counterfactual is that Spanish solar capacity grew rapidly through 2024 and 2025, so the marginal price-suppressing effect of solar is itself non-stationary. The BSTS per-year spike-and-slab attempts to capture this via year-by-solar interactions; the conditional posterior means (Table~\ref{tab:solar-year-coefs}) are $-0.46$ for 2024 and $-0.29$ for the Jan-Mar-2025 sample on the ID15 spec, suggesting a strong solar effect that may not be fully credited in the post-window prediction. If the post-window counterfactual under-credits solar, the residual ``price drop'' that we attribute to the reform is partly mechanical (it is the solar effect we failed to attribute correctly). We therefore implement a \textbf{calibrated-solar counterfactual}: pre-subtract a known solar contribution $\beta^{\text{cal}}_{\text{solar}} \cdot \text{solar}_t \cdot \mathds{1}\{t \ge 2024\}$ from observed prices, fit the BSTS state-space model on the residual (with the usual base regressors but no year interactions), and add the calibrated solar contribution back to the post-window prediction before computing the treatment effect.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l r r r r r r}
+\toprule
+& \multicolumn{3}{c}{\textbf{ID15 IDA}} & \multicolumn{3}{c}{\textbf{DA15 DA}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+\textbf{Calibrated solar coefficient $\beta^{\text{cal}}_{\text{solar}}$ (EUR/MWh per GWh)} & \textbf{Real} & \textbf{Placebo} & \textbf{Net} & \textbf{Real} & \textbf{Placebo} & \textbf{Net} \\
+\midrule
+$-0.21$ (BSTS unconditional default)                   & $-41$ & $+32$ & $\mathbf{-73}$ & $+30$ & $+43$ & $-13$ \\
+$-0.29$ (per-year cond.\ 2025, ID15 spec)              & $-38$ & $+36$ & $\mathbf{-74}$ & $+21$ & $+32$ & $-12$ \\
+$-0.40$ (per-year cond.\ 2024, DA15 DA spec)           & $-30$ & $+36$ & $\mathbf{-66}$ & $+18$ & $+27$ & $-10$ \\
+$\mathbf{-0.46}$ (per-year cond.\ 2024, ID15 spec)     & $-26$ & $+37$ & $\mathbf{-63}$ & $+9$  & $+23$ & $-13$ \\
+$-0.50$ (per-year cond.\ 2025, DA15 spec)              & $-23$ & $+37$ & $\mathbf{-60}$ & $+9$  & $+19$ & $-10$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Calibrated-solar BSTS treatment effects on clearing price.} EUR/MWh; $-0.46$ row uses the user's preferred ``trust the 2024 conditional'' substitution. The calibrated approach explicitly subtracts $\beta^{\text{cal}}_{\text{solar}} \cdot \text{solar} \cdot \mathbf{1}\{t \ge 2024\}$ from prices, fits BSTS on the residual (no year interactions), and adds the calibrated contribution back to the post-window prediction. Placebo column uses the same calibration but with the cutover shifted one year earlier (real reform absent in the placebo window). Real, placebo, and net all measured on the price level in EUR/MWh.}
+\label{tab:calibrated-solar}
+\end{center}
+
+\textbf{The price drop at ID15 IDA survives every solar calibration we tried.} Under the most aggressive solar coefficient ($-0.50$, the DA15-spec conditional 2025 mean) the real-effect point estimate is $-23$ EUR/MWh; under the user's preferred ``trust the 2024 conditional'' value of $-0.46$ it is $-26$ EUR/MWh; under the BSTS unconditional default it is $-41$ EUR/MWh. After 2024-same-calendar placebo-netting (which absorbs whatever cross-season variation exists in the spring window) the net effects are uniformly larger in magnitude ($-60$ to $-74$ EUR/MWh) because the placebo windows themselves have positive ``effects'' under the calibrated specification, reflecting whatever upward residual variation Spring 2024 carried. The DA15 DA real effect is essentially null across all solar calibrations ($+9$ to $+30$ EUR/MWh, $\approx 0$); the net effect is mildly negative ($-10$ to $-13$ EUR/MWh) under every solar calibration but the magnitude is much smaller than at ID15 and the credible intervals always bracket zero.
+
+\textbf{Bottom line.} The ID15 IDA price drop is robustly negative in sign and substantial in magnitude under every solar coefficient we could justify. Solar's strong 2024 marginal effect ($-0.46$) does not explain the ID15 price drop --- the reform did something to the granular leg's clearing price on top of what solar alone would predict. The DA15 DA effect is small to null under every calibration. We treat the ID15 drop as a real reform effect and the DA15 drop as not separately identified. The per-firm slope increase (Appendix~\ref{sec:5-residual-demand-slope}) remains the cleanly-identified pricing-chain INPUT and is unaffected by this discussion.
+
+\paragraph{OLS cross-check.} The wide credible intervals in the calibrated-solar BSTS reflect the state-space level component's flexibility, which absorbs persistent low-frequency variation that the regression then has no way to pin down. We complement the BSTS with a standard OLS regression on the same daily price panel, including calendar-month and day-of-week fixed effects (the seasonal structure that BSTS encoded via local-level + 7-day seasonal), a time trend (linear or quadratic), gas price, and per-year wind and solar interactions. Standard errors are Newey-West HAC with $7$-day bandwidth to account for daily price autocorrelation. The model:
+\[
+p_t \;=\; \alpha + \theta\,\text{POST}_t + \beta_{\text{wind}}\text{wind}_t + \beta_{\text{solar}}\text{solar}_t + \beta_{\text{gas}}\text{gas}_t + \sum_y \gamma_y\,\text{renew}_t \cdot \mathds{1}\{\text{year}=y\} + \phi_m + \delta_{\text{dow}} + g(t) + \varepsilon_t.
+\]
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l r r r r}
+\toprule
+& \multicolumn{2}{c}{\textbf{ID15 IDA price}} & \multicolumn{2}{c}{\textbf{DA15 DA price}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+\textbf{Specification (POST coef $\theta$)} & $\hat\theta$ & HAC SE & $\hat\theta$ & HAC SE \\
+\midrule
+Spec 1: base $+$ month FE $+$ DOW FE                 & $\mathbf{-31.7}^{***}$ & $8.2$ & $-8.3$           & $5.3$ \\
+Spec 2: $+$ linear time trend                         & $\mathbf{-23.7}^{***}$ & $8.6$ & $+8.3$           & $7.3$ \\
+Spec 3: $+$ year-by-renewable (per year)              & $\mathbf{-45.8}^{***}$ & $9.6$ & $-8.6$           & $8.1$ \\
+Spec 4: $+$ year-by-renewable (2024+ pooled)          & $\mathbf{-38.7}^{***}$ & $7.3$ & $-4.6$           & $7.7$ \\
+Spec 5: $+$ quadratic time trend                      & $\mathbf{-53.1}^{***}$ & $6.8$ & $\mathbf{-18.9}^{**}$ & $9.2$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{OLS price-effect estimates with full controls.} Daily clearing-price regressions with calendar-month and day-of-week fixed effects, gas price, time trend (linear or quadratic), and year-by-renewable interactions. Newey-West HAC standard errors with $7$-day bandwidth. POST = 1 on/after the reform cutover. Spec 4 (year-by-renewable with 2024+2025 pooled) implements the user-suggested fix for the Jan-Mar-2025-only-fit problem. $^{**}\,p<0.05$, $^{***}\,p<0.01$. ID15 IDA pre-window 2022-01-01 to 2025-03-18, post 2025-03-19 to 2025-04-27. DA15 DA pre 2022-01-01 to 2025-09-30, post 2025-10-01 to 2025-12-31.}
+\label{tab:ols-price-full-controls}
+\end{center}
+
+\textbf{OLS verdict matches the calibrated-solar BSTS verdict.} The ID15 IDA price drop is significant at every standard significance level across all five specifications ($-24$ to $-53$ EUR/MWh, $p<0.01$ throughout). The DA15 DA effect ranges from $-4.6$ (null, $p=0.55$) to $-18.9$ (significant under quadratic trend, $p=0.04$); the bulk of specifications return small null or marginally-significant negative coefficients. OLS with full controls is more precise than the BSTS (smaller standard errors, narrower confidence intervals) but qualitatively delivers the same conclusion: \textbf{ID15 has a robust own-market price drop; DA15 does not}.
+
+This diagnostic also clarifies why several level findings (\S\ref{sec:results:6-3}) lose significance under the year-interaction spec: forecast uncertainty about what solar's marginal price impact will be in the post-cutover window is large precisely because the coefficient has been shifting fast in the years immediately preceding the cutover.
+
+
+
+\paragraph{Note on bid-shape outcomes in this appendix.} The bid-shape DiD robustness tables below report on the headline quintuple $(\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_p)$ used in \S\ref{sec:data:bandwidth}. The cross-border and offer-type checks lead with $\sigma_p$ (the robust price-side anchor); for a near-linear curve $\sigma_p \approx |\hat\beta|\cdot\sigma_Q$, so the signs on those checks track $\hat\beta$ up to estimator noise (and via curvature track $\hat\gamma$).
+
+\subsection{Convex-renewable robustness on the price OLS}\label{app:convex-renew}
+
+Hourly OLS on the ID15 IDA price, no linear trend, Newey-West HAC lag $24\times 7$. Pre window 2022-01-01 onwards; post = 40 days for ID15 (pre-blackout), 92 days for DA15. \textbf{D}: quadratic spec adds wind$^2$, solar$^2$ with year-by-renewable interactions on both linear and quadratic terms. \textbf{E}: cubic spec adds wind$^3$, solar$^3$ with year-by-renewable interactions on all three orders. The quadratic spec absorbs merit-order curvature in renewable price-suppression; the cubic adds essentially nothing (diminishing returns).
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{l c c c c}
+\toprule
+                                                     & \multicolumn{2}{c}{\textbf{ID15 (IDA reform)}} & \multicolumn{2}{c}{\textbf{DA15 (DA reform)}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+                                                     & IDA (own) & DA (cross) & DA (own) & IDA (cross) \\
+\midrule
+OLS hourly --- $+$ year-by-renewable (2024+25 pooled) & $-30^{***}$ & $-29^{***}$ & $+3$ & $+2$ \\
+\textbf{D}  $+$ quadratic renew $\times$ year         & $\mathbf{-24}^{***}$ & $\mathbf{-24}^{***}$ & $-2$ & $-3$ \\
+\textbf{E}  $+$ cubic renew $\times$ year             & $-24^{***}$ & $-23^{***}$ & $-2$ & $-2$ \\
+\addlinespace
+Newey-West HAC SE (D)                                & 7.00 & 7.10 & 5.36 & 5.31 \\
+Newey-West HAC SE (E)                                & 6.85 & 6.95 & 5.37 & 5.32 \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Convex-renewable robustness.} Quadratic (D) and cubic (E) renewable terms with year interactions, no trend. ID15 holds at $\approx-24$; DA15 stays null.}
+\label{tab:convex-renew}
+\end{center}
+
+
+\subsection{Renewable capacity vs realised production, 2024 vs 2025}\label{app:renewables-check}
+
+\textbf{(a) Installed capacity at year-start} (ENTSO-E, MW). Solar PV expanded $+43\%$; wind essentially flat.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l c c c c}
+\toprule
+                       & \textbf{Jan 2024} & \textbf{Jan 2025} & \textbf{$\Delta$ MW} & \textbf{$\Delta$ \%} \\
+\midrule
+Solar PV (B16)         & 29{,}047 & $\mathbf{41{,}433}$ & $+12{,}386$ & $+42.6\%$ \\
+Wind (B18$+$B19)       & 30{,}932 & 32{,}451            & $+1{,}519$  & $+4.9\%$  \\
+Solar $+$ Wind         & 59{,}979 & 73{,}885            & $+13{,}906$ & $+23.2\%$ \\
+Coal (B05)             &  1{,}820 &  1{,}258            & $-562$      & $-30.9\%$ \\
+Nuclear (B14), Gas (B04) & no change & no change & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textbf{(b) Realised production in the matched ID15 window} (Mar 19 -- Apr 27).
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l c c c c}
+\toprule
+                              & \textbf{Spring 2024} & \textbf{Spring 2025} & \textbf{$\Delta$} & \textbf{$\Delta$ \%} \\
+\midrule
+Wind (GWh/d)                  & 167.5 & 161.4 & $-6.1$  & $-4\%$  \\
+Solar (GWh/d)                 & 122.2 & 138.4 & $+16.2$ & $+13\%$ \\
+Gas (EUR/MWh)                 & 431   & 746   & $+315$  & $\mathbf{+73\%}$ \\
+IDA price (EUR/MWh, raw mean) & 10.9  & 25.1  & $+14.2$ & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+\subsection{Window length: long-pre controls and conditional parallel trends}\label{sec:5-long-pre-ra}
+
+I extend the pre-window to 2022-01-01, add year FE, calendar-month FE, and crit$\times$wind/crit$\times$solar interactions; and as a separate spec run the regression-adjustment DiD of \citet{heckman1997} under conditional parallel trends. ID15 DA CCGT (anticipation) survives both checks on $\sigma_p$ and HHI; DA15 DA CCGT survives on $\sigma_p$, the HHI sign flips under RA-DiD so the $\sigma_p$ side is the rugged headline. Side technologies omitted: only cells that survive at least the long-pre spec are reported (Table~\ref{tab:spec-c-longpre-ra}).
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l l c c c}
+\toprule
+\textbf{Cell}                       & \textbf{Outcome} & \textbf{Tight (1)} & \textbf{Long-pre + controls (2)} & \textbf{RA-DiD (3)} \\
+\midrule
+ID15 DA CCGT (anticipation)         & $\sigma_p$       & $+19.42^{***}$ & $+10.78^{***}$ & $+12.71^{**}$ \\
+                                    & $\text{HHI}_p$   & $-0.076^{***}$ & $-0.098^{***}$ & $-0.000$ \\
+\addlinespace
+DA15 DA CCGT                        & $\sigma_p$       & $+1.25^{**}$   & $+5.47^{***}$  & $+1.72$ \\
+                                    & $\text{HHI}_p$   & $-0.059^{***}$ & $-0.028^{***}$ & $+0.099^{**}$ \\
+\addlinespace
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Bid-shape DiD: tight (1), long-pre with controls (2), regression-adjustment DiD (3).} Spec (2) extends the pre-window to 2022 with year, month, and crit$\times$renewable controls; spec (3) is the \citet{heckman1997} RA-DiD under conditional parallel trends. Wider band $H=140$, so magnitudes exceed the headline table; signs are the comparable object.}
+\label{tab:spec-c-longpre-ra}
+\end{center}
+
+\paragraph{Per-firm $b_{mt}$ under the same long-pre control.} I run the same long-pre + year + month FE on the per-firm $b_{mt}$ increase: magnitude shrinks from the tight-window range $+13$\%--$+28$\% to $+8$\%--$+15$\% across the four dominant CCGT-owning firms, all firm cells still significant. Direction robust, magnitude roughly halved.
+
+\subsection{Bid types: CCGT offer-type composition}\label{sec:5-offertype}
+I split CCGT bids by structural type (simple / MIC / block) and re-run the DA15 DiD within each type. The composition shifts toward more block offers post-reform (block offers are mechanically single-tranche, pushing pooled HHI UP), but the within-type DiD is still negative in MIC ($-0.046^{***}$) and block ($-0.043^{***}$), and pooled stays $-0.059^{***}$. The bid-stack deconcentration is real within-tranche behaviour, not a composition artefact.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{../../figures/working/fig_ccgt_offer_type.pdf}
+\caption{\textbf{CCGT offer-type composition and within-type bid-shape DiD at DA15.} \emph{Left}: CCGT in-band sell-curve composition, pre vs post. \emph{Right}: $\sigma_p$ DiD by offer type, 95\% CI. The $\text{HHI}_p$ DiD is negative within every type, so the deconcentration is not a composition artefact.}
+\label{fig:ccgt-offer-type}
+\end{figure}
+
+\subsection{Demand-side bid shape}\label{sec:5-demand-side}
+I re-run bid-shape DiD symmetrically on buy offers (tranches sorted descending in price) per demand class. At DA15 the buy-side $\alpha$ rises in step with sell-side $\alpha$ in critical: equilibrium re-coordination at a higher reservation level, not a one-sided supply shift.
+
+\begin{center}
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l c c c c}
+\toprule
+\textbf{Demand class} & \textbf{ID15 IDA} & \textbf{ID15 DA} & \textbf{DA15 DA} & \textbf{DA15 IDA} \\
+\midrule
+\multicolumn{5}{l}{\emph{Intercept $\alpha$ (EUR/MWh)}} \\
+Retailer            & $-10.6^{**}$        & $5.4$       & $15.0^{***}$       & $33.1^{***}$ \\
+DirectCons          & $0.2$               & ---         & $-3.1$             & $19.5^{***}$ \\
+PumpBuy             & $0.3$               & $-4.9$      & $-2.1^{*}$         & $0.8$ \\
+\addlinespace
+\multicolumn{5}{l}{\emph{Slope $\beta$ (EUR/MWh per buy MW; on a descending price-ordered curve)}} \\
+Retailer            & $-1.688$            & $-1.624$    & $2.607^{***}$      & $-2.272^{**}$ \\
+DirectCons          & $-5.308^{***}$      & ---         & $-3.746^{***}$     & $1.555^{***}$ \\
+PumpBuy             & $-0.012$            & $0.133$     & $0.039^{***}$      & $0.017^{***}$ \\
+\addlinespace
+\multicolumn{5}{l}{\emph{Curvature $\gamma$ (EUR/MWh per buy MW$^2$)}} \\
+Retailer            & $-6.1746$           & $-0.7050$   & $2.7389$           & $4.9286$ \\
+DirectCons          & $-25.4^{***}$       & ---         & $-5.7976^{*}$      & $-0.0206$ \\
+PumpBuy             & $-0.0002$           & $0.0002$    & $0.0008^{**}$      & $0.0005$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Demand-side bid-shape DiD, critical vs.\ flat.} Buy curves sorted descending in price. Retailer $=$ competitive supplier; DirectCons $=$ industrial buyer; PumpBuy $=$ pump-storage charging.}
+\label{tab:demand-did}
+\end{center}
+
+Retailer DA15 IDA $\alpha$ at $+33^{***}$ tracks the sell-side widening; ID15 IDA retailer runs the opposite direction, corroborating the ID15 IDA price compression in \S\ref{sec:results:6-3}.
+
+\subsection{Per-CCGT-firm decomposition}\label{sec:5-perfirm}
+I run the DiD firm by firm on each firm's own CCGT fleet (unit FE within-firm). Naturgy is the dominant scale-up at DA15 DA (Table~\ref{tab:perfirm-ccgt}); Iberdrola flat on level; EDP-HC small same-sign. ID15 IDA spreads more evenly across firms. Sign and firm-ranking are interpretable; magnitudes are not (firm intercepts not netted out).
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l r r r r}
+\toprule
+\textbf{Firm} & $\alpha$ & $\beta$ & $\gamma$ & Units \\
+\midrule
+\multicolumn{5}{l}{\emph{DA15 DA (own-market)}} \\
+Naturgy      & $69.9^{***}$ & $-0.402^{***}$ & $0.0022^{**}$   & $17$ \\
+Iberdrola    & $0.0$        & $0.001$        & $0.0000$        & $10$ \\
+EDP-HC       & $5.2^{*}$    & $-0.021^{*}$   & $-0.0002$       & $7$  \\
+\addlinespace
+\multicolumn{5}{l}{\emph{ID15 IDA (own-market)}} \\
+Naturgy      & $10.3$       & $-1.197^{*}$   & $0.0109$        & $17$ \\
+Iberdrola    & $32.2$       & $-0.253$       & ---             & $9$  \\
+Endesa       & $-2.9$       & $0.109$        & $0.0044^{*}$    & $7$  \\
+EDP-HC       & $1.7$        & $-0.211^{**}$  & $-0.0029$       & $6$  \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Per-firm CCGT bid-shape DiD, own-market cells.} One regression per firm on its own CCGT fleet (unit FE). Sign and ranking are interpretable; magnitudes are not comparable to the pooled headlines.}
+\label{tab:perfirm-ccgt}
+\end{center}
+
+% =====================================================================
+\section{Measurement details: bid curves, residual demand, and the margin proxy}\label{app:measurement}
+% =====================================================================
+
+\subsection{Representative bid curves by technology}\label{app:context-bid-curves}\phantomsection\label{app:context}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.92\textwidth}
+\centering
+\includegraphics[width=\linewidth]{fig_bid_curves_by_tech.pdf}
+\caption{Evening-ramp critical quarter: 2025-12-17, hour 17, quarter 4.}
+\label{fig:bid-curves-by-tech}
+\end{subfigure}\\[4pt]
+\begin{subfigure}{0.92\textwidth}
+\centering
+\includegraphics[width=\linewidth]{fig_bid_curves_by_tech_flat.pdf}
+\caption{Flat overnight quarter on a windy night: 2025-12-04, hour 01, quarter 4.}
+\label{fig:bid-curves-by-tech-flat}
+\end{subfigure}
+\caption{\textbf{Representative day-ahead supply curves by technology} (post-MTU15-DA). Red dashed: MCP; orange band: in-band region ($\delta=50$). Dispatchables structure their competing tier inside the band; renewables submit single blocks far below it --- the basis for excluding renewables from the bid-shape DiD.}
+\label{fig:bid-curves-by-tech-merged}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig_buy_vs_sell_curves.pdf}
+\caption{\textbf{Representative IDA sell vs buy bid curves by technology, pre-ID15.} One representative (unit, date, session, period) per tech. Blue: sell curve (supply, ascending in price). Red: buy curve (demand, descending in price). Dashed: MCP. Pre-ID15 window 2024-06-14 to 2025-03-18.}
+\label{fig:buy-vs-sell-curves}
+\end{figure}
+
+\subsection{Residual-demand slope inside the bandwidth: empirical $b_{mt}$}\label{sec:5-residual-demand-slope}\phantomsection\label{tab:residual-demand-slope}
+
+I replicate \citet{ito_reguant_2016} Section~III.A Method~1 per firm. For each (date, period, market, focal firm) I build the residual demand the firm faces as aggregate demand minus all-other-firms' supply, sample it on a price grid $\pm 50$~EUR/MWh around MCP, fit a quadratic, and take the slope at MCP. Per-firm means in Table~\ref{tab:per-firm-residual-demand}.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l r r r r r r r r r r r r}
+\toprule
+        & \multicolumn{4}{c}{\textbf{ID15 IDA}} & \multicolumn{4}{c}{\textbf{DA15 DA}} & \multicolumn{4}{c}{\textbf{DA15 IDA}} \\
+\cmidrule(lr){2-5} \cmidrule(lr){6-9} \cmidrule(lr){10-13}
+\textbf{Firm}     & pre & post & $\Delta$ & ratio & pre & post & $\Delta$ & ratio & pre & post & $\Delta$ & ratio \\
+\midrule
+Iberdrola         & $156$ & $180$ & $+24$ & $1.15$ & $230$ & $285$ & $+55$ & $1.24$ & $149$ & $168$ & $+19$ & $1.13$ \\
+Endesa            & $180$ & $214$ & $+34$ & $1.19$ & $255$ & $321$ & $+66$ & $1.26$ & $171$ & $202$ & $+31$ & $1.18$ \\
+Naturgy           & $173$ & $212$ & $+39$ & $1.23$ & $266$ & $330$ & $+64$ & $1.24$ & $159$ & $187$ & $+28$ & $1.17$ \\
+EDP-HC            & $167$ & $193$ & $+26$ & $1.16$ & $231$ & $295$ & $+64$ & $1.28$ & $157$ & $181$ & $+24$ & $1.15$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Per-firm residual-demand slope $b_{mt}$ at MCP} (MW per EUR/MWh; larger $=$ more elastic). Recovered as in \citet{ito_reguant_2016} III.A.}
+\label{tab:per-firm-residual-demand}
+\end{center}
+
+The residual-demand slope $b_f$ rises for every firm in every (reform, market) cell, by $13$--$28\%$ (tight) and $8$--$15\%$ (long-pre + year + month FE). The Cournot first-order condition then implies markup compression. Per-firm $b$ is the model's pricing primitive and it moves as predicted.
+
+\paragraph{Per-IDA-session decomposition.} I rebuild $b_{mt}$ per IDA session (S1, S2, S3) by joining each session's MCP to its own bids. Pre-reform the model predicts $b$ thins toward delivery (S1 > S2 > S3); the data confirm it. Post-MTU15-IDA the S2/S3 gap collapses (Table~\ref{tab:per-session-bmt}).
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l r r r r r r}
+\toprule
+                  & \multicolumn{3}{c}{\textbf{Pre-MTU15-IDA}} & \multicolumn{3}{c}{\textbf{Post-MTU15-IDA}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+\textbf{Grid bandwidth} & \textbf{S1} & \textbf{S2} & \textbf{S3 (closest to delivery)} & \textbf{S1} & \textbf{S2} & \textbf{S3} \\
+\midrule
+$\pm 50$ EUR/MWh (baseline) & $80.2$ & $68.3$ & $59.4$ & $\mathbf{99.9}$ & $73.0$ & $72.3$ \\
+$\pm 70$ EUR/MWh            & $71.7$ & $62.6$ & $55.0$ & $\mathbf{84.0}$ & $61.8$ & $60.5$ \\
+$\pm 90$ EUR/MWh            & $64.2$ & $57.1$ & $50.8$ & $\mathbf{73.4}$ & $54.5$ & $53.0$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Mean per-firm $b_{mt}$ by IDA session and bandwidth.} MW per EUR/MWh, mean across the four dominant firms.}
+\label{tab:per-session-bmt}
+\end{center}
+
+At every bandwidth: pre-reform residual demand becomes less elastic toward delivery ($b_{S1}>b_{S2}>b_{S3}$, the sequential-markets ordering); post-reform the session-1 slope rises $14$--$24\%$ and the S2-vs-S3 gap collapses, making the two later sessions look like the same product. Industry reporting confirms the liquidity ordering (IDA1, IDA2 ${\sim}37\%$ each; IDA3 $12\%$).
+
+\subsection{Strategic markup proxy: $q_f^{\text{strat}}/b_f$ per firm}\label{app:strategic-markup}
+
+Cournot first-order condition: $(p-MC)/p = q_f^{\text{strat}}/(b_f\cdot p)$, where $q_f^{\text{strat}}$ is the focal firm's strategic cleared MW (total cleared minus own renewable cleared MW: wind, solar PV, run-of-river, CSP, biomass-renewable, RE Tarifa CUR). Renewables clear at marginal cost $\approx 0$ regardless of bidding choices, so they are infra-marginal and do not enter the markup calculation. Reported as the period mean of $q_f^{\text{strat}}/b_f$ per (firm, window). Bigger $=$ more pricing power per strategic MW.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l c c c c c c c c}
+\toprule
+ & \multicolumn{4}{c}{\textbf{$\%\Delta\, b_f$ (residual demand)}} & \multicolumn{4}{c}{\textbf{$\%\Delta\, \text{markup}_f$}} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+                & \textbf{IB} & \textbf{GE} & \textbf{GN} & \textbf{HC} & \textbf{IB} & \textbf{GE} & \textbf{GN} & \textbf{HC} \\
+\midrule
+ID15 IDA        & $+15$ & $+19$ & $+23$ & $+16$ & $-12$ & $+152^{\ddagger}$ & $-13$ & $+62^{\ddagger}$ \\
+ID15 DA         & $\mathbf{+116}$ & $\mathbf{+93}$ & $\mathbf{+100}$ & $\mathbf{+100}$ & $-19$ & $+29^{\ddagger}$ & $\mathbf{-38}$ & $+23^{\ddagger}$ \\
+\textbf{DA15 DA}& $\mathbf{+24}$ & $\mathbf{+26}$ & $\mathbf{+24}$ & $\mathbf{+28}$ & $\mathbf{-27}$ & $\mathbf{-26}$ & $-12$ & $-18$ \\
+DA15 IDA        & $+13$ & $+18$ & $+17$ & $+15$ & $+7$ & $+10$ & $-15$ & $+40$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Per-firm residual-demand slope and strategic margin proxy, pre vs post.} Margin proxy $= q_f^{\text{strat}}/b_f$, $q_f^{\text{strat}}$ net of own renewables. $^{\ddagger}$ ID15 margin signs are compositional (small 40-day post base), not behavioural. DA15 DA is the clean cell: $b_f$ up $24$--$28\%$, margin proxy down $12$--$27\%$ on all four firms.}
+\label{tab:strategic-markup}
+\end{center}
+
+
+% =====================================================================
+\section{Additional descriptive findings}\label{app:extra}
+% =====================================================================
+
+Brief descriptive evidence adjacent to the main results. None of it carries identification weight; it is recorded because it informs the reading of the headline estimates.
+
+\subsection{Continuous-market response at the three reforms}\label{app:continuous}
+\phantomsection\label{sec:5-demand-buy-share}\phantomsection\label{tab:demand-buy-share}
+
+BSTS on ES-leg continuous-market series under headline BSTS. ID15 is the only structural cutover of the three: trade count jumps $+24{,}269$/day placebo-net ($p<0.001$) as participants take up the four 15-min contracts per clock-hour, and energy turnover drops $-12.36$ GWh/day placebo-net ($p<0.001$) as smaller contracts and partial migration toward the now-finer IDA auctions thin total volume. The continuous-market volume-weighted price is not separately identifiable from the renewable-driven price drop once year-interactions control the wind/solar coefficient (real $-43.6^{*}$, placebo-net $-18.3$ ns). ISP15 is a methodological null (settlement-only reform, contract grid unchanged); DA15 leaves the continuous-market contract grid alone (already 15-min post-ID15) and no outcome survives the year-interaction control. The continuous-market reading is consistent with the auction-side reading: granularity reforms shift the contract grid and the participation pattern, but the price-level component cannot be separated from the renewable-coefficient drift.
+
+\subsection{Reforzada and the ancillary layer: the cost increase concentrates on CCGT}
+The post-blackout intervention is technology-specific. Decomposing each technology's weekly dispatch chronologically (day-ahead, bilaterals, intraday auctions, continuous, then post-IDA redispatch), the gas panel of Figure~\ref{fig:ree_intervention_by_tech} shows the day-ahead-cleared base collapsing post-blackout while the REE-routed Fase~I layer balloons; other technologies are flat (Figure~\ref{fig:ree_intervention_other_tech}). Fase~I is the pre-IDA technical-restriction redispatch, paid pay-as-bid through a separate restriction offer (PO~3.2; PO~14.4 ap.~20.1).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig_programs_by_tech_weekly.pdf}
+\caption{\textbf{Weekly program cascade by technology.} Chronological stack: day-ahead $+$ bilaterals $+$ IDA1--3 $+$ continuous $+$ post-IDA redispatch; supply above zero, consumption and down-redispatch below; black line $=$ PHF net. Vertical guides: ID15, blackout, DA15.}
+\label{fig:ree_intervention_by_tech}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig_programs_by_tech_other_weekly.pdf}
+\caption{\textbf{Weekly program cascade, other technologies.} Same convention as Figure~\ref{fig:ree_intervention_by_tech}: supply above zero, consumption and down-redispatch below zero, black line $=$ PHF net. Pump-storage load is purely consumption and plots entirely below zero.}
+\label{fig:ree_intervention_other_tech}
+\end{figure}
+
+The CCGT-only pattern is the cleanest evidence that the reforzada cost increase is separate from the granularity reforms: a reform touching all firms equally would not produce a single-technology intervention.
+
+\subsection{Per-channel BSTS on REE ajuste-cost decisions}\label{sec:5-ajuste-bsts}
+
+BSTS on the eight daily ajuste-cost channels (raw posterior mean). MTU15-IDA shrinks real-time technical restrictions and aFRR-up cleanly ($-$EUR\,3.9M/day total); MTU15-DA is dominated by the reforzada-driven Fase~I-up rise ($+$EUR\,5.1M/day). No same-calendar placebo: these are operator procurement decisions, not market outcomes, so a year-ago window is not a counterfactual.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{l r r}
+\toprule
+\textbf{Channel}    & \textbf{MTU15-IDA (pre-blackout post)} & \textbf{MTU15-DA (post-window straddles reforzada)} \\
+\midrule
+Fase~I up           & $+1{,}988$              & $+4{,}554$ \\
+Fase~I dn           & $-197^{**}$             & $-123$ \\
+Fase~II up          & $-24$                   & $-143^{***}$ \\
+Fase~II dn          & $-963^{*}$              & $+1{,}959^{**}$ \\
+TR up               & $\mathbf{-4{,}182}^{**}$ & $-709$ \\
+TR dn               & $+390^{***}$            & $-29$ \\
+aFRR up             & $\mathbf{-842}^{***}$    & $-325$ \\
+aFRR dn             & $-44$                   & $-132$ \\
+\midrule
+\textbf{Sum}        & $\mathbf{\approx-3{,}874}$ & $\mathbf{\approx+5{,}102}$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{BSTS on daily REE ajuste-cost channels} (kEUR/day). Stars: $95\%$ credible interval excludes zero.}
+\label{tab:bsts-ajuste-costs}
+\end{center}
+
+\citet{davi_arderius_graf_2026} put the reforzada cost rise at $\sim$EUR\,$1.24$B/year, the same order as the raw MTU15-DA Fase~I-up posterior here ($\approx$EUR\,$1.7$B/year) --- directionally reassuring, not an identification claim.
+
+% =====================================================================
+\subsection{Post-DA15 IDA activity rise and the Fase~I displacement channel}\label{sec:5-ida-activity-fase1}
+% =====================================================================
+
+Post-DA15 vs pre-DA15 IDA activity (reforzada-constant window): CCGT supply in IDA3 falls $15\%$ while demand-side volume rises $15$/$10$/$29\%$ across IDA1/IDA2/IDA3 --- consistent with re-reinforced Fase~I displacement (CCGT dispatched pre-IDA, leaving residual imbalance for the demand side in late sessions).
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{l c c c c c c c c}
+\toprule
+            & \multicolumn{2}{c}{\textbf{IDA1}} & \multicolumn{2}{c}{\textbf{IDA2}} & \multicolumn{2}{c}{\textbf{IDA3}} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+\textbf{Side / outcome}        & MW/day & tranches/curve & MW/day & tranches/curve & MW/day & tranches/curve \\
+\midrule
+CCGT supply        & $+11.6\%$ & $-3.8\%$ & $+0.5\%$ & $-1.9\%$ & $\mathbf{-15.0\%}$ & $-18.3\%$ \\
+All supply         & $-5.7\%$  & $+16.7\%$ & $-10.2\%$ & $+6.9\%$ & $-17.9\%$ & $+3.8\%$ \\
+Demand             & $\mathbf{+14.7\%}$ & $+14.9\%$ & $\mathbf{+10.0\%}$ & $+12.0\%$ & $\mathbf{+29.4\%}$ & $+9.7\%$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{IDA bidding activity, post-DA15 vs.\ pre-DA15.} \% change in in-band MW/day and tranches per curve. Block orders excluded.}
+\label{tab:ida-activity-fase1}
+\end{center}
+
+This composes with Table~\ref{tab:bsts-ajuste-costs}: the TR-up shrink at MTU15-DA is procurement-timing substitution into Fase~I, not a market-mechanism cleanup.
+
+
+\subsection{Per-session IDA bid-shape decomposition: CCGT bidding intensity is IDA2-concentrated pre-reform and homogenizes post-reform}\label{sec:5-per-session-ida}
+% =====================================================================
+
+Pre-reform CCGT bidding intensity concentrates in IDA2 ($\sigma_p$ and $\hat\beta$ roughly $2.5\times$ IDA1); post-reform the three sessions converge. Descriptive across three calendar windows, not an identified effect.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l c c c c c c c c c}
+\toprule
+            & \multicolumn{3}{c}{\textbf{Pre-MTU15-IDA}} & \multicolumn{3}{c}{\textbf{Post-MTU15-IDA (pre-blackout)}} & \multicolumn{3}{c}{\textbf{Post-DA15 (incl.\ re-reinforced)}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-10}
+\textbf{Outcome} & IDA1 & IDA2 & IDA3 & IDA1 & IDA2 & IDA3 & IDA1 & IDA2 & IDA3 \\
+\midrule
+$\sigma_p$ (EUR/MWh)   & $1.74$ & $4.08$ & $0.34$ & $4.03$ & $5.77$ & $2.47$ & $3.64$ & $4.79$ & $2.07$ \\
+$\hat\beta$ (EUR/MWh per MW) & $0.125$ & $0.335$ & $0.161$ & $0.122$ & $0.135$ & $0.123$ & $0.099$ & $0.125$ & $0.098$ \\
+$\text{HHI}_p$          & $0.25$ & $0.50$ & $0.60$ & $0.21$ & $0.33$ & $0.33$ & $0.22$ & $0.25$ & $0.33$ \\
+\addlinespace
+$n_{\text{curves}}$     & 7{,}647 & 11{,}398 & 10{,}515 & 8{,}962 & 10{,}254 & 7{,}208 & 56{,}484 & 60{,}147 & 43{,}998 \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Per-session IDA CCGT bid-shape, critical evening hours 16--22.} Medians at $\delta=150$~EUR/MWh across three calendar windows; descriptive, not an identified effect.}
+\label{tab:per-session-ida-bidshape}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../../figures/thesis/fig_parallel_trends_sigma_p_per_session.pdf}
+\caption{\textbf{Weekly CCGT $\sigma_p$ by hour-class: day-ahead and the three IDA sessions.} Red: critical hours; blue: flat. Dashes mark ID15, blackout, DA15. The IDA sessions converge in level post-reform.}
+\label{fig:parallel-trends-sigma-p-per-session}
+\end{figure}
+
+% =====================================================================
+\subsection{Battery bid behavior in the IDA --- descriptive}\label{sec:5-batteries}
+Battery curves are single-tranche throughout, so the bid-shape DiD does not apply; what changes is participation and bid placement relative to the clearing price (eleven buy-side and three sell-side OMIE storage units, across three regimes).
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l c c c c c}
+\toprule
+\textbf{Regime} & \textbf{Side} & \textbf{Curves} & \textbf{Median $p_{\text{bid}}-\text{MCP}$} & \textbf{In-band share ($\pm 50$)} & \textbf{Avg MW/bid} \\
+\midrule
+Pre-MTU15-IDA          & Charge  & $8$    & $+38.0$  & $63\%$ & $4.4$ \\
+                       & Sell    & $4$    & $-47.6$  & $50\%$ & $4.2$ \\
+\addlinespace
+Post-MTU15-IDA         & Charge  & $1{,}115$ & $+0.2$  & $96\%$ & $3.3$ \\
+                       & Sell    & $1{,}017$ & $+0.2$  & $98\%$ & $3.9$ \\
+\addlinespace
+Post-DA15              & Charge  & $2{,}184$ & $+27.4$  & $74\%$ & $3.3$ \\
+                       & Sell    & $1{,}598$ & $-10.0$  & $72\%$ & $3.1$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Battery IDA bidding by regime (descriptive).} Positive $p_{\text{bid}}-\text{MCP}$ on the charge side $=$ bidding above MCP to guarantee clearing.}
+\label{tab:batteries-ida}
+\end{center}
+
+Two shifts: participation rises from a dozen curves pre-MTU15-IDA to thousands post-DA15 (a build-out alongside the reforms), and the strategy moves from at-MCP price-taking at the MTU15-IDA cutover to spread-around-MCP bidding (charge above, sell below) at DA15 --- the signature of active storage arbitrage.
+
+Post-DA15 one battery (Batalha) starts placing bids on both sides of the same period in $18\%$ of cases --- a bracketing position that clears in either direction, consistent with two-sided arbitrage. Sample is tiny; descriptive only.
+
+\subsection{Nuclear PDBF shortfall before the blackout}\label{sec:5-nuclear-pdbf}
+Headline BSTS on nuclear auction-plus-bilateral dispatch (PDBF, PHF) at both reforms. Nuclear output drops sharply in the 40 days between ID15 and the blackout; the DA15 window is null.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l l r r r}
+\toprule
+\textbf{Reform window} & \textbf{Outcome} & \textbf{Real} & \textbf{Placebo 2024} & \textbf{Placebo-net} \\
+\midrule
+ID15 (Mar 19 -- Apr 27, 2025, pre-blackout)     & PDBF (DA + bilateral)  & $\mathbf{-72.8}^{***}$ & $-18.9$       & $-53.9$ \\
+                                                & PHF (post-IDA total)   & $\mathbf{-54.1}^{***}$ & $+17.3$       & $-71.4$ \\
+\addlinespace
+DA15 (Oct 1 -- Dec 31, 2025, reforzada-constant) & PDBF                  & $-6.1$         & $-29.4$       & $+23.3$ \\
+                                                 & PHF                   & $-7.8$         & $-31.2$       & $+23.4$ \\
+\bottomrule
+\end{tabular}
+\captionof{table}{\textbf{Nuclear PDBF and PHF BSTS} (GWh/day). Placebos: same-calendar 2024 windows.}
+\label{tab:bsts-nuclear-pdbf}
+\end{center}
 
 \end{document}
