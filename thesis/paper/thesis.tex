@@ -1137,13 +1137,13 @@ $q^m(\bar a - \Delta) \ge \Delta/(2(2n+1))$: the monopoly quantity is interior i
 \end{assumption}
 
 
+\subsubsection{Continuous benchmark}\label{app:tranche:locus}
+
 \begin{lemma}[Continuous benchmark]\label{lem:locus}
 The supply schedule $S^*(p) = b\,(p - c)$ clears at the full-information monopoly point $p^m(A) = (A + bc)/(2b)$, $q^m(A) = (A - bc)/2$ in every state $A$, and is the unique non-decreasing schedule that does so on the contested range. Expected profit equals $\mathbb{E}[(A - bc)^2 \mid \mathcal{H}_m]/(4b)$, the monopoly value.
 \end{lemma}
 
-\subsubsection{Continuous benchmark (proof of Lemma~\ref{lem:locus})}\label{app:tranche:locus}
-
-In state $A$, the full-information monopoly point maximises $(p - c)(A - b\,p)$ over $p$; the FOC gives $p^m(A) = (A + b\,c)/(2 b)$ and $q^m(A) = (A - b\,c)/2$. Eliminating $A$, the monopoly line is $\{(q, p) : q = b(p - c)\}$, a line of slope $b$ through $(p, q) = (c, 0)$. Define $S^\star(p) = b(p - c)$. For any state $A$,
+\noindent\textit{Proof.}\ In state $A$, the full-information monopoly point maximises $(p - c)(A - b\,p)$ over $p$; the FOC gives $p^m(A) = (A + b\,c)/(2 b)$ and $q^m(A) = (A - b\,c)/2$. Eliminating $A$, the monopoly line is $\{(q, p) : q = b(p - c)\}$, a line of slope $b$ through $(p, q) = (c, 0)$. Define $S^\star(p) = b(p - c)$. For any state $A$,
 \[
 S^\star(p^m(A)) \;=\; b\Bigl(\frac{A + b\,c}{2 b} - c\Bigr) \;=\; \frac{A - b\,c}{2} \;=\; q^m(A),
 \]
@@ -1212,15 +1212,17 @@ For the gradient, the cumulative quantity at tranche $k$ is $Q_k = q_0 + k\,w$ a
 \]
 And since $p_k$ is an exact affine function of $Q_k$, a quadratic fit adds nothing: the curvature coefficient is zero. $\square$
 
+\subsubsection{Level neutrality}\label{app:tranche:level}
+
 \begin{remark}[Level neutrality]\label{rem:level}
 $\mathbb{E}[\text{clearing price} \mid \mathcal{H}_m] = p^m(\bar a)$ for every $n$: ladder geometry reshapes dispersion and surplus, but never the mean price.
 \end{remark}
 
-\subsubsection{Level neutrality (proof of Remark~\ref{rem:level})}\label{app:tranche:level}
-
-Take expectation of the clearing price over states. Each cell contributes its midpoint-monopoly price weighted by cell length: horizontal cells contribute $p_k = p^m(m_{2k})$ over length $w$; riser cells contribute the average realised price over the riser, $\mathbb{E}[(A - Q_k)/b \mid \mathcal{H}_m, V_k] = (m_{2k+1} - q^m(m_{2k+1}))/b = p^m(m_{2k+1})$, using $A - b\,p^m(A) - q^m(A) \equiv 0$; the base riser contributes $p^m(m_1)$ by the same demand-sets-price computation. The resulting weighted average over all $2n+1$ cells (each of length $w$) is the simple average of the $2n+1$ midpoint-monopoly prices, which --- because $p^m$ is affine and the midpoints $m_j$ are symmetric around $\bar a$ --- equals $p^m(\bar a)$. So $\mathbb{E}[\text{clearing price} \mid \mathcal{H}_m] = p^m(\bar a)$, independent of $n$. $\square$
+\noindent\textit{Proof.}\ Take expectation of the clearing price over states. Each cell contributes its midpoint-monopoly price weighted by cell length: horizontal cells contribute $p_k = p^m(m_{2k})$ over length $w$; riser cells contribute the average realised price over the riser, $\mathbb{E}[(A - Q_k)/b \mid \mathcal{H}_m, V_k] = (m_{2k+1} - q^m(m_{2k+1}))/b = p^m(m_{2k+1})$, using $A - b\,p^m(A) - q^m(A) \equiv 0$; the base riser contributes $p^m(m_1)$ by the same demand-sets-price computation. The resulting weighted average over all $2n+1$ cells (each of length $w$) is the simple average of the $2n+1$ midpoint-monopoly prices, which --- because $p^m$ is affine and the midpoints $m_j$ are symmetric around $\bar a$ --- equals $p^m(\bar a)$. So $\mathbb{E}[\text{clearing price} \mid \mathcal{H}_m] = p^m(\bar a)$, independent of $n$. $\square$
 
 \paragraph{Distributional consequence.} The step structure reshapes the variance and the per-state surplus split, but never the mean clearing price. Bid-shape changes (regrading the ladder) are therefore \emph{level-neutral} on price; mean price changes come only from changes in residual demand (the slope $b$ or the market supply $S^{op}$), which is the channel underpinning the markup identity \eqref{eq:cournot-markup} in the body.
+
+\subsubsection{Optimal tranche depth under a complexity cost}\label{app:tranche:budget}
 
 \begin{proposition}[Tranche budget]\label{prop:budget}
 With a linear cost $\kappa > 0$ per competing tranche (treating $n$ as continuous; the integer optimum is one of the two adjacent integers), the optimal depth satisfies
@@ -1230,9 +1232,7 @@ With a linear cost $\kappa > 0$ per competing tranche (treating $n$ as continuou
 ladders deepen with the screened range, $n^* + \tfrac12 = \tfrac12\,\Delta^{2/3}\,(3\,b\,\kappa)^{-1/3}$, and flatten with market thickness $b$ and complexity cost $\kappa$.
 \end{proposition}
 
-\subsubsection{Tranche budget (proof of Proposition~\ref{prop:budget})}\label{app:tranche:budget}
-
-With a complexity cost $\kappa > 0$ per competing tranche, the objective is
+\noindent\textit{Proof.}\ With a complexity cost $\kappa > 0$ per competing tranche, the objective is
 \[
 \mathbb{E}[\pi_n \mid \mathcal{H}_m] - \kappa\,n \;=\; \frac{\mathbb{E}[(A - bc)^2 \mid \mathcal{H}_m]}{4 b} \;-\; \frac{\Delta^2}{12\,b\,(2n+1)^2} \;-\; \kappa\,n.
 \]
