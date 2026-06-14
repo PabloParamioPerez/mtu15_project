@@ -1,0 +1,9 @@
+cell,outcome,ba_crit,ba_crit_t,ba_flat,ba_flat_t,did,did_t,sign_agree
+DA15_DA CCGT,sigma_p,0.9473,2.38,0.5143,0.78,1.2478,2.21,True
+DA15_DA CCGT,hhi,-0.0337,-7.3,0.0166,1.84,-0.0589,-9.02,True
+DA15_DA Hydro_pump,sigma_p,-0.9185,-2.83,-2.7044,-6.07,1.3306,3.0,False
+DA15_DA Hydro_pump,hhi,-0.0348,-2.92,-0.0139,-0.81,0.0152,1.51,False
+ID15_DA CCGT,sigma_p,-9.3356,-6.6,-29.4128,-21.17,19.415,10.92,False
+ID15_DA CCGT,hhi,0.0619,8.25,0.1361,10.58,-0.0764,-6.04,False
+ID15_IDA Hydro_pump,sigma_p,-2.003,-5.5,-2.2873,-5.24,0.2462,0.87,False
+ID15_IDA Hydro_pump,hhi,0.0821,4.4,0.1216,6.27,-0.0404,-2.17,False
