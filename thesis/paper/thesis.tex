@@ -911,7 +911,7 @@ Flat                 & $\mathbf{4.7}^{***}$ & $-0.0$              & $-2.0^{*}$ &
 \end{center}
 
 \begin{untested}
-\untestedhead These results establish the \emph{directions}; two of the model's sharper claims here are still open. It attaches specific \emph{magnitudes} to the wedge SD at each state --- $\sigma_\psi/2b_2$ at the spot reform, $\lambda_1\sigma_\zeta/2$ at the forward reform --- which I do not take to the data. And its cleanest forward-leg prediction is descriptive and untested: across-quarter dispersion of \emph{forward} prices should be absent at ID15 and switch on only at DA15, which deserves its own pre/post comparison rather than the market-pooled, post-only gap of \S\ref{sec:data:partition}. The dropped quantity-side prediction sits here too: the aggregator should shift volume to the granular leg in proportion to its forecast-error range, largest for wind and solar; the intraday in-band sell-share does rise for the forecast-error technologies at ID15 with aggregate cleared quantities unchanged, but a clean migration test is blocked by the program-cascade endogeneity of \S\ref{sec:data:aggregate}.
+\untestedhead These results establish the \emph{directions}; two of the model's sharper claims here are still open. It attaches specific \emph{magnitudes} to the wedge SD at each state --- $\sigma_\psi/2b_2$ at the spot reform, $\lambda_1\sigma_\zeta/2$ at the forward reform --- which I do not take to the data. And its cleanest forward-leg prediction is descriptive and untested: across-quarter dispersion of \emph{forward} prices should be absent at ID15 and switch on only at DA15, which deserves its own pre/post comparison rather than the market-pooled, post-only gap of \S\ref{sec:data:partition}. The dropped quantity-side prediction sits here too: the aggregator should shift volume to the granular leg in proportion to its forecast-error range, largest for wind and solar. Its footprint is visible --- the in-band sell-share rises for exactly those technologies at ID15 (\S\ref{sec:results:migration}) --- but a clean test on cleared \emph{quantities} is blocked by the program-cascade endogeneity of \S\ref{sec:data:aggregate}.
 \end{untested}
 
 \subsection{Bid curves disperse and gain tranches in critical hours on each reformed market}\label{sec:results:6-1}
@@ -992,6 +992,30 @@ The split between price and volume is exactly the model's. \textbf{The cost of a
 \begin{untested}
 \untestedhead The hedging gain $G(\Delta_\eta) = \gamma Q\Delta_\eta/2$ is \emph{increasing in the forecast-error range}, so the penalty saving should be concentrated in --- and scale with --- the technologies whose $\Delta_\eta$ is largest, namely wind and solar. I measure only the system-aggregate $-33\%$; the cross-sectional prediction that the saving grades with per-technology forecast-error magnitude is in reach with the per-balance-party imbalance settlement detail (ESIOS \emph{liquicierre}). One result also under-fits the model and is worth flagging plainly: the model sends the priceable imbalance cost to zero at the spot reform, yet the penalty falls only a third rather than to its floor. The gap is consistent with the irreducible production error $\varepsilon_t$ (which no auction prices) plus incomplete hedging by smaller parties, but I do not decompose the residual penalty into these, and doing so would sharpen the claim.
 \end{untested}
+
+\subsection{Position-management migrates into the granular auction}\label{sec:results:migration}
+
+When the spot becomes quarter-hourly, the granular auction turns into the venue where both of the model's agents settle their positions, and the cruder instruments they leaned on before --- post-auction continuous trading and the balancing layer --- recede. The renewable aggregator, able for the first time to hedge its forecast error per quarter, sells more of its output on the intraday: the in-band sell-share of the forecast-error technologies jumps at ID15 --- wind by \textbf{0.24} (BSTS, $p<0.001$), with smaller rises for solar and run-of-river hydro --- while CCGT, carrying no forecast error, does not move. The strategic price-setter discriminates more finely in that same auction: it stacks more offers per product to build a deeper competing ladder, the multi-offer share rising from \textbf{0.49 to 0.55}, the behaviour the dispersion and tranche-count results already pick up (\S\ref{sec:results:6-1}).
+
+As position-management moves into the auction, the ex-post instruments thin. Continuous-market energy turnover falls by \textbf{12 GWh/day} even as the number of trades rises with the finer contracts (Appendix~\ref{app:continuous}), and the imbalance penalty drops by a third (\S\ref{sec:results:Q2}): the forecast errors that used to load onto balancing now clear a step earlier, in the granular auction. None of this happens at DA15, where the forward reform creates no new contractibility --- the sell-share, the continuous market and the imbalance penalty are all flat, and the apparent DA15 sell-share moves are seasonal (their 2024 placebo is non-null). It is the same asymmetry the price and bid-shape results show: the granular \emph{spot} is where position-management consolidates, and the forward reform only relocates what is already contractible.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{l l c c}
+\toprule
+\textbf{Channel} & \textbf{Measure} & \textbf{ID15} & \textbf{DA15} \\
+\midrule
+Aggregator $\rightarrow$ auction       & in-band sell-share (wind)      & $0.24^{***}$        & seasonal \\
+Strategic bidder $\rightarrow$ auction  & multi-offer share (CCGT)       & $0.49\!\to\!0.55$   & flat \\
+Ex-post: continuous market              & energy turnover (GWh/day)      & $-12^{***}$         & flat \\
+Ex-post: balancing                      & imbalance penalty              & $-33\%$             & flat \\
+\bottomrule
+\end{tabular}
+% Source: scripts/analysis/bid/bsts_ida_sell_share.R (sell-share); offer_stacking_confounder.py (multi-offer); bsts_continuous.R (turnover); bsts_imbalance_penalty.R (penalty)
+\captionof{table}{\textbf{Position-management at the two reforms.} Aggregator and strategic-bidder activity moves into the granular auction at ID15 while the ex-post instruments shrink; DA15 is flat (its sell-share moves fail the 2024 placebo).}
+\label{tab:migration}
+\end{center}
 
 \subsection{Ancillary-services costs are dominated by the reinforced-operation regime, not granularity}\label{sec:results:granularity-vs-reforzada}
 
@@ -1774,7 +1798,7 @@ ID15 IDA Pump & $\sigma_p$               & $-0.73^{***}$ & $-1.00^{***}$ & $12\%
 \label{tab:offer-stacking}
 \end{center}
 
-The day-ahead cells are unchanged by construction, so the headline bid-shape results do not rest on offer management. The intraday CCGT cell does: its $\sigma_p$ widening collapses from $1.02$ to an insignificant $0.29$ once stacking is held out, so the apparent intraday CCGT bid-shape response is mostly the unit \emph{adding offers}, not regrading a single curve. Pump-storage is the exception --- its intraday $\sigma_p$ change survives, and indeed strengthens --- so I read the intraday CCGT bid-shape (the per-session decomposition of Appendix~\ref{sec:5-per-session-ida}) as descriptive of offer management rather than within-curve discrimination, and rest the intraday bid-shape evidence on pump-storage.
+The day-ahead cells are unchanged by construction, so the headline day-ahead bid-shape results do not rest on offer management. The intraday CCGT cell is different: its combined-curve $\sigma_p$ widening collapses from $1.02$ to an insignificant $0.29$ once the unit is held to a single offer, so the intraday CCGT response is a deepening built \emph{across} offers, not a regrading \emph{within} one. That is itself part of the granularity response --- with the five-step cap binding per offer, a deeper ladder requires more offers, and the stacking share does rise at ID15 (\S\ref{sec:results:migration}) --- but it means the per-session CCGT decomposition (Appendix~\ref{sec:5-per-session-ida}) should be read as offer-stacking discrimination rather than within-offer shape. Pump-storage, whose intraday $\sigma_p$ change survives the single-offer restriction, is the one cell where the curve regrades within the offer.
 
 \subsection{Bandwidth $\delta$}\label{sec:5e}
 
