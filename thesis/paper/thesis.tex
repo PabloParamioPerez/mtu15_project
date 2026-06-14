@@ -1864,7 +1864,7 @@ Table~\ref{tab:solar-year-coefs} reports the cumulative solar coefficient (base 
 
 Reading the table: the DA15 spec (which sees Jan-Sep 2025) tells the cleaner story. Solar's marginal price-suppressing effect is roughly constant from 2022 to 2023, then nearly doubles from 2023 to 2024 (Spain added $\sim\!5$ GW of solar capacity in 2024 alone), and continues to deepen in 2025 as solar saturates more clock-hours and negative-price events become routine. The ID15 spec's 2025 coefficient looks deceptively small (Jan-Mar winter sun is weak) but the underlying renewable response in 2025 is the most negative on record. The non-stationarity is exactly what the year interaction is designed to absorb: a flat-coefficient spec would average $-0.22$ (2022) and $-0.50$ (2025) into a single value around $-0.35$, mis-fitting both ends of the window.
 
-\paragraph{Calibrated-solar robustness: how much of the price drop is solar vs the reform?} A natural concern about the headline BSTS counterfactual is that Spanish solar capacity grew rapidly through 2024 and 2025, so the marginal price-suppressing effect of solar is itself non-stationary. The BSTS per-year spike-and-slab attempts to capture this via year-by-solar interactions; the conditional posterior means (Table~\ref{tab:solar-year-coefs}) are $-0.46$ for 2024 and $-0.29$ for the Jan-Mar-2025 sample on the ID15 spec, suggesting a strong solar effect that may not be fully credited in the post-window prediction. If the post-window counterfactual under-credits solar, the residual ``price drop'' that we attribute to the reform is partly mechanical (it is the solar effect we failed to attribute correctly). We therefore implement a \textbf{calibrated-solar counterfactual}: pre-subtract a known solar contribution $\beta^{\text{cal}}_{\text{solar}} \cdot \text{solar}_t \cdot \mathds{1}\{t \ge 2024\}$ from observed prices, fit the BSTS state-space model on the residual (with the usual base regressors but no year interactions), and add the calibrated solar contribution back to the post-window prediction before computing the treatment effect.
+\paragraph{Calibrated-solar robustness: how much of the price drop is solar vs the reform?} If the BSTS post-window prediction under-credits solar's fast-growing marginal effect, part of the ``price drop'' we attribute to the reform would in fact be a mis-attributed solar effect. The calibrated-solar counterfactual guards against this: I pre-subtract a known solar contribution $\beta^{\text{cal}}_{\text{solar}} \cdot \text{solar}_t \cdot \mathds{1}\{t \ge 2024\}$ from prices, fit the BSTS on the residual (no year interactions), and add it back to the post-window prediction --- sweeping $\beta^{\text{cal}}_{\text{solar}}$ from the unconditional default to the most aggressive per-year conditional value.
 
 \begin{center}
 \footnotesize
@@ -1889,65 +1889,7 @@ $-0.50$ (per-year cond.\ 2025, DA15 spec)              & $-23$ & $37$ & $\mathbf
 
 \textbf{The price drop at ID15 IDA survives every solar calibration.} Under the most aggressive solar coefficient ($-0.50$, the DA15-spec conditional 2025 mean) the real-effect point estimate is $-23$ EUR/MWh; under the 2024 conditional value of $-0.46$ it is $-26$; under the BSTS unconditional default, $-41$. After 2024-same-calendar placebo-netting the net effects are uniformly larger in magnitude ($-60$ to $-74$ EUR/MWh), because the placebo windows carry their own positive ``effect'' under the calibrated specification. The DA15 DA real effect is essentially null across all calibrations ($9$ to $30$ EUR/MWh); its net effect is mildly negative ($-10$ to $-13$) but far smaller than at ID15, with credible intervals that always bracket zero. So solar's strong 2024 marginal effect does not explain the ID15 drop --- the reform moved the granular leg's clearing price on top of what solar alone would predict --- while the DA15 effect is not separately identified. The cleanly-identified pricing-chain input remains the per-firm slope increase of Appendix~\ref{sec:5-residual-demand-slope}, which this discussion leaves untouched.
 
-\paragraph{OLS cross-check.} The wide credible intervals in the calibrated-solar BSTS reflect the state-space level component's flexibility, which absorbs persistent low-frequency variation that the regression then has no way to pin down. We complement the BSTS with a standard OLS regression on the same daily price panel, including calendar-month and day-of-week fixed effects (the seasonal structure that BSTS encoded via local-level + 7-day seasonal), a time trend (linear or quadratic), gas price, and per-year wind and solar interactions. Standard errors are Newey-West HAC with $7$-day bandwidth to account for daily price autocorrelation. The model:
-\[
-p_t \;=\; \alpha + \theta\,\text{POST}_t + \beta_{\text{wind}}\text{wind}_t + \beta_{\text{solar}}\text{solar}_t + \beta_{\text{gas}}\text{gas}_t + \sum_y \gamma_y\,\text{renew}_t \cdot \mathds{1}\{\text{year}=y\} + \phi_m + \delta_{\text{dow}} + g(t) + \varepsilon_t.
-\]
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l r r r r}
-\toprule
-& \multicolumn{2}{c}{\textbf{ID15 IDA price}} & \multicolumn{2}{c}{\textbf{DA15 DA price}} \\
-\cmidrule(lr){2-3} \cmidrule(lr){4-5}
-\textbf{Specification (POST coef $\theta$)} & $\hat\theta$ & HAC SE & $\hat\theta$ & HAC SE \\
-\midrule
-Spec 1: base $+$ month FE $+$ DOW FE                 & $\mathbf{-31.7}^{***}$ & $8.2$ & $-8.3$           & $5.3$ \\
-Spec 2: $+$ linear time trend                         & $\mathbf{-23.7}^{***}$ & $8.6$ & $8.3$           & $7.3$ \\
-Spec 3: $+$ year-by-renewable (per year)              & $\mathbf{-45.8}^{***}$ & $9.6$ & $-8.6$           & $8.1$ \\
-Spec 4: $+$ year-by-renewable (2024+ pooled)          & $\mathbf{-38.7}^{***}$ & $7.3$ & $-4.6$           & $7.7$ \\
-Spec 5: $+$ quadratic time trend                      & $\mathbf{-53.1}^{***}$ & $6.8$ & $\mathbf{-18.9}^{**}$ & $9.2$ \\
-\bottomrule
-\end{tabular}
-% Source: scripts/analysis/bid/ols_price_full_controls.R
-\captionof{table}{\textbf{OLS price-effect estimates with full controls.} Daily clearing-price regressions with calendar-month and day-of-week fixed effects, gas price, time trend (linear or quadratic), and year-by-renewable interactions. Newey-West HAC standard errors with $7$-day bandwidth. POST = 1 on/after the reform cutover. Spec 4 (year-by-renewable, 2024+2025 pooled) addresses the Jan-Mar-2025-only fit of the per-year spec. $^{**}\,p<0.05$, $^{***}\,p<0.01$. ID15 IDA pre-window 2022-01-01 to 2025-03-18, post 2025-03-19 to 2025-04-27. DA15 DA pre 2022-01-01 to 2025-09-30, post 2025-10-01 to 2025-12-31.}
-\label{tab:ols-price-full-controls}
-\end{center}
-
-\textbf{OLS verdict matches the calibrated-solar BSTS verdict.} The ID15 IDA price drop is significant at every standard significance level across all five specifications ($-24$ to $-53$ EUR/MWh, $p<0.01$ throughout). The DA15 DA effect ranges from $-4.6$ (null, $p=0.55$) to $-18.9$ (significant under quadratic trend, $p=0.04$); the bulk of specifications return small null or marginally-significant negative coefficients. OLS with full controls is more precise than the BSTS (smaller standard errors, narrower confidence intervals) but qualitatively delivers the same conclusion: \textbf{ID15 has a robust own-market price drop; DA15 does not}.
-
-This diagnostic also clarifies why several level findings (\S\ref{sec:results:6-3}) lose significance under the year-interaction spec: forecast uncertainty about what solar's marginal price impact will be in the post-cutover window is large precisely because the coefficient has been shifting fast in the years immediately preceding the cutover.
-
-
-
 \paragraph{Note on bid-shape outcomes in this appendix.} The bid-shape DiD robustness tables below report on the headline quintuple $(\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_{\text{tr}})$ used in \S\ref{sec:data:bandwidth}. The cross-border and offer-type checks lead with $\sigma_p$ (the robust price-side anchor); for a near-linear curve $\sigma_p \approx |\hat\beta|\cdot\sigma_Q$, so the signs on those checks track $\hat\beta$ up to estimator noise (and via curvature track $\hat\gamma$).
-
-\subsection{Convex-renewable robustness on the price OLS}\label{app:convex-renew}
-
-Hourly OLS on the ID15 IDA price, no linear trend, Newey-West HAC lag $24\times 7$. Pre window 2022-01-01 onwards; post = 40 days for ID15 (pre-blackout), 92 days for DA15. \textbf{D}: quadratic spec adds wind$^2$, solar$^2$ with year-by-renewable interactions on both linear and quadratic terms. \textbf{E}: cubic spec adds wind$^3$, solar$^3$ with year-by-renewable interactions on all three orders. The quadratic spec absorbs merit-order curvature in renewable price-suppression; the cubic adds essentially nothing (diminishing returns).
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{8pt}
-\begin{tabular}{l c c c c}
-\toprule
-                                                     & \multicolumn{2}{c}{\textbf{ID15 (IDA reform)}} & \multicolumn{2}{c}{\textbf{DA15 (DA reform)}} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-                                                     & IDA (own) & DA (cross) & DA (own) & IDA (cross) \\
-\midrule
-OLS hourly --- $+$ year-by-renewable (2024+25 pooled) & $-30^{***}$ & $-29^{***}$ & $3$ & $2$ \\
-\textbf{D}  $+$ quadratic renew $\times$ year         & $\mathbf{-24}^{***}$ & $\mathbf{-24}^{***}$ & $-2$ & $-3$ \\
-\textbf{E}  $+$ cubic renew $\times$ year             & $-24^{***}$ & $-23^{***}$ & $-2$ & $-2$ \\
-\addlinespace
-Newey-West HAC SE (D)                                & 7.00 & 7.10 & 5.36 & 5.31 \\
-Newey-West HAC SE (E)                                & 6.85 & 6.95 & 5.37 & 5.32 \\
-\bottomrule
-\end{tabular}
-% Source: scripts/analysis/bid/ols_price_hourly.R
-\captionof{table}{\textbf{Convex-renewable robustness.} Quadratic (D) and cubic (E) renewable terms with year interactions, no trend. ID15 holds at $\approx-24$; DA15 stays null.}
-\label{tab:convex-renew}
-\end{center}
 
 \subsection{Cross-border flow control on the price effect}\label{app:xborder-price}
 
@@ -1956,41 +1898,7 @@ A natural worry about the ID15 price drop is that it reflects cross-border condi
 
 \subsection{Renewable capacity vs realised production, 2024 vs 2025}\label{app:renewables-check}
 
-\textbf{(a) Installed capacity at year-start} (ENTSO-E, MW). Solar PV expanded $43\%$; wind essentially flat.
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l c c c c}
-\toprule
-                       & \textbf{Jan 2024} & \textbf{Jan 2025} & \textbf{$\Delta$ MW} & \textbf{$\Delta$ \%} \\
-\midrule
-Solar PV (B16)         & 29{,}047 & $\mathbf{41{,}433}$ & $12{,}386$ & $42.6\%$ \\
-Wind (B18$+$B19)       & 30{,}932 & 32{,}451            & $1{,}519$  & $4.9\%$  \\
-Solar $+$ Wind         & 59{,}979 & 73{,}885            & $13{,}906$ & $23.2\%$ \\
-Coal (B05)             &  1{,}820 &  1{,}258            & $-562$      & $-30.9\%$ \\
-Nuclear (B14), Gas (B04) & no change & no change & --- & --- \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\noindent\textbf{(b) Realised production in the matched ID15 window} (Mar 19 -- Apr 27).
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l c c c c}
-\toprule
-                              & \textbf{Spring 2024} & \textbf{Spring 2025} & \textbf{$\Delta$} & \textbf{$\Delta$ \%} \\
-\midrule
-Wind (GWh/d)                  & 167.5 & 161.4 & $-6.1$  & $-4\%$  \\
-Solar (GWh/d)                 & 122.2 & 138.4 & $16.2$ & $13\%$ \\
-Gas (EUR/MWh)                 & 431   & 746   & $315$  & $\mathbf{73\%}$ \\
-IDA price (EUR/MWh, raw mean) & 10.9  & 25.1  & $14.2$ & --- \\
-\bottomrule
-\end{tabular}
-\end{center}
-
+Installed solar PV grew $43\%$ between January 2024 and 2025 ($29.0$ to $41.4$ GW), wind only $5\%$, with no change in nuclear or gas capacity --- the build-out the year-by-renewable controls absorb. In the matched ID15 window (Mar 19 -- Apr 27), realised solar production rose $13\%$ year-on-year and wind fell $4\%$, while the gas price rose $73\%$ (431 to 746 EUR/MWh); the raw IDA price rose from $10.9$ to $25.1$ EUR/MWh, so the controlled price \emph{fall} runs against the raw direction --- exactly why the renewable and gas controls are load-bearing.
 
 \subsection{Window length: long-pre controls and conditional parallel trends}\label{sec:5-long-pre-ra}
 
@@ -2335,55 +2243,7 @@ $n_{\text{curves}}$     & 7{,}647 & 11{,}398 & 10{,}515 & 8{,}962 & 10{,}254 & 7
 \end{figure}
 
 % =====================================================================
-\subsection{Battery bid behavior in the IDA --- descriptive}\label{sec:5-batteries}
-Battery curves are single-tranche throughout, so the bid-shape DiD does not apply; what changes is participation and bid placement relative to the clearing price (eleven buy-side and three sell-side OMIE storage units, across three regimes).
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l c c c c c}
-\toprule
-\textbf{Regime} & \textbf{Side} & \textbf{Curves} & \textbf{Median $p_{\text{bid}}-\text{MCP}$} & \textbf{In-band share ($\pm 50$)} & \textbf{Avg MW/bid} \\
-\midrule
-Pre-MTU15-IDA          & Charge  & $8$    & $38.0$  & $63\%$ & $4.4$ \\
-                       & Sell    & $4$    & $-47.6$  & $50\%$ & $4.2$ \\
-\addlinespace
-Post-MTU15-IDA         & Charge  & $1{,}115$ & $0.2$  & $96\%$ & $3.3$ \\
-                       & Sell    & $1{,}017$ & $0.2$  & $98\%$ & $3.9$ \\
-\addlinespace
-Post-DA15              & Charge  & $2{,}184$ & $27.4$  & $74\%$ & $3.3$ \\
-                       & Sell    & $1{,}598$ & $-10.0$  & $72\%$ & $3.1$ \\
-\bottomrule
-\end{tabular}
-% Source: hand-built descriptive table from the OMIE IDA order book (no standalone script)
-\captionof{table}{\textbf{Battery IDA bidding by regime (descriptive).} Positive $p_{\text{bid}}-\text{MCP}$ on the charge side $=$ bidding above MCP to guarantee clearing.}
-\label{tab:batteries-ida}
-\end{center}
-
-Two shifts: participation rises from a dozen curves pre-MTU15-IDA to thousands post-DA15 (a build-out alongside the reforms), and the strategy moves from at-MCP price-taking at the MTU15-IDA cutover to spread-around-MCP bidding (charge above, sell below) at DA15 --- the signature of active storage arbitrage.
-
-Post-DA15 one battery (Batalha) starts placing bids on both sides of the same period in $18\%$ of cases --- a bracketing position that clears in either direction, consistent with two-sided arbitrage. Sample is tiny; descriptive only.
-
 \subsection{Nuclear PDBF shortfall before the blackout}\label{sec:5-nuclear-pdbf}
-Headline BSTS on nuclear auction-plus-bilateral dispatch (PDBF, PHF) at both reforms. Nuclear output drops sharply in the 40 days between ID15 and the blackout; the DA15 window is null.
-
-\begin{center}
-\footnotesize
-\setlength{\tabcolsep}{6pt}
-\begin{tabular}{l l r r r}
-\toprule
-\textbf{Reform window} & \textbf{Outcome} & \textbf{Real} & \textbf{Placebo 2024} & \textbf{Placebo-net} \\
-\midrule
-ID15 (Mar 19 -- Apr 27, 2025, pre-blackout)     & PDBF (DA + bilateral)  & $\mathbf{-72.8}^{***}$ & $-18.9$       & $-53.9$ \\
-                                                & PHF (post-IDA total)   & $\mathbf{-54.1}^{***}$ & $17.3$       & $-71.4$ \\
-\addlinespace
-DA15 (Oct 1 -- Dec 31, 2025, reforzada-constant) & PDBF                  & $-6.1$         & $-29.4$       & $23.3$ \\
-                                                 & PHF                   & $-7.8$         & $-31.2$       & $23.4$ \\
-\bottomrule
-\end{tabular}
-% Source: scripts/analysis/bid/bsts_nuclear_pdbf.R
-\captionof{table}{\textbf{Nuclear PDBF and PHF BSTS} (GWh/day). Placebos: same-calendar 2024 windows.}
-\label{tab:bsts-nuclear-pdbf}
-\end{center}
+Nuclear auction-plus-bilateral output (PDBF, BSTS) falls sharply in the forty days between ID15 and the blackout --- $-72.8$ GWh/day, placebo-net $-53.9$ ($p<0.001$), with the post-IDA total (PHF) down similarly --- while the DA15 window is null (placebo-net $+23$). This is a blackout-adjacent descriptive, not a granularity effect; it is recorded because the conclusion's open question on grid stability returns to it.
 
 \end{document}

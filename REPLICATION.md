@@ -51,8 +51,6 @@ Schematic figures drawn in-document with TikZ (no script): `fig:market-structure
 | `tab:xb-control` | cross-border-flow control on the bid-shape DiD | `bid/run_xb_control_p90.py` |
 | `tab:solar-year-coefs` | per-year solar coefficient from the BSTS posterior | `bid/bsts_solar_year_coefficients.R` |
 | `tab:calibrated-solar` | calibrated-solar BSTS counterfactual | `bid/bsts_calibrated_solar.R` |
-| `tab:ols-price-full-controls` | OLS price effect, full control ladder | `bid/ols_price_full_controls.R` |
-| `tab:convex-renew` | quadratic/cubic-renewable robustness | `bid/ols_price_hourly.R` |
 | `tab:spec-c-longpre-ra` | bid-shape DiD: tight, long-pre, RA-DiD | `bid/spec_c_long_pre_ra_did.py` |
 | `tab:demand-did` | demand-side (buy-curve) bid-shape DiD | `bid/slope_did_demand.py` |
 | `tab:perfirm-ccgt` | per-CCGT-firm bid-shape DiD | `bid/mtu15_critical_flat_did.py` |
@@ -63,8 +61,7 @@ Schematic figures drawn in-document with TikZ (no script): `fig:market-structure
 | `tab:bsts-ajuste-costs` | per-channel BSTS on REE ajuste costs | `bid/bsts_ajuste_costs.R` |
 | `tab:ida-activity-fase1` | post-DA15 IDA activity rise | `bid/claim_D_ida_activity_post_da15.py` |
 | `tab:per-session-ida-bidshape` | per-session IDA CCGT bid shape | `bid/claim_C_per_session_bid_shape.py` |
-| `tab:batteries-ida` | battery IDA bidding by regime (descriptive) | hand-built from the OMIE order book (no script) |
-| `tab:bsts-nuclear-pdbf` | nuclear PDBF/PHF BSTS | `bid/bsts_nuclear_pdbf.R` |
+| `sec:5-nuclear-pdbf` | nuclear PDBF/PHF BSTS (in-text figures) | `bid/bsts_nuclear_pdbf.R` |
 
 The critical/flat partition (§4.4, `sec:data:partition`) is built by
 `balancing/partition_cv_sigma.py`; the before-after-vs-DiD diagnostic behind the
