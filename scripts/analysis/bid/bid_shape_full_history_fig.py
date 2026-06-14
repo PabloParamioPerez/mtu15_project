@@ -3,16 +3,17 @@
 # Full-history parallel-trends of sigma_p and HHI per tech per market.
 # Critical vs flat (14-day rolling mean), with ID15 and DA15 reform lines.
 #
-# OUT: figures/working/fig_bid_shape_full_history_{sigma_p,hhi}_{da,ida}.{pdf,png}
+# OUT: figures/thesis/fig_bid_shape_full_history_{sigma_p,hhi}_{da,ida}.{pdf,png}
+#      (slides-only figures; the slides graphicspath resolves figures/thesis/)
 
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-REPO = Path("/Users/pabloparamio/Desktop/CEMFI/2nd Year/Master Thesis/mtu15_project")
+REPO = Path(__file__).resolve().parents[3]
 PANEL = REPO / "data/derived/panels/bid_shape_daily_means_extended.parquet"
-OUT_DIR = REPO / "figures/working"
+OUT_DIR = REPO / "figures/thesis"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 ID15 = pd.Timestamp("2025-03-19")
