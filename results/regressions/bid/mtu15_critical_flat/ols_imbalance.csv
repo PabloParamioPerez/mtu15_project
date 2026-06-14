@@ -1,0 +1,9 @@
+outcome,reform,eff,se,p,n_post
+bs3_eur_mwh,ID15,-1.32,0.31,0.0,40
+bs3_eur_mwh,DA15,-0.15,0.42,0.7204,92
+price_dev_up_eur_mwh,ID15,-48.53,6.33,0.0,40
+price_dev_up_eur_mwh,DA15,-4.2,8.92,0.6379,92
+price_dev_dn_eur_mwh,ID15,-51.33,6.23,0.0,40
+price_dev_dn_eur_mwh,DA15,4.2,7.84,0.5921,92
+abs_imbalance_mwh,ID15,-166.99,173.89,0.3369,40
+abs_imbalance_mwh,DA15,-287.08,178.68,0.1081,92

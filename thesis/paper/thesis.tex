@@ -847,6 +847,7 @@ DA15 is the mirror image. Every specification leaves both its own forward market
 \quad base                                  & $-31.7^{***}$ & $-32.8^{***}$ & $-8.3$ & $-8.4$ \\
 \quad year\,$\times$\,renewable (per year)  & $-45.8^{***}$ & $-46.7^{***}$ & $-8.6$ & $-10.0$ \\
 \quad year\,$\times$\,renewable (pooled)    & $\mathbf{-38.7}^{***}$ & $\mathbf{-38.7}^{***}$ & $-4.6$ & $-6.0$ \\
+\quad quadratic renewable\,$\times$\,year   & $-22.7^{***}$ & $-23.2^{***}$ & $-2.8$ & $-3.4$ \\
 \addlinespace
 \multicolumn{5}{l}{\textit{OLS, hourly}}\\
 \quad base                                  & $-33.6^{***}$ & $-33.6^{***}$ & $-10.3^{**}$ & $-10.2^{**}$ \\
@@ -855,7 +856,8 @@ DA15 is the mirror image. Every specification leaves both its own forward market
 \quad quadratic renewable\,$\times$\,year   & $-24.3^{***}$ & $-23.6^{***}$ & $-2.3$ & $-2.5$ \\
 \addlinespace
 \multicolumn{5}{l}{\textit{BSTS counterfactual}}\\
-\quad daily                                 & $-34.3^{*}$ & $-33.9^{*}$ & $7.8$ & $1.0$ \\
+\quad daily, year\,$\times$\,renewable      & $-34.3^{*}$ & $-33.9^{*}$ & $7.8$ & $1.0$ \\
+\quad daily, quadratic renewable            & $-32.8$ & $-32.2$ & $8.5$ & $1.6$ \\
 \bottomrule
 \end{tabular}
 \captionof{table}{\textbf{Clearing-price effect by specification and reform-side leg} (EUR/MWh). Common pre-window from 2022-01-01; post-windows 2025-03-19 to 2025-04-27 (ID15, 40 days, pre-blackout) and the 90 days from 2025-10-01 (DA15). Base controls (all rows): wind, solar, gas, month FE, day-of-week FE, with hour-of-day FE added in the hourly rows; the renewable terms named are added on top. The quadratic row adds $\text{wind}^2$ and $\text{solar}^2$ with year-by-renewable interactions on the linear and quadratic terms; the cubic spec gives $-23.5$ / $-22.9$ ($p<0.001$). Newey--West HAC; BSTS adds a state-space level and 7-day seasonality, its $^{*}$ marking the posterior tail. Headline pooled-renewable ID15 spec in \textbf{bold}. The only significant DA15 cell is the hourly base, and it vanishes the moment renewable controls enter --- a confound, not an effect.}
@@ -972,30 +974,32 @@ $\text{HHI}_{\text{tr}}$                       & CCGT          & $\mathbf{-0.18}
 \end{untested}
 
 
-\subsection{Imbalance: the penalty per MWh drops at ID15, aggregate volume is unchanged}\label{sec:results:Q2}\phantomsection\label{sec:results:Q2-penalty}
+\subsection{Imbalance: the price of a deviation falls at ID15, the volume does not}\label{sec:results:Q2}\phantomsection\label{sec:results:Q2-penalty}
 
-ID15 cut the imbalance penalty per MWh by a third; DA15 added nothing. Aggregate imbalance volume is essentially unchanged at both reforms: granularity reorganises within-hour timing of imbalance, not its size: the same MWh of residual imbalance is resolved with cheaper balancing reserves.
+The balancing-layer evidence comes from REE's settlement, published through ESIOS, and it earns a word of caution before any number. The series are the quarter-hourly imbalance settlement prices --- what a party pays when it is short (an \emph{up}-deviation) and receives when it is long (a \emph{down}-deviation) --- together with a net penalty per megawatt-hour of imbalance and the aggregate imbalance volume, all averaged to the day. How REE forms the net penalty, and exactly what the volume series counts, is not fully transparent in the public data; I document the underlying settlement concepts and their construction in Appendix~\ref{app:imbalance-data}, and I lead with the two directional prices, which are unambiguous. To avoid resting on a single estimator I report both a daily OLS and the BSTS counterfactual (Table~\ref{tab:bsts-imbalance-penalty}), and they agree --- which matters, because a result visible under only one method would be the kind of thing worth distrusting.
 
-The split between price and volume is exactly the model's. The penalty per MWh of deviation is the imbalance settlement price --- the MW-weighted price of the reserves REE uses to balance the system, set ex post by formula rather than at anyone's discretion --- and it falls $\mathbf{-33\%}$ at ID15 and is flat at DA15. The aggregate volume of imbalance, by contrast, barely moves at either reform ($-0.1\%$ and $-4\%$, both null). That is what the model predicts: forecast errors are physical --- wind, solar and demand stochasticity --- so granularity cannot shrink the megawatt-hours of residual imbalance, only reorganise their within-hour timing. The mechanism is the aggregator's hedging gain $G(\Delta_\eta) = \gamma Q\Delta_\eta/2$: a granular spot lets balance-responsible parties re-schedule as their forecast updates resolve, revealing positions earlier, so REE can schedule cheaper reserves ahead of time instead of dipping into expensive ones at the margin. The same residual imbalance is cleared with a cheaper reserve stack. And the timing is the model's signature --- the saving arrives entirely at the spot reform, where the balancing residual collapses to $\Delta_t = \varepsilon_t$, with nothing left for the forward reform to add, exactly the null DA15 column.
+The split between price and volume is exactly the model's. The cost of a deviation falls at ID15 --- by roughly a third on the net penalty and by some forty to fifty EUR/MWh on each directional price, significant under both estimators --- while the megawatt-hours of imbalance do not move. Forecast errors are physical (wind, solar and demand stochasticity), so granularity cannot shrink the residual imbalance, only let it be covered with cheaper reserves scheduled earlier: the aggregator's hedging gain $G(\Delta_\eta) = \gamma Q\Delta_\eta/2$, a granular spot revealing positions before the forecast update $\eta_t$ resolves, so REE pre-schedules cheaper reserves instead of dipping into expensive ones at the margin. The same residual imbalance is cleared with a cheaper reserve stack. And the timing is the model's signature: the saving arrives entirely at the spot reform, where the balancing residual collapses to $\Delta_t = \varepsilon_t$, with nothing left for the forward reform --- the null DA15 column under both estimators. One caveat on the spec: the ISP15 settlement series only begins in December 2024, so the imbalance pre-window is a single short winter; I therefore drop month fixed effects from the OLS, which on so short a window would be collinear with the post period and would spuriously soak up the treatment.
 
 \begin{center}
 \footnotesize
-\setlength{\tabcolsep}{8pt}
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{l c c c}
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabular}{l c cc cc}
 \toprule
-\textbf{Outcome} & \textbf{Pre mean} & \textbf{ID15} & \textbf{DA15} \\
+ & & \multicolumn{2}{c}{\textbf{ID15}} & \multicolumn{2}{c}{\textbf{DA15}} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+\textbf{Outcome} & \textbf{Pre mean} & OLS & BSTS & OLS & BSTS \\
 \midrule
-\multicolumn{4}{l}{\textit{Settlement prices (EUR/MWh)}}\\
-\quad Penalty per MWh of $|\text{deviation}|$  & $3.45$  & $\mathbf{-1.14}^{***}$ ($-33\%$) & $-0.05$ (flat) \\
-\quad Up-deviation imbalance price             & $69.4$  & $\mathbf{-44.6}^{***}$ ($-64\%$) & $10.3$ (ns) \\
-\quad Down-deviation imbalance price           & $100.7$ & $\mathbf{-49.6}^{***}$ ($-49\%$) & $5.1$ (ns) \\
+\multicolumn{6}{l}{\textit{Settlement prices (EUR/MWh)}}\\
+\quad Penalty per MWh of $|\text{dev}|$  & $3.45$  & $\mathbf{-1.3}^{***}$ & $\mathbf{-1.1}^{***}$ & $-0.2$ & $-0.1$ \\
+\quad Up-deviation price                 & $69.4$  & $\mathbf{-48.5}^{***}$ & $\mathbf{-44.6}^{***}$ & $-4.2$ & $10.3$ \\
+\quad Down-deviation price               & $100.7$ & $\mathbf{-51.3}^{***}$ & $\mathbf{-49.6}^{***}$ & $4.2$ & $5.1$ \\
 \addlinespace
-\multicolumn{4}{l}{\textit{Volume (MWh/day)}}\\
-\quad Aggregate $|\text{imbalance}|$           & $1{,}676$ & $-2$ ($-0.1\%$, ns) & $-67$ ($-4\%$, ns) \\
+\multicolumn{6}{l}{\textit{Volume (MWh/day)}}\\
+\quad Aggregate $|\text{imbalance}|$     & $1{,}676$ & $-167$ & $-2$ & $-287$ & $-67$ \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{BSTS on imbalance settlement prices and aggregate volume.} ID15 pre-window 2024-12-01 to 2025-03-18, post 2025-03-19 to 2025-04-27 (pre-blackout); DA15 pre 2025-04-28 to 2025-09-30, post 2025-10-01 to 2025-12-31. BSTS with 7-day seasonality and wind, solar, gas covariates; relative effect in parentheses, $^{***}$ posterior probability $>0.999$, ns not significant. The \emph{penalty per MWh} is the net settlement price per MWh of net imbalance; the \emph{up-} and \emph{down-deviation} prices are the gross prices a party pays to be short or receives to be long. ID15 cuts all three; DA15 moves none, and aggregate volume is unchanged at both.}
+\captionof{table}{\textbf{Imbalance settlement prices and volume: OLS and BSTS agree.} Outcomes are ESIOS quarter-hourly settlement series, daily means (Appendix~\ref{app:imbalance-data}). Windows: ID15 pre 2024-12-01 (ISP15 settlement start) to 2025-03-18, post 2025-03-19 to 2025-04-27; DA15 pre 2025-04-28 to 2025-09-30, post 2025-10-01 to 2025-12-31. OLS: post $+$ wind $+$ solar $+$ gas $+$ day-of-week, Newey--West HAC lag 7, \emph{no} month FE (the short ISP15 pre-window makes them collinear with the post); BSTS: state-space level, 7-day seasonality, same covariates. The penalty per MWh is the net settlement price per MWh of net imbalance; the up- and down-deviation prices are the gross prices to be short or long. Both estimators cut the ID15 prices, leave DA15 null, and leave volume unchanged. Stars: OLS HAC $p$; BSTS posterior tail.}
 \label{tab:bsts-imbalance-penalty}
 \end{center}
 
@@ -2112,6 +2116,18 @@ DA15 IDA        & $13$ & $18$ & $17$ & $15$ & $7$ & $10$ & $-15$ & $40$ \\
 \captionof{table}{\textbf{Per-firm residual-demand slope and strategic margin proxy, pre vs post.} Margin proxy $= q_f^{\text{strat}}/b_f$, $q_f^{\text{strat}}$ net of own renewables. $^{\ddagger}$ ID15 margin signs are compositional (small 40-day post base), not behavioural. DA15 DA is the clean cell: $b_f$ up $24$--$28\%$, margin proxy down $12$--$27\%$ on all four firms.}
 \label{tab:strategic-markup}
 \end{center}
+
+\subsection{Imbalance settlement data and what its prices mean}\label{app:imbalance-data}
+
+The imbalance evidence of \S\ref{sec:results:Q2} rests on REE's settlement, retrieved through the ESIOS API. This subsection says what the series are, how Spanish imbalance settlement works, and where the public data stops being transparent.
+
+\paragraph{What imbalance settlement does.} Once the markets have cleared and the delivery period has passed, every balance-responsible party is measured against its final schedule; the difference is its imbalance, and REE charges or pays for it at a settlement price set ex post. The intent is to leave a party roughly indifferent --- or slightly worse off --- between balancing itself and leaning on the system. Spain runs a near dual-price scheme: a party that is \emph{short} relative to the system's own imbalance pays an up-deviation price, a party that is \emph{long} receives a down-deviation price, and the two generally straddle the day-ahead price. Both are formed ex post from the cost of the balancing reserves REE actually activated (automatic and manual frequency restoration, replacement reserves) over the settlement period.
+
+\paragraph{The series I use.} From the per-ISP settlement I take, as daily means: the up-deviation price (ESIOS concept \texttt{prdvsuqh}) and the down-deviation price (\texttt{prdvbaqh}); a net penalty per megawatt-hour, the system-aggregate settlement cost over the aggregate imbalance volume; and that aggregate volume itself. The first two are the cleanest objects --- they are published prices --- so the body leads with them. The net penalty is a ratio of two settlement aggregates and inherits whatever the bundle nets.
+
+\paragraph{Where transparency stops.} The public series do not ship with the exact formula mapping activated-reserve costs into the per-ISP deviation prices, nor with a clean statement of which settlement concepts enter the ``net penalty'' and the ``volume'': the settlement bundle carries scores of concept families, and the split between energy, capacity, and the various reserve products is not always legible from the field names alone. I therefore treat the net penalty as a summary rather than a primitive, cross-check it against the two directional prices, and report OLS and BSTS side by side so the result visibly does not hang on one estimator or one ambiguous aggregate.
+
+\paragraph{Role in the argument.} These prices are the empirical face of the model's balancing cost $\gamma\,\mathbb{E}[\Delta_t^2]$: the cheaper it is to settle a deviation, the smaller the penalty the system pays for the residual the auctions could not contract. The model predicts that cost falls once the spot becomes granular (the hedging gain $G$) and not again at the forward reform --- which is what both estimators in Table~\ref{tab:bsts-imbalance-penalty} show.
 
 
 % =====================================================================
