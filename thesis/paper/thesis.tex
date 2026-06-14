@@ -581,13 +581,9 @@ The panel runs, for most series, from January 2018 to the present, spanning the 
 
 \subsection{Bid offers, reform path, and notation}\label{sec:data:outcomes}
 
-\paragraph{Unit of observation and indices.} The unit of observation is one offer curve: a unit $u$, on date $d$, for delivery period $p$ --- a clock-hour before the market's MTU15 cutover, a 15-minute quarter after it. Clock-hours are indexed $h \in \{1,\dots,24\}$, with within-hour quarters $q \in \{1,\dots,4\}$ defined post-MTU15 only; $s$ indexes IDA sessions, $t$ technologies, $m \in \{\text{DA},\text{IDA}\}$ markets, and $k$ the tranches of a step ladder. $T_r$ is a reform cutover date and $\mathcal{X} \in \{\text{morning ramp, midday, evening ramp, flat}\}$ the hour class of \S\ref{sec:data:partition}.
+The object I observe, and the one the analysis is built on, is a single offer curve: one generating unit $u$, on date $d$, bidding into one delivery period $p$ --- a clock-hour before that market's switch to fifteen minutes, a quarter-hour after it. Each sell offer arrives in the tranche format of the OMIE files, a step ladder $\{(p_k, \Delta q_k)\}_{k=1}^{K_{u,d,p}}$ sorted by ascending price, where $\Delta q_k$ is the extra megawatts the unit adds once the price reaches $p_k$; cumulating the increments, $q_k = \sum_{j \le k} \Delta q_j$, recovers the corner points of the model's step offer. Offers come in three forms --- a bare price--quantity ladder, one carrying a minimum-income condition, or an all-or-nothing block spanning periods --- and most technologies bid the bare form, the combined-cycle plants being the exception, bidding mostly income-conditioned or block. Against each offer I line up the auction's clearing price $\text{MCP}_{d,p}$ and its cleared quantity $Q^\star_{d,p}$. Throughout, $h \in \{1,\dots,24\}$ indexes the clock-hour and $q \in \{1,\dots,4\}$ its quarters (defined only after the switch), $s$ the three intraday sessions, $t$ a technology, $m \in \{\text{DA},\text{IDA}\}$ the market, $k$ the rungs of a ladder, and $T_r$ the cutover date of a given reform.
 
-\paragraph{Bid offer.} Each $(u,d,p)$ sell offer is a step ladder $\{(p_k, \Delta q_k)\}_{k=1}^{K_{u,d,p}}$ sorted by ascending price: $\Delta q_k$ is the incremental MW the unit adds once the price reaches $p_k$ --- the tranche format of the OMIE files. Cumulating the increments, $q_k = \sum_{j \le k} \Delta q_j$, gives the corner points $\{(p_k, q_k)\}$ of the model's step offer (\S\ref{sec:theory:ladder}). Offers carry one of three structural types: \emph{simple} (a bare price--quantity ladder), \emph{minimum-income condition} (MIC), or \emph{block} (all-or-nothing across periods). Most technologies bid simple; CCGT is the outlier, with the bulk of its offers in MIC or block form.
-
-\paragraph{Market clearing.} $\text{MCP}_{d,p}$ is the OMIE clearing price (EUR/MWh) of the auction in which the offer was submitted and $Q^\star_{d,p}$ the system cleared quantity; per-technology cleared MWh per clock-hour is written $Q^{\text{cl}}_{t,m,d,h}$.
-
-\paragraph{Reform path.} The Spanish wholesale market underwent three granularity reforms in under a year: \textbf{ISP15} (2024-12-11), REE's settlement period moved from 60 to 15 min while the OMIE contract grid stayed at 60 min; \textbf{ID15} (2025-03-19), intraday auctions and continuous market moved from 60 to 15 min; \textbf{DA15} (2025-10-01), day-ahead moved from 60 to 15 min. The April 2025 blackout (2025-04-28) triggered a continuous \emph{operaci\'on reforzada} regime (CCGT-led voltage support, post-DA redispatch) that overlaps DA15 calendar-wise but operates on a different mechanism. Figure~\ref{fig:bid_internal:timeline} in \S\ref{sec:institutional} maps the sequence; analysis windows are built inside constant-regime spans, so the blackout regime is held fixed on both sides of each cutover.
+Three reforms move the granularity of this object in under a year, and the whole empirical design turns on keeping them apart. The settlement clock went quarter-hourly first (ISP15, 11 December 2024), then the intraday auctions and the continuous market (ID15, 19 March 2025), and finally the day-ahead (DA15, 1 October 2025); the late-April 2025 blackout opened the reinforced-operation regime that then runs alongside the last cutover. Because that regime overlaps the day-ahead reform on the calendar but works through a different mechanism, every comparison window below is cut inside a span where the regime is constant, so a reform effect and a regime effect are never confounded.
 
 \subsection{In-band region and bid-shape outcomes}\label{sec:data:bandwidth}
 
@@ -664,41 +660,31 @@ DA15 placebo (2024)   & 45 & 49 \\
 \label{fig:in-band-bandwidth}
 \end{figure}
 
-\paragraph{In-band set.} For each $(u,d,p)$ curve:
+For a given offer curve, then, the in-band set collects the rungs within $\delta$ of clearing, with megawatt shares and a share-weighted mean price,
 \[
 \mathcal{B}_{u,d,p} \;=\; \bigl\{k:\;|p_k - \text{MCP}_{d,p}| \le \delta\bigr\}, \qquad
 w_k = \frac{\Delta q_k}{\sum_{j\in\mathcal{B}_{u,d,p}} \Delta q_j}, \qquad
-\bar p_{u,d,p} = \sum_{k\in\mathcal{B}} w_k\, p_k.
+\bar p_{u,d,p} = \sum_{k\in\mathcal{B}} w_k\, p_k,
 \]
-Representative bid curves per technology in critical and flat hours are in Appendix~\ref{app:context-bid-curves} (Figure~\ref{fig:bid-curves-by-tech-merged}); they illustrate the dispatchable-ladder vs renewable-block contrast.
-
-\paragraph{Five bid-shape outcomes.} Per in-band curve we summarise the ladder with a quintuple $(\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_{\text{tr}})$. Let $Q_k = \sum_{j\in\mathcal{B},\, j\le k}\Delta q_j$ be the cumulative in-band MW after the $k$th tranche.
-
-\emph{Price-side dispersion} (the robust price-side anchor, well-defined on every curve including single- and few-tranche ones where the OLS slope is noisy):
+and on that set I summarise the ladder with five numbers, the sample images of the competing-tier geometry the theory delivers. (What these look like for each technology, dispatchable ladders against single renewable blocks, is in Appendix~\ref{app:context-bid-curves}.) Writing $Q_k = \sum_{j\in\mathcal{B},\, j\le k}\Delta q_j$ for the cumulative in-band megawatts up to the $k$th rung, the one I lean on is the share-weighted price dispersion,
 \[
-\sigma_{p,\,u,d,p} \;=\; \Big[\sum_{k\in\mathcal{B}} w_k \,(p_k - \bar p_{u,d,p})^2\Big]^{1/2}.
+\sigma_{p,\,u,d,p} \;=\; \Big[\sum_{k\in\mathcal{B}} w_k \,(p_k - \bar p_{u,d,p})^2\Big]^{1/2}
 \]
-
-\emph{Level and linear slope} (unweighted OLS on in-band step endpoints):
+--- how spread out the in-band rungs are, weighted by megawatts because profit risk scales with tranche size and an unweighted spread would let a handful of micro-rungs dominate a statistic meant to capture where the offered megawatts actually sit. Equally robust is the bid-stack concentration, the megawatt-weighted Herfindahl of those rungs,
 \[
-p_k \;=\; \hat\alpha_{u,d,p} + \hat\beta_{u,d,p}\,Q_k + e_k.
+\text{HHI}_{\text{tr},\,u,d,p} \;=\; \sum_{k\in\mathcal{B}} w_k^2 \;\in\; \big[1/|\mathcal{B}|,\,1\big],
 \]
-$\hat\alpha$ is the geometric level of the ladder; $\hat\beta$ is the average slope (EUR/MWh per MW), the empirical counterpart of the \emph{inverse} residual-demand slope $1/b_{mt}$ (Corollary~\ref{cor:stats}).
-
-\emph{Curvature} (separate quadratic fit; we keep only the quadratic coefficient):
+which falls as the ladder splits into more, more even steps --- the empirical face of the ladder's depth. The other three come from fitting the rungs: an unweighted regression of price on cumulative in-band megawatts,
 \[
-p_k \;=\; \tilde\alpha_{u,d,p} + \tilde\beta_{u,d,p}\,Q_k + \hat\gamma_{u,d,p}\,Q_k^2 + \tilde e_k.
+p_k \;=\; \hat\alpha_{u,d,p} + \hat\beta_{u,d,p}\,Q_k + e_k,
 \]
-$\hat\gamma > 0$ means convex (cheap MW packed at the bottom, marginal MW priced high); $\hat\gamma < 0$ means concave.
-
-\emph{Bid-stack concentration} (the \emph{tranche-Herfindahl}: the MW-weighted Herfindahl of the in-band tranches):
+returns a level $\hat\alpha$ and a slope $\hat\beta$, the latter the empirical counterpart of the inverse residual-demand slope; and a separate quadratic fit,
 \[
-\text{HHI}_{\text{tr},\,u,d,p} \;=\; \sum_{k\in\mathcal{B}} w_k^2, \qquad w_k = \frac{\Delta q_k}{\sum_{j\in\mathcal{B}}\Delta q_j} \in \big[1/|\mathcal{B}|,\,1\big].
+p_k \;=\; \tilde\alpha_{u,d,p} + \tilde\beta_{u,d,p}\,Q_k + \hat\gamma_{u,d,p}\,Q_k^2 + \tilde e_k,
 \]
+adds a curvature $\hat\gamma$ --- positive when cheap megawatts are packed at the bottom and the marginal ones priced steeply, negative when concave, and meaningful only on curves with at least three rungs. Reading all five against the contemporaneous clearing price through $\delta$ is what makes them immune to price-level seasonality: a January curve and a July curve are compared by shape, not by the level the season puts them at.
 
-Three construction choices follow from the model. The price dispersion $\sigma_p$ is MW-weighted because profit risk scales with tranche size --- the model's tranches carry equal shares, but real ones do not, and an unweighted dispersion would let a string of micro-tranches dominate a statistic meant to capture where the offered megawatts sit. The curvature $\hat\gamma$ comes from a \emph{separate} quadratic fit so that it reads as curvature net of the linear trend (it is identified only on curves with at least three tranches). And every outcome is defined relative to the contemporaneous clearing price through $\delta$, which makes the quintuple immune to price-level seasonality: a January curve and a July curve are compared by shape, not by the level the season puts them at.
-
-The five split into two robust anchors and three fragile descriptors, a distinction that governs which results I lead with. The dispersion $\sigma_p$ and the concentration $\text{HHI}_{\text{tr}}$ are defined on every curve --- including the single- and few-tranche curves where an OLS slope is pure noise --- and they are invariant to the mechanical tranche-count and price-grid changes that the 2024 session reform and ID15 introduced. The slope $\hat\beta$ and the curvature $\hat\gamma$ inherit those mechanical shifts, so their pre-trends drift (Appendix~\ref{app:robustness}); the level $\hat\alpha$ is informative only as a level-neutrality check (Remark~\ref{rem:level}). I therefore treat $\sigma_p$ and $\text{HHI}_{\text{tr}}$ as the headline bid-shape evidence and $\hat\beta$, $\hat\gamma$, $\hat\alpha$ as supporting.
+The five are not on an equal footing, and the difference governs which I lead with. The dispersion and the concentration are defined on every curve --- even the single- and few-rung ones where a fitted slope is pure noise --- and they shrug off the mechanical changes in tranche count and price-grid spacing that the 2024 session reform and ID15 introduced. The slope and curvature inherit those mechanical shifts, so their pre-reform trends drift (Appendix~\ref{app:robustness}), and the level is useful only as a check that a reform moved a curve's shape without moving where it sits. I therefore lead with the dispersion and the concentration and keep the other three in support.
 
 \subsection{Aggregate outcomes}\label{sec:data:aggregate}
 
@@ -706,20 +692,16 @@ Four system-level outcomes are built off the bid stack and the cleared prices, e
 
 The model also has a clean quantity-side prediction --- more capacity should compete near clearing once the state is contractible --- but I do not build an outcome for it. A per-curve in-band offered-energy series would have to be summed across the program cascade, where cleared and offered megawatts are jointly determined over many stages, and it would inherit the bandwidth $\delta$, which itself moves with the price level; the resulting quantity is too endogenous to read as a treatment response. I keep the quantity-side prediction as an open, in-reach test (\S\ref{sec:results:Q3}) rather than force it through a noisy proxy.
 
-\paragraph{Cross-market wedge} (per clock-hour) is the arbitrage object of \S\ref{sec:theory:arbitrage} --- the level is the forward premium, the within-day SD the dispersion granularity unlocks. With $\text{MCP}^m_{d,h}$ the within-market mean of OMIE clearing prices over sub-hour structure on date $d$:
+The first is the wedge between the two auctions, the day-ahead price minus the intraday for the same clock-hour, together with its within-day spread,
 \[
 \Delta_{d,h} \;=\; \text{MCP}^{\text{DA}}_{d,h} - \text{MCP}^{\text{IDA}}_{d,h}, \qquad
 \Delta^{\text{SD}}_d \;=\; \mathrm{sd}_h(\Delta_{d,h}).
 \]
-
-\paragraph{IDA in-band sell-share} (per (tech, day)) locates each technology between sell-heavy participation (rent capture on the granular leg) and buy-heavy participation (forecast-driven rebalancing) --- the empirical counterpart of the aggregator-migration mechanism of \S\ref{sec:theory:id15}:
+The level of $\Delta$ is the forward premium the two auctions carry; its within-day standard deviation is the dispersion granularity unlocks. The second places each technology on the intraday by its in-band sell-share,
 \[
-\text{SS}_{t,d} \;=\; \frac{\sum_{q,k\in\mathcal{B}} q^{\text{sell}}_{t,d,q,k}}{\sum_{q,k\in\mathcal{B}}\bigl(q^{\text{sell}}_{t,d,q,k} + q^{\text{buy}}_{t,d,q,k}\bigr)}.
+\text{SS}_{t,d} \;=\; \frac{\sum_{q,k\in\mathcal{B}} q^{\text{sell}}_{t,d,q,k}}{\sum_{q,k\in\mathcal{B}}\bigl(q^{\text{sell}}_{t,d,q,k} + q^{\text{buy}}_{t,d,q,k}\bigr)},
 \]
-
-\paragraph{System adjustment cost} (per day, EUR\,M) tracks what the system operator pays to keep the system feasible. Components from ESIOS: up-direction (TR-up, aFRR-up, mFRR-up, Fase~I) and down-direction (Fase~II, RR-dn), stacked in Figure~\ref{fig:efficiency_gains}. This outcome is complementary evidence on the balancing layer, not a primary object of the analysis.
-
-\paragraph{Within-hour dispersion outcomes} (post-MTU15 only) trace within-hour discrimination directly: each is an across-quarter SD inside one clock-hour, so each is mechanically zero under hourly products. For each (unit, date, clock-hour) with four quarters $q=1,\ldots,4$:
+the share of its in-band megawatts offered to sell rather than to buy --- which separates the rent-capturing sellers on the granular leg from the forecast-driven rebalancers, the footprint the aggregator's migration would leave. The third is the system adjustment cost, the daily bill REE runs to keep the system feasible, summed from the ESIOS settlement series across its up- and down-direction channels (the Fase~I and Fase~II technical restrictions, the real-time restrictions, and the secondary, tertiary and replacement-reserve energy); it enters as complementary evidence on the balancing layer, not as a primary object. The last set exists only after the fifteen-minute switch and reads within-hour discrimination straight off the data: for each unit, date and clock-hour I take the across-quarter standard deviation of, in turn, the curve's price level, its offered volume (as a coefficient of variation), the system clearing price, the ladder's spread, and its tranche concentration,
 \[
 D^{\bar p}_{d,h} = \mathrm{sd}_q(\bar p_q), \quad
 D^{m}_{d,h} = \mathrm{sd}_q(m_q)/\bar m, \quad
@@ -727,7 +709,7 @@ D^{\text{MCP}}_{d,h} = \mathrm{sd}_q(\text{MCP}_q), \quad
 D^{\sigma_p}_{d,h} = \mathrm{sd}_q(\sigma_{p,q}), \quad
 D^{\text{HHI}}_{d,h} = \mathrm{sd}_q(\text{HHI}_{\text{tr},q}).
 \]
-The five capture, in order: across-quarter shifts in the curve's price level, its offered volume (as a coefficient of variation), the system clearing price, the ladder spread, and the tranche concentration. Any positive value post-MTU15 is a unit actively treating the four quarters differently.
+Each is mechanically zero under hourly products --- a single hourly figure cannot differ from itself across quarters --- so any positive value after the switch is a unit deliberately treating its four quarters differently.
 
 \subsection{Critical / flat hour-class partition}\label{sec:data:partition}
 
@@ -741,11 +723,11 @@ The within-hour state is not observed, but its physical driver is. The state the
 \end{itemize}
 In the language of the model, critical hours are the large-$\rho$ hours and flat hours the $\rho \approx 1$ benchmark: critical residual demand swings two to four times as much within the hour as flat residual demand (the $[522,1303]$ versus $[336,357]$ MW ranges above), so the within-hour state these hours hand the bidder is genuinely different. The critical-minus-flat, post-minus-pre double difference is then the empirical counterpart of Corollary~\ref{cor:did}(iii), and the bid-shape DiD of \S\ref{sec:empirical:bidshape} uses this contrast as its within-day identification device. The partition earns its keep: the descriptive gap below shows that wherever the model says discrimination can happen --- the critical hours --- the within-hour dispersion outcomes light up, and in flat hours they stay near zero.
 
-\paragraph{Descriptive critical $-$ flat differential.} Let $D^\bullet_{d,h}$ stand for any one of the five within-hour dispersion outcomes of \S\ref{sec:data:aggregate} on date $d$, clock-hour $h$. Fit per outcome on the post-MTU15 sample, $h\in\mathcal{C}\cup\mathcal{F}$:
+To see this before any reform comparison, take each of the five within-hour dispersion outcomes on the post-switch sample and regress it on nothing more than a critical-hour indicator with date fixed effects,
 \[
-D^\bullet_{d,h} \;=\; \eta_d \;+\; \theta\,\mathbf{1}\{h\in\mathcal{C}\} \;+\; \varepsilon_{d,h}
+D^\bullet_{d,h} \;=\; \eta_d \;+\; \theta\,\mathbf{1}\{h\in\mathcal{C}\} \;+\; \varepsilon_{d,h},
 \]
-with date fixed effects $\eta_d$ (distinct from the bandwidth $\delta$). $\theta$ is the critical$-$flat dispersion gap; a descriptive contrast, not a causal estimate.
+so that $\theta$ is the bare critical-minus-flat gap --- a description, not yet a causal estimate. The pattern is the one the partition promises: every dispersion outcome runs several times larger in critical hours than in flat ones, and the gap is sharpest exactly where the model expects the most discrimination.
 
 \begin{center}
 \footnotesize
