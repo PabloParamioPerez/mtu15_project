@@ -8,7 +8,7 @@
 #        average.
 #
 # IN:  data/processed/esios/indicators/indicators_all.parquet
-# OUT: figures/working/efficiency_gains_timeseries.pdf
+# OUT: figures/thesis/efficiency_gains_timeseries.pdf
 
 from pathlib import Path
 import duckdb
@@ -21,7 +21,7 @@ import matplotlib.dates as mdates
 
 REPO = Path(__file__).resolve().parents[3]
 IND  = REPO / "data" / "processed" / "esios" / "indicators" / "indicators_all.parquet"
-FIG_DIR = REPO / "figures" / "working"
+FIG_DIR = REPO / "figures" / "thesis"
 FIG_DIR.mkdir(parents=True, exist_ok=True)
 
 WINDOW_START = "2023-01-01"

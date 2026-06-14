@@ -12,7 +12,7 @@
 #            Shows: sigma_p widening is concentrated in simple offers
 #            (+3.53***, t=3.60); pooled +1.25 dilutes it.
 #
-# OUT: figures/working/fig_ccgt_offer_type.pdf
+# OUT: figures/thesis/fig_ccgt_offer_type.pdf
 
 from pathlib import Path
 
@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[3]
-OUT = REPO / "figures/working/fig_ccgt_offer_type.pdf"
+OUT = REPO / "figures/thesis/fig_ccgt_offer_type.pdf"
 OUT.parent.mkdir(parents=True, exist_ok=True)
 
 # Composition (%) from the ccgt_offer_type_split_did.py console output:

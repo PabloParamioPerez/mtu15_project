@@ -16,7 +16,7 @@
 #   - PHFC vs PHF: continuous-market revisions after PHF publication (small).
 #   - Real-time balancing (RR, aFRR, mFRR): post-PHF, not in OMIE per-unit.
 #
-# OUT: figures/working/fig_programs_by_tech_weekly.{pdf,png}
+# OUT: figures/thesis/fig_programs_by_tech_weekly.{pdf,png}
 
 from pathlib import Path
 import sys
@@ -37,7 +37,7 @@ PIBCI = REPO / "data/processed/omie/mercado_intradiario_subastas/programas/pibci
 PIBCIC = REPO / "data/processed/omie/mercado_intradiario_continuo/programas/pibcic_all.parquet"
 PHF = REPO / "data/processed/omie/mercado_intradiario_subastas/programas/phf_all.parquet"
 UNITS_CSV = REPO / "data/external/omie_reference/lista_unidades.csv"
-OUTDIR = REPO / "figures/working"
+OUTDIR = REPO / "figures/thesis"
 
 START = "2024-01-01"
 END = "2026-01-09"

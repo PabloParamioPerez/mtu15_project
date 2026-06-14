@@ -995,7 +995,7 @@ This is also where the model is deliberately blind, and it is worth saying so. T
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{../../figures/working/efficiency_gains_timeseries.pdf}
+\includegraphics[width=\textwidth]{efficiency_gains_timeseries.pdf}
 \caption{\textbf{Daily adjustment-cost composition, 2023--2026} (EUR\,M\,/\,day, 14-day rolling mean). Each channel is the daily sum of the pay-as-bid system-cost series REE publishes via ESIOS: \emph{TR up/dn} is real-time technical restrictions under PO~3.7 (cost of energy REE buys/sells to enforce grid security between gate closure and delivery); \emph{aFRR up/dn} is the automatic Frequency Restoration Reserve energy cost; \emph{Fase~I up/dn} is the pre-IDA technical-restrictions process applied to PDBF (pay-as-bid of a separate restriction offer per PO~3.2 and PO~14.4 ap.~20.1, distinct from the day-ahead market offer); \emph{Fase~II up/dn} is the post-Fase-I rebalance that re-absorbs the up-redispatch into the schedule. All series are EUR sums collected at native 15-min granularity (raw daily totals smoothed only by the 14-day moving average), with down-direction channels taken as absolute values so the chart reads as gross costs REE pays providers in both directions. Up-direction stacked solid (TR-up, aFRR-up, Fase~II up, Fase~I up); down-direction stacked hatched. Blue background: pre-blackout (granularity reforms shrink the up-direction TR and aFRR channels through the ISP15-win and MTU15-IDA cutovers, visible against the stable 2023 baseline). Red background: post-blackout reforzada (Fase~I up-redispatch balloons by EUR\,$\sim$5\,M/day, almost entirely CCGT voltage support; this is the level shift between the 2023 baseline and 2025-Q4 totals).}
 \label{fig:efficiency_gains}
 \end{figure}
@@ -1935,7 +1935,7 @@ I split CCGT bids by structural type (simple / MIC / block) and re-run the DA15 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../../figures/working/fig_ccgt_offer_type.pdf}
+\includegraphics[width=0.95\textwidth]{fig_ccgt_offer_type.pdf}
 \caption{\textbf{CCGT offer-type composition and within-type bid-shape DiD at DA15.} \emph{Left}: CCGT in-band sell-curve composition, pre vs post. \emph{Right}: $\sigma_p$ DiD by offer type, 95\% CI. The $\text{HHI}_{\text{tr}}$ DiD is negative within every type, so the deconcentration is not a composition artefact.}
 \label{fig:ccgt-offer-type}
 \end{figure}

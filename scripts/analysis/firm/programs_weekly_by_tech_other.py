@@ -7,7 +7,7 @@
 #        body slide: Cogen, Coal, Biomass, small Hydro RES, Pump load,
 #        Hybrid RES+storage.
 #
-# OUT: figures/working/fig_programs_by_tech_other_weekly.{pdf,png}
+# OUT: figures/thesis/fig_programs_by_tech_other_weekly.{pdf,png}
 
 from pathlib import Path
 import sys

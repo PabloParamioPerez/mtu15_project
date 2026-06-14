@@ -16,7 +16,7 @@
 #             series for either critical or flat).
 #   (no fill) -- ambiguous; reader judges.
 #
-# One figure per (reform, market). OUT: figures/working/fig_bid_shape_pt_<reform>_<market>.{pdf,png}
+# One figure per (reform, market). OUT: figures/thesis/fig_bid_shape_pt_<reform>_<market>.{pdf,png}
 #
 # Additionally emits metric-split variants for the thesis appendix (clean-PT
 # metrics vs drifting-PT metrics):
@@ -32,7 +32,7 @@ from scipy import stats
 REPO = Path(__file__).resolve().parents[3]
 PANEL = REPO / "data/derived/panels/bid_shape_daily_means_extended.parquet"
 DIDCSV = REPO / "results/regressions/bid/mtu15_critical_flat/bid_shape_did_extended.csv"
-OUTDIR = REPO / "figures/working"
+OUTDIR = REPO / "figures/thesis"
 
 TECHS_PLOT = ["CCGT", "Cogen", "Hydro_pump", "Hybrid", "Biomass"]
 TECH_LABEL = {"CCGT": "CCGT", "Cogen": "Cogen (CHP)",
