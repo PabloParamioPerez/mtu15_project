@@ -1750,6 +1750,32 @@ The ID15 day-ahead $\sigma_p$ widening --- the cross-market anticipation channel
 \label{fig:parallel-trends-abgN}
 \end{figure}
 
+\subsection{Offer stacking and the intraday bid-shape metrics}\label{app:offer-stacking}
+
+The bid-shape statistics are computed on each unit's \emph{combined} in-band curve --- the union of every offer it submits in the period --- because the per-offer step cap (\S\ref{sec:results:6-1}) is not a ceiling on the unit's competing tier. In the day-ahead this is moot: a unit submits exactly one offer per period, so the combined curve \emph{is} the offer. In the intraday, units stack --- a third of CCGT intraday curves draw on more than one offer --- and a shift in stacking across the reform could move $\sigma_p$ and the tranche count mechanically. I re-run the critical-flat DiD restricted to single-offer unit-periods, where stacking cannot operate.
+
+\begin{center}
+\footnotesize
+\setlength{\tabcolsep}{7pt}
+\begin{tabular}{l l c c c}
+\toprule
+\textbf{Cell} & \textbf{Metric} & \textbf{Full} & \textbf{Single-offer} & \textbf{Multi-offer share} \\
+\midrule
+ID15 DA CCGT  & $\sigma_p$               & $3.40^{***}$ & $3.40^{***}$ & $0\%$ \\
+DA15 DA CCGT  & $\sigma_p$               & $1.39^{***}$ & $1.39^{***}$ & $0\%$ \\
+DA15 DA CCGT  & $1/\text{HHI}_{\text{tr}}$ & $1.56^{***}$ & $1.56^{***}$ & $0\%$ \\
+ID15 IDA CCGT & $\sigma_p$               & $1.02^{**}$  & $0.29$       & $36\%$ \\
+ID15 IDA CCGT & $1/\text{HHI}_{\text{tr}}$ & $1.86^{**}$  & $0.15^{*}$    & $36\%$ \\
+ID15 IDA Pump & $\sigma_p$               & $-0.73^{***}$ & $-1.00^{***}$ & $12\%$ \\
+\bottomrule
+\end{tabular}
+% Source: scripts/analysis/bid/offer_stacking_confounder.py
+\captionof{table}{\textbf{Bid-shape DiD restricted to single-offer unit-periods.} Day-ahead has no stacking, so the two columns coincide by construction. In-band band $\pm 50$ EUR/MWh; SEs clustered by date.}
+\label{tab:offer-stacking}
+\end{center}
+
+The day-ahead cells are unchanged by construction, so the headline bid-shape results do not rest on offer management. The intraday CCGT cell does: its $\sigma_p$ widening collapses from $1.02$ to an insignificant $0.29$ once stacking is held out, so the apparent intraday CCGT bid-shape response is mostly the unit \emph{adding offers}, not regrading a single curve. Pump-storage is the exception --- its intraday $\sigma_p$ change survives, and indeed strengthens --- so I read the intraday CCGT bid-shape (the per-session decomposition of Appendix~\ref{sec:5-per-session-ida}) as descriptive of offer management rather than within-curve discrimination, and rest the intraday bid-shape evidence on pump-storage.
+
 \subsection{Bandwidth $\delta$}\label{sec:5e}
 
 I rerun the DiD at $\delta = 100, 140, 200$ EUR/MWh on the headline metrics $\sigma_p$ and $1/\text{HHI}_{\text{tr}}$ (Table~\ref{tab:bandwidth-robustness}). The CCGT deconcentration at DA15 is the most bandwidth-robust cell: the $1/\text{HHI}_{\text{tr}}$ DiD is positive and significant at every bandwidth. On the ID15 IDA leg both CCGT metrics strengthen as the band widens beyond the contested $p_{90}$ margin ($\sigma_p$ insignificant at $\delta = 100$, significant at $140$ and $200$), consistent with the re-spaced tranches extending past the tight headline band. Hydro's $\sigma_p$ widening is significant throughout, while its DA15 $1/\text{HHI}_{\text{tr}}$ changes sign at wide bands; pump-storage moves are concentrated at ID15 on $1/\text{HHI}_{\text{tr}}$.
@@ -2253,7 +2279,7 @@ This composes with Table~\ref{tab:bsts-ajuste-costs}: the TR-up shrink at MTU15-
 \subsection{Per-session IDA bid-shape decomposition: CCGT bidding intensity is IDA2-concentrated pre-reform and homogenizes post-reform}\label{sec:5-per-session-ida}
 % =====================================================================
 
-Pre-reform CCGT bidding intensity concentrates in IDA2 ($\sigma_p$ and $\hat\beta$ roughly $2.5\times$ IDA1); post-reform the three sessions converge. Descriptive across three calendar windows, not an identified effect.
+Pre-reform CCGT bidding intensity concentrates in IDA2 ($\sigma_p$ and $\hat\beta$ roughly $2.5\times$ IDA1); post-reform the three sessions converge. Descriptive across three calendar windows, not an identified effect --- and, since these are intraday CCGT curves, partly a reflection of offer stacking rather than within-curve shape (Appendix~\ref{app:offer-stacking}): read the convergence as a change in how CCGT spreads its offers across sessions, not necessarily in the shape of any one curve.
 
 \begin{center}
 \footnotesize
