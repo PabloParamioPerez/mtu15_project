@@ -843,14 +843,19 @@ DA15 is the mirror image. Every specification leaves both its own forward market
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
 \textbf{Specification} & IDA (own) & DA (cross) & DA (own) & IDA (cross) \\
 \midrule
-OLS daily, base                                  & $-31.7^{***}$ & $-32.8^{***}$ & $-8.3$ & $-8.4$ \\
-OLS daily, year\,$\times$\,renewable (per year)  & $-45.8^{***}$ & $-46.7^{***}$ & $-8.6$ & $-10.0$ \\
-OLS daily, year\,$\times$\,renewable (pooled)    & $\mathbf{-38.7}^{***}$ & $\mathbf{-38.7}^{***}$ & $-4.6$ & $-6.0$ \\
-OLS hourly, base                                 & $-33.6^{***}$ & $-33.6^{***}$ & $-10.3^{**}$ & $-10.2^{**}$ \\
-OLS hourly, year\,$\times$\,renewable (per year) & $-40.4^{***}$ & $-39.0^{***}$ & $-3.0$ & $-4.0$ \\
-OLS hourly, year\,$\times$\,renewable (pooled)   & $-30.1^{***}$ & $-28.7^{***}$ & $2.9$ & $1.7$ \\
-OLS hourly, quadratic renewable\,$\times$\,year  & $-24.3^{***}$ & $-23.6^{***}$ & $-2.3$ & $-2.5$ \\
-BSTS daily counterfactual                        & $-34.3^{*}$ & $-33.9^{*}$ & $7.8$ & $1.0$ \\
+\multicolumn{5}{l}{\textit{OLS, daily averages}}\\
+\quad base                                  & $-31.7^{***}$ & $-32.8^{***}$ & $-8.3$ & $-8.4$ \\
+\quad year\,$\times$\,renewable (per year)  & $-45.8^{***}$ & $-46.7^{***}$ & $-8.6$ & $-10.0$ \\
+\quad year\,$\times$\,renewable (pooled)    & $\mathbf{-38.7}^{***}$ & $\mathbf{-38.7}^{***}$ & $-4.6$ & $-6.0$ \\
+\addlinespace
+\multicolumn{5}{l}{\textit{OLS, hourly}}\\
+\quad base                                  & $-33.6^{***}$ & $-33.6^{***}$ & $-10.3^{**}$ & $-10.2^{**}$ \\
+\quad year\,$\times$\,renewable (per year)  & $-40.4^{***}$ & $-39.0^{***}$ & $-3.0$ & $-4.0$ \\
+\quad year\,$\times$\,renewable (pooled)    & $-30.1^{***}$ & $-28.7^{***}$ & $2.9$ & $1.7$ \\
+\quad quadratic renewable\,$\times$\,year   & $-24.3^{***}$ & $-23.6^{***}$ & $-2.3$ & $-2.5$ \\
+\addlinespace
+\multicolumn{5}{l}{\textit{BSTS counterfactual}}\\
+\quad daily                                 & $-34.3^{*}$ & $-33.9^{*}$ & $7.8$ & $1.0$ \\
 \bottomrule
 \end{tabular}
 \captionof{table}{\textbf{Clearing-price effect by specification and reform-side leg} (EUR/MWh). Common pre-window from 2022-01-01; post-windows 2025-03-19 to 2025-04-27 (ID15, 40 days, pre-blackout) and the 90 days from 2025-10-01 (DA15). Base controls (all rows): wind, solar, gas, month FE, day-of-week FE, with hour-of-day FE added in the hourly rows; the renewable terms named are added on top. The quadratic row adds $\text{wind}^2$ and $\text{solar}^2$ with year-by-renewable interactions on the linear and quadratic terms; the cubic spec gives $-23.5$ / $-22.9$ ($p<0.001$). Newey--West HAC; BSTS adds a state-space level and 7-day seasonality, its $^{*}$ marking the posterior tail. Headline pooled-renewable ID15 spec in \textbf{bold}. The only significant DA15 cell is the hourly base, and it vanishes the moment renewable controls enter --- a confound, not an effect.}
@@ -864,25 +869,27 @@ BSTS daily counterfactual                        & $-34.3^{*}$ & $-33.9^{*}$ & $
 
 \subsection{The margin channel: residual demand becomes more price-elastic and margins compress}\label{sec:results:6-5}\phantomsection\label{sec:results:synthesis}
 
-The residual demand each dominant firm faces became more price-elastic at every reform-side leg (Table~\ref{tab:margin-channel}). I recover the slope of that residual demand at the clearing price for each firm in the spirit of \citet[\S III.A]{ito_reguant_2016}, and I read it as suggestive evidence on the competitive margin --- not as an estimate of a structural conduct parameter, which this design does not attempt. The reading the model invites is direct: a steeper residual demand leaves a firm less room to hold price above cost, so the slope increase the supply side shows should map into the level cuts the previous subsection found, on the same legs. The rise is corroborated by two estimators that disagree about almost everything else --- hourly OLS and a daily BSTS counterfactual agree that the cross-market day-ahead slope roughly doubles at ID15, and agree in sign on the DA15 day-ahead.
+The residual demand each dominant firm faces became more price-elastic at every reform-side leg (Table~\ref{tab:margin-channel}). I recover the slope of that residual demand at the clearing price for each firm in the spirit of \citet[\S III.A]{ito_reguant_2016}, and I read it as suggestive evidence on the competitive margin --- not as an estimate of a structural conduct parameter, which this design does not attempt. The reading the model invites is direct: a steeper residual demand leaves a firm less room to hold price above cost, so the slope increase the supply side shows should map into the level cuts the previous subsection found, on the same legs. The rise is corroborated by two estimators that disagree about almost everything else --- hourly OLS and a daily BSTS counterfactual agree that the cross-market day-ahead slope roughly doubles at ID15, and agree in sign on the DA15 day-ahead. The thickening is, moreover, a \emph{local} phenomenon: measured over the whole residual-demand curve rather than in a tight band around the clearing price it shrinks several-fold (the last slope column of Table~\ref{tab:margin-channel}), because the reform makes residual demand more elastic right where the market clears --- exactly the margin a strategic bidder prices against --- and much less so far from it.
 
 A coarse margin index points the same way without pretending to more. Taking each firm's cleared megawatts net of its own renewable output --- which clears at essentially zero price and carries no margin --- and scaling by the slope gives a quantity-over-elasticity index that should move as the markup channel would; it is a descriptive indicator, not a fitted first-order condition. At the DA15 day-ahead it falls for every dominant firm, the margin-compression direction, exactly where the model places the strategic bidder. At ID15 its sign is mixed, but for a mundane reason rather than a model failure: the forty pre-blackout days have nuclear offline and gas called hard, so the composition of who is marginal is unstable. The one genuinely ambiguous cell is the DA15 cross-market spot, where the two estimators disagree in sign; the model is comfortable with either, because relocating within-hour pricing to the forward can leave the spot residual demand flatter or steeper depending on which screen component departs, and the negative BSTS branch coheres with the spot bid curve concentrating at DA15 (\S\ref{sec:results:6-1}). The two reforms thus light up the model's two agents in turn --- the aggregator, a price-taker hedging its forecast error, at the spot reform; the strategic bidder, a residual monopolist, at the forward reform.
 
 \begin{center}
 \footnotesize
-\setlength{\tabcolsep}{7pt}
+\setlength{\tabcolsep}{5pt}
 \renewcommand{\arraystretch}{1.18}
-\begin{tabular}{l c c c}
+\begin{tabular}{l cc c c}
 \toprule
-\textbf{Reform-side leg} & \textbf{$\Delta b_f$ OLS} & \textbf{$\Delta b_f$ BSTS} & \textbf{Margin index} \\
+ & \multicolumn{2}{c}{\textbf{$\Delta b_f$ in-band ($\pm 50$)}} & \textbf{$\Delta b_f$} & \textbf{Margin} \\
+\cmidrule(lr){2-3}
+\textbf{Reform-side leg} & OLS & BSTS & \textbf{full curve} & \textbf{index} \\
 \midrule
-ID15 IDA (granular spot)    & $16$ to $25\%$ & $10$ to $16\%$ & mixed \\
-ID15 DA  (cross-market)     & $\mathbf{109}$ to $\mathbf{141\%}$ & $\mathbf{99}$ to $\mathbf{124\%}$ & mixed \\
-DA15 DA  (granular forward) & $19$ to $42\%$ & $12$ to $13\%$ & $\mathbf{-12}$ to $\mathbf{-27\%}$ \\
-DA15 IDA (cross-market)     & $13$ to $20\%$ & $-11$ to $-8\%$ & --- \\
+ID15 IDA (granular spot)    & $16$ to $25\%$ & $10$ to $16\%$ & $-2$ to $3\%$ & mixed \\
+ID15 DA  (cross-market)     & $\mathbf{109}$ to $\mathbf{141\%}$ & $\mathbf{99}$ to $\mathbf{124\%}$ & $14$ to $19\%$ & mixed \\
+DA15 DA  (granular forward) & $19$ to $42\%$ & $12$ to $13\%$ & $9$ to $13\%$ & $\mathbf{-12}$ to $\mathbf{-27\%}$ \\
+DA15 IDA (cross-market)     & $13$ to $20\%$ & $-11$ to $-8\%$ & $3$ to $8\%$ & --- \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{Residual-demand slope change and a descriptive margin index, by reform-side leg.} $\Delta b_f$: percentage change in the slope of the residual demand each of the four dominant firms faces at the clearing price (recovered following \citealp[\S III.A]{ito_reguant_2016}), under hourly OLS on $\log b_f$ (no trend) and the daily BSTS counterfactual; range across the four firms, reforzada-constant windows. Margin index: pre/post change in cleared megawatts net of own renewable clearance, divided by the slope --- a descriptive indicator motivated by the markup channel, not an estimated first-order condition. Per-firm detail in Appendix~\ref{app:strategic-markup}.}
+\captionof{table}{\textbf{Residual-demand slope change with and without the bandwidth, and a descriptive margin index.} $\Delta b_f$: percentage change (post vs pre, range across the four dominant firms) in the slope of the residual demand each faces, following \citet[\S III.A]{ito_reguant_2016}. \emph{In-band} fits the slope locally, within $\pm 50$ EUR/MWh of the clearing price, under controlled hourly OLS on $\log b_f$ and a daily BSTS counterfactual; \emph{full curve} is the raw post/pre change in the slope fit over the entire residual-demand curve. The thickening is concentrated at the clearing price --- several times larger in-band than over the full curve, where strategic bidders operate (the contrast survives like-for-like: the in-band \emph{raw} change is $93$ to $116\%$ on ID15 DA against $14$ to $19\%$ full curve). Margin index: pre/post change in cleared MW net of own renewable clearance, divided by the slope; descriptive, not a fitted first-order condition. Reforzada-constant windows; per-firm detail in Appendix~\ref{app:strategic-markup}.}
 \label{tab:margin-channel}
 \end{center}
 
@@ -894,26 +901,27 @@ DA15 IDA (cross-market)     & $13$ to $20\%$ & $-11$ to $-8\%$ & --- \\
 
 \subsection{Within-hour wedge dispersion turns on at ID15 and does not collapse at DA15}\label{sec:results:6-5wedge}\phantomsection\label{sec:results:Q3}\phantomsection\label{sec:results:6-6}\phantomsection\label{sec:results:6-6b}\phantomsection\label{tab:bsts-buy-share}
 
-The within-day dispersion of the day-ahead\,$-$\,intraday wedge is the model's sharpest sign test, and it turns on exactly where the model says it should. The dispersion was mechanically zero before ID15 --- a single hourly day-ahead price cannot differ from itself within the hour --- and at ID15 it appears, but only in the ramp hours: strong in the morning ramp, present in the evening, and absent overnight (Table~\ref{tab:wedge-sd}). This is block parity at work. The hourly forward can be arbitraged only against the \emph{average} of the four spot quarter-prices, so arbitrage disciplines the mean wedge but lets the within-hour spread of the granular leg pass straight through --- and that spread is largest precisely where the ramp is steepest. The one off-sign cell, midday, is the solar-marginal block I exclude from the partition: there the granular prices \emph{converge} as midday solar flattens the within-hour profile, so a narrowing wedge is the same mechanism running the other way, not a counterexample.
+The within-day dispersion of the day-ahead\,$-$\,intraday wedge is the model's sharpest sign test, and it turns on exactly where the model says it should. The dispersion was mechanically zero before ID15 --- a single hourly day-ahead price cannot differ from itself within the hour --- and at ID15 it appears, concentrated in the critical ramp hours and absent overnight (the SD columns of Table~\ref{tab:wedge-sd}, sharpest in the morning ramp). This is block parity at work. The hourly forward can be arbitraged only against the \emph{average} of the four spot quarter-prices, so arbitrage disciplines the average wedge far more than its within-hour spread, and that spread is largest precisely where the ramp is steepest. The one off-sign cell, midday, is the solar-marginal block I exclude from the partition: there the granular prices \emph{converge} as midday solar flattens the within-hour profile, so a narrowing wedge is the same mechanism running the other way, not a counterexample. The average wedge \emph{level} moves too, but more modestly and through the separate forward-premium margin --- at ID15 it rises in the flat hours rather than the ramps, the mirror image of where the dispersion lives.
 
 At DA15 the dispersion does not change in any hour class, and that null is itself a prediction borne out. With both auctions granular, full arbitrage would drive the within-hour wedge SD to zero; the model instead keeps it alive, because the position-takers who would close it hold a per-product capacity that shrinks as the number of products grows (\S\ref{sec:theory:da15}). The dispersion that switched on at the spot reform stays on through the forward reform --- bounded, price-impact-aware arbitrage sustains it rather than competing it away. The per-session wedge \emph{levels} at ID15 are consistent with the same story: the earliest intraday session widens robustly across estimators, while an apparent narrowing of the latest session appears only in the daily specification and does not survive the hourly or BSTS estimators; the placebo cutover is null, and DA15 leaves the session wedges unchanged.
 
 \begin{center}
 \footnotesize
-\setlength{\tabcolsep}{10pt}
+\setlength{\tabcolsep}{8pt}
 \renewcommand{\arraystretch}{1.18}
-\begin{tabular}{l c c}
+\begin{tabular}{l cc cc}
 \toprule
-\textbf{Hour class} & \textbf{ID15} & \textbf{DA15} \\
+ & \multicolumn{2}{c}{\textbf{ID15}} & \multicolumn{2}{c}{\textbf{DA15}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+\textbf{Hour class} & Mean & SD & Mean & SD \\
 \midrule
-Overall               & $\mathbf{1.1}^{**}$  & $-0.1$ \\
-Morning ramp (5--8)   & $\mathbf{2.3}^{***}$ & $0.5$ \\
-Midday (11--14)       & $-1.6^{**}$          & $-0.7$ \\
-Evening ramp (16--22) & $1.2^{*}$            & $-1.4$ \\
-Flat (1--3)           & $-0.0$               & $-0.5$ \\
+Overall          & $1.0$               & $\mathbf{1.1}^{**}$  & $-1.9^{*}$ & $-0.1$ \\
+Critical (ramps) & $1.1$               & $\mathbf{2.1}^{***}$ & $0.2$      & $-0.5$ \\
+Midday           & $1.3$               & $-1.6^{***}$         & $-2.5$     & $-0.7^{*}$ \\
+Flat             & $\mathbf{4.7}^{***}$ & $-0.0$              & $-2.0^{*}$ & $-0.5$ \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{Within-day SD of the day-ahead\,$-$\,intraday wedge $\Delta^{\text{SD}}_d$ by hour class} (EUR/MWh, BSTS effect). Reforzada-constant windows: ID15 post 2025-03-19 to 2025-04-27; DA15 post 2025-10-01 to 2025-12-31. At ID15 only the overall and morning-ramp effects are significant; every DA15 cell is insignificant. The dispersion turns on at ID15 and does not collapse at DA15.}
+\captionof{table}{\textbf{Mean and within-day SD effect on the day-ahead\,$-$\,intraday wedge, by hour class} (EUR/MWh, BSTS). Reforzada-constant windows: ID15 post 2025-03-19 to 2025-04-27; DA15 post 2025-10-01 to 2025-12-31. \emph{Mean} is the average wedge-level effect, \emph{SD} the within-day dispersion effect. Critical pools the morning (5--8) and evening (16--22) ramps; midday (11--14) is the excluded solar-marginal block; flat is overnight (1--3). The dispersion turns on at ID15 in the ramp hours and does not collapse at DA15; the level shifts more modestly and through a separate margin.}
 \label{tab:wedge-sd}
 \end{center}
 
@@ -944,65 +952,11 @@ $\sigma_p$ (EUR/MWh)                 & CCGT          & $\mathbf{4.45}^{***}$ & $
 $\text{HHI}_p$                       & CCGT          & $\mathbf{-0.18}^{***}$ & $-0.04$            & $\mathbf{-0.17}^{***}$  & $-0.00$ \\
                                      & Hydro         & $0.010^{*}$           & $-0.034^{***}$ & $-0.037^{***}$ & $-0.01$ \\
                                      & Pump-storage  & $0.00$                 & $-0.02$            & $0.00$                  & $0.01$ \\
-\addlinespace
-\multicolumn{6}{l}{\emph{Slope and curvature in Appendix --- $\hat\beta$, $\hat\gamma$ are mechanically sensitive to tranche-count and price-grid density; treat as supporting.}} \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{Bid-curve-level DiD on headline bid-shape outcomes.} Critical-flat DiD on price dispersion $\sigma_p$ and bid-stack concentration $\text{HHI}_p$. Tight pre/post windows (reforzada held constant): ID15 pre 2024-12-19 to 2025-03-18, post 2025-03-19 to 2025-04-27 (40 days, pre-blackout); DA15 pre 2025-07-01 to 2025-09-30, post 2025-10-01 to 2025-12-31. Bandwidth $\delta = p_{90}-p_{50}$ window-specific. SEs clustered by date. A negative HHI DiD means the bid stack \emph{deconcentrates} in critical hours relative to flat. Full $(\hat\alpha, \hat\beta, \hat\gamma)$ decomposition, additional technologies (Cogen, Hybrid, Wind, Biomass), morning-ramp-only robustness, and parallel-trends figures in Appendix~\ref{app:robustness}.}
+\captionof{table}{\textbf{Bid-curve-level DiD on headline bid-shape outcomes.} Critical-flat DiD on price dispersion $\sigma_p$ and bid-stack concentration $\text{HHI}_p$. Tight pre/post windows (reforzada held constant): ID15 pre 2024-12-19 to 2025-03-18, post 2025-03-19 to 2025-04-27 (40 days, pre-blackout); DA15 pre 2025-07-01 to 2025-09-30, post 2025-10-01 to 2025-12-31. Bandwidth $\delta = p_{90}-p_{50}$ window-specific. SEs clustered by date. A negative HHI DiD means the bid stack \emph{deconcentrates} in critical hours relative to flat. The slope $\hat\beta$ and curvature $\hat\gamma$ --- mechanically sensitive to tranche-count and grid density --- are supporting; their full decomposition, additional technologies (Cogen, Hybrid, Wind, Biomass), morning-ramp-only robustness, and parallel-trends figures are in Appendix~\ref{app:robustness}.}
 \label{tab:spec-c}
 \end{center}
-
-
-\begin{figure}[h]
-\centering
-\begin{tikzpicture}[scale=0.46, every node/.style={font=\scriptsize}]
-  \def\W{7.5}\def\H{5.0}\def\PMCP{2.7}\def\DELTA{1.1}
-  \tikzset{
-    axis/.style={draw=gray!55, thick, ->, >=Stealth},
-    mcp/.style={red!70!black, thick, dash pattern=on 3pt off 2pt},
-    band/.style={fill=orange!15},
-    pre/.style={blue!65!black, very thick, line cap=round},
-    post/.style={red!65!black, very thick, dash pattern=on 5pt off 2.5pt, line cap=round},
-    plabel/.style={font=\scriptsize\bfseries, anchor=north, align=center},
-  }
-  %% Panel A: DA15 DA CCGT (slope flatter + intercept up, gamma convex)
-  \begin{scope}[xshift=0cm, yshift=0cm]
-    \fill[band] (0,\PMCP-\DELTA) rectangle (\W-0.2,\PMCP+\DELTA);
-    \draw[axis] (0,0) -- (\W,0); \draw[axis] (0,0) -- (0,\H+0.3);
-    \draw[mcp] (0,\PMCP) -- (\W-0.2,\PMCP);
-    \node[red!70!black, anchor=west, font=\tiny] at (\W-0.18,\PMCP) {MCP};
-    \draw[pre] (0,0.4) -- (0.5,0.4) -- (0.5,2.1) -- (2.4,2.1) -- (2.4,2.7) -- (4.3,2.7) -- (4.3,3.3) -- (6.2,3.3) -- (6.2,4.5) -- (7.0,4.5);
-    \draw[post] (0,0.4) -- (0.5,0.4) -- (0.5,2.4) -- (1.5,2.4) -- (1.5,2.6) -- (2.7,2.6)
-      -- (2.7,2.85) -- (3.9,2.85) -- (3.9,3.1) -- (5.1,3.1) -- (5.1,3.4) -- (6.2,3.4) -- (6.2,4.7) -- (7.0,4.7);
-    \node[plabel] at (\W/2,-0.25) {\textbf{DA15 DA CCGT} \\ $\hat\alpha\uparrow$, $\hat\beta\downarrow$, $\hat\gamma\uparrow$};
-    \node[blue!65!black, anchor=west, font=\tiny] at (4.5,4.45) {pre};
-    \node[red!65!black, anchor=west, font=\tiny] at (4.5,4.95) {post};
-  \end{scope}
-  %% Panel B (was C): ID15 DA CCGT (anticipation: slope steeper + intercept down + gamma concave)
-  \begin{scope}[xshift=9cm, yshift=0cm]
-    \fill[band] (0,\PMCP-\DELTA) rectangle (\W-0.2,\PMCP+\DELTA);
-    \draw[axis] (0,0) -- (\W,0); \draw[axis] (0,0) -- (0,\H+0.3);
-    \draw[mcp] (0,\PMCP) -- (\W-0.2,\PMCP);
-    \node[red!70!black, anchor=west, font=\tiny] at (\W-0.18,\PMCP) {MCP};
-    \draw[pre] (0,0.4) -- (0.5,0.4) -- (0.5,2.40) -- (2.0,2.40) -- (2.0,2.65) -- (3.5,2.65) -- (3.5,2.85) -- (5.0,2.85) -- (5.0,3.10) -- (6.3,3.10) -- (6.3,4.4) -- (7.0,4.4);
-    \draw[post] (0,0.4) -- (0.5,0.4) -- (0.5,1.75) -- (2.0,1.75) -- (2.0,2.40) -- (3.5,2.40) -- (3.5,2.95) -- (5.0,2.95) -- (5.0,3.60) -- (6.3,3.60) -- (6.3,4.7) -- (7.0,4.7);
-    \node[plabel] at (\W/2,-0.25) {\textbf{ID15 DA CCGT (anticipation)} \\ $\hat\alpha\downarrow$, $\hat\beta\uparrow$, $\hat\gamma\downarrow$};
-  \end{scope}
-  %% Panel C: ID15 IDA hydro/pump-storage (HHI_p down, slope similar)
-  \begin{scope}[xshift=18cm, yshift=0cm]
-    \fill[band] (0,\PMCP-\DELTA) rectangle (\W-0.2,\PMCP+\DELTA);
-    \draw[axis] (0,0) -- (\W,0); \draw[axis] (0,0) -- (0,\H+0.3);
-    \draw[mcp] (0,\PMCP) -- (\W-0.2,\PMCP);
-    \node[red!70!black, anchor=west, font=\tiny] at (\W-0.18,\PMCP) {MCP};
-    \draw[pre] (0,0.4) -- (0.5,0.4) -- (0.5,2.0) -- (2.5,2.0) -- (2.5,2.7) -- (4.5,2.7) -- (4.5,3.4) -- (6.3,3.4) -- (6.3,4.4) -- (7.0,4.4);
-    \draw[post] (0,0.4) -- (0.5,0.4) -- (0.5,2.05) -- (1.4,2.05) -- (1.4,2.30) -- (2.3,2.30) -- (2.3,2.55) -- (3.2,2.55)
-      -- (3.2,2.75) -- (4.1,2.75) -- (4.1,2.95) -- (5.0,2.95) -- (5.0,3.20) -- (5.9,3.20) -- (5.9,3.45) -- (6.3,3.45) -- (6.3,4.7) -- (7.0,4.7);
-    \node[plabel] at (\W/2,-0.25) {\textbf{ID15 IDA hydro / pump-storage} \\ $\text{HHI}_p\downarrow$ (denser ladder)};
-  \end{scope}
-\end{tikzpicture}
-\caption{\textbf{Stylised retained bidding shifts.} Three in-band ladder reshapes observed in the data: DA15 day-ahead CCGT (level up, slope flatter, convex bend); ID15 day-ahead CCGT anticipation (level down, steeper, concave bend); ID15 intraday-auction hydro and pump-storage (denser ladder, level and slope unchanged). Blue solid: pre-reform; red dashed: post-reform.}
-\label{fig:bidshape-shifts}
-\end{figure}
 
 \begin{untested}
 \untestedhead The bid-shape evidence confirms the \emph{directions} of the ladder comparative statics but not the two quantitative magnitudes the model also implies. The tranche budget predicts a ladder depth $2n^*+1 = (\Delta^2/3b\kappa)^{1/3}$ (Proposition~\ref{prop:budget}) --- a cube-root in the screen amplification --- so the number of in-band tranches should scale roughly as $\sigma_{\text{within}}^{2/3}$ across hours; I show tranche counts rise in critical hours (the sign) but never check this scaling, a purely descriptive exercise. And the ID15 cross-market anticipation predicts the forward ladder steepens more the more the granular spot multiplies the products hanging off it (Corollary~\ref{cor:continuation}); I treat the slope as supporting because of its pre-trend drift and so do not pursue that magnitude. Level-neutrality, finally, is verified on the ID15 intraday cell; the sharp claim is that \emph{no} shape change moves the level in \emph{any} cell, and a full cell-by-cell level comparison across reforms, markets and technologies is in reach.
@@ -1021,13 +975,18 @@ The split between price and volume is exactly the model's. The penalty per MWh o
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{l c c c}
 \toprule
-\textbf{Outcome} & \textbf{Pre mean} & \textbf{ID15 (March)} & \textbf{DA15 (October)} \\
+\textbf{Outcome} & \textbf{Pre mean} & \textbf{ID15} & \textbf{DA15} \\
 \midrule
-Penalty per MWh of $|\text{deviation}|$ (EUR/MWh) & $3.45$ & $\mathbf{-1.14}^{***}$ ($-33\%$) & $-0.05$ (null, flat) \\
-Aggregate $|\text{imbalance}|$ (MWh/day)          & $1{,}676$ & $-2$ (null, $-0.1\%$) & $-67$ (null, $-4\%$) \\
+\multicolumn{4}{l}{\textit{Settlement prices (EUR/MWh)}}\\
+\quad Penalty per MWh of $|\text{deviation}|$  & $3.45$  & $\mathbf{-1.14}^{***}$ ($-33\%$) & $-0.05$ (flat) \\
+\quad Up-deviation imbalance price             & $69.4$  & $\mathbf{-44.6}^{***}$ ($-64\%$) & $10.3$ (ns) \\
+\quad Down-deviation imbalance price           & $100.7$ & $\mathbf{-49.6}^{***}$ ($-49\%$) & $5.1$ (ns) \\
+\addlinespace
+\multicolumn{4}{l}{\textit{Volume (MWh/day)}}\\
+\quad Aggregate $|\text{imbalance}|$           & $1{,}676$ & $-2$ ($-0.1\%$, ns) & $-67$ ($-4\%$, ns) \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{BSTS on imbalance penalty and aggregate volume.} ID15 pre-window 2024-12-01 to 2025-03-18, post 2025-03-19 to 2025-04-27 (pre-blackout). DA15 pre 2025-04-28 to 2025-09-30, post 2025-10-01 to 2025-12-31. BSTS with seasonality, wind, solar, and gas covariates. Relative effect in parentheses. $^{***}$ denotes posterior probability $>0.999$ that the effect is non-zero. Penalty per MWh is the imbalance settlement price (the MW-weighted price of the reserves used to balance the system).}
+\captionof{table}{\textbf{BSTS on imbalance settlement prices and aggregate volume.} ID15 pre-window 2024-12-01 to 2025-03-18, post 2025-03-19 to 2025-04-27 (pre-blackout); DA15 pre 2025-04-28 to 2025-09-30, post 2025-10-01 to 2025-12-31. BSTS with 7-day seasonality and wind, solar, gas covariates; relative effect in parentheses, $^{***}$ posterior probability $>0.999$, ns not significant. The \emph{penalty per MWh} is the net settlement price per MWh of net imbalance; the \emph{up-} and \emph{down-deviation} prices are the gross prices a party pays to be short or receives to be long. ID15 cuts all three; DA15 moves none, and aggregate volume is unchanged at both.}
 \label{tab:bsts-imbalance-penalty}
 \end{center}
 
