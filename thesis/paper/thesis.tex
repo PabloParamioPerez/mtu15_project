@@ -123,7 +123,7 @@ MTU       & market time unit (MTU60 hourly; MTU15 15-min) & CCGT     & combined-
 ISP15     & imbalance settlement at 15 min (2024-12-11)   & RES      & renewable energy sources \\
 ID15      & intraday at 15 min (2025-03-19)               & PV       & photovoltaic \\
 DA15      & day-ahead at 15 min (2025-10-01)              & MIC      & minimum-income condition (offer type) \\
-DA60      & pre-DA15 hourly day-ahead                     & $\text{HHI}_p$ & tranche-Herfindahl (in-band bid concentration) \\
+DA60      & pre-DA15 hourly day-ahead                     & $\text{HHI}_{\text{tr}}$ & tranche-HHI: MW-weighted concentration of in-band bid tranches \\
 MCP       & market clearing price                         & MW / MWh / GWh & megawatt / megawatt-hour / gigawatt-hour \\
 \bottomrule
 \end{tabular}\normalsize
@@ -140,7 +140,7 @@ MCP       & market clearing price                         & MW / MWh / GWh & meg
   \item \textbf{Question.} Does finer time resolution reshape strategic bidding? Does market power go up or down? What is the effect on prices, on the day-ahead vs intraday wedge, and on imbalance penalties?
   \item \textbf{Headline answer.} Granularity made the market more competitive without moving aggregate quantities: prices fell substantially at ID15 and were unchanged at DA15; the residual demand each dominant firm faces became more price-elastic at every reform; dispatchables grade their critical-hour ladders more finely while renewables compress; imbalance penalty per MWh dropped by a third at ID15 with aggregate imbalance volume essentially unchanged.
   \item \textbf{Identification challenge.} An April 2025 blackout triggered a separate ``operaci\'on reforzada'' regulatory regime that inflated ancillary-services costs. Granularity and that regime are calendar-overlapping but mechanistically distinct; the empirical windows are constructed to keep them separable.
-  \item \textbf{Contribution.} Bid-level identification on the new MTU15 sequence; a sequential-markets model in which the optimal step offer is solved exactly --- the bid ladder places equal-MW tranches on an even price grid along the bidder's monopoly line, so the measured bid-shape statistics $(\sigma_p, \text{HHI}_p, \hat\beta)$ have closed-form model counterparts; per-firm Ito-Reguant residual-demand recovery for Spanish data; convex-renewable robustness on the price effect; a strategic-markup proxy that nets out infra-marginal own production from the Cournot first-order condition.
+  \item \textbf{Contribution.} Bid-level identification on the new MTU15 sequence; a sequential-markets model in which the optimal step offer is solved exactly --- the bid ladder places equal-MW tranches on an even price grid along the bidder's monopoly line, so the measured bid-shape statistics $(\sigma_p, \text{HHI}_{\text{tr}}, \hat\beta)$ have closed-form model counterparts; per-firm Ito-Reguant residual-demand recovery for Spanish data; convex-renewable robustness on the price effect; a strategic-markup proxy that nets out infra-marginal own production from the Cournot first-order condition.
   \item \textbf{Roadmap.} Institutional setting (\S\ref{sec:institutional}); theory (\S\ref{sec:theory}); data (\S\ref{sec:data}); empirical strategy (\S\ref{sec:empirical}); results (\S\ref{sec:results}); conclusion (\S\ref{sec:conclusion}).
 \end{itemize}
 
@@ -595,7 +595,7 @@ The model gives the bid curve a shape only where the curve actually competes. Th
 
 This bandwidth has an empirical job the model does not pin down. The interior-solution assumption (Assumption~\ref{ass:soc}, which keeps the stage-1 problem concave and the ladder centred on the monopoly line) tells us \emph{that} the active tranches sit near clearing, but it does not deliver a number: the screen half-width $\Delta_m$ is a latent object, not an observable price. So $\delta$ is the empirical analogue of ``the part of the ladder the screen reaches,'' not the screen itself --- related to the interior-solution restriction, but set from the data rather than from $\Delta_m$. I anchor it to the contemporaneous contested margin, $\delta = p_{90}-p_{50}$ of the clearing-price distribution in the analysis window, market by market, so the band tracks the price level and a window with high prices does not mechanically admit more tranches than a low one. The eight values (one per reform $\times$ \{real, placebo\} $\times$ \{DA, IDA\}) are in Table~\ref{tab:bandwidths}; the bid-shape results are robust to widening $\delta$ (Appendix~\ref{sec:5e}). CCGT's explicit two-tier offer structure (Appendix~\ref{app:context}) makes the competing-versus-parked distinction visible in the raw data.
 
-Per in-band curve I compute the five sample counterparts of the competing-tier geometry of Corollary~\ref{cor:stats}: the MW-weighted price dispersion $\sigma_p$ (the tier dispersion $\sigma(\Delta;b)$), the bid-stack concentration $\text{HHI}_p$ (the inverse depth $1/n$), the slope $\hat\beta$ (the inverse residual-demand slope $1/b_{mt}$), the curvature $\hat\gamma$ (zero on the even grid), and the level $\hat\alpha$ (granularity-invariant by Remark~\ref{rem:level}). Two of these are robust price-side anchors and three are mechanically fragile; I make the distinction precise after defining them.
+Per in-band curve I compute the five sample counterparts of the competing-tier geometry of Corollary~\ref{cor:stats}: the MW-weighted price dispersion $\sigma_p$ (the tier dispersion $\sigma(\Delta;b)$), the bid-stack concentration $\text{HHI}_{\text{tr}}$ (the inverse depth $1/n$), the slope $\hat\beta$ (the inverse residual-demand slope $1/b_{mt}$), the curvature $\hat\gamma$ (zero on the even grid), and the level $\hat\alpha$ (granularity-invariant by Remark~\ref{rem:level}). Two of these are robust price-side anchors and three are mechanically fragile; I make the distinction precise after defining them.
 \begin{center}
 \footnotesize
 \setlength{\tabcolsep}{8pt}
@@ -672,7 +672,7 @@ w_k = \frac{\Delta q_k}{\sum_{j\in\mathcal{B}_{u,d,p}} \Delta q_j}, \qquad
 \]
 Representative bid curves per technology in critical and flat hours are in Appendix~\ref{app:context-bid-curves} (Figure~\ref{fig:bid-curves-by-tech-merged}); they illustrate the dispatchable-ladder vs renewable-block contrast.
 
-\paragraph{Five bid-shape outcomes.} Per in-band curve we summarise the ladder with a quintuple $(\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_p)$. Let $Q_k = \sum_{j\in\mathcal{B},\, j\le k}\Delta q_j$ be the cumulative in-band MW after the $k$th tranche.
+\paragraph{Five bid-shape outcomes.} Per in-band curve we summarise the ladder with a quintuple $(\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_{\text{tr}})$. Let $Q_k = \sum_{j\in\mathcal{B},\, j\le k}\Delta q_j$ be the cumulative in-band MW after the $k$th tranche.
 
 \emph{Price-side dispersion} (the robust price-side anchor, well-defined on every curve including single- and few-tranche ones where the OLS slope is noisy):
 \[
@@ -693,12 +693,12 @@ $\hat\gamma > 0$ means convex (cheap MW packed at the bottom, marginal MW priced
 
 \emph{Bid-stack concentration} (the \emph{tranche-Herfindahl}: the MW-weighted Herfindahl of the in-band tranches):
 \[
-\text{HHI}_{p,\,u,d,p} \;=\; \sum_{k\in\mathcal{B}} w_k^2, \qquad w_k = \frac{\Delta q_k}{\sum_{j\in\mathcal{B}}\Delta q_j} \in \big[1/|\mathcal{B}|,\,1\big].
+\text{HHI}_{\text{tr},\,u,d,p} \;=\; \sum_{k\in\mathcal{B}} w_k^2, \qquad w_k = \frac{\Delta q_k}{\sum_{j\in\mathcal{B}}\Delta q_j} \in \big[1/|\mathcal{B}|,\,1\big].
 \]
 
 Three construction choices follow from the model. The price dispersion $\sigma_p$ is MW-weighted because profit risk scales with tranche size --- the model's tranches carry equal shares, but real ones do not, and an unweighted dispersion would let a string of micro-tranches dominate a statistic meant to capture where the offered megawatts sit. The curvature $\hat\gamma$ comes from a \emph{separate} quadratic fit so that it reads as curvature net of the linear trend (it is identified only on curves with at least three tranches). And every outcome is defined relative to the contemporaneous clearing price through $\delta$, which makes the quintuple immune to price-level seasonality: a January curve and a July curve are compared by shape, not by the level the season puts them at.
 
-The five split into two robust anchors and three fragile descriptors, a distinction that governs which results I lead with. The dispersion $\sigma_p$ and the concentration $\text{HHI}_p$ are defined on every curve --- including the single- and few-tranche curves where an OLS slope is pure noise --- and they are invariant to the mechanical tranche-count and price-grid changes that the 2024 session reform and ID15 introduced. The slope $\hat\beta$ and the curvature $\hat\gamma$ inherit those mechanical shifts, so their pre-trends drift (Appendix~\ref{app:robustness}); the level $\hat\alpha$ is informative only as a level-neutrality check (Remark~\ref{rem:level}). I therefore treat $\sigma_p$ and $\text{HHI}_p$ as the headline bid-shape evidence and $\hat\beta$, $\hat\gamma$, $\hat\alpha$ as supporting.
+The five split into two robust anchors and three fragile descriptors, a distinction that governs which results I lead with. The dispersion $\sigma_p$ and the concentration $\text{HHI}_{\text{tr}}$ are defined on every curve --- including the single- and few-tranche curves where an OLS slope is pure noise --- and they are invariant to the mechanical tranche-count and price-grid changes that the 2024 session reform and ID15 introduced. The slope $\hat\beta$ and the curvature $\hat\gamma$ inherit those mechanical shifts, so their pre-trends drift (Appendix~\ref{app:robustness}); the level $\hat\alpha$ is informative only as a level-neutrality check (Remark~\ref{rem:level}). I therefore treat $\sigma_p$ and $\text{HHI}_{\text{tr}}$ as the headline bid-shape evidence and $\hat\beta$, $\hat\gamma$, $\hat\alpha$ as supporting.
 
 \subsection{Aggregate outcomes}\label{sec:data:aggregate}
 
@@ -725,7 +725,7 @@ D^{\bar p}_{d,h} = \mathrm{sd}_q(\bar p_q), \quad
 D^{m}_{d,h} = \mathrm{sd}_q(m_q)/\bar m, \quad
 D^{\text{MCP}}_{d,h} = \mathrm{sd}_q(\text{MCP}_q), \quad
 D^{\sigma_p}_{d,h} = \mathrm{sd}_q(\sigma_{p,q}), \quad
-D^{\text{HHI}}_{d,h} = \mathrm{sd}_q(\text{HHI}_{p,q}).
+D^{\text{HHI}}_{d,h} = \mathrm{sd}_q(\text{HHI}_{\text{tr},q}).
 \]
 The five capture, in order: across-quarter shifts in the curve's price level, its offered volume (as a coefficient of variation), the system clearing price, the ladder spread, and the tranche concentration. Any positive value post-MTU15 is a unit actively treating the four quarters differently.
 
@@ -769,14 +769,14 @@ $D^{1/\text{HHI}}$                  & CCGT       & $0.17$ (0.16)          & $\ma
                                     & Wind       & $0.00$ (0.00)          & $0.01$ (0.00)                   & $1.0\times,\ 1.3\times$ \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{Post-MTU15 critical$-$flat within-hour dispersion gap $\theta$, by outcome.} Post-only cross-sectional gap. Windows: ID15 post 2025-03-19 to 2025-04-27; DA15 post 2025-10-01 to 2025-12-31. SE clustered by date; $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$ (applies to all subsequent tables). Bid-level rows ($D^{\bar p}$, $D^{m}$, $D^{\text{MCP}}$) are bandwidth-free; the per-tech $D^{\sigma_p}$ and $D^{1/\text{HHI}}$ rows use the window-specific $p_{90}$ bandwidth (\S\ref{sec:data:bandwidth}): ID15 column $\delta{=}62$ (post-ID15 IDA); DA15 column $\delta{=}50$ (post-DA15 DA). $D^{1/\text{HHI}}$ uses the effective-tranche-count framing ($N_{\text{eff}} = 1/\text{HHI}_p$) because the within-hour SD of HHI is mechanically tiny on a $[0,1]$ scale; the inverse-HHI quantity carries the same content on a more readable scale.}
+\captionof{table}{\textbf{Post-MTU15 critical$-$flat within-hour dispersion gap $\theta$, by outcome.} Post-only cross-sectional gap. Windows: ID15 post 2025-03-19 to 2025-04-27; DA15 post 2025-10-01 to 2025-12-31. SE clustered by date; $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$ (applies to all subsequent tables). Bid-level rows ($D^{\bar p}$, $D^{m}$, $D^{\text{MCP}}$) are bandwidth-free; the per-tech $D^{\sigma_p}$ and $D^{1/\text{HHI}}$ rows use the window-specific $p_{90}$ bandwidth (\S\ref{sec:data:bandwidth}): ID15 column $\delta{=}62$ (post-ID15 IDA); DA15 column $\delta{=}50$ (post-DA15 DA). $D^{1/\text{HHI}}$ uses the effective-tranche-count framing ($N_{\text{eff}} = 1/\text{HHI}_{\text{tr}}$) because the within-hour SD of HHI is mechanically tiny on a $[0,1]$ scale; the inverse-HHI quantity carries the same content on a more readable scale.}
 \end{center}
 
 % =====================================================================
 \section{Empirical strategy}\label{sec:empirical}
 % =====================================================================
 
-The empirical strategy pairs two specifications with two economic objects. For \textbf{level outcomes} (prices, wedge SD, imbalance penalty, cleared MWh) we run hourly OLS and a BSTS counterfactual on long pre-windows (2022 onwards) with year-by-year renewable interactions, and check robustness to convex (quadratic and cubic) renewable terms. For \textbf{bid-shape outcomes} ($\sigma_p$, $\hat\alpha$, $\hat\beta$, $\hat\gamma$, $\text{HHI}_p$) we run a bid-curve-level DiD with flat hours as the within-day control for critical hours.
+The empirical strategy pairs two specifications with two economic objects. For \textbf{level outcomes} (prices, wedge SD, imbalance penalty, cleared MWh) we run hourly OLS and a BSTS counterfactual on long pre-windows (2022 onwards) with year-by-year renewable interactions, and check robustness to convex (quadratic and cubic) renewable terms. For \textbf{bid-shape outcomes} ($\sigma_p$, $\hat\alpha$, $\hat\beta$, $\hat\gamma$, $\text{HHI}_{\text{tr}}$) we run a bid-curve-level DiD with flat hours as the within-day control for critical hours.
 
 \subsection{Level variables: hourly OLS with convex-renewable controls and BSTS counterfactual}\label{sec:empirical:level}\phantomsection\label{sec:empirical:specA}
 
@@ -794,9 +794,9 @@ The empirical strategy pairs two specifications with two economic objects. For \
 
 \subsection{Bid-shape outcomes: per-curve DiD with critical-vs-flat hours}\label{sec:empirical:bidshape}\phantomsection\label{sec:empirical:specC}
 
-The bid-shape DiD identifies \emph{within-day} changes in the bid curve: per (unit, date, period) we summarise the in-band ladder with the quintuple $(\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_p)$ and use flat hours as the within-day control for critical hours. The flat-hour partition is the identifying restriction; no time-series extrapolation is needed.
+The bid-shape DiD identifies \emph{within-day} changes in the bid curve: per (unit, date, period) we summarise the in-band ladder with the quintuple $(\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_{\text{tr}})$ and use flat hours as the within-day control for critical hours. The flat-hour partition is the identifying restriction; no time-series extrapolation is needed.
 
-For per-tech bid-shape outcomes $Y\in\{\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_p\}$ we use the DiD:
+For per-tech bid-shape outcomes $Y\in\{\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_{\text{tr}}\}$ we use the DiD:
 \[
 Y_{u,d,p[,s]} = \alpha_u + \beta\,\mathbf{1}\{d\ge T_r\} + \xi\,\mathbf{1}\{h\in\mathcal{C}\} + \theta\,D_{d,h} + \varepsilon, \qquad \text{SEs clustered by date.}
 \]
@@ -804,7 +804,7 @@ Y_{u,d,p[,s]} = \alpha_u + \beta\,\mathbf{1}\{d\ge T_r\} + \xi\,\mathbf{1}\{h\in
 \textit{[To be written. Concepts to cover:]}
 \begin{itemize}\setlength{\itemsep}{1pt}
   \item \textbf{Why critical vs flat.} Differentiated bidding only pays off where residual demand is steep enough to reward it. In critical hours that condition holds and four quarter-prices unlock real discrimination; in flat hours the curve is shallow and the extra granularity is mostly wasted optionality. The critical$-$flat differential $\theta$ \emph{is} the granularity-enabled discrimination, not a residual we are netting out.
-  \item \textbf{Identification assumption.} Parallel trends in critical and flat hours absent the reform. $\sigma_p$ and $\text{HHI}_p$ satisfy this cleanly for CCGT and Hydro-pump (the headline cells); $\hat\beta$ and $\hat\gamma$ show pre-trend drift because they are mechanically sensitive to tranche-count and price-grid density (both shifted at 2024-06-14 and 2025-03-19). Treat $\hat\beta$ and $\hat\gamma$ as supporting, not headline.
+  \item \textbf{Identification assumption.} Parallel trends in critical and flat hours absent the reform. $\sigma_p$ and $\text{HHI}_{\text{tr}}$ satisfy this cleanly for CCGT and Hydro-pump (the headline cells); $\hat\beta$ and $\hat\gamma$ show pre-trend drift because they are mechanically sensitive to tranche-count and price-grid density (both shifted at 2024-06-14 and 2025-03-19). Treat $\hat\beta$ and $\hat\gamma$ as supporting, not headline.
   \item \textbf{Threats absorbed by construction.} Bid-shape outcomes are robust to seasonal level shifts (all computed relative to contemporaneous MCP via bandwidth $\delta$). Main residual threat: post-reform shocks that affect critical or flat hours asymmetrically in \emph{shape} (not level).
   \item \textbf{Each reform studied separately} --- standard 2$\times$2 DiD, no staggered-treatment complications \citep[ch.~3]{de_chaisemartin_2026}.
 \end{itemize}
@@ -931,7 +931,16 @@ Flat             & $\mathbf{4.7}^{***}$ & $-0.0$              & $-2.0^{*}$ & $-0
 
 \subsection{Bid curves disperse and gain tranches in critical hours on each reformed market}\label{sec:results:6-1}
 
-Both reformed markets reshape the ladder of the dispatchable price-setter, each in the direction the model assigns to it, while the price-takers move the opposite way. I read the reshaping off the two robust anchors --- the price dispersion $\sigma_p$ and the tranche-Herfindahl $\text{HHI}_p$ --- and leave the slope and curvature to the appendix, where their pre-trends drift (Table~\ref{tab:spec-c}). CCGT, the marginal-cost unit that tends to set price, widens its day-ahead in-band ladder and splits it into more, more finely-priced steps at \emph{both} reforms. That is one unit responding to two different mechanisms: at the spot reform the cross-market anticipation channel disperses the forward ladder ahead of the granular continuation (Corollary~\ref{cor:continuation}), and at the forward reform the forward screen itself widens as the ramp becomes contractible there (Corollary~\ref{cor:did}). The relocation runs in reverse wherever a market loses its within-hour pricing job: the same statistics shrink, the ladder concentrating into fewer, fatter tranches --- visible in the cross-market CCGT response and in pump-storage, which coarsens its day-ahead ladder once it can discriminate in the now-granular intraday instead. The strategic renewables compress on the reformed leg, the price-takers again moving against the dispatchables. The morning-ramp-only double difference reproduces every headline sign, and the parallel-trends figures are clean for both anchors on the headline cells (Appendix~\ref{app:robustness}).
+Both reformed markets reshape the ladder of the dispatchable price-setter, each in the direction the model assigns to it, while the price-takers move the opposite way. I read the reshaping off the two robust anchors --- the price dispersion $\sigma_p$ and the tranche-Herfindahl $\text{HHI}_{\text{tr}}$ --- and leave the slope and curvature to the appendix, where their pre-trends drift (Table~\ref{tab:spec-c}). CCGT, the marginal-cost unit that tends to set price, widens its day-ahead in-band ladder and splits it into more, more finely-priced steps at \emph{both} reforms. That is one unit responding to two different mechanisms: at the spot reform the cross-market anticipation channel disperses the forward ladder ahead of the granular continuation (Corollary~\ref{cor:continuation}), and at the forward reform the forward screen itself widens as the ramp becomes contractible there (Corollary~\ref{cor:did}). The relocation runs in reverse wherever a market loses its within-hour pricing job: the same statistics shrink, the ladder concentrating into fewer, fatter tranches --- visible in the cross-market CCGT response and in pump-storage, which coarsens its day-ahead ladder once it can discriminate in the now-granular intraday instead. The strategic renewables compress on the reformed leg, the price-takers again moving against the dispatchables. The morning-ramp-only double difference reproduces every headline sign, and the critical-versus-flat pre-trends --- the identifying restriction --- are shown for CCGT in Figure~\ref{fig:ccgt-pt-main}, with the full set of technologies in Appendix~\ref{app:robustness}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\textwidth]{fig_ccgt_pt_main.pdf}
+\caption{\textbf{Critical-versus-flat pre-trends for CCGT on the two day-ahead cells} (14-day rolling means; dashed line $=$ cutover). Critical pools the morning and evening ramps; flat is overnight. At DA15 the critical-hour dispersion lifts above flat only after the cutover and the pre-reform paths run together; the collapse of both lines at the right edge of that window is the reinforced-operation regime moving CCGT into the real-time technical-restriction (Fase~I) process, not the reform. The ID15 post-window is only the 40 pre-blackout days.}
+\label{fig:ccgt-pt-main}
+\end{figure}
+
+Because the design identifies off parallel critical-versus-flat trends, those paths deserve to be seen before the coefficients, and they carry three cautions the table cannot. First, the DA15 day-ahead cell is the cleanest: the pre-reform lines move together and the critical dispersion lifts away only after the cutover. Second, the sharp fall in both DA15 lines at the end of the window is a regime artefact, not a reform reversal --- once the post-blackout reinforced operation moved the dispatchables' business into the Fase~I real-time restriction process, the day-ahead curve stopped being where CCGT competes and its dispersion fell accordingly. Third, the ID15 day-ahead cell is thin: its post-window is only the forty pre-blackout days, and that spring was a low-gas, renewable-heavy period that pushed CCGT off the merit order for long stretches, so the ID15 day-ahead CCGT result is suggestive rather than decisive. The intraday cells need one further caution of their own: before the reform CCGT's flat-hour dispersion \emph{exceeds} its critical-hour dispersion in the intraday auctions --- the reverse of the day-ahead ordering --- so the intraday baseline starts from a different place; and the third intraday session covers only the afternoon, with no overnight flat hours at all, so it cannot enter a critical-versus-flat comparison. The intraday bid-shape evidence therefore rests on the first two sessions (Appendix~\ref{sec:5-per-session-ida}), and I read the pooled intraday columns of Table~\ref{tab:spec-c} as the weakest in the set.
 
 That this tranche-count margin is institutionally real, and not a free parameter, shows in how often it binds. In the intraday auctions --- where a simple offer may carry at most five price steps --- CCGT units submit the full five on $48\%$ of their offers, against under $4\%$ for wind and essentially never for nuclear, and not one of the roughly $203$ million sample offers exceeds the cap. In the day-ahead the looser ceiling of twenty-five steps is slack on the supply side, with CCGT ladders averaging five steps, so there the binding margin is the per-step cost of Proposition~\ref{prop:budget} rather than the cap itself. Either way it is the dispatchable price-setter, not the price-takers, that runs up against the finite-tranche friction the model places at its centre.
 
@@ -949,12 +958,12 @@ The cleanest single test in this section is on the bid-curve \emph{level}. The m
 $\sigma_p$ (EUR/MWh)                 & CCGT          & $\mathbf{4.45}^{***}$ & $0.24$            & $\mathbf{1.05}^{***}$  & $\mathbf{-1.01}^{***}$ \\
                                      & Hydro         & $-0.35^{**}$           & $0.24$            & $0.85^{***}$  & $0.44^{***}$ \\
                                      & Pump-storage  & $\mathbf{-1.48}^{***}$ & $0.03$            & $0.13$                 & $-0.02$ \\
-$\text{HHI}_p$                       & CCGT          & $\mathbf{-0.18}^{***}$ & $-0.04$            & $\mathbf{-0.17}^{***}$  & $-0.00$ \\
+$\text{HHI}_{\text{tr}}$                       & CCGT          & $\mathbf{-0.18}^{***}$ & $-0.04$            & $\mathbf{-0.17}^{***}$  & $-0.00$ \\
                                      & Hydro         & $0.010^{*}$           & $-0.034^{***}$ & $-0.037^{***}$ & $-0.01$ \\
                                      & Pump-storage  & $0.00$                 & $-0.02$            & $0.00$                  & $0.01$ \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{Bid-curve-level DiD on headline bid-shape outcomes.} Critical-flat DiD on price dispersion $\sigma_p$ and bid-stack concentration $\text{HHI}_p$. Tight pre/post windows (reforzada held constant): ID15 pre 2024-12-19 to 2025-03-18, post 2025-03-19 to 2025-04-27 (40 days, pre-blackout); DA15 pre 2025-07-01 to 2025-09-30, post 2025-10-01 to 2025-12-31. Bandwidth $\delta = p_{90}-p_{50}$ window-specific. SEs clustered by date. A negative HHI DiD means the bid stack \emph{deconcentrates} in critical hours relative to flat. The slope $\hat\beta$ and curvature $\hat\gamma$ --- mechanically sensitive to tranche-count and grid density --- are supporting; their full decomposition, additional technologies (Cogen, Hybrid, Wind, Biomass), morning-ramp-only robustness, and parallel-trends figures are in Appendix~\ref{app:robustness}.}
+\captionof{table}{\textbf{Bid-curve-level DiD on headline bid-shape outcomes.} Critical-flat DiD on price dispersion $\sigma_p$ and bid-stack concentration $\text{HHI}_{\text{tr}}$. Tight pre/post windows (reforzada held constant): ID15 pre 2024-12-19 to 2025-03-18, post 2025-03-19 to 2025-04-27 (40 days, pre-blackout); DA15 pre 2025-07-01 to 2025-09-30, post 2025-10-01 to 2025-12-31. Bandwidth $\delta = p_{90}-p_{50}$ window-specific. SEs clustered by date. A negative HHI DiD means the bid stack \emph{deconcentrates} in critical hours relative to flat. The slope $\hat\beta$ and curvature $\hat\gamma$ --- mechanically sensitive to tranche-count and grid density --- are supporting; their full decomposition, additional technologies (Cogen, Hybrid, Wind, Biomass), morning-ramp-only robustness, and parallel-trends figures are in Appendix~\ref{app:robustness}.}
 \label{tab:spec-c}
 \end{center}
 
@@ -1703,7 +1712,7 @@ Pump-storage & $0.0014$          & $0.0005$         & $0.0001$            & $0.0
 \label{tab:pretrend-placebo}
 \end{center}
 
-\paragraph{Parallel-trends diagnostics, metric by metric.} Figures~\ref{fig:parallel-trends-sigma-p} and \ref{fig:parallel-trends-abgN} plot critical against flat hours around each cutover for every dispatchable technology. The split follows the headline-vs-supporting logic of \S\ref{sec:data:bandwidth}: $\sigma_p$ and $\text{HHI}_p$ --- first and second moments of the in-band price distribution --- show flat pre-differentials on the headline cells, while $\hat\beta$ and $\hat\gamma$ --- within-curve OLS objects, mechanically sensitive to tranche counts and price-grid density --- drift in most cells. ($\sigma_p$ also needs only price-side variation and is well-defined on single-tranche curves, where $\hat\beta$ requires joint $p$--$q$ variation; for near-linear curves $\sigma_p \approx |\hat\beta|\,\sigma_Q$, so the two track each other up to estimator noise.)
+\paragraph{Parallel-trends diagnostics, metric by metric.} Figures~\ref{fig:parallel-trends-sigma-p} and \ref{fig:parallel-trends-abgN} plot critical against flat hours around each cutover for every dispatchable technology. The split follows the headline-vs-supporting logic of \S\ref{sec:data:bandwidth}: $\sigma_p$ and $\text{HHI}_{\text{tr}}$ --- first and second moments of the in-band price distribution --- show flat pre-differentials on the headline cells, while $\hat\beta$ and $\hat\gamma$ --- within-curve OLS objects, mechanically sensitive to tranche counts and price-grid density --- drift in most cells. ($\sigma_p$ also needs only price-side variation and is well-defined on single-tranche curves, where $\hat\beta$ requires joint $p$--$q$ variation; for near-linear curves $\sigma_p \approx |\hat\beta|\,\sigma_Q$, so the two track each other up to estimator noise.)
 
 \begin{figure}[H]
 \centering
@@ -1711,7 +1720,7 @@ Pump-storage & $0.0014$          & $0.0005$         & $0.0001$            & $0.0
 \includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_ID15_ida_sigma_hhi.pdf}\\[2pt]
 \includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_da_sigma_hhi.pdf}\\[2pt]
 \includegraphics[width=0.84\textwidth]{fig_bid_shape_pt_DA15_ida_sigma_hhi.pdf}
-\caption{\textbf{Parallel trends for $\sigma_p$ and $\text{HHI}_p$: clean on the headline cells.} Critical (red) vs flat (blue), 14-day rolling means; dashed line $=$ cutover. Panels top to bottom: ID15 DA, ID15 IDA, DA15 DA, DA15 IDA.}
+\caption{\textbf{Parallel trends for $\sigma_p$ and $\text{HHI}_{\text{tr}}$: clean on the headline cells.} Critical (red) vs flat (blue), 14-day rolling means; dashed line $=$ cutover. Panels top to bottom: ID15 DA, ID15 IDA, DA15 DA, DA15 IDA.}
 \label{fig:parallel-trends-sigma-p}
 \end{figure}
 
@@ -1727,7 +1736,7 @@ Pump-storage & $0.0014$          & $0.0005$         & $0.0001$            & $0.0
 
 \subsection{Bandwidth $\delta$}\label{sec:5e}
 
-I rerun the DiD at $\delta = 100, 140, 200$ EUR/MWh on the headline metrics $\sigma_p$ and $1/\text{HHI}_p$ (Table~\ref{tab:bandwidth-robustness}). The CCGT deconcentration at DA15 is the most bandwidth-robust cell: the $1/\text{HHI}_p$ DiD is positive and significant at every bandwidth. On the ID15 IDA leg both CCGT metrics strengthen as the band widens beyond the contested $p_{90}$ margin ($\sigma_p$ insignificant at $\delta = 100$, significant at $140$ and $200$), consistent with the re-spaced tranches extending past the tight headline band. Hydro's $\sigma_p$ widening is significant throughout, while its DA15 $1/\text{HHI}_p$ changes sign at wide bands; pump-storage moves are concentrated at ID15 on $1/\text{HHI}_p$.
+I rerun the DiD at $\delta = 100, 140, 200$ EUR/MWh on the headline metrics $\sigma_p$ and $1/\text{HHI}_{\text{tr}}$ (Table~\ref{tab:bandwidth-robustness}). The CCGT deconcentration at DA15 is the most bandwidth-robust cell: the $1/\text{HHI}_{\text{tr}}$ DiD is positive and significant at every bandwidth. On the ID15 IDA leg both CCGT metrics strengthen as the band widens beyond the contested $p_{90}$ margin ($\sigma_p$ insignificant at $\delta = 100$, significant at $140$ and $200$), consistent with the re-spaced tranches extending past the tight headline band. Hydro's $\sigma_p$ widening is significant throughout, while its DA15 $1/\text{HHI}_{\text{tr}}$ changes sign at wide bands; pump-storage moves are concentrated at ID15 on $1/\text{HHI}_{\text{tr}}$.
 
 \begin{center}
 \footnotesize
@@ -1743,13 +1752,13 @@ $\delta=100$          & $0.65$          & $1.10^{***}$  & $0.03$  & $-0.68$     
 $\delta=140$          & $2.45^{***}$    & $1.17^{***}$  & $0.25$  & $1.30^{*}$     & $1.69^{***}$ & $-0.63^{*}$ \\
 $\delta=200$          & $2.09^{***}$    & $1.06^{**}$   & $0.24$  & $0.50$         & $1.82^{***}$ & $-0.68^{**}$ \\
 \addlinespace
-\multicolumn{7}{l}{\emph{Effective tranche count $1/\text{HHI}_p$}} \\
+\multicolumn{7}{l}{\emph{Effective tranche count $1/\text{HHI}_{\text{tr}}$}} \\
 $\delta=100$          & $0.66$          & $0.20^{***}$  & $0.16^{**}$ & $1.11^{***}$ & $0.22^{***}$  & $-0.01$ \\
 $\delta=140$          & $0.79^{***}$    & $0.21^{***}$  & $0.18^{**}$ & $0.44^{***}$ & $-0.04$       & $-0.05$ \\
 $\delta=200$          & $0.84^{***}$    & $0.24^{***}$  & $0.19^{**}$ & $0.42^{***}$ & $-0.13^{***}$ & $-0.04$ \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{Bandwidth robustness, $\sigma_p$ and $1/\text{HHI}_p$.} DiD $\theta$ at $\delta=100,140,200$ EUR/MWh; the headline $p_{90}$ estimates are in Table~\ref{tab:spec-c}. Positive $1/\text{HHI}_p$ $=$ deconcentration. SEs clustered by date.}
+\captionof{table}{\textbf{Bandwidth robustness, $\sigma_p$ and $1/\text{HHI}_{\text{tr}}$.} DiD $\theta$ at $\delta=100,140,200$ EUR/MWh; the headline $p_{90}$ estimates are in Table~\ref{tab:spec-c}. Positive $1/\text{HHI}_{\text{tr}}$ $=$ deconcentration. SEs clustered by date.}
 \label{tab:bandwidth-robustness}
 \end{center}
 
@@ -1844,7 +1853,7 @@ This diagnostic also clarifies why several level findings (\S\ref{sec:results:6-
 
 
 
-\paragraph{Note on bid-shape outcomes in this appendix.} The bid-shape DiD robustness tables below report on the headline quintuple $(\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_p)$ used in \S\ref{sec:data:bandwidth}. The cross-border and offer-type checks lead with $\sigma_p$ (the robust price-side anchor); for a near-linear curve $\sigma_p \approx |\hat\beta|\cdot\sigma_Q$, so the signs on those checks track $\hat\beta$ up to estimator noise (and via curvature track $\hat\gamma$).
+\paragraph{Note on bid-shape outcomes in this appendix.} The bid-shape DiD robustness tables below report on the headline quintuple $(\sigma_p, \hat\alpha, \hat\beta, \hat\gamma, \text{HHI}_{\text{tr}})$ used in \S\ref{sec:data:bandwidth}. The cross-border and offer-type checks lead with $\sigma_p$ (the robust price-side anchor); for a near-linear curve $\sigma_p \approx |\hat\beta|\cdot\sigma_Q$, so the signs on those checks track $\hat\beta$ up to estimator noise (and via curvature track $\hat\gamma$).
 
 \subsection{Convex-renewable robustness on the price OLS}\label{app:convex-renew}
 
@@ -1912,7 +1921,7 @@ IDA price (EUR/MWh, raw mean) & 10.9  & 25.1  & $14.2$ & --- \\
 
 \subsection{Window length: long-pre controls and conditional parallel trends}\label{sec:5-long-pre-ra}
 
-I extend the pre-window to 2022-01-01, add year FE, calendar-month FE, and crit$\times$wind/crit$\times$solar interactions; and as a separate spec run the regression-adjustment DiD of \citet{heckman1997} under conditional parallel trends. ID15 DA CCGT (anticipation) survives both checks on $\sigma_p$ and $\text{HHI}_p$; DA15 DA CCGT survives on $\sigma_p$, the $\text{HHI}_p$ sign flips under RA-DiD so the $\sigma_p$ side is the rugged headline. Side technologies omitted: only cells that survive at least the long-pre spec are reported (Table~\ref{tab:spec-c-longpre-ra}).
+I extend the pre-window to 2022-01-01, add year FE, calendar-month FE, and crit$\times$wind/crit$\times$solar interactions; and as a separate spec run the regression-adjustment DiD of \citet{heckman1997} under conditional parallel trends. ID15 DA CCGT (anticipation) survives both checks on $\sigma_p$ and $\text{HHI}_{\text{tr}}$; DA15 DA CCGT survives on $\sigma_p$, the $\text{HHI}_{\text{tr}}$ sign flips under RA-DiD so the $\sigma_p$ side is the rugged headline. Side technologies omitted: only cells that survive at least the long-pre spec are reported (Table~\ref{tab:spec-c-longpre-ra}).
 
 \begin{center}
 \footnotesize
@@ -1922,10 +1931,10 @@ I extend the pre-window to 2022-01-01, add year FE, calendar-month FE, and crit$
 \textbf{Cell}                       & \textbf{Outcome} & \textbf{Tight (1)} & \textbf{Long-pre + controls (2)} & \textbf{RA-DiD (3)} \\
 \midrule
 ID15 DA CCGT (anticipation)         & $\sigma_p$       & $19.42^{***}$ & $10.78^{***}$ & $12.71^{**}$ \\
-                                    & $\text{HHI}_p$   & $-0.076^{***}$ & $-0.098^{***}$ & $-0.000$ \\
+                                    & $\text{HHI}_{\text{tr}}$   & $-0.076^{***}$ & $-0.098^{***}$ & $-0.000$ \\
 \addlinespace
 DA15 DA CCGT                        & $\sigma_p$       & $1.25^{**}$   & $5.47^{***}$  & $1.72$ \\
-                                    & $\text{HHI}_p$   & $-0.059^{***}$ & $-0.028^{***}$ & $0.099^{**}$ \\
+                                    & $\text{HHI}_{\text{tr}}$   & $-0.059^{***}$ & $-0.028^{***}$ & $0.099^{**}$ \\
 \addlinespace
 \bottomrule
 \end{tabular}
@@ -1936,12 +1945,12 @@ DA15 DA CCGT                        & $\sigma_p$       & $1.25^{**}$   & $5.47^{
 \paragraph{Per-firm $b_{mt}$ under the same long-pre control.} I run the same long-pre + year + month FE on the per-firm $b_{mt}$ increase: magnitude shrinks from the tight-window range $13$\%--$28$\% to $8$\%--$15$\% across the four dominant CCGT-owning firms, all firm cells still significant. Direction robust, magnitude roughly halved.
 
 \subsection{Bid types: CCGT offer-type composition}\label{sec:5-offertype}
-I split CCGT bids by structural type (simple / MIC / block) and re-run the DA15 DiD within each type. The composition shifts toward more block offers post-reform (block offers are mechanically single-tranche, pushing the pooled $\text{HHI}_p$ UP), but the within-type DiD is still negative in MIC ($-0.046^{***}$) and block ($-0.043^{***}$), and pooled stays $-0.059^{***}$. The bid-stack deconcentration is real within-tranche behaviour, not a composition artefact.
+I split CCGT bids by structural type (simple / MIC / block) and re-run the DA15 DiD within each type. The composition shifts toward more block offers post-reform (block offers are mechanically single-tranche, pushing the pooled $\text{HHI}_{\text{tr}}$ UP), but the within-type DiD is still negative in MIC ($-0.046^{***}$) and block ($-0.043^{***}$), and pooled stays $-0.059^{***}$. The bid-stack deconcentration is real within-tranche behaviour, not a composition artefact.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../../figures/working/fig_ccgt_offer_type.pdf}
-\caption{\textbf{CCGT offer-type composition and within-type bid-shape DiD at DA15.} \emph{Left}: CCGT in-band sell-curve composition, pre vs post. \emph{Right}: $\sigma_p$ DiD by offer type, 95\% CI. The $\text{HHI}_p$ DiD is negative within every type, so the deconcentration is not a composition artefact.}
+\caption{\textbf{CCGT offer-type composition and within-type bid-shape DiD at DA15.} \emph{Left}: CCGT in-band sell-curve composition, pre vs post. \emph{Right}: $\sigma_p$ DiD by offer type, 95\% CI. The $\text{HHI}_{\text{tr}}$ DiD is negative within every type, so the deconcentration is not a composition artefact.}
 \label{fig:ccgt-offer-type}
 \end{figure}
 
@@ -2207,7 +2216,7 @@ Pre-reform CCGT bidding intensity concentrates in IDA2 ($\sigma_p$ and $\hat\bet
 \midrule
 $\sigma_p$ (EUR/MWh)   & $1.74$ & $4.08$ & $0.34$ & $4.03$ & $5.77$ & $2.47$ & $3.64$ & $4.79$ & $2.07$ \\
 $\hat\beta$ (EUR/MWh per MW) & $0.125$ & $0.335$ & $0.161$ & $0.122$ & $0.135$ & $0.123$ & $0.099$ & $0.125$ & $0.098$ \\
-$\text{HHI}_p$          & $0.25$ & $0.50$ & $0.60$ & $0.21$ & $0.33$ & $0.33$ & $0.22$ & $0.25$ & $0.33$ \\
+$\text{HHI}_{\text{tr}}$          & $0.25$ & $0.50$ & $0.60$ & $0.21$ & $0.33$ & $0.33$ & $0.22$ & $0.25$ & $0.33$ \\
 \addlinespace
 $n_{\text{curves}}$     & 7{,}647 & 11{,}398 & 10{,}515 & 8{,}962 & 10{,}254 & 7{,}208 & 56{,}484 & 60{,}147 & 43{,}998 \\
 \bottomrule
