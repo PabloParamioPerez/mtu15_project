@@ -1,0 +1,9 @@
+cell,kind,outcome,DiD,se,t,n
+ID15 DA,real,sigma_p,3.3959,0.46,7.38,35260
+ID15 DA,real,n_eff,-0.2962,0.2154,-1.38,35260
+ID15 DA,placebo,sigma_p,0.1846,0.8881,0.21,44618
+ID15 DA,placebo,n_eff,-0.8101,0.2938,-2.76,44618
+DA15 DA,real,sigma_p,1.386,0.1422,9.75,163615
+DA15 DA,real,n_eff,1.5603,0.0917,17.02,163615
+DA15 DA,placebo,sigma_p,1.1481,0.2479,4.63,61376
+DA15 DA,placebo,n_eff,0.4002,0.1196,3.35,61376
