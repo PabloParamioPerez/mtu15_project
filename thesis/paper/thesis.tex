@@ -843,16 +843,17 @@ DA15 is the mirror image. Every specification leaves both its own forward market
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
 \textbf{Specification} & IDA (own) & DA (cross) & DA (own) & IDA (cross) \\
 \midrule
-OLS daily, calendar FE only                 & $-31.7^{***}$ & $-32.8^{***}$ & $-8.3$ & $-8.4$ \\
-OLS daily, year\,$\times$\,renewable (per year) & $-45.8^{***}$ & $-46.7^{***}$ & $-8.6$ & $-10.0$ \\
-OLS daily, year\,$\times$\,renewable (pooled)   & $\mathbf{-38.7}^{***}$ & $\mathbf{-38.7}^{***}$ & $-4.6$ & $-6.0$ \\
-OLS hourly, year\,$\times$\,renewable (pooled)  & $-30.1^{***}$ & $-28.7^{***}$ & $2.9$ & $1.7$ \\
-OLS hourly, quadratic renewables            & $-24.3^{***}$ & $-23.6^{***}$ & $-2.3$ & $-2.5$ \\
-OLS hourly, cubic renewables                & $-23.5^{***}$ & $-22.9^{***}$ & $-2.0$ & $-2.2$ \\
-BSTS daily counterfactual                   & $-34.3$ & $-33.9$ & $7.8$ & $1.0$ \\
+OLS daily, base                                  & $-31.7^{***}$ & $-32.8^{***}$ & $-8.3$ & $-8.4$ \\
+OLS daily, year\,$\times$\,renewable (per year)  & $-45.8^{***}$ & $-46.7^{***}$ & $-8.6$ & $-10.0$ \\
+OLS daily, year\,$\times$\,renewable (pooled)    & $\mathbf{-38.7}^{***}$ & $\mathbf{-38.7}^{***}$ & $-4.6$ & $-6.0$ \\
+OLS hourly, base                                 & $-33.6^{***}$ & $-33.6^{***}$ & $-10.3^{**}$ & $-10.2^{**}$ \\
+OLS hourly, year\,$\times$\,renewable (per year) & $-40.4^{***}$ & $-39.0^{***}$ & $-3.0$ & $-4.0$ \\
+OLS hourly, year\,$\times$\,renewable (pooled)   & $-30.1^{***}$ & $-28.7^{***}$ & $2.9$ & $1.7$ \\
+OLS hourly, quadratic renewable\,$\times$\,year  & $-24.3^{***}$ & $-23.6^{***}$ & $-2.3$ & $-2.5$ \\
+BSTS daily counterfactual                        & $-34.3^{*}$ & $-33.9^{*}$ & $7.8$ & $1.0$ \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{Clearing-price effect by specification and reform-side leg} (EUR/MWh). Long common pre-window from 2022; post-windows 2025-03-19 to 2025-04-27 (ID15, pre-blackout) and from 2025-10-01 (DA15). OLS with month, day-of-week, and (hourly rows) hour-of-day fixed effects, gas, wind and solar, plus the renewable terms named; Newey--West HAC. BSTS: state-space level, 7-day seasonality, same regressors. Headline pooled-renewable ID15 spec in \textbf{bold}; the ID15 BSTS effects carry roughly $90\%$ posterior mass below zero (wide intervals, less powered than OLS), and DA15 is insignificant in every cell.}
+\captionof{table}{\textbf{Clearing-price effect by specification and reform-side leg} (EUR/MWh). Common pre-window from 2022-01-01; post-windows 2025-03-19 to 2025-04-27 (ID15, 40 days, pre-blackout) and the 90 days from 2025-10-01 (DA15). Base controls (all rows): wind, solar, gas, month FE, day-of-week FE, with hour-of-day FE added in the hourly rows; the renewable terms named are added on top. The quadratic row adds $\text{wind}^2$ and $\text{solar}^2$ with year-by-renewable interactions on the linear and quadratic terms; the cubic spec gives $-23.5$ / $-22.9$ ($p<0.001$). Newey--West HAC; BSTS adds a state-space level and 7-day seasonality, its $^{*}$ marking the posterior tail. Headline pooled-renewable ID15 spec in \textbf{bold}. The only significant DA15 cell is the hourly base, and it vanishes the moment renewable controls enter --- a confound, not an effect.}
 \label{tab:price-specs}
 \end{center}
 
@@ -895,7 +896,7 @@ DA15 IDA (cross-market)     & $13$ to $20\%$ & $-11$ to $-8\%$ & --- \\
 
 The within-day dispersion of the day-ahead\,$-$\,intraday wedge is the model's sharpest sign test, and it turns on exactly where the model says it should. The dispersion was mechanically zero before ID15 --- a single hourly day-ahead price cannot differ from itself within the hour --- and at ID15 it appears, but only in the ramp hours: strong in the morning ramp, present in the evening, and absent overnight (Table~\ref{tab:wedge-sd}). This is block parity at work. The hourly forward can be arbitraged only against the \emph{average} of the four spot quarter-prices, so arbitrage disciplines the mean wedge but lets the within-hour spread of the granular leg pass straight through --- and that spread is largest precisely where the ramp is steepest. The one off-sign cell, midday, is the solar-marginal block I exclude from the partition: there the granular prices \emph{converge} as midday solar flattens the within-hour profile, so a narrowing wedge is the same mechanism running the other way, not a counterexample.
 
-At DA15 the dispersion does not change in any hour class, and that null is itself a prediction borne out. With both auctions granular, full arbitrage would drive the within-hour wedge SD to zero; the model instead keeps it alive, because the position-takers who would close it hold a per-product capacity that shrinks as the number of products grows (\S\ref{sec:theory:da15}). The dispersion that switched on at the spot reform stays on through the forward reform --- bounded, price-impact-aware arbitrage sustains it rather than competing it away. The per-session wedge \emph{levels} at ID15 tell a consistent story, the earliest intraday session widening and the latest narrowing relative to the day-ahead, with the placebo cutover null; DA15 leaves the session wedges unchanged.
+At DA15 the dispersion does not change in any hour class, and that null is itself a prediction borne out. With both auctions granular, full arbitrage would drive the within-hour wedge SD to zero; the model instead keeps it alive, because the position-takers who would close it hold a per-product capacity that shrinks as the number of products grows (\S\ref{sec:theory:da15}). The dispersion that switched on at the spot reform stays on through the forward reform --- bounded, price-impact-aware arbitrage sustains it rather than competing it away. The per-session wedge \emph{levels} at ID15 are consistent with the same story: the earliest intraday session widens robustly across estimators, while an apparent narrowing of the latest session appears only in the daily specification and does not survive the hourly or BSTS estimators; the placebo cutover is null, and DA15 leaves the session wedges unchanged.
 
 \begin{center}
 \footnotesize
@@ -905,15 +906,14 @@ At DA15 the dispersion does not change in any hour class, and that null is itsel
 \toprule
 \textbf{Hour class} & \textbf{ID15} & \textbf{DA15} \\
 \midrule
-Overall           & $\mathbf{1.1}^{**}$  & null \\
-Critical (pooled) & $\mathbf{2.1}^{***}$ & null \\
-\quad Morning ramp & $\mathbf{2.3}^{***}$ & null \\
-\quad Evening ramp & $1.2^{*}$            & null \\
-Midday (excluded) & $-1.6^{**}$          & null \\
-Flat              & null                 & null \\
+Overall               & $\mathbf{1.1}^{**}$  & $-0.1$ \\
+Morning ramp (5--8)   & $\mathbf{2.3}^{***}$ & $0.5$ \\
+Midday (11--14)       & $-1.6^{**}$          & $-0.7$ \\
+Evening ramp (16--22) & $1.2^{*}$            & $-1.4$ \\
+Flat (1--3)           & $-0.0$               & $-0.5$ \\
 \bottomrule
 \end{tabular}
-\captionof{table}{\textbf{Within-day SD of the day-ahead\,$-$\,intraday wedge $\Delta^{\text{SD}}_d$ by hour class} (EUR/MWh, BSTS effect). Reforzada-constant windows: ID15 post 2025-03-19 to 2025-04-27; DA15 post 2025-10-01 to 2025-12-31. ``null'' denotes a $95\%$ interval covering zero in every hour class. The dispersion turns on at ID15 and does not collapse at DA15.}
+\captionof{table}{\textbf{Within-day SD of the day-ahead\,$-$\,intraday wedge $\Delta^{\text{SD}}_d$ by hour class} (EUR/MWh, BSTS effect). Reforzada-constant windows: ID15 post 2025-03-19 to 2025-04-27; DA15 post 2025-10-01 to 2025-12-31. At ID15 only the overall and morning-ramp effects are significant; every DA15 cell is insignificant. The dispersion turns on at ID15 and does not collapse at DA15.}
 \label{tab:wedge-sd}
 \end{center}
 
@@ -939,10 +939,10 @@ The cleanest single test in this section is on the bid-curve \emph{level}. The m
 \textbf{Outcome (DiD $\theta$)} & \textbf{Tech} & DA & IDA & DA & IDA \\
 \midrule
 $\sigma_p$ (EUR/MWh)                 & CCGT          & $\mathbf{4.45}^{***}$ & $0.24$            & $\mathbf{1.05}^{***}$  & $\mathbf{-1.01}^{***}$ \\
-                                     & Hydro         & $-0.35^{**}$           & $0.24$            & $\mathbf{0.85}^{***}$  & $\mathbf{0.44}^{***}$ \\
+                                     & Hydro         & $-0.35^{**}$           & $0.24$            & $0.85^{***}$  & $0.44^{***}$ \\
                                      & Pump-storage  & $\mathbf{-1.48}^{***}$ & $0.03$            & $0.13$                 & $-0.02$ \\
 $\text{HHI}_p$                       & CCGT          & $\mathbf{-0.18}^{***}$ & $-0.04$            & $\mathbf{-0.17}^{***}$  & $-0.00$ \\
-                                     & Hydro         & $0.010^{*}$           & $\mathbf{-0.034}^{***}$ & $\mathbf{-0.037}^{***}$ & $-0.01$ \\
+                                     & Hydro         & $0.010^{*}$           & $-0.034^{***}$ & $-0.037^{***}$ & $-0.01$ \\
                                      & Pump-storage  & $0.00$                 & $-0.02$            & $0.00$                  & $0.01$ \\
 \addlinespace
 \multicolumn{6}{l}{\emph{Slope and curvature in Appendix --- $\hat\beta$, $\hat\gamma$ are mechanically sensitive to tranche-count and price-grid density; treat as supporting.}} \\
