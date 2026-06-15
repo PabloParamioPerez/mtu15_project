@@ -35,6 +35,8 @@
 \usepackage{enumitem}
 \setlist[itemize]{leftmargin=*, itemsep=5pt, topsep=5pt}
 \usepackage{titlesec}
+% Section titles in the CEMFI accent colour (ties to the cover); lower levels stay black.
+\titleformat{\section}{\normalfont\Large\bfseries\color{cemfiblue}}{\thesection}{1em}{}
 \titlespacing*{\section}{0pt}{18pt}{10pt}
 \titlespacing*{\subsection}{0pt}{12pt}{6pt}
 \titlespacing*{\subsubsection}{0pt}{10pt}{4pt}
@@ -70,6 +72,10 @@
 % TikZ libraries used by the theory section's structure figure
 \usetikzlibrary{positioning, arrows.meta, calc, shapes.geometric, decorations.pathreplacing}
 
+% CEMFI / UIMP brand colours (sampled from the official combined logo)
+\definecolor{cemfiblue}{RGB}{47,73,149}
+\definecolor{uimpnavy}{RGB}{1,43,91}
+
 % Colour tints for critical / flat hour-class table rows
 \definecolor{critfill}{rgb}{0.98, 0.88, 0.88}
 \definecolor{flatfill}{rgb}{0.86, 0.91, 0.98}
@@ -94,12 +100,65 @@
 \date{June 2026}
 
 \begin{document}
-\maketitle
+
+% Front matter in roman numerals (cover counted but unprinted); the body
+% restarts at arabic 1 from the Introduction.
+\pagenumbering{roman}
+
+% ============================ Cover page ============================
+\begin{titlepage}
+\centering
+\vspace*{0.6cm}
+
+\includegraphics[width=5.2cm]{cemfi_uimp_logo.jpg}\\[0.55cm]
+
+{\large\scshape\color{cemfiblue} Centro de Estudios Monetarios y Financieros}\\[0.12cm]
+{\normalsize\color{uimpnavy} Universidad Internacional Men\'endez Pelayo}\\[0.18cm]
+{\normalsize Master in Economics and Finance}\\[1.1cm]
+
+{\color{cemfiblue}\rule{\textwidth}{1.3pt}}\\[0.6cm]
+
+{\LARGE\bfseries\color{cemfiblue} Rewiring the Market Time Clock in\\[0.25cm]
+ Spanish Electricity Markets\par}
+\vspace{0.45cm}
+{\large\itshape Strategic behaviour and market power with higher granularity}\\[0.6cm]
+
+{\color{cemfiblue}\rule{\textwidth}{1.3pt}}\\[1.7cm]
+
+{\footnotesize\bfseries\color{cemfiblue} AUTHOR}\\[0.22cm]
+{\large Pablo Paramio P\'erez}\\[1.1cm]
+
+{\footnotesize\bfseries\color{cemfiblue} THESIS ADVISOR}\\[0.22cm]
+{\large Pedro Mira}\\[1.7cm]
+
+{\large\color{cemfiblue} Madrid \textbullet\ June 2026}
+
+\vfill
+\end{titlepage}
+% ==================================================================
+
+% Title page is folio i (unprinted); the titlepage environment resets the page
+% counter to 1, so advance to ii here to keep front-matter anchors unique.
+\setcounter{page}{2}
+
+% ============================ Abstract ============================
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+
+\noindent\textit{[To be written --- one self-contained paragraph (about 150--200 words): the question (does a finer market-time unit reshape strategic bidding and market power?), the setting (the 2024--2025 ISP15 / ID15 / DA15 reforms in the Spanish wholesale market, separated from the post-blackout reinforced-operation regime), the approach (bid-level difference-in-differences paired with a sequential-markets model whose optimal step offer is solved in closed form), and the headline findings (clearing prices, residual-demand elasticity, bid-shape dispersion and concentration, the day-ahead/intraday wedge, and the imbalance penalty).]}
+
+\vspace{1.4cm}
+
+\section*{Resumen}
+
+\noindent\textit{[Por redactar --- traducci\'on al espa\~nol del resumen anterior, de extensi\'on equivalente.]}
+
+\clearpage
+% ==================================================================
 
 
 {\hypersetup{linkcolor=black}\tableofcontents}
-\clearpage
-
+\vspace{50pt}
 % =====================================================================
 \section*{Glossary of acronyms}\label{sec:glossary}
 \addcontentsline{toc}{section}{Glossary of acronyms}
@@ -108,27 +167,24 @@
 \noindent\footnotesize
 \begin{tabular}{@{}l p{0.36\textwidth}@{\hspace{1em}}l p{0.36\textwidth}@{}}
 \toprule
-OMIE      & Operador del Mercado Ib\'erico de Energ\'ia  & PDBC     & Programa Diario Base de Casaci\'on \\
-REE       & Red El\'ectrica de Espa\~na                  & PDBF     & PDBC plus bilateral contracts \\
-CNMC      & Comisi\'on Nacional de los Mercados y la Competencia & PIBCI & Programa Intradiario Base de Casaci\'on Incremental \\
-ENTSO-E   & European Network of TSOs for Electricity     & TR       & Tiempo Real (real-time technical restrictions) \\
-ESIOS     & Sistema de Informaci\'on del Operador del Sistema & Fase~I/II & pre-/post-IDA technical-restriction redispatch \\
-EU        & European Union                                & PO       & Procedimientos de Operaci\'on \\
-DA        & day-ahead auction                             & aFRR     & automatic Frequency Restoration Reserve \\
-IDA       & intraday auctions                             & mFRR     & manual Frequency Restoration Reserve \\
-SIDC      & Single Intraday Coupling                      & RR       & Replacement Reserve \\
-XBID      & cross-border intraday continuous market       & BRP      & Balance Responsible Party \\
-EPEX      & European Power Exchange                       & BSP      & Balance Service Provider \\
-MTU       & market time unit (MTU60 hourly; MTU15 15-min) & CCGT     & combined-cycle gas turbine \\
-ISP15     & imbalance settlement at 15 min (2024-12-11)   & RES      & renewable energy sources \\
-ID15      & intraday at 15 min (2025-03-19)               & PV       & photovoltaic \\
-DA15      & day-ahead at 15 min (2025-10-01)              & MIC      & minimum-income condition (offer type) \\
-DA60      & pre-DA15 hourly day-ahead                     & $\text{HHI}_{\text{tr}}$ & tranche-HHI: MW-weighted concentration of in-band bid tranches \\
-MCP       & market clearing price                         & MW / MWh / GWh & megawatt / megawatt-hour / gigawatt-hour \\
+OMIE      & Operador del Mercado Ib\'erico de Energ\'ia  & PDBF     & day-ahead base schedule, bilateral contracts included \\
+REE       & Red El\'ectrica de Espa\~na                  & Fase~I/II & pre-/post-IDA technical-restriction redispatch \\
+CNMC      & Comisi\'on Nacional de los Mercados y la Competencia & TR & Tiempo Real (real-time technical restrictions) \\
+ENTSO-E   & European Network of TSOs for Electricity     & PO       & Procedimientos de Operaci\'on \\
+ESIOS     & Sistema de Informaci\'on del Operador del Sistema & aFRR & automatic Frequency Restoration Reserve \\
+DA        & day-ahead auction                             & mFRR     & manual Frequency Restoration Reserve \\
+IDA       & intraday auctions                             & MCP      & market clearing price \\
+SIDC      & Single Intraday Coupling                      & $\text{HHI}_{\text{tr}}$ & tranche-HHI: MW-weighted concentration of in-band bid tranches \\
+XBID      & cross-border intraday continuous market       & CCGT     & combined-cycle gas turbine \\
+MTU       & market time unit (MTU60 hourly; MTU15 15-min) & MIC      & minimum-income condition (offer type) \\
+ISP15     & imbalance settlement at 15 min (2024-12-11)   & MW / MWh / GWh & megawatt / megawatt-hour / gigawatt-hour \\
+ID15      & intraday at 15 min (2025-03-19)               &          & \\
+DA15      & day-ahead at 15 min (2025-10-01)              &          & \\
 \bottomrule
 \end{tabular}\normalsize
 
 \clearpage
+\pagenumbering{arabic}  % body starts at page 1
 
 % =====================================================================
 \section{Introduction}\label{sec:intro}
@@ -403,7 +459,7 @@ The ladder does two things at once, and it helps to separate them. \emph{Where} 
 
 \subsection{Bid ladders within a product: step offers along the monopoly line}\label{sec:theory:ladder}
 
-I now solve the bid-shape layer: how the finite step ladder approximates the monopoly line within one delivery product. With linear residual demand and one-dimensional clearing-state uncertainty, a continuous supply schedule would sit exactly on the line and replicate the full-information monopoly outcome state by state, so the only friction is the finite number of tranches.\footnote{This friction is institutional, not merely a modelling convenience: a simple offer is capped at 25 price--quantity steps per period in the day-ahead auction \citep{omie_ficheros_2025} and at 5 in the intraday auctions \citep{omie_intradiario_2025}, so the number of tranches is genuinely bounded --- and far more tightly on the intraday side, where the bid-shape margin is institutionally narrower regardless of any strategic choice.} The optimal $n$-tranche ladder has a closed form for every bid-shape metric, it leaves the mean clearing price untouched (so the pricing layer is unaffected), and it interacts with granularity in a single line (Corollary~\ref{cor:did}).
+I now solve the bid-shape layer: how the finite step ladder approximates the monopoly line within one delivery product. With linear residual demand and one-dimensional clearing-state uncertainty, a continuous supply schedule would sit exactly on the line and replicate the full-information monopoly outcome state by state, so the only friction is the finite number of tranches.\footnote{This friction is institutional, not merely a modelling convenience: a simple offer is capped at 25 price--quantity steps per period in the day-ahead auction \citep{omie_ficheros_2025} and at 5 in the intraday auctions \citep{omie_intradiario_2025}, so the number of tranches is genuinely bounded --- and far more tightly on the intraday side, where the bid-shape margin is institutionally narrower regardless of any strategic choice. The 5 tranche limitation in the intraday auctions is alleviated by the possibility of submiting multiple bids, something not possible in the day-ahead market.} The optimal $n$-tranche ladder has a closed form for every bid-shape metric, it leaves the mean clearing price untouched (so the pricing layer is unaffected), and it interacts with granularity in a single line (Corollary~\ref{cor:did}).
 
 Fix one delivery product with residual demand $q = A - b\,p$, where $A = \bar a + v$, $v \sim U[-\Delta, \Delta]$, and marginal cost is a constant $c$; this is the generic stage-$m$ product, with the $mt$ subscripts of \S\ref{sec:theory:setup} suppressed here and restored per stage when the reforms apply the result --- for a spot product the centre $\bar a$ carries the realised forward price. The bidder submits a non-decreasing step offer before $v$ realises, and the auction clears at the crossing of the realised residual demand with the offer. When the crossing lands on a horizontal segment the marginal tranche sets the price; when it lands on a vertical riser the realised demand does. Both cases occur in equilibrium.
 
@@ -421,13 +477,54 @@ Let $w = 2\Delta/(2n+1)$ and let the monopoly quantity be interior in every stat
 (Proof: Appendix~\ref{app:tranche}.)
 \end{proposition}
 
-Figure~\ref{fig:ladder-quantizer} draws the result for two residual-demand slopes: each ladder weaves across its own monopoly line, crossing it at the midpoint of every horizontal segment and every vertical riser, and a flatter line (larger $b$) is tracked by a more compressed ladder.
+Figure~\ref{fig:ladder-quantizer} makes the geometry concrete. Panel~(a) shows \emph{how} a finite ladder implements the continuous benchmark: the staircase crosses its monopoly line at the midpoint of every segment (the dots), and those crossings are exactly the $2n+1$ \emph{target} states at which the offered step coincides with the full-information monopoly point; between targets the ladder departs from the line, and that gap is the $(A - \hat A)^2/(4b)$ approximation loss of Proposition~\ref{prop:ladder}. Panel~(b) is the comparative static: each ladder weaves across its own monopoly line, and a flatter line (larger $b$) is tracked by a more compressed ladder.
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[scale=0.82, every node/.style={font=\footnotesize}]
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+% x stretched (xscale>yscale) so the panel is as wide as (b) and the loss gap is
+% legible; anisotropic scaling preserves all incidences (lines, crossings,
+% collinearity). Point markers are nodes (absolute size) so the stretch does not
+% deform them.
+\begin{tikzpicture}[xscale=1.5, yscale=0.92, every node/.style={font=\scriptsize}]
+  \draw[-{Latex[length=2.2mm]}, thick, gray!70] (0,0) -- (4.0,0)
+    node[below left=1pt and -20pt, black]{Quantity $q$ (MW)};
+  \draw[-{Latex[length=2.2mm]}, thick, gray!70] (0,0) -- (0,4.7);
+  \node[rotate=90, anchor=south, black] at (-0.32, 2.4) {Bid price (EUR/MWh)};
+  % cost floor c=1
+  \fill[black] (0,1.0) circle (1.5pt);
+  \node[anchor=east, font=\tiny] at (-0.04,1.0) {$c$};
+  % monopoly line p = c + q/b, slope 0.85
+  \draw[red!70!black, dashed, very thick] (0,1.0) -- (3.45,3.93);
+  \node[red!70!black, anchor=west, align=left, font=\tiny] at (0.5,4.15) {monopoly line $S^\star$};
+  % base tier (parked) at floor
+  \draw[blue!65!black, line width=0.7pt, dotted] (0,1.0) -- (0.6,1.0);
+  % optimal ladder, n=2
+  \draw[blue!65!black, ultra thick, line cap=round, line join=round]
+    (0.6,1.0) -- (0.6,2.02) -- (1.8,2.02) -- (1.8,3.04) -- (3.0,3.04) -- (3.0,4.06);
+  % target dots: segment midpoints, on the line
+  \foreach \x/\y in {0.6/1.51, 1.2/2.02, 1.8/2.53, 2.4/3.04, 3.0/3.55}
+     \fill[red!70!black] (\x,\y) circle (1.6pt);
+  % residual-demand line through a TARGET state (through (1.2,2.02))
+  \draw[teal!55!black, thin] (0.45,2.66) -- (2.05,1.30);
+  \node[teal!45!black, anchor=north, font=\tiny, align=center] at (1.35,1.80) {target:\\ clearing $=$ monopoly};
+  % residual-demand line through an OFF-TARGET state: clearing (1.8,2.07) on riser, monopoly (1.529,2.299) on line
+  \draw[orange!75!black, thin] (1.25,2.54) -- (2.15,1.77);
+  \draw[{Latex[length=1.6mm]}-{Latex[length=1.6mm]}, orange!85!black, line width=0.8pt] (1.8,2.07) -- (1.529,2.299);
+  \node[draw=orange!85!black, fill=white, rectangle, minimum size=3.6pt, inner sep=0pt, line width=0.7pt] at (1.8,2.07) {}; % clearing on ladder
+  \node[draw=red!70!black, fill=white, circle, minimum size=3.6pt, inner sep=0pt, line width=0.7pt] at (1.529,2.299) {}; % monopoly on line
+  \node[orange!80!black, anchor=west, font=\tiny] at (1.92,2.16) {loss $\propto (A-\hat A)^2$};
+\end{tikzpicture}
+\caption{Implementing the line: exact at $2n+1$ targets.}
+\label{fig:ladder-quantizer-a}
+\end{subfigure}
+\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\begin{tikzpicture}[scale=0.665, every node/.style={font=\scriptsize}]
   \draw[-{Latex[length=2.4mm]}, thick, gray!70] (0,0) -- (9.2,0)
-    node[below left=2pt and -8pt, black]{Cumulative offered quantity (MW)};
+    node[below left=2pt and -8pt, black]{Quantity $q$ (MW)};
   \draw[-{Latex[length=2.4mm]}, thick, gray!70] (0,0) -- (0,6.5);
   \node[rotate=90, anchor=south, black] at (-0.55, 3.2) {Bid price (EUR/MWh)};
   % common cost intercept c
@@ -448,7 +545,10 @@ Figure~\ref{fig:ladder-quantizer} draws the result for two residual-demand slope
     -- (4.8,1.88) -- (4.8,2.392) -- (6.4,2.392) -- (6.4,2.65);
   \foreach \x/\y in {2.4/1.368, 4.0/1.88, 5.6/2.392} \fill[orange!80!black] (\x,\y) circle (1.6pt);
 \end{tikzpicture}
-\caption{\textbf{Different residual-demand slopes, different ladders.} Each monopoly line $p^m = c + q/b$ (common cost $c$, different slope $1/b$) is tracked by its own optimal step ladder, weaving across it at every segment midpoint (dots mark the implemented points). Competing tranches carry the same width $w$, so the price grid step $w/b$ --- and hence the dispersion of tranche prices --- shrinks as residual demand flattens: a steep line (small $b$) yields a tall, widely-spaced ladder; a flat line (large $b$) a compressed one. This is the bid-shape comparative static the reforms move (\S\ref{sec:theory:ladder}).}
+\caption{Different slopes, different ladders.}
+\label{fig:ladder-quantizer-b}
+\end{subfigure}
+\caption{\textbf{The optimal ladder as a finite implementation of the monopoly line.} \emph{Panel (a):} a monopoly line $S^\star$ and its optimal $n{=}2$ ladder, crossing at the segment midpoints (red dots, the $2n+1$ targets). A residual-demand line through a target (green) clears where ladder meets line; one through an intermediate state (orange) splits into a ladder point (square) and a monopoly point (circle), the separation being the $(A-\hat A)^2/(4b)$ loss. \emph{Panel (b):} a flatter monopoly line (larger $b$) is tracked by a more compressed ladder. See text.}
 \label{fig:ladder-quantizer}
 \end{figure}
 
@@ -581,7 +681,7 @@ The panel runs, for most series, from January 2018 to the present, spanning the 
 
 \subsection{Bid offers, reform path, and notation}\label{sec:data:outcomes}
 
-The object I observe, and the one the analysis is built on, is a single offer curve: one generating unit $u$, on date $d$, bidding into one delivery period $p$ --- a clock-hour before that market's switch to fifteen minutes, a quarter-hour after it. Each sell offer arrives in the tranche format of the OMIE files, a step ladder $\{(p_k, \Delta q_k)\}_{k=1}^{K_{u,d,p}}$ sorted by ascending price, where $\Delta q_k$ is the extra megawatts the unit adds once the price reaches $p_k$; cumulating the increments, $q_k = \sum_{j \le k} \Delta q_j$, recovers the corner points of the model's step offer. Offers come in three forms --- a bare price--quantity ladder, one carrying a minimum-income condition, or an all-or-nothing block spanning periods --- and most technologies bid the bare form, the combined-cycle plants being the exception, bidding mostly income-conditioned or block. Against each offer I line up the auction's clearing price $\text{MCP}_{d,p}$ and its cleared quantity $Q^\star_{d,p}$. Throughout, $h \in \{1,\dots,24\}$ indexes the clock-hour and $q \in \{1,\dots,4\}$ its quarters (defined only after the switch), $s$ the three intraday sessions, $t$ a technology, $m \in \{\text{DA},\text{IDA}\}$ the market, $k$ the rungs of a ladder, and $T_r$ the cutover date of a given reform.
+The object I observe, and the one the analysis is built on, is the in-band supply curve of one generating unit $u$, on date $d$, into one delivery period $p$ --- a clock-hour before that market's switch to fifteen minutes, a quarter-hour after it. Each sell offer arrives in the tranche format of the OMIE files, a step ladder $\{(p_k, \Delta q_k)\}_{k=1}^{K_{u,d,p}}$ sorted by ascending price, where $\Delta q_k$ is the extra megawatts the unit adds once the price reaches $p_k$; cumulating the increments, $q_k = \sum_{j \le k} \Delta q_j$, recovers the corner points of the model's step offer. A unit may split its bid across more than one offer in the same period; since the auction clears against the union of its tranches, I pool a unit's offers into the single per-unit curve before forming any bid-shape statistic --- the economically relevant schedule, and the level at which the model's competing tier is defined. This is moot in the day-ahead, where a unit bids one offer per period, and binds only in the intraday, where a minority of units stack (Appendix~\ref{app:offer-stacking}). Offers come in three forms --- a bare price--quantity ladder, one carrying a minimum-income condition, or an all-or-nothing block spanning periods --- and most technologies bid the bare form, the combined-cycle plants being the exception, bidding mostly income-conditioned or block. Against each offer I line up the auction's clearing price $\text{MCP}_{d,p}$ and its cleared quantity $Q^\star_{d,p}$. Throughout, $h \in \{1,\dots,24\}$ indexes the clock-hour and $q \in \{1,\dots,4\}$ its quarters (defined only after the switch), $s$ the three intraday sessions, $t$ a technology, $m \in \{\text{DA},\text{IDA}\}$ the market, $k$ the rungs of a ladder, and $T_r$ the cutover date of a given reform.
 
 Three reforms move the granularity of this object in under a year, and the whole empirical design turns on keeping them apart. The settlement clock went quarter-hourly first (ISP15, 11 December 2024), then the intraday auctions and the continuous market (ID15, 19 March 2025), and finally the day-ahead (DA15, 1 October 2025); the late-April 2025 blackout opened the reinforced-operation regime that then runs alongside the last cutover. Because that regime overlaps the day-ahead reform on the calendar but works through a different mechanism, every comparison window below is cut inside a span where the regime is constant, so a reform effect and a regime effect are never confounded.
 
@@ -1065,6 +1165,17 @@ Read together, the results trace the asymmetry of activation that \S\ref{sec:the
 
 \appendix
 
+% --- Appendices divider: a TOC entry plus an unnumbered heading at the
+% transition from main text to supplementary material. ---
+\addtocontents{toc}{\protect\addvspace{6pt}}
+\addcontentsline{toc}{section}{\protect\textbf{Appendices}}
+
+\begin{center}
+  {\Large\bfseries\color{cemfiblue} Appendices}\\[5pt]
+  {\color{cemfiblue}\rule{0.16\textwidth}{1pt}}
+\end{center}
+\vspace{0.3\baselineskip}
+
 % =====================================================================
 \section{Theoretical derivations}\label{app:derivations}
 % =====================================================================
@@ -1091,17 +1202,17 @@ where $p_{1(t)}$ is the forward price covering quarter $t$ (one number per clock
 \paragraph{Tiling lemma: uniform amplification under aggregation.} \S\ref{sec:theory:setup} states that the uniform family is closed under the aggregation $v_{mt} = \theta_m + \mu_{mt}$ --- that one stochastic news process delivers both $\theta_m \sim U[-\Delta_m, \Delta_m]$ and $v_{mt} \sim U[-\rho\Delta_m, +\rho\Delta_m]$ at once. The tiling lemma is the construction behind that claim: it exhibits the $\mu_{mt}$ that closes the family and pins $\rho$ to the support of the news.
 
 \begin{lemma}[Tiling]\label{lem:tiling}
-Let $\theta_m \sim U[-\Delta_m, \Delta_m]$ and let $\mu_{mt}$ be supported on $\{-\Delta_m, +\Delta_m\}$, taking each value with probability $1/2$ in each quarter (with $\sum_t \mu_{mt} = 0$ enforced across quarters). Then $v_{mt} = \theta_m + \mu_{mt} \sim U[-2\Delta_m, +2\Delta_m]$ exactly: $\rho = 2$. More generally, supporting $\mu_{mt}$ on the integer multiples $\{-(2j-1)\Delta_m, +(2j-1)\Delta_m\}$ for $j = 1, \dots, J$ delivers $v_{mt} \sim U[-(2J)\Delta_m, +(2J)\Delta_m]$ exactly, i.e.\ $\rho = 2J$, an arbitrary even integer.
+Let $\theta_m \sim U[-\Delta_m, \Delta_m]$ and let $\mu_{mt}$ be supported on $\{-\Delta_m, +\Delta_m\}$, taking each value with probability $1/2$ in each quarter (with $\sum_t \mu_{mt} = 0$ enforced across quarters). Then $v_{mt} = \theta_m + \mu_{mt} \sim U[-2\Delta_m, +2\Delta_m]$ exactly: $\rho = 2$. More generally, supporting $\mu_{mt}$ on the $2J$ odd multiples $\{-(2j-1)\Delta_m, +(2j-1)\Delta_m\}$ for $j = 1, \dots, J$, each with probability $1/(2J)$, delivers $v_{mt} \sim U[-(2J)\Delta_m, +(2J)\Delta_m]$ exactly, i.e.\ $\rho = 2J$, an arbitrary even integer.
 \end{lemma}
 
 \begin{proof}
-For the $J = 1$ case: $\theta_m + \Delta_m \sim U[0, 2\Delta_m]$ when $\mu_{mt} = +\Delta_m$, and $\theta_m - \Delta_m \sim U[-2\Delta_m, 0]$ when $\mu_{mt} = -\Delta_m$. Each sub-distribution has density $1/(2\Delta_m)$ on its support; the equiprobable mixture has density $1/(4\Delta_m)$ on $[-2\Delta_m, 2\Delta_m]$, which is $U[-2\Delta_m, 2\Delta_m]$. The two sub-supports tile $[-2\Delta_m, 2\Delta_m]$ without overlap or gap. The $J > 1$ case is the same tiling argument with $J$ pairs of sub-supports.
+For the $J = 1$ case: $\theta_m + \Delta_m \sim U[0, 2\Delta_m]$ when $\mu_{mt} = +\Delta_m$, and $\theta_m - \Delta_m \sim U[-2\Delta_m, 0]$ when $\mu_{mt} = -\Delta_m$. Each sub-distribution has density $1/(2\Delta_m)$ on its support; the equiprobable mixture has density $1/(4\Delta_m)$ on $[-2\Delta_m, 2\Delta_m]$, which is $U[-2\Delta_m, 2\Delta_m]$. The two sub-supports tile $[-2\Delta_m, 2\Delta_m]$ without overlap or gap. The $J > 1$ case is the same tiling argument with $J$ pairs of sub-supports: the $2J$ shifted copies of $U[-\Delta_m,\Delta_m]$ have centres spaced $2\Delta_m$ apart, so they abut without overlap or gap, and equiprobable weighting $1/(2J)$ gives every tile the common height $1/(4J\Delta_m)$, i.e.\ a single uniform on $[-2J\Delta_m, 2J\Delta_m]$ (unequal weights would make the density a step function rather than uniform).
 \end{proof}
 
 The body carries a general $\rho$ rather than the even-integer values delivered by the tiling; I treat $\rho$ as a primitive of the hour, pinned by the support of the redistributive component the market's per-quarter object carries. The same construction with a smaller support delivers the news-only value $\rho^{\,\mu} \le \rho$ used in \S\ref{sec:theory:da15}.
 
 
-\paragraph{Model abstractions: residual monopolist, supply functions, and the passive balancing stage.} Three simplifications deserve flagging. First, the strategic bidder is a single residual monopolist per product, even though Spanish wholesale concentration is moderate (firm-level Herfindahl $\sim$1\,100) and several firms compete on the bid stack. The residual monopolist is a stylised device that delivers clean comparative statics on conduct near the clearing price. Second, within a product the bid \emph{is} a supply function, and with a single strategic bidder facing one-dimensional residual-demand uncertainty the optimal schedule is exact (\S\ref{sec:theory:ladder}); what I do not model is strategic interaction in supply functions across several large firms --- the supply-function-equilibrium concept of \citet{klemperer_meyer_1989} --- which gets intractable in a sequential-market setting. Third, the balancing stage in the model is a passive settlement of the residual imbalance, \emph{not} an active auction with bidding. The aggregator internalises its own deviation through the penalty $\gamma$; the strategic bidder produces with certainty and so carries no individual imbalance; the unpriced within-hour residual collects in $C^I_{\text{sys}}$ for the welfare account (Appendix~\ref{app:balancing}, \ref{app:welfare}). In reality the system operator runs active balancing auctions; I abstract from them to keep the focus on how forward and spot granularity reshape the auction stages. What the model keeps from this layer is its prediction: finer auctions absorb the within-hour state upstream and shrink the balancing residual.
+\paragraph{Model abstractions: residual monopolist, supply functions, and the passive balancing stage.} Three simplifications deserve flagging. First, the strategic bidder is a single residual monopolist per product, even though Spanish wholesale concentration is moderate (firm-level Herfindahl $\sim$1\,100) and several firms compete on the bid stack. The residual monopolist is a stylised device that delivers clean comparative statics on conduct near the clearing price. Second, within a product the bid \emph{is} a supply function, and with a single strategic bidder facing one-dimensional residual-demand uncertainty the optimal schedule is exact (\S\ref{sec:theory:ladder}); what I do not model is strategic interaction in supply functions across several large firms --- the supply-function-equilibrium concept of \citet{klemperer_meyer_1989} --- which gets intractable in a sequential-market setting. Third, the balancing stage in the model is a passive settlement of the residual imbalance, \emph{not} an active auction with bidding. The aggregator internalises its own deviation through the penalty $\gamma$; the strategic bidder produces with certainty and so carries no individual imbalance; the unpriced within-hour residual collects in $C^I_{\text{sys}}$ for the welfare account (Appendix~\ref{app:balancing}, \ref{app:welfare}). In reality the operator actively holds total generation equal to total demand in real time --- keeping system frequency at its nominal value --- by activating reserves it procures in the secondary (automatic), tertiary (manual) and replacement-reserve markets, the cost of which is then allocated back to deviating parties through imbalance settlement (the model's penalty $\gamma$ is the reduced-form stand-in for that settlement charge). I abstract from this real-time frequency-control layer to keep the focus on how forward and spot granularity reshape the day-ahead and intraday auction stages. What the model keeps from this layer is its prediction: finer auctions absorb the within-hour state upstream and shrink the balancing residual.
 
 \paragraph{Renewable fringe and our relation to \citeauthor{ito_reguant_2016}.} \citeauthor{ito_reguant_2016}'s residual-demand interpretation already absorbs a renewable (or thermal) competitive fringe into the slope $b_m$: the strategic bidder serves $A - b_m p_m$, the implicit fringe serves the complement. Their setup delivers the strategic-bidder, arbitrage, and price-wedge mechanisms but is silent on two objects our data record directly: \emph{why} the fringe's willingness to supply changes with granularity, and \emph{what shape} the strategic bidder's offer takes. I make the fringe explicit (the operational aggregator with forecast errors and an imbalance penalty $\gamma$), so the hedging gain from per-period scheduling has the closed form $G(\Delta_\eta) = \gamma Q \Delta_\eta/2$ (Appendix~\ref{app:aggregator}); and I let the strategic bidder choose the step offer itself, so the geometry of the competing tier --- depth, dispersion, gradient --- comes out in closed form (\S\ref{sec:theory:ladder}).
 
@@ -1176,11 +1287,11 @@ $q^m(\bar a - \Delta) \ge \Delta/(2(2n+1))$: the monopoly quantity is interior i
 The supply schedule $S^*(p) = b\,(p - c)$ clears at the full-information monopoly point $p^m(A) = (A + bc)/(2b)$, $q^m(A) = (A - bc)/2$ in every state $A$, and is the unique non-decreasing schedule that does so on the contested range. Expected profit equals $\mathbb{E}[(A - bc)^2 \mid \mathcal{H}_m]/(4b)$, the monopoly value.
 \end{lemma}
 
-\noindent\textit{Proof.}\ In state $A$, the full-information monopoly point maximises $(p - c)(A - b\,p)$ over $p$; the FOC gives $p^m(A) = (A + b\,c)/(2 b)$ and $q^m(A) = (A - b\,c)/2$. Eliminating $A$, the monopoly line is $\{(q, p) : q = b(p - c)\}$, a line of slope $b$ through $(p, q) = (c, 0)$. Define $S^\star(p) = b(p - c)$. For any state $A$,
+\noindent\textit{Proof.}\ In state $A$, the full-information monopoly point maximises $(p - c)(A - b\,p)$ over $p$; the FOC gives $p^m(A) = (A + b\,c)/(2 b)$ and $q^m(A) = (A - b\,c)/2$. \emph{Candidate (eliminate $A$).} As $A$ ranges over its support, the optimum $(p^m(A), q^m(A))$ traces a curve; eliminating the parameter $A$\footnote{$p^m(A)$ and $q^m(A)$ are the parametric equations of a line with parameter $A$; solving $A = 2b\,p^m - bc$ and substituting into $q^m$ removes $A$, giving the Cartesian relation $q = b(p-c)$ the optimum satisfies in every state.} identifies that curve as the monopoly line $\{(q, p) : q = b(p - c)\}$, a line of slope $b$ through $(p, q) = (c, 0)$. This is a derivation: it tells us \emph{which} curve the state-by-state optima sit on, nothing yet about a committed schedule. \emph{Verification (re-introduce $A$).} Read the line as a single, state-independent supply schedule $S^\star(p) = b(p - c)$ --- chosen before $A$ is known --- and check it clears at the monopoly optimum in \emph{every} state. For any $A$,
 \[
 S^\star(p^m(A)) \;=\; b\Bigl(\frac{A + b\,c}{2 b} - c\Bigr) \;=\; \frac{A - b\,c}{2} \;=\; q^m(A),
 \]
-so $(p^m(A), q^m(A))$ is on $S^\star$ in every state. \emph{Uniqueness on the contested range}: a non-decreasing schedule that clears at the monopoly point in every state must contain the line, which is strictly increasing; a monotone schedule containing a strictly increasing curve coincides with it on its range. Expected profit at $S^\star$ is $\mathbb{E}[(p^m(A) - c) q^m(A) \mid \mathcal{H}_m] = \mathbb{E}[(A - b c)^2 \mid \mathcal{H}_m]/(4 b)$, the monopoly value. $\square$
+so the one fixed schedule $S^\star$ passes through $(p^m(A), q^m(A))$ in every state, and is a strictly increasing (hence admissible monotone) bid. \emph{Uniqueness on the contested range}: a non-decreasing schedule that clears at the monopoly point in every state must contain the line, which is strictly increasing; a monotone schedule containing a strictly increasing curve coincides with it on its range. Expected profit at $S^\star$ is $\mathbb{E}[(p^m(A) - c) q^m(A) \mid \mathcal{H}_m] = \mathbb{E}[(A - b c)^2 \mid \mathcal{H}_m]/(4 b)$, the monopoly value. $\square$
 
 \subsubsection{Optimal $n$-tranche ladder (proof of Proposition~\ref{prop:ladder})}\label{app:tranche:quantizer}
 
@@ -1192,17 +1303,17 @@ so $(p^m(A), q^m(A))$ is on $S^\star$ in every state. \emph{Uniqueness on the co
 \end{itemize}
 This partitions the state space into $2n+1$ full cells: one base riser, $n$ horizontals of length $Q_k - Q_{k-1}$ (in $A$-units), and $n$ risers of length $b(p_{k+1} - p_k)$. Profit is continuous at every switch: both adjacent regimes deliver the same price--quantity pair at the boundary state.
 
-\paragraph{Each instrument serves an interval of states and loses a squared distance.} Profit in state $A$ is a quadratic hill around the monopoly point. On a horizontal segment at price $p$, completing the square gives $\pi(p;\, A) = \pi^m(A) - b\,(p - p^m(A))^2$; on a riser at quantity $q$ (the base included), $\pi(q;\, A) = \pi^m(A) - (q - q^m(A))^2/b$. Each instrument is therefore exactly right in one state --- the step at $p$ in the state whose monopoly price is $p$, the riser at $q$ in the state whose monopoly quantity is $q$; call that state the instrument's \emph{target} $\hat A$. Because $p^m$ and $q^m$ are linear in $A$ with slopes $1/(2b)$ and $1/2$, both losses reduce to the same expression,
+\paragraph{Each instrument is tuned to one state and loses the squared distance to it.} Read the offer as a kit of $2n+1$ \emph{instruments}: the $n$ horizontal steps, one fixing the \emph{price} $p_k$ the bidder will accept, and the $n+1$ risers (the base $q_0$ and the cumulative quantities $Q_k$), each fixing a \emph{quantity} the bidder will supply. A fixed step or riser coincides with the full-information monopoly response in exactly one state --- the step at price $p$ in the state whose monopoly price is $p$ (where $p^m(A)=p$), the riser at quantity $q$ in the state where $q^m(A)=q$. Call that single state the instrument's \emph{target} $\hat A$: the state it is tuned to, in which using it costs nothing. Away from $\hat A$ profit falls off as a quadratic hill around the monopoly point --- completing the square, a horizontal at $p$ earns $\pi(p;\, A) = \pi^m(A) - b\,(p - p^m(A))^2$ and a riser at $q$ earns $\pi(q;\, A) = \pi^m(A) - (q - q^m(A))^2/b$. Substituting the target ($p = p^m(\hat A)$, $q = q^m(\hat A)$) and using that $p^m, q^m$ are linear in $A$ with slopes $1/(2b)$ and $1/2$ --- so $p - p^m(A) = (\hat A - A)/(2b)$ and $q - q^m(A) = (\hat A - A)/2$ --- both losses collapse to the same penalty in the \emph{state} distance,
 \[
-\pi^m(A) - \pi \;=\; \frac{(A - \hat A)^2}{4\,b},
+\pi^m(A) - \pi \;=\; \frac{(A - \hat A)^2}{4\,b}.
 \]
-so the bidder's problem is to place $2n+1$ targets so that whichever state realises, it lands close to a target.
+The bidder's problem is therefore to place $2n+1$ targets along the state range so that, whichever state $A$ realises, it lands close to some target.
 
-\paragraph{Equal intervals are optimal.} An instrument serving an interval of length $L$ does best with its target at the interval's midpoint, since the loss is symmetric in the distance; the mean squared distance of a uniform draw from the midpoint is $L^2/12$ (the variance of a uniform), and the interval is reached with probability $L/(2\Delta)$. Its contribution to the expected loss is therefore at least
+\paragraph{Equal intervals are optimal.} Whichever target is nearest clears, so the $2n+1$ targets cut the state range $[\bar a - \Delta, \bar a + \Delta]$ (total width $2\Delta$, and $A$ uniform on it) into $2n+1$ contiguous intervals, one served by each target. Consider any one such interval, of length $L$. Its instrument can do no better than centring the target at the interval's midpoint, since the loss $(A - \hat A)^2/(4b)$ is symmetric in the distance to $\hat A$; centred, a uniform state falling in the interval sits at mean squared distance $L^2/12$ from the target (the variance of a uniform of width $L$), and the interval is reached with probability $L/(2\Delta)$. Its contribution to the expected loss is therefore at least
 \[
-\frac{L^2}{12} \cdot \frac{1}{4 b} \cdot \frac{L}{2\Delta} \;=\; \frac{L^3}{96\, b\, \Delta},
+\underbrace{\frac{L^2}{12}}_{\text{mean sq.\ dist.}} \cdot \underbrace{\frac{1}{4 b}}_{\text{loss per unit}} \cdot \underbrace{\frac{L}{2\Delta}}_{\Pr(\text{state}\in\text{interval})} \;=\; \frac{L^3}{96\, b\, \Delta}.
 \]
-and the total expected loss is at least $\sum_j L_j^3/(96\, b\, \Delta)$ over the $2n+1$ intervals with $\sum_j L_j = 2\Delta$. Since $x^3$ is convex, moving length from a longer interval to a shorter one always lowers the sum, so the minimum splits the state range into \emph{equal} intervals of width $w \equiv 2\Delta/(2n+1)$.
+Summing over the intervals, the expected loss is at least $\sum_j L_j^3/(96\, b\, \Delta)$ with the lengths constrained by $\sum_j L_j = 2\Delta$. Since $x^3$ is convex, moving length from a longer interval to a shorter one always lowers the sum, so the bound is minimised by splitting the state range into $2n+1$ \emph{equal} intervals of width $w \equiv 2\Delta/(2n+1)$. (The next step shows the equal grid actually attains this lower bound.)
 
 \paragraph{The clearing rule places the boundaries halfway by itself.} The bidder chooses only the targets; the interval boundaries then follow from the clearing geometry, and they land exactly halfway between adjacent targets. The switch from the step at $p_k$ to the riser at $Q_k$ occurs at the state $A^\star = Q_k + b\,p_k$; substituting $p_k = p^m(\hat A_{H_k})$ and $Q_k = q^m(\hat A_{V_k})$,
 \[

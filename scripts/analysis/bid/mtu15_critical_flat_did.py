@@ -139,7 +139,25 @@ def clustered_ols(y, X, cluster):
 # ============================================================================
 
 def build_ida_panel(lo, hi):
-    """Per (unit, date, session, period) IDA in-band sigma_p and N_eff."""
+    """Per (unit, date, session, period) IDA in-band sigma_p and N_eff.
+
+    AGGREGATION LEVEL: the bid-shape metrics are computed on each unit's
+    COMBINED in-band supply curve, pooling every offer the unit stacks into the
+    same (session, period). The GROUP BY below keys on unit_code, NOT offer_code,
+    so the tranches from all of a unit's offers are merged before sigma_p,
+    n_eff (1/HHI_tr), and n_tranche are formed. This is the economically correct
+    object: EUPHEMIA clears the UNION of a unit's tranches, so the schedule the
+    market actually faces is the merged per-unit curve, not any single offer.
+    Measuring per-offer would (i) impose an artificial 5-step ceiling (the cap is
+    per OFFER, not per unit -- a unit stacking k offers can present up to 5k
+    steps) and (ii) miss the discrimination a unit achieves by splitting its
+    schedule across offers. We do NOT aggregate further to the firm level: a
+    firm's units are physically distinct assets, so the bid-shape primitive is
+    per-unit. One caveat this creates -- the multi-offer SHARE itself shifts
+    across the reforms, so part of the per-unit granularity change can be
+    mechanical -- is checked in offer_stacking_confounder.py (single-offer-
+    restricted DiD).
+    """
     con = duckdb.connect()
     con.execute("SET memory_limit='12GB'")
     con.execute("SET threads=4")
@@ -186,7 +204,7 @@ def build_ida_panel(lo, hi):
            SUM(i.q*i.p*i.p) AS sum_wp2, SUM(i.q*i.q) AS sum_w2,
            COUNT(*) AS n_tranche
     FROM inband i JOIN u ON i.unit_code = u.unit_code
-    GROUP BY 1,2,3,4,5,6,7
+    GROUP BY 1,2,3,4,5,6,7  -- by unit, NOT offer_code: merge a unit's stacked offers
     HAVING SUM(i.q) > 0
     """
     df = con.execute(sql).fetchdf()
@@ -523,7 +541,7 @@ def main():
            SUM(i.q) sum_w, SUM(i.q*i.p) sum_wp, SUM(i.q*i.p*i.p) sum_wp2,
            SUM(i.q*i.q) sum_w2, COUNT(*) n_tranche
     FROM inband i JOIN u ON i.unit_code = u.unit_code
-    GROUP BY 1,2,3,4,5,6 HAVING SUM(i.q) > 0
+    GROUP BY 1,2,3,4,5,6 HAVING SUM(i.q) > 0  -- by unit, NOT offer_code (see build_ida_panel docstring)
     """
     da = con.execute(sql).fetchdf()
     da["d"] = pd.to_datetime(da["d"])
