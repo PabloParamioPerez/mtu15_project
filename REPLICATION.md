@@ -28,6 +28,7 @@ each exhibit pointing to the same script.
 | `fig:ree_intervention_by_tech` | `fig_programs_by_tech_weekly.pdf` | `firm/programs_weekly_by_tech.py` |
 | `fig:ree_intervention_other_tech` | `fig_programs_by_tech_other_weekly.pdf` | `firm/programs_weekly_by_tech_other.py` |
 | `fig:parallel-trends-sigma-p-per-session` | `fig_parallel_trends_sigma_p_per_session.pdf` | `bid/fig_parallel_trends_sigma_p_per_session.py` |
+| `fig:hhi-price-pt` | `fig_ccgt_hhi_price_pt.pdf` | `bid/fig_ccgt_hhi_price_pt.py` |
 
 Schematic figures drawn in-document with TikZ (no script): `fig:market-structure`,
 `fig:bid_internal:timeline`, `fig:model-structure`, `fig:within-hour-state`,
@@ -40,8 +41,9 @@ Schematic figures drawn in-document with TikZ (no script): `fig:market-structure
 | `tab:bandwidths` | in-band bandwidth δ = p90−p50 per (window, market) | values read from the MCP distribution; no standalone script |
 | `tab:price-specs` | clearing-price effect by spec (OLS daily/hourly, BSTS) | `bid/ols_price_full_controls.R`, `bid/ols_price_hourly.R`, `bid/bsts_daily_year_interactions.R`, `bid/bsts_daily_quadratic.R` |
 | `tab:margin-channel` | residual-demand slope change + margin index | `bid/build_per_firm_residual_demand_slope.py`, `bid/bsts_per_firm_b.R`, `bid/build_per_firm_strategic_markup.py` |
-| `tab:bsts-buy-share` / `tab:wedge-sd` | DA−IDA wedge mean and within-day SD by hour class | `bid/bsts_wedge_hour_class.R` |
+| `tab:wedge-sd` | DA−IDA wedge mean and within-day SD by hour class (incl. morning/evening ramp split) | Mean: `bid/build_wedge_hour_class_panel.py` → `bid/bsts_wedge_hour_class.R`; SD: `bid/build_wedge_volatility_panel.py` → `bid/bsts_wedge_volatility.R` |
 | `tab:spec-c` | bid-shape DiD on σ_p and HHI_tr | `bid/mtu15_critical_flat_did.py` |
+| `tab:hhi-price` | price-gap Herfindahl HHI_p DiD (own-market cells) | `bid/hhi_price_did.py` |
 | `tab:bsts-imbalance-penalty` | imbalance settlement prices and volume (OLS + BSTS) | `bid/bsts_imbalance_penalty.R`, `bid/ols_imbalance.py` |
 | `tab:comparative` | theory comparative statics across the reform path | hand-built from the model (no script) |
 | `tab:pretrend-placebo` | pre-only midpoint placebo for the bid-shape DiD | `bid/run_pre_only_placebo_p90.py` |
