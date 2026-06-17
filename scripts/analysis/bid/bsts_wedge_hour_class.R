@@ -1,9 +1,9 @@
 # STATUS: ALIVE
 # LAST-AUDIT: 2026-05-29
 # FEEDS: thesis/provisional/advisor_memo.tex sec 4(ii) -- BSTS on the
-#        DA - IDA wedge by hour-class (critical / midday / flat) using the
-#        reforzada-constant per-reform pre/post windows. 12 BSTS runs
-#        (3 hour-classes x 2 reforms x real/placebo).
+#        DA - IDA wedge by hour-class (critical / morning ramp / evening ramp /
+#        midday / flat) using the reforzada-constant per-reform pre/post windows.
+#        20 BSTS runs (5 hour-classes x 2 reforms x real/placebo).
 #
 # OUT: results/regressions/bid/mtu15_critical_flat/bsts_wedge_hour_class.csv
 
@@ -20,7 +20,7 @@ panel_fp <- file.path(repo, "data/derived/panels/wedge_hour_class_panel.parquet"
 out_dir <- file.path(repo, "results/regressions/bid/mtu15_critical_flat")
 
 COVARS <- c("wind_gwh", "solar_gwh", "gas_eur")
-OUTCOMES <- c("wedge_critical", "wedge_midday", "wedge_flat")
+OUTCOMES <- c("wedge_critical", "wedge_morning", "wedge_evening", "wedge_midday", "wedge_flat")
 CFGS <- list(
   list("ID15", "real",    "2024-06-14", "2025-03-18", "2025-03-19", "2025-04-27"),
   list("ID15", "placebo", "2023-06-14", "2024-03-18", "2024-03-19", "2024-04-27"),

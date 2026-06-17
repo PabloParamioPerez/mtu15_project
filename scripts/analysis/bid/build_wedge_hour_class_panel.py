@@ -79,6 +79,18 @@ def main():
     daily.index = pd.to_datetime(daily.index)
     daily = daily.reset_index().rename(columns={"d": "d"})
 
+    # Morning (5-8) and evening (16-22) ramp sub-splits of critical (daily means)
+    MORNING = {5, 6, 7, 8}
+    EVENING = {16, 17, 18, 19, 20, 21, 22}
+    ramp = (joined.assign(
+                ramp=joined["clock_hour"].map(
+                    lambda h: "wedge_morning" if h in MORNING
+                    else ("wedge_evening" if h in EVENING else None)))
+            .dropna(subset=["ramp"])
+            .groupby(["d", "ramp"])["wedge"].mean().unstack("ramp"))
+    ramp.index = pd.to_datetime(ramp.index)
+    daily = daily.merge(ramp.reset_index(), on="d", how="left")
+
     # Merge with covariates from bsts_daily_panel
     base = pd.read_parquet(BASE)[["d", "wind_gwh", "solar_gwh", "gas_eur"]]
     base["d"] = pd.to_datetime(base["d"])
