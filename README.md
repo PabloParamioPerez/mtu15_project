@@ -27,7 +27,6 @@ Superseded exploratory analyses (≈280 scripts) live under `scripts/analysis/at
 |---|---|
 | [`thesis/paper/thesis.tex`](thesis/paper/thesis.tex) → [`thesis.pdf`](thesis/paper/thesis.pdf) | The thesis paper itself. Single-file LaTeX (sections, not chapters). |
 | [`thesis/provisional/additional_results.tex`](thesis/provisional/additional_results.tex) | Working scratch pad of supplementary findings outside the main paper. |
-| [`CLAUDE.md`](CLAUDE.md) | Canonical project rules — data layers, OVB / seasonality protocols, file conventions, source-separation rule. |
 | [`docs/notes/SPANISH_MARKET_STRUCTURE.md`](docs/notes/SPANISH_MARKET_STRUCTURE.md) | Project reference for the sequential market structure (DA $\to$ IDA $\to$ continuous $\to$ balancing $\to$ P48), `tipo_redespacho` codes, TR cause-code dictionary, ESIOS indicator inventory. |
 | [`notebooks/memos/_esios_archive_catalog.md`](notebooks/memos/_esios_archive_catalog.md) | ESIOS API archive triage memo (which archives we ingest and why) — the only memo we actively maintain. |
 | [`data/external/esios_indicator_catalog.yaml`](data/external/esios_indicator_catalog.yaml) | 279 curated ESIOS indicators across 32 families, tagged with their native granularity. |
@@ -51,7 +50,7 @@ These dates appear as constants `ISP15_REFORM`, `INTRADAY_REFORM`, `BLACKOUT`, `
 
 ## Data sources
 
-Three sources, kept strictly separate at the data layer (see `CLAUDE.md` §Source separation rule).
+Three sources, kept strictly separate at the data layer (the source-separation rule below).
 
 ### OMIE — Iberian market operator
 
@@ -278,7 +277,6 @@ mtu15_project/
 ├── tests/                                 # pytest suite
 ├── logs/                                  # runtime logs
 ├── attic/                                 # project-level retired material
-├── CLAUDE.md                              # canonical project rules
 └── README.md                              # this file
 ```
 
@@ -313,7 +311,7 @@ mtu15_project/
 
 ## Methodological protocols
 
-OVB-robustness, good-vs-bad controls (the simultaneity / mediator-bias rules), seasonality + weather controls for cross-regime claims, and the power-vs-energy discipline (MW vs MWh under mixed-granularity samples) all live in [`CLAUDE.md`](CLAUDE.md) under the respective sections.
+The identification and robustness methodology — OVB-robustness and good-vs-bad controls (the simultaneity / mediator-bias rules), seasonality and weather controls for cross-regime claims, and the power-vs-energy discipline (MW vs MWh under mixed-granularity samples) — is documented in the thesis (§5–§6 and the appendices) and applied throughout the analysis code.
 
 The thesis paper itself (`thesis/paper/thesis.tex`) presents the integrated theory, identification and empirical evidence; the identification strategy (per-curve DiD on bid shape with a critical/flat hour partition, and BSTS counterfactuals with same-calendar placebos for prices and cleared MW) is documented in §5 and §6 of that document, with the pre-window choice and the solar-coefficient symmetry diagnostic in Appendix A.6.
 

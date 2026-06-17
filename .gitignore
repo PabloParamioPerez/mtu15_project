@@ -129,3 +129,6 @@ logs/overnight_summary_*.txt
 # Submission deliverable (large; repo is the live replication)
 Paramio_Pablo_Replication.zip
 mtu15_replication.zip
+
+# internal project notes -- not part of the replication
+CLAUDE.md

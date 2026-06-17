@@ -18,7 +18,7 @@ import pandas as pd
 # Project root = three parents up from this file (src/mtu/notebook_utils.py).
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-# Reform dates (see CLAUDE.md §"Reform dates").
+# Reform dates.
 IDA_REFORM       = pd.Timestamp('2024-06-14')  # 6 MIBEL sessions → 3 European IDA sessions
 ISP15_REFORM     = pd.Timestamp('2024-12-01')  # REE imbalance settlement period → MTU15
 INTRADAY_REFORM  = pd.Timestamp('2025-03-19')  # OMIE intraday auctions + continuous → MTU15

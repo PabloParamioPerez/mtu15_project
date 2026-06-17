@@ -2,7 +2,7 @@
 # LAST-AUDIT: 2026-05-19
 # CLAIM: Parse the MITECO registry XLSX into two clean parquet tables.
 #        Stdlib-only (zipfile + xml.etree) since openpyxl is not in the
-#        project venv per CLAUDE.md (no dependency adds without asking).
+#        project venv (no dependency adds without asking).
 #
 # Input: latest data/external/miteco_productores/registro_<YYYYMMDD>.xlsx
 # Output:

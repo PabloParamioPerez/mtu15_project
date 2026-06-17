@@ -107,7 +107,7 @@ thesis/paper/                thesis.tex, thesis.pdf, references.bib
 - **Power vs. energy.** OMIE `quantity_mw` is instantaneous power (a rate), independent
   of the 60→15-minute period length. Cross-reform quantity comparisons convert to MWh
   first; per-period slopes/rates are granularity-neutral and are *not* summed across the
-  four quarters of a clock-hour. (See `CLAUDE.md` for the full discipline.)
+  four quarters of a clock-hour. (The thesis details this MW-vs-MWh discipline.)
 - **Reform vs. reinforced operation.** An April 2025 blackout triggered a separate
   cost regime; the analysis windows are constructed to keep it separable, and the driver
   reproduces those windows exactly as coded.
