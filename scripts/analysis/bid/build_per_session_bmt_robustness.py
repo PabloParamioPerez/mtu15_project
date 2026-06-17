@@ -1,11 +1,11 @@
 """Per-session b_mt at multiple bandwidths for robustness."""
 import sys
 from pathlib import Path
-sys.path.insert(0, "/Users/pabloparamio/Desktop/CEMFI/2nd Year/Master Thesis/mtu15_project/src")
+REPO = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(REPO / "src"))
 from mtu.classification.units import firm_unit_panel
 import duckdb, numpy as np, pandas as pd
 
-REPO = Path("/Users/pabloparamio/Desktop/CEMFI/2nd Year/Master Thesis/mtu15_project")
 ICAB = REPO/"data/processed/omie/mercado_intradiario_subastas/ofertas/icab_all.parquet"
 IDET = REPO/"data/processed/omie/mercado_intradiario_subastas/ofertas/idet_all.parquet"
 MPIBC = REPO/"data/processed/omie/mercado_intradiario_subastas/precios/marginalpibc_all.parquet"

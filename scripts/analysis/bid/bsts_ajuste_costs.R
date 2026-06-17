@@ -23,7 +23,9 @@ suppressPackageStartupMessages({
   library(arrow); library(CausalImpact); library(zoo)
 })
 
-repo <- "/Users/pabloparamio/Desktop/CEMFI/2nd Year/Master Thesis/mtu15_project"
+.cmdargs <- commandArgs(trailingOnly = FALSE)
+.thisfile <- sub("^--file=", "", .cmdargs[grep("^--file=", .cmdargs)])
+repo <- normalizePath(file.path(dirname(.thisfile), "..", "..", ".."))
 panel_fp <- file.path(repo, "data/derived/panels/bsts_daily_panel_costs.parquet")
 out_dir  <- file.path(repo, "results/regressions/bid/mtu15_critical_flat")
 

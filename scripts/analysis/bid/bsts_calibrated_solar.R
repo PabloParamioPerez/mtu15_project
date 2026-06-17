@@ -5,7 +5,9 @@
 # reform's effect.
 
 suppressPackageStartupMessages({ library(arrow); library(bsts); library(zoo) })
-repo <- "/Users/pabloparamio/Desktop/CEMFI/2nd Year/Master Thesis/mtu15_project"
+.cmdargs <- commandArgs(trailingOnly = FALSE)
+.thisfile <- sub("^--file=", "", .cmdargs[grep("^--file=", .cmdargs)])
+repo <- normalizePath(file.path(dirname(.thisfile), "..", "..", ".."))
 panel <- read_parquet(file.path(repo, "data/derived/panels/bsts_quantities_panel.parquet"))
 panel$d <- as.Date(panel$d)
 panel <- panel[order(panel$d), ]

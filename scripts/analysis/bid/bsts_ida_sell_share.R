@@ -10,7 +10,9 @@ suppressPackageStartupMessages({
   library(arrow); library(CausalImpact); library(zoo)
 })
 
-repo  <- "/Users/pabloparamio/Desktop/CEMFI/2nd Year/Master Thesis/mtu15_project"
+.cmdargs <- commandArgs(trailingOnly = FALSE)
+.thisfile <- sub("^--file=", "", .cmdargs[grep("^--file=", .cmdargs)])
+repo <- normalizePath(file.path(dirname(.thisfile), "..", "..", ".."))
 panel <- read_parquet(file.path(repo, "data/derived/panels/ida_inband_sell_share_daily.parquet"))
 cov   <- read_parquet(file.path(repo, "data/derived/panels/bsts_quantities_panel.parquet"))
 panel$d <- as.Date(panel$d); cov$d <- as.Date(cov$d)

@@ -14,7 +14,9 @@
 #      results/regressions/bid/mtu15_critical_flat/ols_price_per_hour.csv
 
 suppressPackageStartupMessages({ library(arrow); library(lmtest); library(sandwich) })
-repo <- "/Users/pabloparamio/Desktop/CEMFI/2nd Year/Master Thesis/mtu15_project"
+.cmdargs <- commandArgs(trailingOnly = FALSE)
+.thisfile <- sub("^--file=", "", .cmdargs[grep("^--file=", .cmdargs)])
+repo <- normalizePath(file.path(dirname(.thisfile), "..", "..", ".."))
 panel <- read_parquet(file.path(repo, "data/derived/panels/bsts_hourly_panel.parquet"))
 panel$d <- as.Date(panel$d); panel <- panel[order(panel$d, panel$hour), ]
 

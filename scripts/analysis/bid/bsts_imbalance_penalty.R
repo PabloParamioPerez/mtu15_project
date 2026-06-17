@@ -21,7 +21,9 @@
 
 suppressPackageStartupMessages({ library(arrow); library(CausalImpact); library(zoo) })
 
-repo <- "/Users/pabloparamio/Desktop/CEMFI/2nd Year/Master Thesis/mtu15_project"
+.cmdargs <- commandArgs(trailingOnly = FALSE)
+.thisfile <- sub("^--file=", "", .cmdargs[grep("^--file=", .cmdargs)])
+repo <- normalizePath(file.path(dirname(.thisfile), "..", "..", ".."))
 PANEL <- file.path(repo, "data/derived/panels/bsts_imbalance_penalty_daily.parquet")
 RENEW <- file.path(repo, "data/derived/panels/bsts_daily_panel.parquet")
 OUT   <- file.path(repo, "results/regressions/bid/mtu15_critical_flat/bsts_imbalance_penalty.csv")

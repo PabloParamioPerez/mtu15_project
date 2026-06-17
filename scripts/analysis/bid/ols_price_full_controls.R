@@ -12,7 +12,9 @@
 # OUT: results/regressions/bid/mtu15_critical_flat/ols_price_full_controls.csv
 
 suppressPackageStartupMessages({ library(arrow); library(lmtest); library(sandwich) })
-repo <- "/Users/pabloparamio/Desktop/CEMFI/2nd Year/Master Thesis/mtu15_project"
+.cmdargs <- commandArgs(trailingOnly = FALSE)
+.thisfile <- sub("^--file=", "", .cmdargs[grep("^--file=", .cmdargs)])
+repo <- normalizePath(file.path(dirname(.thisfile), "..", "..", ".."))
 panel_q  <- read_parquet(file.path(repo, "data/derived/panels/bsts_quantities_panel.parquet"))
 panel_q$d  <- as.Date(panel_q$d);  panel_q  <- panel_q[order(panel_q$d), ]
 panel_ps <- read_parquet(file.path(repo, "data/derived/panels/bsts_per_session_panel.parquet"))

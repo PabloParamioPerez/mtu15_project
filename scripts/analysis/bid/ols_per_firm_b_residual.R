@@ -21,8 +21,9 @@
 # OUT: results/regressions/bid/mtu15_critical_flat/ols_per_firm_b_residual.csv
 
 suppressPackageStartupMessages({ library(arrow); library(lmtest); library(sandwich) })
-repo <- "/Users/pabloparamio/Desktop/CEMFI/2nd Year/Master Thesis/mtu15_project"
-
+.cmdargs <- commandArgs(trailingOnly = FALSE)
+.thisfile <- sub("^--file=", "", .cmdargs[grep("^--file=", .cmdargs)])
+repo <- normalizePath(file.path(dirname(.thisfile), "..", "..", ".."))
 # Per-firm residual demand slope panel (one row per d, period, market, focal_firm)
 b_panel <- read_parquet(file.path(repo, "data/derived/panels/per_firm_residual_demand_slope.parquet"))
 b_panel$d <- as.Date(b_panel$d)
