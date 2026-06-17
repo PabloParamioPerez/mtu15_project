@@ -1,13 +1,23 @@
 # MTU15 Project — Spanish electricity market: granularity reforms 2024–2025
 
-Master's thesis (CEMFI, 2026) on the Spanish wholesale electricity market reforms that progressively reduced the **Market Time Unit** (MTU) from 60 to 15 minutes across three sequential stages, with the **Imbalance Settlement Period** (ISP) tightened in parallel. The project builds a fully reproducible data pipeline for OMIE (market operator), ESIOS / REE (system operator), and ENTSO-E (pan-European TSO data) to study (i) how dominant firms organise their bid stack within the hour, (ii) how the post-DA cascade of REE redispatch absorbs and re-monetises the bid-stack reallocation, and (iii) how the post-2025-04-28 *operación reforzada* regime interacts with the MTU15 reforms in the same calendar window.
+Master's thesis (CEMFI, 2026) by **Pablo Paramio Pérez** (advisor: Pedro Mira) on the Spanish wholesale electricity market reforms that reduced the **Market Time Unit** (MTU) from 60 to 15 minutes across two sequential auction reforms — first the intraday market (**ID15**, 2025-03-19), then the day-ahead market (**DA15**, 2025-10-01) — with the **Imbalance Settlement Period** tightened in parallel (**ISP15**, 2024-12-11). The project builds a fully reproducible data pipeline for OMIE (market operator), ESIOS / REE (system operator), and ENTSO-E (pan-European TSO data) to ask **how finer time granularity changes the way firms bid and the market power they hold**: (i) it reshapes strategic bidding — price-setters spread their offers into more, finer steps in the volatile ramp hours, while price-taking renewables only adjust how much they sell; (ii) the effect is **asymmetric across the two reforms** — new within-hour contractibility, and the market re-clearing that drops the clearing price (about a fifth) and the imbalance cost (about forty per cent), arrive only at the intraday (spot) reform, while the day-ahead reform merely relocates bid shape between markets; (iii) underneath both, the residual demand each firm faces grows more price-elastic and markups narrow. The post-2025-04-28 *operación reforzada* regime is held separable from the granularity effects (the 40-day window 2025-03-19 → 2025-04-27 is the only post-ID15, pre-blackout sample) so the two are never confounded.
 
 The theoretical and empirical work is consolidated into a single deliverable:
 
-- [`thesis/paper/thesis.tex`](thesis/paper/thesis.tex) → [`thesis.pdf`](thesis/paper/thesis.pdf) — the thesis paper. Theory (sequential-market Cournot model with granularity selectors and an explicit operational aggregator); data and identification (per-curve DiD on bid shape with a critical/flat hour partition + BSTS counterfactuals on prices, cleared MW, and the within-hour wedge SD); results (bid-shape widening in critical hours, in-band offered-energy migration into the finer market, ID15 cross-market price drop, DA15 day-ahead CCGT cleared scale-up, wedge SD asymmetric persistence, production-unit arbitrageurs, granularity-vs-reforzada system-cost decomposition); conclusion (granularity as a strategic-latitude reveal); four-section appendix (robustness, continuous-market response, market-structure context, theoretical derivations).
-- [`thesis/provisional/additional_results.tex`](thesis/provisional/additional_results.tex) — working scratch pad of supplementary findings not in the main paper.
+- [`thesis/paper/thesis.tex`](thesis/paper/thesis.tex) → [`thesis.pdf`](thesis/paper/thesis.pdf) — the thesis paper. Theory (a sequential forward–spot Cournot game in which a residual-demand monopolist bids step offers and granularity widens the within-hour state each product screens); data and identification (a bid-level difference-in-differences on bid shape with a critical/flat hour partition, plus BSTS counterfactuals on prices, cleared MW, and the within-hour price gap); results (bid-shape widening in volatile hours, offered-energy migration into the finer market, the ID15 cross-market price drop, the imbalance-cost fall, the asymmetric null at DA15, and the markup-compression channel), with a granularity-vs-*reforzada* system-cost decomposition; conclusion; and appendices (robustness, continuous-market response, market-structure context, theoretical derivations).
+- **Submission deliverables:** [`Paramio_Pablo_Thesis.pdf`](Paramio_Pablo_Thesis.pdf) (the compiled paper) and `Paramio_Pablo_Replication.zip` (the packaged replication snapshot — built from this repo, see [Replication](#replication) below).
 
-The two pre-pivot documents `descriptive_facts.tex` and `regression_results.tex` have been archived under [`attic/provisional/`](attic/provisional/); the older `model.tex` and `preliminary_results.tex` were merged into `thesis.tex` on 2026-06-02 and archived alongside.
+### Replication
+
+`replication/run_replication.py` reproduces every reported number and figure end-to-end (data download → parse/build → derived panels → analyses), organised **section by section** (Q1 prices, the margin channel, the within-hour wedge, bid-shape DiD, imbalance, migration, robustness). The headline values are then typeset into `thesis.tex` by hand (the paper has no auto-generated tables). The full exhibit→script map is in [`REPLICATION.md`](REPLICATION.md); the replicator's guide (requirements, credentials, staging) is in [`replication/README.md`](replication/README.md).
+
+```bash
+uv sync                                              # build the Python env from the lockfile
+uv run python replication/run_replication.py --list  # print the section-by-section plan
+uv run python replication/run_replication.py --from 2 # panels + analyses (skip data download)
+```
+
+Superseded exploratory analyses (≈280 scripts) live under `scripts/analysis/attic/`; every script that produces a paper exhibit is referenced in `REPLICATION.md` and run by the driver. Pre-pivot write-ups are archived under [`attic/`](attic/).
 
 ---
 
@@ -30,7 +40,7 @@ Run `uv run pytest` for the test suite; `uv run python scripts/pipelines/.../00_
 
 | Event | Date | What changed |
 |---|---|---|
-| **ISP15** | 2024-12-01 (effective 2024-12-09) | Imbalance settlement period changed from 60 min to 15 min |
+| **ISP15** | 2024-12-11 | Imbalance settlement period changed from 60 min to 15 min |
 | **MTU15-IDA** | 2025-03-19 | Intraday markets (3 European auctions + continuous XBID) switched from MTU60 to MTU15 |
 | **Iberian blackout** | 2025-04-28 | Triggered REE's *operación reforzada* (continuous post-blackout reinforced-operation stance: larger pre-IDA and post-IDA RT, primarily Fase~I-up, to keep zonal voltage and inertia margins) |
 | **MTU15-DA** | 2025-10-01 | Day-ahead market switched from MTU60 to MTU15 (overlaps with continuing *operación reforzada*) |

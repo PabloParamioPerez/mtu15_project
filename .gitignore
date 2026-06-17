@@ -125,3 +125,7 @@ renv/python/
 
 # Overnight sync summary text files
 logs/overnight_summary_*.txt
+
+# Submission deliverable (large; repo is the live replication)
+Paramio_Pablo_Replication.zip
+mtu15_replication.zip
