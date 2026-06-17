@@ -68,6 +68,9 @@
 \newcommand{\untestedhead}{\textbf{\textit{Within reach, not yet tested.}}\ }
 \renewcommand{\arraystretch}{1.18}
 \linespread{1.12}
+% A touch more air between the body text and the footnote block.
+\setlength{\skip\footins}{18pt plus 4pt minus 2pt}
+\setlength{\footnotesep}{9pt}
 
 % TikZ libraries used by the theory section's structure figure
 \usetikzlibrary{positioning, arrows.meta, calc, shapes.geometric, decorations.pathreplacing}
@@ -155,7 +158,7 @@
 
 \section*{Resumen}
 
-\noindent La electricidad se negocia y liquida en unidades de tiempo cada vez más finas: cuartos de hora en lugar de horas. ¿Cambia esto la forma en que las empresas ofertan y el poder de mercado que ejercen? Estudio las reformas españolas de 2025, que llevaron a quince minutos primero el mercado intradiario y después el diario, separando sus efectos del costoso contexto posterior al apagón de abril de 2025. Combino un modelo sencillo de un monopolista de demanda residual que envía ofertas escalonadas a una subasta a plazo (el diario) y luego a una al contado (el intradiario) con una diferencia-en-diferencias a nivel de oferta que compara las horas volátiles de rampa con las horas llanas de la madrugada, partiendo de que la granularidad influye más cuanto mayor es la variación dentro de la hora. Tras controlar por la penetración renovable, la reforma intradiaria redujo el precio de casación en torno a un quinto --- los vendedores liquidan más de su posición en el mercado, ahora más fino, lo que empuja su precio a la baja ---, trasladó esa caída al mercado diario, al que la reforma no afectó, y abarató el coste de un desvío en torno a un cuarenta por ciento, al cubrirse los errores de previsión antes y con reservas más baratas. La reforma diaria no produjo nada de esto: el intradiario ya era fino y no se abrió ninguna posibilidad nueva. Las empresas que fijan el precio reparten sus ofertas en más escalones y más finos en las horas volátiles, mientras que las renovables, tomadoras de precios, solo ajustan cuánto venden; la demanda a la que se enfrentan se volvió más sensible al precio y sus márgenes se estrecharon. Una mayor granularidad temporal hizo el mercado mayorista algo más competitivo, casi por completo en la primera reforma.
+\noindent La electricidad se negocia y liquida en unidades de tiempo cada vez más finas: un sistema cuartohorario en lugar de uno horario. ¿Altera esto la forma en que las empresas ofertan y el poder de mercado que ejercen? Estudio las reformas españolas de 2025, que pasaron a cuartos de hora primero el mercado intradiario y después el diario, lo que permite separar sus efectos del costoso contexto que dejó el apagón de abril de 2025. Combino un modelo sencillo --- un monopolista de demanda residual que presenta ofertas escalonadas en un mercado forward (el diario) y, a continuación, en uno spot (el intradiario) --- con una estimación de diferencias en diferencias a nivel de oferta que contrasta las horas volátiles de rampa con las horas llanas de la madrugada, bajo la idea de que la granularidad importa más cuanto mayor es la variabilidad dentro de cada hora. Controlando por la penetración renovable, la reforma del intradiario redujo el precio de casación en torno a un quinto --- los vendedores liquidan una parte mayor de su posición en un mercado ahora más fino, lo que presiona su precio a la baja ---, trasladó esa caída al mercado diario, al que la reforma no llegó, y abarató el coste de los desvíos cerca de un cuarenta por ciento, al resolverse antes los errores de previsión y con reservas más baratas. La reforma del diario no produjo ninguno de estos efectos: el intradiario ya era fino y no abrió ningún margen nuevo. Las empresas que marcan el precio reparten sus ofertas en más escalones, y más finos, en las horas volátiles, mientras que las renovables, tomadoras de precios, solo ajustan cuánto venden; la demanda a la que se enfrentan se volvió más sensible al precio y sus márgenes se estrecharon. En conjunto, una mayor granularidad temporal hizo el mercado mayorista algo más competitivo, casi por completo en la primera reforma.
 
 \clearpage
 % ==================================================================
@@ -169,21 +172,25 @@
 % =====================================================================
 
 \noindent\footnotesize
-\begin{tabular}{@{}l p{0.36\textwidth}@{\hspace{1em}}l p{0.36\textwidth}@{}}
+\begin{tabular}{@{}l p{0.33\textwidth}@{\hspace{0.7em}}l p{0.33\textwidth}@{}}
 \toprule
-OMIE      & Operador del Mercado Ib\'erico de Energ\'ia  & PDBF     & day-ahead base schedule, bilateral contracts included \\
-REE       & Red El\'ectrica de Espa\~na                  & Fase~I/II & pre-/post-IDA technical-restriction redispatch \\
-CNMC      & Comisi\'on Nacional de los Mercados y la Competencia & TR & Tiempo Real (real-time technical restrictions) \\
-ENTSO-E   & European Network of TSOs for Electricity     & PO       & Procedimientos de Operaci\'on \\
-ESIOS     & Sistema de Informaci\'on del Operador del Sistema & aFRR & automatic Frequency Restoration Reserve \\
-DA        & day-ahead auction                             & mFRR     & manual Frequency Restoration Reserve \\
-IDA       & intraday auctions                             & MCP      & market clearing price \\
-SIDC      & Single Intraday Coupling                      & $\text{HHI}_{\text{tr}}$ & tranche-HHI: MW-weighted concentration of in-band bid tranches \\
-XBID      & cross-border intraday continuous market       & CCGT     & combined-cycle gas turbine \\
-MTU       & market time unit (MTU60 hourly; MTU15 15-min) & MIC      & minimum-income condition (offer type) \\
-ISP15     & imbalance settlement at 15 min (2024-12-11)   & MW / MWh / GWh & megawatt / megawatt-hour / gigawatt-hour \\
-ID15      & intraday at 15 min (2025-03-19)               &          & \\
-DA15      & day-ahead at 15 min (2025-10-01)              &          & \\
+OMIE      & Operador del Mercado Ib\'erico de Energ\'ia          & PDBF     & day-ahead base schedule, bilateral contracts included \\
+REE       & Red El\'ectrica de Espa\~na                          & MIC      & minimum-income condition (offer type) \\
+CNMC      & Comisi\'on Nacional de los Mercados y la Competencia & MCP      & market clearing price \\
+ENTSO-E   & European Network of TSOs for Electricity             & Fase~I/II & pre-/post-IDA technical-restriction redispatch \\
+ESIOS     & Sistema de Informaci\'on del Operador del Sistema    & TR       & Tiempo Real (real-time technical restrictions) \\
+DA        & day-ahead auction                                    & PO       & Procedimientos de Operaci\'on \\
+IDA       & intraday auctions                                    & aFRR     & automatic Frequency Restoration Reserve \\
+MIBEL     & Iberian electricity market (pre-2024 intraday)       & mFRR     & manual Frequency Restoration Reserve \\
+SIDC      & Single Intraday Coupling                             & RR       & Replacement Reserve \\
+XBID      & cross-border intraday continuous market              & $\text{HHI}_{\text{tr}}$ & tranche-HHI: MW-weighted concentration of in-band bid tranches \\
+MTU       & market time unit (MTU60 hourly; MTU15 15-min)        & CCGT     & combined-cycle gas turbine \\
+ISP15     & imbalance settlement at 15 min (2024-12-11)          & PV       & solar photovoltaic \\
+ID15      & intraday at 15 min (2025-03-19)                      & MW / MWh / GWh & megawatt / megawatt-hour / gigawatt-hour \\
+DA15      & day-ahead at 15 min (2025-10-01)                     & DiD      & difference-in-differences \\
+OLS       & ordinary least squares                               & FE       & fixed effects \\
+BSTS      & Bayesian structural time series                      & HAC      & heteroskedasticity-/autocorrelation-consistent (Newey--West) \\
+          &                                                      & CV       & coefficient of variation \\
 \bottomrule
 \end{tabular}\normalsize
 
@@ -230,7 +237,7 @@ Section~\ref{sec:institutional} covers the market sequence and the three reforms
 
 \subsection{Spanish wholesale architecture: sequential auctions and balancing}
 
-Spanish wholesale electricity markets are run in sequential order by the Iberian wholesale market operator (OMIE\footnote{\textit{Operador del Mercado Ibérico de Energía}}), which organizes auctions for both Spain and Portugal jointly. The product of each auction is the delivery of electricity, in MW\footnote{Megawatts are Joules per second, so it is a rate, not a stock. The stock is MWh, which is the MW that are delivered in 1 hour. Key distinction for the granularity reform.}, over a fixed short time slot: 60 minutes before the reform, 15 minutes after. Even though the product is homogeneous, a mix of technologies competes to supply it. The most important ones are nuclear, combined-cycle gas turbines (CCGT), hydro (run-of-river and pumped-storage), wind and solar photovoltaic (PV), with smaller contributions from cogeneration, biomass and a fast-growing battery-storage segment. These technologies differ sharply in marginal cost and in how flexibly they can move output within an hour, and it is precisely this heterogeneity that makes the granularity of the delivery slot economically relevant: nuclear runs as near-inflexible baseload, CCGT and hydro are the usual price-setters at the margin, and wind and solar are near-zero-marginal-cost but variable within the hour.
+Spanish wholesale electricity markets are run in sequential order by the Iberian wholesale market operator (OMIE\footnote{\textit{Operador del Mercado Ibérico de Energía}}), which organizes auctions for both Spain and Portugal jointly. The product of each auction is the delivery of electricity, in MW\footnote{A megawatt is joules per second, so it is a rate, not a stock. The stock is the megawatt-hour (MWh): the energy one megawatt delivers in an hour. Key distinction for the granularity reform.}, over a fixed short time slot: 60 minutes before the reform, 15 minutes after. Even though the product is homogeneous, a mix of technologies competes to supply it. The most important ones are nuclear, combined-cycle gas turbines (CCGT), hydro (run-of-river and pumped-storage), wind and solar photovoltaic (PV), with smaller contributions from cogeneration, biomass and a fast-growing battery-storage segment. These technologies differ sharply in marginal cost and in how flexibly they can move output within an hour, and it is precisely this heterogeneity that makes the granularity of the delivery slot economically relevant: nuclear runs as near-inflexible baseload, CCGT and hydro are the usual price-setters at the margin, and wind and solar are near-zero-marginal-cost but variable within the hour.
 
 The auctions\footnote{Note that these auctions are separate from bilateral contracts between the agents, which are over-the-counter (OTC).} are the following: 
   \begin{itemize}
@@ -483,7 +490,7 @@ The ladder does two things at once, and it helps to separate them. \emph{Where} 
 
 \subsection{Bid ladders within a product: step offers along the monopoly line}\label{sec:theory:ladder}
 
-I now solve the bid-shape layer: how the finite step ladder approximates the monopoly line within one delivery product. With linear residual demand and one-dimensional clearing-state uncertainty, a continuous supply schedule would sit exactly on the line and replicate the full-information monopoly outcome state by state, so the only friction is the finite number of tranches.\footnote{This friction is institutional, not merely a modelling convenience: a simple offer is capped at 25 price--quantity steps per period in the day-ahead auction \citep{omie_ficheros_2025} and at 5 in the intraday auctions \citep{omie_intradiario_2025}, so the number of tranches is genuinely bounded --- and far more tightly on the intraday side, where the bid-shape margin is institutionally narrower regardless of any strategic choice. The 5 tranche limitation in the intraday auctions is alleviated by the possibility of submiting multiple bids, something not possible in the day-ahead market.} The optimal $n$-tranche ladder has a closed form for every bid-shape metric, it leaves the mean clearing price untouched (so the pricing layer is unaffected), and it interacts with granularity in a single line (Proposition~\ref{cor:did}).
+I now solve the bid-shape layer: how the finite step ladder approximates the monopoly line within one delivery product. With linear residual demand and one-dimensional clearing-state uncertainty, a continuous supply schedule would sit exactly on the line and replicate the full-information monopoly outcome state by state, so the only friction is the finite number of tranches.\footnote{This friction is institutional, not merely a modelling convenience: a simple offer is capped at 25 price--quantity steps per period in the day-ahead auction \citep{omie_ficheros_2025} and at 5 in the intraday auctions \citep{omie_intradiario_2025}, so the number of tranches is genuinely bounded --- and far more tightly on the intraday side, where the bid-shape margin is institutionally narrower regardless of any strategic choice. The 5 tranche limitation in the intraday auctions is alleviated by the possibility of submitting multiple bids, something not possible in the day-ahead market.} The optimal $n$-tranche ladder has a closed form for every bid-shape metric, it leaves the mean clearing price untouched (so the pricing layer is unaffected), and it interacts with granularity in a single line (Proposition~\ref{cor:did}).
 
 Fix one delivery product with residual demand $q = A - b\,p$, where $A = \bar a + v$, $v \sim U[-\Delta, \Delta]$, and marginal cost is a constant $c$; this is the generic stage-$m$ product, with the $mt$ subscripts of \S\ref{sec:theory:setup} suppressed here and restored per stage when the reforms apply the result --- for a spot product the centre $\bar a$ carries the realised forward price. The bidder submits a non-decreasing step offer before $v$ realises, and the auction clears at the crossing of the realised residual demand with the offer. When the crossing lands on a horizontal segment the marginal tranche sets the price; when it lands on a vertical riser the realised demand does. Both cases occur in equilibrium.
 
@@ -588,12 +595,12 @@ with $\sigma_v = \Delta/\sqrt{3}$ the SD of the screened state; and the ladder c
 
 Ladder geometry is also \emph{level-neutral}: $\mathbb{E}[\text{clearing price} \mid \mathcal{H}_m] = p^m(\bar a)$ for every $n$, because within each interval of states the realised price averages to the monopoly price at the interval's midpoint (Corollary~\ref{rem:level}, Appendix~\ref{app:tranche}). Bid-shape changes and price-level changes are therefore separate channels: a reform can change the spacing and dispersion of a bid curve's tranche prices strongly while leaving its price level untouched.
 
-What \emph{does} move the level is the markup. At the monopoly point the margin over cost is the net sold quantity over the slope of residual demand,
+What \emph{does} move the level is the markup --- and in this model it moves \emph{through the reform}, not through the bare identity. The accounting is the familiar monopoly margin,
 \begin{equation}
-p_t - c \;=\; \frac{q_m}{b_{mt}},
+p_{mt} - c \;=\; \frac{q_{mt}}{b_{mt}},
 \label{eq:cournot-markup}
 \end{equation}
-the Cournot identity (the first-order condition of $\max_q \bigl(p(q)-c\bigr)\,q$ against $p(q) = (A - q)/b_{mt}$). The level moves only through the quantity a firm clears and the slope it faces, never through ladder geometry: a more price-elastic residual demand (larger $b_{mt}$) compresses the margin, a less elastic one raises it. Granularity can push $b_{mt}$ either way --- finer products make residual demand more elastic if rivals and re-scheduled volume adjust per quarter, or when demand adjust within hour depending on prices; less elastic if a fixed pool of responsive supply is split across more products --- so the model leaves the direction free and reads its sign off the data.
+but its content here is what granularity does to the two terms on the right, neither of which is a primitive. The slope $b_{mt}$ is that of the \emph{residual} demand the firm faces --- the market's response to its price --- so everything competitive enters through it: finer products make it more elastic if rivals and re-scheduled volume adjust per quarter, or if demand itself responds to price within the hour, and less elastic if a fixed pool of responsive supply is split across more products. The cleared quantity $q_{mt}$ moves with the volume that \emph{migrates} onto the granular leg (\S\ref{sec:theory:id15}). Ladder geometry moves neither, which is exactly why the price \emph{level} and the bid \emph{shape} are separate channels. The model leaves the direction of the slope effect free and reads its sign off the data; the level expression the reform analysis actually leans on --- the spot best response of \S\ref{sec:theory:id15}, in which both terms appear at once --- carries both forces explicitly.
 
 The ladder stays finite because price steps are not free. Each competing tranche is a distinct price--quantity pair the bidder must design, submit, monitor, and risk-manage --- across every delivery product and session --- so finer discrimination carries a \emph{bidding-complexity cost}: a menu, or attention, cost paid per competing tranche. It is the smooth counterpart of the hard institutional cap on the number of steps an offer may carry (twenty-five in the day-ahead, five in the intraday); indeed dispatchables use far fewer steps than the day-ahead cap allows (\S\ref{sec:results:6-1}), so it is this cost, not the cap, that pins their depth there. With a linear such cost $\kappa > 0$ per competing tranche the optimal depth satisfies $2 n^* + 1 = \bigl(\Delta^2/(3 b \kappa)\bigr)^{1/3}$ (Proposition~\ref{prop:budget}, Appendix~\ref{app:tranche}); without any such cost the bidder would use a continuum of tranches and track the monopoly line exactly, leaving no finite tranche count to respond to anything. Ladders therefore gain tranches as the screened range widens, and lose them as residual demand becomes more price-elastic or tranches more costly. A wider screened range raises the tranche-price dispersion and the number of tranches \emph{together} --- a joint signature, not two independent movements.
 
@@ -684,7 +691,7 @@ The forward reform brings no new contractibility: it \emph{relocates} the alread
 
 \paragraph{Per-product arbitrage thins, so the wedge survives.} The arbitrageur now earns $s_t\,(p_{1t} - p_{2t})$ per matched quarter. Full arbitrage would give $p_{1t} = p_{2t}$ and a wedge SD of zero; unlimited strategic arbitrage would give the per-product wedge \eqref{eq:strategic-arb} and a wedge SD of $\lambda_1 \sigma_\zeta / 4$. Neither obtains once the per-product capacity $K_a/Q$ binds. The symmetric state therefore sits in the \textbf{limited-arbitrage regime} (\citeauthor{ito_reguant_2016} Result 3) applied per product: the per-product wedge becomes $(p_{1t}-c)/2$ rather than $(p_{1t}-c)/4$, doubling the wedge SD to
 \begin{equation}
-\boxed{\;\mathrm{sd}_h(p_{1t} - p_{2t}) \;=\; \frac{\lambda_1\, \sigma_\zeta}{2}\;}
+\boxed{\;\mathrm{sd}_t(p_{1t} - p_{2t}) \;=\; \frac{\lambda_1\, \sigma_\zeta}{2}\;}
 \label{eq:wedge-sd-limited}
 \end{equation}
 (Appendix~\ref{app:15-15:limited}). The wedge SD does \emph{not} collapse at the symmetric state: bounded, market-power-conscious arbitrage sustains it.
@@ -748,8 +755,8 @@ Per in-band curve I compute four summaries of the competing tier (Corollary~\ref
   \def\h{1.15}
   \def\ceiling{6.6}
   \fill[orange!18] (0, \mcp-\h) rectangle (\xmax-0.3, \mcp+\h);
-  \draw[-{Latex[length=2.4mm]}, thick, gray!75] (0,0) -- (\xmax,0)
-    node[below left=2pt and -10pt, black] {Cumulative offered quantity (MW)};
+  \draw[-{Latex[length=2.4mm]}, thick, gray!75] (0,0) -- (\xmax,0);
+  \node[black, anchor=north] at (\xmax/2, -0.72) {Cumulative offered quantity (MW)};
   \draw[-{Latex[length=2.4mm]}, thick, gray!75] (0,0) -- (0,\ymax);
   \node[rotate=90, anchor=south, black] at (-0.55, \ymax/2)
     {Bid price (EUR/MWh)};
@@ -877,6 +884,7 @@ On the post-switch sample, before any reform comparison, the within-hour dispers
 \begin{center}
 \footnotesize
 \setlength{\tabcolsep}{6pt}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{l l c c c}
 \toprule
 \textbf{Outcome} & \textbf{Subsample} & \textbf{ID15 ($\theta$)} & \textbf{DA15 ($\theta$)} & \textbf{crit/flat mean ratio (IDA, DA)} \\
@@ -895,7 +903,8 @@ $D^{1/\text{HHI}}$                  & CCGT       & $0.17$ (0.16)          & $\ma
                                     & Hydro pump & $\mathbf{0.03}^{***}$ (0.01)    & $\mathbf{0.13}^{***}$ (0.03)    & $2.6\times,\ 4.3\times$ \\
                                     & Wind       & $0.00$ (0.00)          & $0.01$ (0.00)                   & $1.0\times,\ 1.3\times$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 % Source: scripts/analysis/bid/within_hour_dispersion_per_tech.py
 \captionof{table}{\textbf{Post-MTU15 critical$-$flat within-hour dispersion gap, by outcome.} Each cell is $\theta$ from the post-only regression $D^\bullet_{d,h} = \eta_d + \theta\,\mathbf{1}\{h\in\mathcal{C}\} + \varepsilon_{d,h}$ in each reform's window (ID15: 2025-03-19 to 2025-04-27; DA15: 2025-10-01 to 2025-12-31): the critical-minus-flat gap in the within-hour dispersion outcome. The last column gives the same contrast as a ratio of critical-to-flat means (IDA then DA); $4\times$ means four times larger in critical hours, $1\times$ means alike. SE clustered by date; $^{*}p<0.10$, $^{**}p<0.05$, $^{***}p<0.01$ (throughout). The per-tech $D^{\sigma_p}$ and $D^{1/\text{HHI}}$ rows use the window's $p_{90}$ bandwidth (\S\ref{sec:data:bandwidth}, $\delta{=}62$ for ID15 IDA, $\delta{=}50$ for DA15 DA); $D^{1/\text{HHI}}$ reports the inverse tranche-HHI, whose within-hour spread reads more clearly than HHI's on its $[0,1]$ scale.}
 \label{tab:within-hour-gap}
@@ -925,7 +934,7 @@ The same level machinery delivers the supply-side reading of \S\ref{sec:results:
 
 The bid-shape outcomes call for a different design, because their threat is different. As we saw, each outcome is built within a band re-centred on the contemporaneous clearing price, so price-\emph{level} seasonality is already differenced out of the curve. What a before-after comparison cannot remove is a common change in bid \emph{shape} that hits every hour alike --- a plant adopting new bidding software around the cutover, or sharper forecasting models --- which stretches or compresses the whole in-band ladder regardless of granularity. Such a shock can even push a naive before-after in critical hours the opposite way to the within-day design, because it moves the flat hours too. The design that isolates the granularity effect from it is a difference-in-differences across hours of the same day.
 
-I summarise each unit's in-band ladder on each date and period by the quadruple $(\sigma_p, \hat\beta, \hat\gamma, \text{HHI}_{\text{tr}})$\footnote{I deliberately reduce each curve to a few shape moments rather than treat it as a functional object: functional-data-analysis methods for electricity price and bid curves exist \citep{otto_winter_2025}, but the model's comparative statics are stated directly on these low-dimensional moments, so the extra machinery would buy no sharper a test and I keep the simpler summary.} and compare its post-minus-pre change in critical hours against the same change in flat hours,
+I summarise each unit's in-band ladder on each date and period by the four shape moments $\sigma_p$, $\hat\beta$, $\hat\gamma$ and $\text{HHI}_{\text{tr}}$\footnote{I deliberately reduce each curve to a few shape moments rather than treat it as a functional object: functional-data-analysis methods for electricity price and bid curves exist \citep{otto_winter_2025}, but the model's comparative statics are stated directly on these low-dimensional moments, so the extra machinery would buy no sharper a test and I keep the simpler summary.} and compare its post-minus-pre change in critical hours against the same change in flat hours,
 \[
 Y_{u,d,p[,s]} = \alpha_u + \beta\,\mathbf{1}\{d\ge T_r\} + \xi\,\mathbf{1}\{h\in\mathcal{C}\} + \theta\,D_{d,h} + \varepsilon, \qquad \text{standard errors clustered by date,}
 \]
@@ -1175,7 +1184,7 @@ The largest cost movements anywhere in the sample have nothing to do with granul
 
 
 \vspace{10pt}
-\noindent Read together, the results trace the asymmetry of activation that \S\ref{sec:theory:speaks} predicts. Everything that requires the within-hour state to become \emph{newly} contractible happens at the spot reform and only there: the granular-leg price falls and transmits cross-market (\S\ref{sec:results:Q1}), the residual demand each firm faces steepens and the markup compresses (\S\ref{sec:results:6-5}), the within-day wedge dispersion rises in the ramp hours while its mean barely moves (\S\ref{sec:results:Q3}), and the imbalance penalty drops as the balancing residual collapses to its irreducible core (\S\ref{sec:results:Q2}). The forward reform adds no new contractibility, and the data show it adding none: prices and the balancing layer do not move, while the bid curves \emph{relocate} --- the forward ladder disperses and gains tranches exactly as the spot's did at the first reform, and the spot ladder concentrates back into fewer, more closely-priced steps (\S\ref{sec:results:6-1}). The within-hour wedge dispersion that switched on at ID15 does not collapse at DA15, the fingerprint of bounded per-product arbitrage. Underneath all of it, the level moves only through the markup channel and never through ladder geometry --- consistent with the flat intraday bid-curve level at ID15, where the price-level channels are quiet. The one place the model stays silent --- the voltage-support layer where the reinforced-operation regime dominates the cost ledger --- is also the place the largest numbers live, and I leave it labelled as such rather than forcing it into the granularity story.
+\noindent Read together, the results trace the asymmetry of activation that \S\ref{sec:theory:speaks} predicts. Everything that requires the within-hour state to become \emph{newly} contractible happens at the spot reform and only there: the granular-leg price falls and transmits cross-market (\S\ref{sec:results:Q1}), the within-day wedge dispersion rises in the ramp hours while its mean barely moves (\S\ref{sec:results:Q3}), and the imbalance penalty drops as the balancing residual collapses to its irreducible core (\S\ref{sec:results:Q2}). The one channel that is \emph{not} ID15-only is the markup: the residual demand each firm faces steepens at both reforms (\S\ref{sec:results:6-5}), a second and much smaller push on the price --- a few EUR/MWh, and if anything cleanest in the margin index at DA15 --- too weak on its own to move the level the way the spot re-clearing does at ID15. The forward reform adds no new contractibility, and the data show it adding none: prices and the balancing layer do not move, while the bid curves \emph{relocate} --- the forward ladder disperses and gains tranches exactly as the spot's did at the first reform, and the spot ladder concentrates back into fewer, more closely-priced steps (\S\ref{sec:results:6-1}). The within-hour wedge dispersion that switched on at ID15 does not collapse at DA15, the fingerprint of bounded per-product arbitrage. Underneath all of it, the level moves only through the markup channel and never through ladder geometry --- consistent with the flat intraday bid-curve level at ID15, where the price-level channels are quiet. The one place the model stays silent --- the voltage-support layer where the reinforced-operation regime dominates the cost ledger --- is also the place the largest numbers live, and I leave it labelled as such rather than forcing it into the granularity story.
 
 
 
@@ -1183,7 +1192,7 @@ The largest cost movements anywhere in the sample have nothing to do with granul
 \section{Conclusion}\label{sec:conclusion}
 % =====================================================================
 
-Finer time resolution did reshape strategic bidding --- but less dramatically, and far more asymmetrically, than the symmetry of the two reforms would suggest. Granularity made the Spanish wholesale market modestly more competitive: on the granular leg the clearing price fell by about a fifth, the residual demand each dominant firm faces steepened, and the cost of an imbalance --- a market-formed price, not one REE sets --- dropped by about forty per cent, with no rise in the megawatt-hours of imbalance and no shift in aggregate cleared volume. The cleanest quantity evidence is on the side least confounded by the bilateral and Fase~I cascade: the renewable, forecast-error technologies move more of their output into the intraday (the wind in-band sell-share rises sharply at ID15, \S\ref{sec:results:migration}), while the dispatchable price-setter --- whose day-ahead volumes the post-blackout redispatch revises --- shows no clean cross-market shift. And essentially all of it happened at the \emph{first} market to go quarter-hourly, the intraday; the day-ahead reform seven months later created no new contractibility, relocating bid-curve shape from one auction to the other while leaving prices and the balancing layer untouched. The model explains this cleanly: new within-hour contractibility, and the market re-clearing that follows, arrive only when the spot becomes granular --- the forward reform can only move what is already contractible.
+Finer time resolution did reshape strategic bidding --- but less dramatically, and far more asymmetrically, than the symmetry of the two reforms would suggest. Granularity made the Spanish wholesale market modestly more competitive: on the granular leg the clearing price fell by about a fifth and the cost of an imbalance --- a market-formed price, not one REE sets --- dropped by about forty per cent, with no rise in the megawatt-hours of imbalance and no shift in aggregate cleared volume. The residual demand each dominant firm faces steepened too, squeezing markups --- but at \emph{both} reforms, a smaller second push on the margin rather than part of the intraday-only story. The cleanest quantity evidence is on the side least confounded by the bilateral and Fase~I cascade: the renewable, forecast-error technologies move more of their output into the intraday (the wind in-band sell-share rises sharply at ID15, \S\ref{sec:results:migration}), while the dispatchable price-setter --- whose day-ahead volumes the post-blackout redispatch revises --- shows no clean cross-market shift. And essentially all of it happened at the \emph{first} market to go quarter-hourly, the intraday; the day-ahead reform seven months later created no new contractibility, relocating bid-curve shape from one auction to the other while leaving prices and the balancing layer untouched. The model explains this cleanly: new within-hour contractibility, and the market re-clearing that follows, arrive only when the spot becomes granular --- the forward reform can only move what is already contractible.
 
 That verdict should be read against its own scale, and this is its main qualification. The reforms moved wholesale prices and balancing costs by single- to twenty-per-cent amounts on the affected margins; over the same window the largest cost movements anywhere in the system were an order of magnitude larger and lived in a different layer entirely --- the grid-security redispatch the post-blackout reinforced-operation regime governs. Figure~\ref{fig:efficiency_gains} makes the contrast plain: after April 2025 the daily adjustment-cost bill is dominated by reinforced-operation up-redispatch --- combined-cycle plants paid to run for voltage support while cheaper solar is curtailed --- beside which any granularity-attributable change is a rounding line. Recent authoritative work points the same way \citep{brown_reguant_2026, davi_arderius_graf_2026}: the first-order questions in this market are about network security and the balance of the energy transition --- weighing the lower wholesale prices that abundant renewables bring against the rising cost of the ancillary services that keep the system stable as the generation mix shifts --- not about whether trading happens by the hour or by the quarter.
 
@@ -1297,7 +1306,7 @@ Per-period imbalance              & $\eta_t$                                   &
 \end{equation}
 Comparative statics are immediate:
 \begin{equation}
-\dfrac{\partial G}{\partial \Delta_\eta} \;=\; \dfrac{\gamma Q}{2} \;>\; 0, \qquad \dfrac{\partial G}{\partial \sigma_\eta^2} \;=\; \dfrac{\gamma Q}{2\sqrt{3}\,\sigma_\eta} \;>\; 0.
+\dfrac{\partial G}{\partial \Delta_\eta} \;=\; \dfrac{\gamma Q}{2} \;>\; 0, \qquad \dfrac{\partial G}{\partial \sigma_\eta^2} \;=\; \dfrac{\sqrt{3}\,\gamma Q}{4\,\sigma_\eta} \;>\; 0.
 \label{eq:agg-cs}
 \end{equation}
 The gain is strictly positive and strictly increasing in the forecast-error variance. \emph{Closing remark (structural variation).} When $\bar y_t \neq \bar Y_h/Q$, the hourly regime's uniform schedule additionally misses the deterministic profile, adding $\gamma \sum_t |\bar y_t - \bar Y_h/Q|$ to its bill; granular scheduling removes this term too, so it enters $G$ additively and we omit it from the display.
@@ -1445,8 +1454,8 @@ Each part substitutes the granularity map $(\Delta, b) \to (\rho\Delta, b')$ int
 \]
 zero iff $\rho = 1$ and strictly increasing in $\rho$. $\square$
 
-\begin{assumption}[Stage-1 second-order condition]\label{ass:soc}
-$B_2 \equiv \sum_t b_{2t} < 2 b_1$: the total continuation slope of the spot products hanging off the forward product is strictly less than twice the forward slope.
+\begin{assumption}[Upward-sloping forward offer]\label{ass:soc}
+$B_2 \equiv \sum_t b_{2t} < 2 b_1$: the total continuation slope of the spot products hanging off the forward product is strictly less than twice the forward slope. This is the stronger of the two bounds the stage-1 problem needs --- concavity requires only $B_2 < 4 b_1$, while $B_2 < 2 b_1$ additionally keeps the committed offer upward-sloping ($dq_1^*/dv > 0$).
 \end{assumption}
 
 \subsubsection{Continuation slope and the forward monopoly line (proof of Corollary~\ref{cor:continuation})}\label{app:tranche:continuation}
@@ -1473,7 +1482,7 @@ The stage-1 monopoly-line slope in $v$ is therefore
 \[
 \boxed{\;\frac{dp_1^*}{dv} \;=\; \frac{1}{2 b_1 - B_2/2}\;}
 \]
-exactly as claimed in Corollary~\ref{cor:continuation}. Assumption~\ref{ass:soc} ($B_2 < 2 b_1$) ensures the denominator is positive, so the line is increasing in $v$ and the stage-1 problem is concave at the interior optimum.
+exactly as claimed in Corollary~\ref{cor:continuation}. Assumption~\ref{ass:soc} ($B_2 < 2 b_1$) makes the denominator positive --- so the monopoly line increases in $v$ and the committed offer slopes up --- and a fortiori delivers the stage-1 second-order condition $B_2 < 4 b_1$.
 
 \paragraph{Price range.} Over the screened states $v \in [-\Delta_1, \Delta_1]$ the stage-1 clearing-price range under the continuous benchmark is exactly
 \[
@@ -1600,7 +1609,7 @@ The dispersion is attenuated by a factor of two relative to the full-arbitrage c
 
 \subsubsection{Wedge SD in the asymmetric state}\label{app:60-15:wedgesd}
 
-\paragraph{Update channel: $\sigma_\psi/(2 b_2)$ (derivation of body eq.~\ref{eq:wedge-sd-1Q}).} Decompose the spot residual demand at the per-quarter level using the within-hour state of \S\ref{sec:theory:setup}: $A_{2t} = \bar A + \zeta_t + v_{2t}$. While the forward is hourly, the update $\psi_t = \zeta_t + \mu_t$ realises between the gates and becomes the spot-side traded object (plus an hour-level component common across $t$, which is absorbed into the mean and does not affect dispersions). The strategic spot best response \eqref{eq:p2-60-15-foc} acquires an $\psi_t$ term:
+\paragraph{Update channel: $\sigma_\psi/(2 b_2)$ (derivation of body eq.~\ref{eq:wedge-sd-1Q}).} Decompose the spot residual demand at the per-quarter level using the within-hour state of \S\ref{sec:theory:setup}: $A_{2t} = \bar A + \zeta_t + v_{2t}$. While the forward is hourly, the update $\psi_t = \zeta_t + \mu_t$ realises between the gates and becomes the spot-side traded object (plus an hour-level component common across $t$, which is absorbed into the mean and does not affect dispersions). The strategic spot best response \eqref{eq:p2-60-15-foc} acquires a $\psi_t$ term:
 \[
 p_{2t}^*(p_1, s_t, \psi_t) \;=\; \frac{p_1 + c}{2} \;+\; \frac{\psi_t + s_t - S^{op}_{2t}}{2\, b_{2t}}.
 \]
@@ -1673,7 +1682,7 @@ To isolate the slope channel, shut the continuation and arbitrage channels in bo
 \[
 \mathbb{E}\!\bigg[\sum_t q_{1t}^* \,\bigg|\, \mathcal{H}_F\bigg] \;=\; \frac{Q \bar A - c \sum_t b_{1t} - \sum_t S^{op}_{1t}}{2}.
 \]
-The hourly counterpart is $Q\cdot q_1^*|_{(1,1)} = Q\cdot(\bar A - b_1 c - S^{op}_1)/2$. Comparing at equal aggregator totals ($\sum_t S^{op}_{1t} = S^{op}_1$):
+The hourly counterpart is $Q\cdot q_1^*|_{(1,1)} = Q\cdot(\bar A - b_1 c - S^{op}_1)/2$. Comparing at equal aggregator totals ($\sum_t S^{op}_{1t} = Q\,S^{op}_1$):
 \begin{equation}
 \mathbb{E}\!\bigg[\sum_{t=1}^{Q} q_{1t}^* \,\bigg|\, \mathcal{H}_F\bigg]\bigg|_{(Q,Q)} \;-\; Q\cdot q_1^*\big|_{(1,1)} \;=\; \frac{c}{2}\,\bigg(Q\, b_1 - \sum_{t=1}^{Q} b_{1t}\bigg).
 \label{eq:scale-up}
@@ -1734,7 +1743,7 @@ Imbalance cost $C^I/(\gamma Q)$, quadratic
 
 Per quarter, the balancing residual collects whatever no auction carried and no agent could re-schedule:
 \begin{equation}
-\Delta_t \;=\; \bigl(\text{within-hour demand objects unpriced by any auction}\bigr) \;+\; \bigl(\text{unhedged production error}\bigr) \;+\; \varepsilon_t.
+\Delta_t \;=\; \bigl(\text{unpriced within-hour objects}\bigr) \;+\; \bigl(\text{unhedged production error}\bigr) \;+\; \varepsilon_t.
 \label{eq:balancing-disc}
 \end{equation}
 
@@ -1819,7 +1828,7 @@ a threshold independent of the distribution of $\psi$. At the spot reform the re
 
 \subsubsection{Markup channel}\label{app:welfare:markup}
 
-From the Cournot identity \eqref{eq:cournot-markup}, $p_t - c = q_m/b_{mt}$: at given cleared quantity, $\partial(p_t - c)/\partial b_{mt} = -\,q_m/b_{mt}^2 < 0$, so a rise in the per-firm residual-demand slope compresses the margin --- and, by level neutrality (Corollary~\ref{rem:level}), this is the \emph{only} channel through which the reform moves mean prices; ladder geometry contributes nothing to the mean.
+From the markup identity \eqref{eq:cournot-markup}, $p_{mt} - c = q_{mt}/b_{mt}$: at given cleared quantity, $\partial(p_{mt} - c)/\partial b_{mt} = -\,q_{mt}/b_{mt}^2 < 0$, so a rise in the per-firm residual-demand slope compresses the margin --- and, by level neutrality (Corollary~\ref{rem:level}), this is the \emph{only} channel through which the reform moves mean prices; ladder geometry contributes nothing to the mean.
 
 \subsubsection{Discreteness channel}\label{app:welfare:quantization}
 
@@ -2107,6 +2116,7 @@ Reading the table: the DA15 spec (which sees Jan-Sep 2025) tells the cleaner sto
 \begin{center}
 \footnotesize
 \setlength{\tabcolsep}{6pt}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{l r r r r r r}
 \toprule
 & \multicolumn{3}{c}{\textbf{ID15 IDA}} & \multicolumn{3}{c}{\textbf{DA15 DA}} \\
@@ -2119,7 +2129,8 @@ $-0.40$ (per-year cond.\ 2024, DA15 DA spec)           & $-30$ & $36$ & $-66$ & 
 $\mathbf{-0.46}$ (per-year cond.\ 2024, ID15 spec)     & $-26$ & $37$ & $-63$ & $9$  & $23$ & $-13$ \\
 $-0.50$ (per-year cond.\ 2025, DA15 spec)              & $-23$ & $37$ & $-60$ & $9$  & $19$ & $-10$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 % Source: scripts/analysis/bid/bsts_calibrated_solar.R
 \captionof{table}{\textbf{Calibrated-solar BSTS treatment effects on clearing price.} EUR/MWh; the $-0.46$ row uses the 2024 conditional-posterior solar coefficient. The calibrated approach explicitly subtracts $\beta^{\text{cal}}_{\text{solar}} \cdot \text{solar} \cdot \mathbf{1}\{t \ge 2024\}$ from prices, fits BSTS on the residual (no year interactions), and adds the calibrated contribution back to the post-window prediction. Placebo column uses the same calibration but with the cutover shifted one year earlier (real reform absent in the placebo window). Real, placebo, and net all measured on the price level in EUR/MWh.}
 \label{tab:calibrated-solar}
@@ -2423,6 +2434,7 @@ For each IDA session I take the median, across all CCGT critical-hour curves in 
 \begin{center}
 \footnotesize
 \setlength{\tabcolsep}{6pt}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{l c c c c c c c c c}
 \toprule
             & \multicolumn{3}{c}{\textbf{Pre-MTU15-IDA}} & \multicolumn{3}{c}{\textbf{Post-MTU15-IDA (pre-blackout)}} & \multicolumn{3}{c}{\textbf{Post-DA15 (incl.\ re-reinforced)}} \\
@@ -2435,7 +2447,8 @@ $\text{HHI}_{\text{tr}}$          & $0.25$ & $0.50$ & $0.60$ & $0.21$ & $0.33$ &
 \addlinespace
 $n_{\text{curves}}$     & 7{,}647 & 11{,}398 & 10{,}515 & 8{,}962 & 10{,}254 & 7{,}208 & 56{,}484 & 60{,}147 & 43{,}998 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 % Source: scripts/analysis/bid/claim_C_per_session_bid_shape.py
 \captionof{table}{\textbf{Per-session IDA CCGT bid-shape, critical evening hours 16--22.} Medians at $\delta=150$~EUR/MWh across three calendar windows; descriptive, not an identified effect.}
 \label{tab:per-session-ida-bidshape}
