@@ -25,6 +25,7 @@
 
 from pathlib import Path
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -45,6 +46,10 @@ OUTCOME_LABEL = {"sigma_p": r"$\sigma_p$ (EUR/MWh)",
                   "hhi":    r"HHI"}
 REFORM_DATE = {"ID15": pd.Timestamp("2025-03-19"),
                 "DA15": pd.Timestamp("2025-10-01")}
+# Focused display window per reform (crop the noisy far-history; enough pre-trend
+# to judge parallelism, post region shaded).
+XLIM = {"ID15": (pd.Timestamp("2024-09-20"), pd.Timestamp("2025-05-03")),
+        "DA15": (pd.Timestamp("2025-04-04"), pd.Timestamp("2026-01-29"))}
 
 GREEN  = "#d9f2dc"
 RED    = "#fadbd8"
@@ -121,14 +126,22 @@ def make_fig(panel: pd.DataFrame, did: pd.DataFrame, reform: str, market: str,
                 gg = gg.sort_values("d")
                 gg["rm"] = gg[col].rolling(14, min_periods=3).mean()
                 ax.plot(gg["d"], gg["rm"], color=color, lw=1.4, label=label)
-            ax.axvline(cut, color="black", lw=0.8, ls="--")
+            lo, hi = XLIM.get(reform, (merged["d"].min(), merged["d"].max()))
+            if not shade:                       # subtle post-reform shading
+                ax.axvspan(cut, hi, color="0.5", alpha=0.07, lw=0)
+            ax.axvline(cut, color="black", lw=0.9, ls="--")
+            ax.set_xlim(lo, hi)
+            ax.grid(True, color="0.88", lw=0.5, alpha=0.9)
+            ax.set_axisbelow(True)
             if r == 0:
                 ax.set_title(TECH_LABEL[tech], fontsize=10)
             if c == 0:
                 ax.set_ylabel(OUTCOME_LABEL[outcome], fontsize=9)
-            ax.tick_params(axis="x", rotation=0, labelsize=8)
+            if r == len(outcomes) - 1:          # readable date ticks, bottom row only
+                ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
+                ax.xaxis.set_major_formatter(mdates.DateFormatter("%b\n%Y"))
+            ax.tick_params(axis="x", labelsize=7.5)
             ax.tick_params(axis="y", labelsize=8)
-            ax.grid(alpha=0.3)
     handles, labels = axes[0, 0].get_legend_handles_labels()
     legend_handles = handles[:]
     legend_labels = labels[:]

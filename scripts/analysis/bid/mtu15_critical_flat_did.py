@@ -213,9 +213,10 @@ def build_ida_panel(lo, hi):
     var_p = df["sum_wp2"] / df["sum_w"] - mean_p ** 2
     df["sigma_p"] = np.sqrt(var_p.clip(lower=0))
     df["n_eff"] = df["sum_w"] ** 2 / df["sum_w2"]
+    df["hhi"] = df["sum_w2"] / df["sum_w"] ** 2
     df["hour_class"] = df["clock_hour"].map(hour_class_label)
     return df[["d", "session_number", "period", "clock_hour", "hour_class",
-               "unit_code", "firm", "tech", "n_tranche", "sigma_p", "n_eff",
+               "unit_code", "firm", "tech", "n_tranche", "sigma_p", "n_eff", "hhi",
                "sum_w", "sum_wp"]]
 
 

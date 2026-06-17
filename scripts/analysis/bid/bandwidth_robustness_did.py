@@ -84,7 +84,8 @@ def build_da_panel(lo, hi, h):
     mean_p = df["sum_wp"] / df["sum_w"]
     var_p = df["sum_wp2"] / df["sum_w"] - mean_p ** 2
     df["sigma_p"] = np.sqrt(var_p.clip(lower=0))
-    df["n_eff"] = df["sum_w"] ** 2 / df["sum_w2"]
+    df["hhi"] = df["sum_w"] ** 2 / df["sum_w2"]
+    df["hhi"] = df["sum_w2"] / df["sum_w"]**2
     df["hour_class"] = df["clock_hour"].map(hour_class_label)
     return df
 
@@ -138,7 +139,7 @@ def main():
 
         for reform, panel in [("ID15", ida), ("DA15", da)]:
             for tech in techs:
-                for outcome in ["sigma_p", "n_eff"]:
+                for outcome in ["sigma_p", "hhi"]:
                     r = run_did(panel, reform, tech, outcome)
                     if r is None:
                         continue

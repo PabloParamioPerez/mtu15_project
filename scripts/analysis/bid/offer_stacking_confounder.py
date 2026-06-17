@@ -79,7 +79,8 @@ def build(lo, hi, band=BAND):
     da["d"] = pd.to_datetime(da["d"])
     mp = da["sum_wp"]/da["sum_w"]
     da["sigma_p"] = np.sqrt((da["sum_wp2"]/da["sum_w"] - mp**2).clip(lower=0))
-    da["n_eff"] = da["sum_w"]**2 / da["sum_w2"]
+    da["hhi"] = da["sum_w"]**2 / da["sum_w2"]
+    da["hhi"] = da["sum_w2"] / da["sum_w"]**2
     da["hour_class"] = da["clock_hour"].map(hour_class_label)
     da["tech"] = "CCGT"
     return da
@@ -123,7 +124,8 @@ def build_ida(lo, hi, band=BAND):
     df = con.execute(sql).fetchdf(); df["d"] = pd.to_datetime(df["d"])
     mp = df["sum_wp"]/df["sum_w"]
     df["sigma_p"] = np.sqrt((df["sum_wp2"]/df["sum_w"] - mp**2).clip(lower=0))
-    df["n_eff"] = df["sum_w"]**2/df["sum_w2"]
+    df["hhi"] = df["sum_w"]**2/df["sum_w2"]
+    df["hhi"] = df["sum_w2"] / df["sum_w"]**2
     df["hour_class"] = df["clock_hour"].map(hour_class_label)
     return df
 
@@ -159,7 +161,7 @@ def report(label, p, win, tech):
     print(f"\n=== {label} ===  mean_offers={pt['n_offers'].mean():.2f}  "
           f"multi_share={multi:.3f}  max_offers={int(pt['n_offers'].max())}")
     rows = []
-    for outcome in ["sigma_p", "n_eff"]:
+    for outcome in ["sigma_p", "hhi"]:
         bf, sf, tf, nf = did(pt, *win, outcome)
         bs, ss, ts, ns = did(pt[pt["n_offers"] == 1], *win, outcome)
         print(f"  DiD {outcome:8s}: FULL {bf:+.3f}{star(tf)} (n={nf})   "

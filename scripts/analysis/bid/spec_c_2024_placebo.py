@@ -90,6 +90,7 @@ def build_da_panel(lo, hi, band=BAND):
     var_p = da["sum_wp2"] / da["sum_w"] - mean_p ** 2
     da["sigma_p"] = np.sqrt(var_p.clip(lower=0))
     da["n_eff"] = da["sum_w"] ** 2 / da["sum_w2"]
+    da["hhi"] = da["sum_w2"] / da["sum_w"] ** 2
     da["hour_class"] = da["clock_hour"].map(hour_class_label)
     return da
 
@@ -105,7 +106,7 @@ def did(panel, pre_lo, pre_hi, post_lo, post_hi, tech):
     p["crit"] = (p["hour_class"] == "Critical").astype(int)
     p["post_crit"] = p["post"] * p["crit"]
     res = {}
-    for outcome in ["sigma_p", "n_eff"]:
+    for outcome in ["sigma_p", "hhi"]:
         d = p.dropna(subset=[outcome]).copy()
         if len(d) < 50 or d["post"].nunique() < 2:
             res[outcome] = (np.nan, np.nan, np.nan, len(d)); continue
@@ -132,7 +133,7 @@ def main():
             print(f"Building DA panel {cell} {kind} ({lo}..{hi}) ...", flush=True)
             panel = build_da_panel(lo, hi)
             r = did(panel, *w[kind], "CCGT")
-            for outcome in ("sigma_p", "n_eff"):
+            for outcome in ("sigma_p", "hhi"):
                 b, se, t, n = r[outcome]
                 rows.append(dict(cell=cell, kind=kind, outcome=outcome,
                                  DiD=round(b, 4), se=round(se, 4),
