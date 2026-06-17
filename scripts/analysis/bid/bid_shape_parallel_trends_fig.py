@@ -42,7 +42,7 @@ TECH_LABEL = {"CCGT": "CCGT", "Cogen": "Cogen (CHP)",
 OUTCOMES = ["sigma_p", "beta", "gamma", "hhi"]
 OUTCOME_LABEL = {"sigma_p": r"$\sigma_p$ (EUR/MWh)",
                   "beta":   r"$\beta$ (slope)",
-                  "gamma":  r"$\gamma$ (curvature)",
+                  "gamma":  r"$\phi$ (curvature)",
                   "hhi":    r"HHI"}
 REFORM_DATE = {"ID15": pd.Timestamp("2025-03-19"),
                 "DA15": pd.Timestamp("2025-10-01")}
